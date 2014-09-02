@@ -1,0 +1,106 @@
+{% load sitemetrics sitetree pythonz_version %}
+<!DOCTYPE html>
+<html lang="ru" prefix="og: http://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta name="language" content="ru" />
+    <meta name="description" content="{% block page_description %}{% sitetree_page_description from "main" %}{% endblock %}">
+
+    <meta property="og:site_name" content="pythonz" />
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+
+    {% block head %}
+        {% if realm.syndication_enabled %}
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ realm.get_syndication_url }}" />
+        {% endif %}
+    {% endblock %}
+
+    {% block meta_og %}{% endblock %}
+
+    <script src="http://yandex.st/jquery/2.1.1/jquery.min.js"></script>
+
+    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/pythonz.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/foundation-icons.css" rel="stylesheet">
+
+    <link href="http://yandex.st/highlightjs/8.2/styles/github.min.css" rel="stylesheet">
+
+    <link href='http://fonts.googleapis.com/css?family=Belleza' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=PT+Serif&subset=cyrillic' rel='stylesheet' type='text/css'>
+
+    <title>{% block page_title %}{% sitetree_breadcrumbs from "main" template "sitetree/breadcrumbs-title.html" %}{% endblock %}</title>
+
+</head>
+<body>
+
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/" title="На главную страницу">PYTHONZ</a>
+
+            {% with template_path="sitetree/menu_top.html" %}
+                {% sitetree_menu from "main" include "topmenu" template template_path %}
+
+                <div class="submenu navbar-nav navbar-left marg__l_mid">
+                {% if view_type == 'listing' %}
+                    {% sitetree_menu from "main" include "this-children" template template_path %}
+                {% else %}
+                    {% sitetree_menu from "main" include "this-siblings" template template_path %}
+                {% endif %}
+                </div>
+            {% endwith %}
+
+            <ul class="nav navbar-nav navbar-right">
+            {% if user.is_authenticated %}
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ request.user.get_full_name|default:request.user.username }} <b class="caret"></b></a>
+                    {% sitetree_menu from "main" include "personal" template "sitetree/menu_bootstrap3_dropdown.html" %}
+                </li>
+            {% else %}
+                <li><a href="{% url "login" %}" class=""><span class="glyphicon glyphicon-log-in"></span>&nbsp; Вход</a></li>
+            {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container body marg__b_max">
+        {% if messages %}
+        <div id="notices">
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}" role="alert">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block page_contents %}{% endblock %}
+    </div>
+
+    <nav class="footer navbar navbar-default marg__t_max" role="navigation">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2">
+                    <address>
+                        <i class="fi-social-github"></i> &nbsp;<a href="https://github.com/idlesign/pythonz/" title="Проект разрабатывается открыто">pythonz {% pythonz_version %} βετα</a>
+                    </address>
+                </div>
+                <div class="col-md-8">
+                    {% sitetree_menu from "main" include "topmenu" template "sitetree/menu_footer.html" %}
+                    {% sitetree_menu from "about" include "trunk" template "sitetree/menu_footer.html"  %}
+                </div>
+                <div class="col-md-2">
+                    <i class="fi-social-twitter"></i> &nbsp;<a href="https://twitter.com/pythonz_net" title="В Твиттере">pythonz_net</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <script src="{{ STATIC_URL }}js/xross/xross.js"></script>
+    <script src="{{ STATIC_URL }}js/pythonz.js"></script>
+
+    <script src="http://yandex.st/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
+    <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+
+    {% sitemetrics by yandex for "21211468" %}
+</body>
+</html>

@@ -1,0 +1,19 @@
+{% load sitetree %}
+
+{% if author.comments_enabled and author.disqus_shortname %}
+<div id="disqus_thread" class="marg__t_max"></div>
+<script type="text/javascript">
+    var disqus_shortname = '{{ author.disqus_shortname }}',
+        disqus_identifier = '{{ entity_name }}_{{ entity_id }}',
+        {% if author.disqus_category_id %}
+        disqus_category_id = '{{ author.disqus_category_id }}',
+        {% endif %}
+        disqus_title = '{% sitetree_page_title from "main" %}';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+{% endif %}

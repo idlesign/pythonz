@@ -1,0 +1,9 @@
+<div class="marg__b_mid">
+    <form role="form" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <textarea rows="2" name="text_src" id="id_text_src" cols="40" class="form-control" placeholder="Место для вашего мнения"></textarea>
+        </div>
+        <input type="submit" class="btn btn-default btn-block btn-primary" value="Опубликовать" />
+    </form>
+</div>

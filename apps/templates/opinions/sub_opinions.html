@@ -1,0 +1,16 @@
+<h3>Мнения</h3>
+<div class="opinions marg__t_mid">
+    {% if request.user.is_authenticated and not opinions.my %}
+        {% include "opinions/sub_opinion_form.html" with form=opinions.form %}
+    {% endif %}
+    {% for opinion in opinions.all %}
+        {% include "opinions/sub_opinion.html" with opinion=opinion %}
+    {% empty %}
+        <div class="well well-sm">
+            <p>Мнения отсутствуют.</p>
+            {% if not request.user.is_authenticated %}
+            <p>Если у вас есть, что сказать, можете <a href="{% url "login" %}">представиться</a> и исправить ситуацию.</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>

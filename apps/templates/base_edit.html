@@ -1,0 +1,27 @@
+{% extends "_base.html" %}
+{% load thumbs %}
+
+{% block page_contents %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {% include "sub_title_block.html" %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            {% include "forms/sub_form.html" with form=form %}
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">К сведению</h3>
+                </div>
+                <div class="panel-body">
+                    {% block hint %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{%  endblock %}

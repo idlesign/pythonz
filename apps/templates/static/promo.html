@@ -1,0 +1,90 @@
+{% extends "_base.html" %}
+{% load sitetree %}
+
+{% block page_title %}{% sitetree_page_title from "about" %}{% endblock %}
+{% block page_description %}{% sitetree_page_description from "about" %}{% endblock %}
+
+{% block page_contents %}
+
+    <div class="page-header">
+        <h1>{% sitetree_page_title from "about" %}</h1>
+    </div>
+
+    <div class="section">
+        Python &#8212; высокоуровневый язык программирования с динамической типизацией, поддерживающий объектно-ориентированный,
+        функциональный и императивный стили программирования. Это язык общего назначения, на котором можно
+        одинаково успешно разрабатывать системные приложения с графическим интерфейсом, утилиты командной строки, научные приложения, игры, приложения для веб и много другое.
+    </div>
+
+    <div class="features section">
+        <div class="row features_row">
+            <div class="col-md-4 text-center">
+                <i class="fi-trophy"></i>
+                <h4>Простота изучения</h4>
+                <p>
+                    Благодаря лаконичности и отличной документированности изучать Python увлекательно и просто.
+                </p>
+            </div>
+
+            <div class="col-md-4 text-center">
+                <i class="fi-graph-trend"></i>
+                <h4>Эффективность</h4>
+                <p>
+                    Python позволяет быстро и эффективно разрабатывать программное обеспечение, а значит повысить продуктивность разработчика и снизить затраты на поддержку.
+                </p>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="fi-torsos-all"></i>
+                <h4>Сообщество</h4>
+                <p>
+                    Сообщество Python основывается на уважении и взаимопомощи: здесь привыкли помогать и советом, и делом.
+                </p>
+            </div>
+        </div>
+
+        <div class="row features_row">
+            <div class="col-md-4 text-center">
+                <i class="fi-battery-full"></i>
+                <h4>Батарейки в комплекте</h4>
+                <p>
+                    Богатая стандартная библиотека чрезвычайно облегчает решение многих задач. Дополнительные модули, доступные в сети, помогут решить практически любую задачу.
+                </p>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="fi-ticket"></i>
+                <h4>Открытая лицензия</h4>
+                <p>
+                    Лицензия Python является открытой и позволяет использовать его для создания коммерческих продуктов.
+                </p>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="fi-monitor"></i>
+                <h4>Кроссплатформенность</h4>
+                <p>
+                    Python работает на множестве операционных систем семейств Linux, Unix, OS X, Windows и др.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="page-header">
+            <h2>Где взять</h2>
+        </div>
+        <p>
+            Если вы используете операционные системы семейств Linux, Unix, или OS X, то Python у вас уже установлен.<br>
+            В остальных случаях, можете <a href="http://python.org/download/">скачать установочный пакет</a> с <a href="http://python.org/">официального сайта Python</a>.
+        </p>
+        <p>Откройте терминал, наберите <code>python</code>, нажмите клавишу <kbd>Enter</kbd>, чтобы перейти в интерактивный режим работы интерпретатора и узнать, какая версия питона установлена:</p>
+        <pre><code class="bash">
+            > python
+
+            Python 3.4.0 (default, Apr 11 2014, 13:05:11)
+            [GCC 4.8.2] on linux
+            Type "help", "copyright", "credits" or "license" for more information.
+            >>>
+        </code></pre>
+        <p>Нажмите <kbd>Ctrl+D</kbd>, чтобы покинуть интерактивный режим.</p>
+    </div>
+
+{%  endblock %}

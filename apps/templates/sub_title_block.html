@@ -1,0 +1,17 @@
+{% load sitetree model_meta %}
+
+{% sitetree_breadcrumbs from "main" template "sitetree/breadcrumbs_bootstrap3.html" %}
+
+{% if realm.syndication_enabled %}
+<a class="pull-right" title="Подписаться на RSS раздела {% model_meta_verbose_name_plural realm.model %}" href="{{ realm.get_syndication_url }}"><i class="fi-rss"></i>&nbsp;RSS</a>
+{% endif %}
+
+<div class="page-header">
+    <span class="icon_entity glyphicon glyphicon-{{ realm.icon }}"></span>
+    <h1>{% sitetree_page_title from "main" %}</h1>
+    <i>{% block subheader %}{{ subheader }}{% endblock %}</i>
+</div>
+
+{% if view_type == 'listing' %}
+    <blockquote>{{ realm.model.txt_promo|safe }}</blockquote>
+{% endif %}

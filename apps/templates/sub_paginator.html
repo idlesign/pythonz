@@ -1,0 +1,19 @@
+{% if paginator.paginator.num_pages > 1 %}
+<div class="row">
+    <div class="col-md-12">
+        <ul class="pagination pagination-sm">
+            {% if paginator.has_previous %}
+                <li><a href="?p={{ paginator.previous_page_number }}">&lt;</a></li>
+                <li><a href="?p={{ paginator.previous_page_number }}">{{ paginator.previous_page_number }}</a></li>
+            {% endif %}
+
+            <li class="active"><a href="?p={{ paginator.number }}">{{ paginator.number }}</a></li>
+
+            {% if paginator.has_next %}
+                <li><a href="?p={{ paginator.next_page_number }}">{{ paginator.next_page_number }}</a></li>
+                <li><a href="?p={{ paginator.next_page_number }}">&gt;</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,30 @@
+{% extends "_base.html" %}
+{% load gravatar %}
+
+
+{% block page_contents %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {% include "sub_title_block.html" %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {% for user in users %}
+                <div class="listing_item small">
+                    <a href="{{ user.get_absolute_url }}">{% gravatar_get_img user %}</a>
+                    <div class="description">
+                        <a href="{{ user.get_absolute_url }}">{{ user.get_display_name }}</a> <sup>{{ user.supporters_num|floatformat }}</sup>
+                        <div class="small">
+                            {{ user.get_username_partial }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% include "sub_paginator.html" with paginator=users %}
+{%  endblock %}

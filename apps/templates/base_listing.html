@@ -1,0 +1,33 @@
+{% extends "_base.html" %}
+{% load thumbs %}
+
+{% block page_contents %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {% include "sub_title_block.html" %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {% for item in items %}
+                <div class="listing_item">
+                    <div class="rating"><span class="label label-success">{{ item.supporters_num|floatformat }}</span></div>
+                    <a href="{{ item.get_absolute_url }}"><img src="{% thumbs_get_thumb_url item.cover 100 131 item.realm %}" class="img-thumbnail" alt="{{ item.title }}"></a>
+                    <div class="description">
+                        <a href="{{ item.get_absolute_url }}">{{ item.title|truncatechars:55 }}</a>
+                        <div class="small">
+                            <strong>{{ item.year }}</strong><br>
+                            {{ item.author }}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>Здесь пока ничего нет.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% include "sub_paginator.html" with paginator=items %}
+{%  endblock %}

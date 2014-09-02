@@ -1,0 +1,48 @@
+{% extends "base_details.html" %}
+{% load gravatar model_meta sitetree %}
+
+
+{% block meta_og %}
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="{{ article.title }}" />
+    <meta property="og:author" content="{{ article.submitter }}" />
+    <meta property="article:published_time" content="{{ article.time_published }}" />
+    <meta property="article:modified_time" content="{{ article.time_modified }}" />
+    {{ block.super }}
+{% endblock %}
+
+
+{% block page_contents %}
+    <div class="row">
+        <div class="col-md-12">
+            {% include "sub_title_block.html" %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div>
+                <div class="pull-right marg__l_mid marg__b_mid">
+                    <div class="well marg__b_mid text-center">
+                        {% with article.submitter.get_absolute_url as article_url %}
+                        <a href="{{ article_url }}">{% gravatar_get_img article.submitter 64 %}</a><br>
+                        <small><a href="{{ article_url }}">{{ article.submitter.get_display_name }}</a></small>
+                        {% endwith %}
+                    </div>
+                    {% include "sub_box_controls.html" %}
+                </div>
+                <div class="marg__b_mid text-muted">
+                    <small>{{ article.time_created }} (<abbr title="Дата последнего редактирования">ред.</abbr> {{ article.time_modified }})</small>
+                </div>
+
+                {% include "sub_box_tags.html" %}
+                <div class="lead">{{ article.description|linebreaksbr }}</div>
+                <div class="py_user">{{ article.text|safe }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% include "sub_disqus.html" with author=article.submitter entity_name='article' entity_id=article.id %}
+        </div>
+    </div>
+{%  endblock %}

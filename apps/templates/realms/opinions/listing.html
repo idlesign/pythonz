@@ -1,0 +1,25 @@
+{% extends "_base.html" %}
+
+
+{% block page_contents %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {% include "sub_title_block.html" %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="opinions marg__t_mid">
+            {% for opinion in opinions %}
+                {% include "opinions/sub_opinion.html" with disable_voting=1 opinion=opinion %}
+            {% empty %}
+                <p>Нет мнений для отображения. Поделитесь?</p>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% include "sub_paginator.html" with paginator=opinions %}
+{%  endblock %}

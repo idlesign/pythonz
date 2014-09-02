@@ -1,0 +1,29 @@
+{% extends "base_details.html" %}
+{% load gravatar sitetree %}
+
+
+{% block meta_og %}
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content="{{ user.get_display_name }}" />
+    <meta property="og:first_name" content="{{ user.first_name }}" />
+    <meta property="og:last_name" content="{{ user.last_name }}" />
+    <meta property="og:username" content="{{ user.get_username_partial }}" />
+
+    <meta property="og:description" content="{% sitetree_page_description from "main" %}" />
+    <meta property="og:image" content="{% gravatar_get_url user 180 %}" />
+{% endblock %}
+
+
+{% block details_contents %}
+    <div class="marg__b_mid text-muted">
+        <small>
+            <span class="marg__r_mid">Имя пользователя: {{ user.get_username_partial }}</span>
+            <span class="marg__r_mid">Дата регистрации: {{ user.date_joined }}</span>
+        </small>
+    </div>
+{%  endblock %}
+
+
+{% block cover %}
+    <img src="{% gravatar_get_url user 180 %}" class="img-thumbnail" alt="{{ user.get_display_name }}">
+{% endblock %}

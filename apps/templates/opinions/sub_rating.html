@@ -1,0 +1,15 @@
+<span id="op_{{ opinion.id }}_box">
+    <span class="item votes label label-info">{{ opinion.supporters_num|floatformat }}
+    {% if not disable_voting and request.user.is_authenticated %}
+        {% if opinion.submitter != request.user %}
+            <a href="#" id="op_rate_{{ opinion.id }}" data-xop="rate_opinion" data-xopinion_id="{{ opinion.id }}" data-xsuccess="replace" data-xtarget="op_{{ opinion.id }}_box" class="xross item"
+            {% if opinion.my_support %}
+                data-xaction="0" title="Больше не нравится"><span class="glyphicon glyphicon-thumbs-down">
+            {% else %}
+                data-xaction="1" title="Нравится!"><span class="glyphicon glyphicon-thumbs-up">
+            {% endif %}
+            </span></a>
+        {% endif %}
+    {% endif %}
+    </span>
+</span>

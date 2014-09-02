@@ -1,0 +1,9 @@
+<div class="well well-sm">
+    {% include "sub_box_rating.html" %}
+    {% include "sub_box_bookmark.html" %}
+    {% if item_edit_allowed %}
+        <form role="form" action="edit/">
+            <button type="submit" class="btn btn-default btn-sm btn-block">&nbsp;&nbsp;<span class="glyphicon glyphicon-pencil"></span> &nbsp;Редактировать &hellip;&nbsp;&nbsp;</button>
+        </form>
+    {% endif %}
+</div>

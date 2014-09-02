@@ -1,0 +1,26 @@
+{% extends "base_details.html" %}
+
+
+{% block meta_og %}
+    <meta property="og:type" content="video.other" />
+    <meta property="og:title" content="{{ video.title }}" />
+    <meta property="og:actor" content="{{ video.author }}" />
+    <meta property="og:release_date" content="{{ video.year }}" />
+    {{ block.super }}
+{% endblock %}
+
+
+{% block details_contents %}
+    <div>
+        {{ video.code|safe }}
+    </div>
+    <div class="marg__b_mid text-muted">
+        <small>
+            <span class="marg__r_mid py_user">Автор: {{ video.author }}</span>
+            <span class="marg__r_mid">Год: {{ video.year }}</span>
+            {%  if video.translator %}
+                <span class="py_user">Перевод/озвучание: {{ video.translator }}</span>
+            {% endif %}
+        </small>
+    </div>
+{%  endblock %}

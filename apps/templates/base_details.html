@@ -1,0 +1,48 @@
+{% extends "_base.html" %}
+{% load thumbs sitetree %}
+
+{% block meta_og %}
+    <meta property="og:description" content="{% sitetree_page_description from "main" %}" />
+    {% if item.cover %}
+    <meta property="og:image" content="{% thumbs_get_thumb_url item.cover 180 236 item.realm %}" />
+    {% endif %}
+{% endblock %}
+
+
+{% block page_contents %}
+    <div class="row">
+        <div class="col-md-9">
+            {% include "sub_title_block.html" %}
+
+            {% block details_contents %}{% endblock %}
+            <div class="marg__b_mid"><i>{{ item.description }}</i></div>
+
+            {% include "sub_box_tags.html" %}
+            <div id="list_opinions" class="{% if item.has_opinions %}xross{% endif %} marg__t_max" data-xcomplete="pythonz.xrossreinit"></div>
+        </div>
+        <div class="col-md-3">
+            <div class="marg__b_mid text-center">
+                <div class="marg__b_mid">
+                    {% block cover %}
+                        <img src="{% thumbs_get_thumb_url item.cover 180 236 item.realm %}" class="img-thumbnail" alt="{{ item.title }}">
+                    {% endblock %}
+                </div>
+                {% include "sub_box_controls.html" %}
+            </div>
+            {% with linked=item.get_linked %}
+                {% if linked.count %}
+                <div class="linked panel panel-default">
+                    <div class="panel-heading">Смотрите также:</div>
+                    <div class="panel-body">
+                        <ul>
+                            {% for linked_item in item.get_linked %}
+                                <li><a href="{{ linked_item.get_absolute_url }}">{{ linked_item.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{%  endblock %}

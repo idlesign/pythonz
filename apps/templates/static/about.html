@@ -1,0 +1,28 @@
+{% extends "_base.html" %}
+{% load sitetree %}
+
+{% block page_title %}{% sitetree_page_title from "about" %}{% endblock %}
+{% block page_description %}{% sitetree_page_description from "about" %}{% endblock %}
+
+{% block page_contents %}
+
+    <div class="section">
+        <div class="page-header">
+            <h1>{% sitetree_page_title from "about" %}</h1>
+        </div>
+        <p>
+            Это попытка объединить русскоязычное сообщество, людей, создающих приложения при помощи
+            языка программирования Python, а также заинтересовать, тех, кто ещё не знаком с ним.
+        </p>
+        <p>
+            Проект разрабатывается открыто: вы можете посетить <a href="https://github.com/idlesign/pythonz/">страницу проекта на GitHub</a>,
+            ознакомится с кодом и поучаствовать в развитии &#8212; поделиться идеей, задать вопрос, расширить функциональность, исправить ошибку.<br>
+        </p>
+        <p>
+            Приходите, приводите друзей.
+        </p>
+    </div>
+
+    {% include "sub_zen.html" %}
+
+{%  endblock %}

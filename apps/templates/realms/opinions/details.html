@@ -1,0 +1,34 @@
+{% extends "_base.html" %}
+{% load gravatar model_meta sitetree %}
+
+{% block page_contents %}
+    <div class="row">
+        <div class="col-md-12">
+            {% include "sub_title_block.html" %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <div class="marg__b_mid text-center">
+                <a href="{{ opinion.submitter.get_absolute_url }}" title="{{ opinion.submitter.get_display_name }}">{% gravatar_get_img opinion.submitter 128 %}</a>
+            </div>
+        </div>
+        <div class="col-md-10">
+            <div>
+                <div class="pull-right marg__l_mid marg__b_mid">
+                    {% include "sub_box_controls.html" %}
+                </div>
+                <a href="{{ opinion.linked_object.get_absolute_url }}">{% model_meta_verbose_name opinion.linked_object %} «{{ opinion.linked_object.title }}»</a>
+                <div class="marg__b_mid text-muted">
+                    <small>{{ opinion.time_created }} (<abbr title="Дата последнего редактирования">ред.</abbr> {{ opinion.time_modified }})</small>
+                </div>
+                <div class="py_user">{{ opinion.text|safe }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% include "sub_disqus.html" with author=opinion.submitter entity_name='opinion' entity_id=opinion.id %}
+        </div>
+    </div>
+{%  endblock %}
