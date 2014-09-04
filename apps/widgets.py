@@ -1,9 +1,5 @@
 from django import forms
-try:
-    from django.forms.utils import flatatt  # Django < 1.7
-except ImportError:
-    from django.forms.util import flatatt
-
+from django.forms.utils import flatatt
 from django.utils.html import format_html, force_text
 
 
