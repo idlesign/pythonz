@@ -22,6 +22,7 @@ class ArticleForm(RealmEditBaseForm):
         fields = (
             'title',
             'description',
+            'status',
             'text_src'
         )
         labels = {
@@ -41,6 +42,7 @@ class BookForm(RealmEditBaseForm):
         fields = (
             'title',
             'description',
+            'status',
             'author',
             'translator',
             'year',
@@ -73,6 +75,7 @@ class VideoForm(RealmEditBaseForm):
             'title',
             'url',
             'description',
+            'status',
             'author',
             'translator',
             'year',
