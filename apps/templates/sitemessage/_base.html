@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ subject }}</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            color: #333;
+            font-size: 14px;
+            padding: 10px;
+            margin: 0;
+        }
+        .header {
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #eee;
+        }
+        .footer {
+            font-size: 10px;
+            color: #999;
+            margin-top: 25px;
+        }
+        hr {
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">PYTHONZ</div>
+    {% block contents %}{% endblock %}
+    <div class="footer">
+        <hr noshade>
+        Это письмо сформировано и выслано автоматически проектом <a href="http://pythonz.net">pythonz.net</a>
+    </div>
+</body>
+</html>
