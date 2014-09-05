@@ -10,6 +10,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from ..utils import get_image_from_url
+from ..signals import signal_new_entity, signal_entity_published
 
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
@@ -167,16 +168,26 @@ class RealmBaseModel(ModelWithFlag):
         :param kwargs:
         :return:
         """
+        initial_pk = self.pk
+        just_published = False
+
         if self._status_backup != self.status:
             self._consider_modified = False  # Если сохраняем с переходом статуса, наивно полагаем объект немодифицированным.
             if self.status == self.STATUS_PUBLISHED:
                 setattr(self, 'time_published', timezone.now())
+                just_published = True
 
         if self._consider_modified:
             setattr(self, 'time_modified', timezone.now())
         else:
             self._consider_modified = True
         super().save(*args, **kwargs)
+
+        if not initial_pk and self.pk:
+            signal_new_entity.send(self.__class__, entity=self)
+
+        if just_published:
+            signal_entity_published.send(self.__class__, entity=self)
 
     @classmethod
     def get_actual(cls):
