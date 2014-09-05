@@ -15,7 +15,7 @@
             {% for opinion in opinions %}
                 {% include "opinions/sub_opinion.html" with disable_voting=1 opinion=opinion %}
             {% empty %}
-                <p>Нет мнений для отображения. Поделитесь?</p>
+                <div class="alert alert-info">Нет мнений для отображения. Поделитесь?</div>
             {% endfor %}
             </div>
         </div>
