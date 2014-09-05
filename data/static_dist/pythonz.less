@@ -38,6 +38,10 @@ h1, h2, h3, h4, h5, h6 {
 
 //------------------------------------------
 
+.block {
+  display: inline-block;
+}
+
 .body {
     background-color: @cl__white;
     padding-top: @gap__max;
@@ -290,6 +294,17 @@ h1, h2, h3, h4, h5, h6 {
 
 .form_table td {
   vertical-align: top;
+}
+
+.cover_img {
+  .icon_entity {
+      padding: @gap__mid;
+      color: lighten(@cl__gray, 20%);
+      min-width: 100px;
+  }
+  a {
+      text-align: center;
+  }
 }
 
 .listing_item {

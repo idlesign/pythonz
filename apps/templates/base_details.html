@@ -22,9 +22,16 @@
         </div>
         <div class="col-md-3">
             <div class="marg__b_mid text-center">
-                <div class="marg__b_mid">
+                <div class="marg__b_mid block">
                     {% block cover %}
-                        <img src="{% thumbs_get_thumb_url item.cover 180 236 item.realm %}" class="img-thumbnail" alt="{{ item.title }}">
+                        <div class="cover_img">
+                            {% thumbs_get_thumb_url item.cover 180 236 item.realm as thumb_url %}
+                            {% if thumb_url %}
+                            <img src="{{ thumb_url }}" class="img-thumbnail" alt="{{ item.title }}">
+                            {% else %}
+                                <span class="img-thumbnail icon_entity glyphicon glyphicon-{{ realm.icon }}"></span>
+                            {% endif %}
+                        </div>
                     {% endblock %}
                 </div>
                 {% include "sub_box_controls.html" %}
