@@ -9,14 +9,14 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from .generics.models import CommonBaseModel, CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmModel
+from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
 from .exceptions import PythonzException
 
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 
 
-class Opinion(InheritedModel, CommonBaseModel, RealmModel, ModelWithCompiledText):
+class Opinion(InheritedModel, RealmBaseModel, ModelWithCompiledText):
     """Модель мнений. Пользователи могут поделится своим менением по попову той или иной сущности на сайте.
     Фактически - комментарии.
     """
@@ -57,7 +57,7 @@ class ModelWithOpinions(models.Model):
         abstract = True
 
 
-class Place(CommonBaseModel, RealmModel):
+class Place(RealmBaseModel):
     """Географическое место. Для людей, событий и пр."""
 
     TYPE_COUNTRY = 'country'
@@ -83,7 +83,7 @@ class Place(CommonBaseModel, RealmModel):
     txt_promo = 'В какую точку земного шара ни ткни, почти наверняка там найдутся интересные люди. Отправлятесь искать клад.'
 
 
-class User(RealmModel, AbstractUser):
+class User(RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
 
     place = models.ForeignKey(Place, verbose_name='Место', help_text='Место вашего пребывания (страна, город, село), чтобы pythonz мог фильтровать интересную вам информацию.', related_name='users', null=True, blank=True)
@@ -114,7 +114,7 @@ class User(RealmModel, AbstractUser):
         return self.username.split('@')[0]
 
 
-class Book(InheritedModel, CommonEntityModel, RealmModel, ModelWithOpinions, ModelWithCategory, ModelWithAuthorAndTranslator):
+class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithAuthorAndTranslator):
     """Модель сущности `Книга`."""
 
     COVER_UPLOAD_TO = 'books'
@@ -143,7 +143,7 @@ class Book(InheritedModel, CommonEntityModel, RealmModel, ModelWithOpinions, Mod
     txt_form_edit = 'Изменить данные книги'
 
 
-class Article(InheritedModel, CommonEntityModel, RealmModel, ModelWithOpinions, ModelWithCategory, ModelWithCompiledText):
+class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithCompiledText):
     """Модель сущности `Статья`."""
 
     class Meta:
@@ -165,7 +165,7 @@ class Article(InheritedModel, CommonEntityModel, RealmModel, ModelWithOpinions, 
     txt_form_edit = 'Редактировать статью'
 
 
-class Video(InheritedModel, CommonEntityModel, RealmModel, ModelWithOpinions, ModelWithCategory, ModelWithAuthorAndTranslator):
+class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithAuthorAndTranslator):
     """Модель сущности `Видео`."""
 
     EMBED_WIDTH = 560
@@ -269,7 +269,7 @@ class EventDetails(models.Model):
         verbose_name_plural = 'Детали событий'
 
 
-class Event(InheritedModel, CommonEntityModel, RealmModel, ModelWithOpinions, ModelWithCompiledText):
+class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCompiledText):
     """Модель сущности `Событие`."""
 
     TYPE_MEETING = 1

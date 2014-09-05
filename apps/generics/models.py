@@ -65,8 +65,56 @@ class ModelWithCompiledText(models.Model):
         super().save(*args, **kwargs)
 
 
-class CommonBaseModel(models.Model):
-    """Класс с базовыми полями, использующимися многими моделями."""
+def get_upload_to(instance, filename):
+    """Вычисляет директорию, в которую будет загружена обложка сущности.
+
+    :param instance:
+    :param filename:
+    :return:
+    """
+    category = getattr(instance, 'COVER_UPLOAD_TO')
+    return os.path.join('img', category, 'orig', '%s%s' % (uuid4(), os.path.splitext(filename)[-1]))
+
+
+class CommonEntityModel(models.Model):
+    """Базовый класс для моделей сущностей."""
+
+    COVER_UPLOAD_TO = 'common'  # Имя категории (оно же имя директории) для хранения загруженных обложек.
+
+    title = models.CharField('Название', max_length=255, unique=True)
+    description = models.TextField('Описание', blank=False, null=False)
+    submitter = models.ForeignKey(USER_MODEL, related_name='%(class)s_submitters', verbose_name='Добавил')
+    linked = models.ManyToManyField('self', verbose_name='Связанные объекты', help_text='Выберите объекты, имеющие отношение к данному.', blank=True)
+    cover = models.ImageField('Обложка', max_length=255, upload_to=get_upload_to, null=True, blank=True)
+    year = models.CharField('Год', max_length=10, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+    def update_cover_from_url(self, url):
+        """Забирает обложку с указанного URL.
+
+        :param url:
+        :return:
+        """
+        img = get_image_from_url(url)
+        self.cover.save(img.name, img, save=False)
+
+    @classmethod
+    def get_paginator_objects(cls):
+        """Возвращает выборку объектов для постраничной навигации.
+        Должен быть реализован наследниками.
+
+        :return:
+        """
+        raise NotImplementedError()
+
+    def __unicode__(self):
+        return self.title
+
+
+class RealmBaseModel(ModelWithFlag):
+    """Базовый класс для моделей, использующихся в областях (realms) сайта."""
 
     STATUS_DRAFT = 1
     STATUS_PUBLISHED = 2
@@ -78,18 +126,57 @@ class CommonBaseModel(models.Model):
         (STATUS_DELETED, 'Удален'),
     )
 
+    FLAG_STATUS_BOOKMARK = 1  # Фильтр флагов-закладок.
+    FLAG_STATUS_SUPPORT = 2  # Фильтр флагов-голосов-поддержки.
+
     time_created = models.DateTimeField('Дата создания', auto_now_add=True, editable=False)
     time_published = models.DateTimeField('Дата публикации', null=True, editable=False)
     time_modified = models.DateTimeField('Дата редактирования', null=True, editable=False)
     status = models.PositiveIntegerField('Статус', choices=STATUSES, default=STATUS_DRAFT)
+    supporters_num = models.PositiveIntegerField('Количество поддержавших', default=0)
 
     class Meta:
         abstract = True
 
-    def save(self, *args, set_modified_time=True, **kwargs):
-        if set_modified_time:
+    realm = None  # Во время исполнения здесь будет объект области (Realm).
+    items_per_page = 16  # Количество объектов для вывода на страницах списков.
+    edit_form = None  # Во время исполнения здесь будет форма редактирования.
+
+    txt_promo = 'Если вы это читаете, значит здесь требуется нормальное описание.'
+    txt_form_add = 'Добавить элемент'
+    txt_form_edit = 'Редактировать элемент'
+
+    def mark_unmodified(self):
+        """Используется для того, чтобы при следующем вызове save()
+        объекта он не считался изменённым.
+
+        :return:
+        """
+        self._consider_modified = False
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._consider_modified = True  # Указывает на то, нужно ли при сохранении устанавливать время изменения
+        self._status_backup = self.status
+
+    def save(self, *args, **kwargs):
+        """Перекрыт, чтобы можно было отследить флаг модифицированности объекта
+        и выставить время модификации соответствующим образом.
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        if self._status_backup != self.status:
+            self._consider_modified = False  # Если сохраняем с переходом статуса, наивно полагаем объект немодифицированным.
+            if self.status == self.STATUS_PUBLISHED:
+                setattr(self, 'time_published', timezone.now())
+
+        if self._consider_modified:
             setattr(self, 'time_modified', timezone.now())
-        super(CommonBaseModel, self).save(*args, **kwargs)
+        else:
+            self._consider_modified = True
+        super().save(*args, **kwargs)
 
     @classmethod
     def get_actual(cls):
@@ -114,64 +201,6 @@ class CommonBaseModel(models.Model):
         """
         return self.linked.filter(status=self.STATUS_PUBLISHED).all()
 
-
-def get_upload_to(instance, filename):
-    """Вычисляет директорию, в которую будет загружена обложка сущности.
-
-    :param instance:
-    :param filename:
-    :return:
-    """
-    category = getattr(instance, 'COVER_UPLOAD_TO')
-    return os.path.join('img', category, 'orig', '%s%s' % (uuid4(), os.path.splitext(filename)[-1]))
-
-
-class CommonEntityModel(CommonBaseModel):
-    """Базовый класс для моделей сущностей."""
-
-    COVER_UPLOAD_TO = 'common'  # Имя категории (оно же имя директории) для хранения загруженных обложек.
-
-    title = models.CharField('Название', max_length=255, unique=True)
-    description = models.TextField('Описание', blank=False, null=False)
-    submitter = models.ForeignKey(USER_MODEL, related_name='%(class)s_submitters', verbose_name='Добавил')
-    linked = models.ManyToManyField('self', verbose_name='Связанные объекты', help_text='Выберите объекты, имеющие отношение к данному.', blank=True)
-    cover = models.ImageField('Обложка', max_length=255, upload_to=get_upload_to, null=True, blank=True)
-    year = models.CharField('Год', max_length=10, null=True, blank=True)
-
-    class Meta:
-        abstract = True
-
-    def update_cover_from_url(self, url):
-        """Забирает обложку с указанного URL.
-
-        :param url:
-        :return:
-        """
-        img = get_image_from_url(url)
-        self.cover.save(img.name, img, save=False)
-
-    def __unicode__(self):
-        return self.title
-
-
-class RealmModel(ModelWithFlag):
-
-    supporters_num = models.PositiveIntegerField('Количество поддержавших', default=0)
-
-    FLAG_STATUS_BOOKMARK = 1  # Фильтр флагов-закладок.
-    FLAG_STATUS_SUPPORT = 2  # Фильтр флагов-голосов-поддержки.
-
-    class Meta:
-        abstract = True
-
-    realm = None  # Во время исполнения здесь будет объект области (Realm).
-    items_per_page = 16  # Количество объектов для вывода на страницах списков.
-    edit_form = None  # Во время исполнения здесь будет форма редактирования.
-
-    txt_promo = 'Если вы это читаете, значит здесь требуется нормальное описание.'
-    txt_form_add = 'Добавить элемент'
-    txt_form_edit = 'Редактировать элемент'
-
     def is_supported_by(self, user):
         """Возвращает указание на то, поддерживает ли данный пользователь данную сущность.
 
@@ -188,7 +217,8 @@ class RealmModel(ModelWithFlag):
         """
         self.supporters_num += 1
         self.set_flag(user, status=self.FLAG_STATUS_SUPPORT)
-        self.save(set_modified_time=False)
+        self.mark_unmodified()
+        self.save()
 
     def remove_support(self, user):
         """Убирает флаг поддержки данным пользователем данной сущности.
@@ -198,7 +228,8 @@ class RealmModel(ModelWithFlag):
         """
         self.supporters_num -= 1
         self.remove_flag(user, status=self.FLAG_STATUS_SUPPORT)
-        self.save(set_modified_time=False)
+        self.mark_unmodified()
+        self.save()
 
     def get_suppport_for_objects(self, objects_list, user):
         """Возвращает данные о поддержке пользователем(ями) указанного набора сущностей.
@@ -257,12 +288,3 @@ class RealmModel(ModelWithFlag):
         """
         tmp, realm_name_plural = self.realm.get_names()
         return reverse('%s:tags' % realm_name_plural, args=[str(category.id)])
-
-    @classmethod
-    def get_paginator_objects(cls):
-        """Возвращает выборку объектов для постраничной навигации.
-        Должен быть реализован наследниками.
-
-        :return:
-        """
-        raise NotImplementedError()
