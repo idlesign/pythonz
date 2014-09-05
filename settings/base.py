@@ -89,7 +89,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'admirarchy',
     'apps',
-    'south',
     'sitecats',
     'siteflags',
     'sitetree',
