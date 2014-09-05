@@ -275,6 +275,20 @@ class RealmBaseModel(ModelWithFlag):
         """
         self.remove_flag(user, status=self.FLAG_STATUS_BOOKMARK)
 
+    def get_verbose_name(self):
+        """Возвращает человекоудобное название типа объекта в ед. числе.
+
+        :return:
+        """
+        return self._meta.verbose_name
+
+    def get_verbose_name_plural(self):
+        """Возвращает человекоудобное название типа объекта во мн. числе.
+
+        :return:
+        """
+        return self._meta.verbose_name_plural
+
     def get_listing_url(self):
         """Возвращает URL страницы со списком объектов.
 
