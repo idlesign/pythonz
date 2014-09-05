@@ -22,8 +22,17 @@ def thumbs_get_thumb_url(context, image, width, height, realm, as_=None, as_name
     :param as_name:
     :return:
     """
+    def get_result(url):
+        if as_name is not None:
+            context[as_name] = url
+            return ''
+        return url
+
     base_path = os.path.join('img', realm.name_plural, 'thumbs', '%sx%s' % (width, height))
-    thumb_file_base = os.path.join(base_path, os.path.basename(image.path))
+    try:
+        thumb_file_base = os.path.join(base_path, os.path.basename(image.path))
+    except ValueError:
+        return get_result('')
     thumb_file = os.path.join(settings.MEDIA_ROOT, thumb_file_base)
 
     if not os.path.exists(thumb_file):  # TODO Довольно долго. Пересмотреть при случае.
@@ -36,8 +45,4 @@ def thumbs_get_thumb_url(context, image, width, height, realm, as_=None, as_name
         img.save(thumb_file)
 
     url = os.path.join(settings.MEDIA_URL, thumb_file_base)
-    if as_ is not None and as_name is not None:
-        context[as_name] = url
-        return ''
-
-    return url
+    return get_result(url)
