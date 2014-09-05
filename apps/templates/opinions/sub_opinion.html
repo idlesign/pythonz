@@ -9,7 +9,7 @@
             <a href="{% url "opinions:details" opinion.id %}" class="item" title="Страница мнения">#</a> &nbsp;
             {{ opinion.submitter.get_display_name }}
         </div>
-        <div class="text py_user">{{ opinion.text|striptags|truncatewords:50 }}</div>
+        <div class="text py_user">{{ opinion.text|safe|truncatewords_html:30 }}</div>
     </div>
     <div class="clearfix"></div>
 </div>
