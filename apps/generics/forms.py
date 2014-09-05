@@ -17,7 +17,11 @@ class CommonEntityForm(forms.ModelForm):
 class RealmEditBaseForm(CommonEntityForm):
     """Базовый класс для форм создания/редактирования сущностей, принадлежащим областям."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, user, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if not user.is_superuser and not user.is_staff:
+            del self.fields['status']
+
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'

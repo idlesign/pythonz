@@ -95,7 +95,7 @@ class DetailsView(RealmView):
         :param request:
         :return:
         """
-        opinion_form = OpinionForm(request.POST or None)
+        opinion_form = OpinionForm(request.POST or None, user=request.user)
 
         if opinion_form.is_valid():
             opinion = opinion_form.save(commit=False)
@@ -281,7 +281,7 @@ class EditView(RealmView):
 
         xross_listener(item=item)
 
-        form = self.realm.form(request.POST or None, request.FILES or None, instance=item)
+        form = self.realm.form(request.POST or None, request.FILES or None, instance=item, user=request.user)
         if item is None:
             form.submit_title = self.realm.model.txt_form_add
         else:
