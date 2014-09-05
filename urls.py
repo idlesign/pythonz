@@ -6,7 +6,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 
-from apps.realms import get_realms_urls, build_sitetree  # Здесь относительный импорт работать не будет.
+from apps.realms import bootstrap_realms  # Здесь относительный импорт работать не будет.
 
 autodiscover_siteprefs()
 
@@ -22,9 +22,8 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += get_sitegate_urls()  # Цепляем URLы от sitegate,
-urlpatterns += get_realms_urls()  # Цепляем URLы областей сайта.
 
-build_sitetree()  # Строим древо сайта налету.
+bootstrap_realms(urlpatterns)  # Инициализируем области
 
 
 if settings.DEBUG:

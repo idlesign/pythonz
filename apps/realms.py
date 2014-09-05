@@ -6,10 +6,38 @@ from sitetree.utils import tree, item
 from .generics.realms import RealmBase
 from .models import User, Opinion, Book, Video, Event, Place, Article
 from .forms import BookForm, VideoForm, EventForm, UserForm, OpinionForm, ArticleForm
+from .signals import signal_new_entity, signal_entity_published
+from .sitemessages import notify_new_entity, notify_entity_published
 from .zen import *  # Регистрируем блок сайта с дзеном
 
 
+def bootstrap_realms(urlpatterns):
+    """Инициализирует машинерию областей сайта.
+
+    Принимает на вход urlpatterns из urls.py и модифицирует их.
+
+    :param urlpatterns:
+    :return:
+    """
+    urlpatterns += get_realms_urls()
+    connect_signals()
+    build_sitetree()
+    return urlpatterns
+
+
 REALMS_REGISTRY = []
+
+
+def connect_signals():
+    """Подключает обработчки сигналов проекта.
+
+    :return:
+    """
+    notify_handler = lambda sender, **kwargs: notify_new_entity(kwargs['entity'])
+    signal_new_entity.connect(notify_handler, dispatch_uid='cfg_new_entity', weak=False)
+
+    notify_handler = lambda sender, **kwargs: notify_entity_published(kwargs['entity'])
+    signal_entity_published.connect(notify_handler, dispatch_uid='cfg_entity_published', weak=False)
 
 
 def register_realms(*classes):
@@ -102,21 +130,21 @@ class VideoRealm(RealmBase):
     icon = 'film'
 
 
-class EventRealm(RealmBase):
-    """
-    Область с событиями.
-    """
-
-    model = Event
-    form = EventForm
-    icon = 'calendar'
-    sitemap_changefreq = 'daily'
+# class EventRealm(RealmBase):
+#     """
+#     Область с событиями.
+#     """
+#
+#     model = Event
+#     form = EventForm
+#     icon = 'calendar'
+#     sitemap_changefreq = 'daily'
 
 
 # class OpeningRealm(RealmBase):
 #
 #     model = Opening
-#     form = VideoForm  # todo
+#     form = VideoForm
 #     icon = 'briefcase'
 
 
@@ -131,14 +159,14 @@ class ArticleRealm(RealmBase):
     sitemap_changefreq = 'monthly'
 
 
-class PlaceRealm(RealmBase):
-    """
-    Область с [географическими] местами.
-    """
-
-    model = Place
-    form = VideoForm  # todo
-    icon = 'globe'
+# class PlaceRealm(RealmBase):
+#     """
+#     Область с [географическими] местами.
+#     """
+#
+#     model = Place
+#     form = VideoForm
+#     icon = 'globe'
 
 
 class OpinionRealm(RealmBase):
