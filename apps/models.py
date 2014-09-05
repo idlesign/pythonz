@@ -128,6 +128,10 @@ class Book(InheritedModel, CommonEntityModel, RealmModel, ModelWithOpinions, Mod
 
     class Fields:
         title = 'Название книги'
+        description = {
+            'verbose_name': 'Аннотация',
+            'help_text': 'Аннотация к книге, или другое краткое описание. Без обозначения личного отношения.',
+        }
         linked = {
             'verbose_name': 'Связанные книги',
             'help_text': 'Выберите книги, которые имеют отношение к данной. Например, для книги-перевода можно указать оригинал.',
@@ -147,6 +151,10 @@ class Article(InheritedModel, CommonEntityModel, RealmModel, ModelWithOpinions, 
         verbose_name_plural = 'Статьи'
 
     class Fields:
+        description = {
+            'verbose_name': 'Введение',
+            'help_text': 'Пара-тройка предложений, описывающих, о чём пойдёт речь в статье.',
+        }
         linked = {
             'verbose_name': 'Связанные статьи',
             'help_text': 'Выберите статьи, которые имеют отношение к данной. Так, например, можно объединить статьи цикла.',
@@ -173,6 +181,9 @@ class Video(InheritedModel, CommonEntityModel, RealmModel, ModelWithOpinions, Mo
 
     class Fields:
         title = 'Название видео'
+        description = {
+            'help_text': 'Краткое описание того, о чём это видео. Без обозначения личного отношения.',
+        }
         linked = {
             'verbose_name': 'Связанные видео',
             'help_text': 'Выберите видео, которые имеют отношение к данному. Например, можно связать несколько эпизодов видео.',
