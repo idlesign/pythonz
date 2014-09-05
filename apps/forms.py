@@ -58,6 +58,8 @@ class BookForm(RealmEditBaseForm):
         if length:
             if (length != 10 and length != 13) or not isbn.isdigit():
                 raise forms.ValidationError('Код ISBN должен содержать 10, либо 13 цифр.')
+        else:
+            isbn = None
         return isbn
 
     def clean_isbn(self):
