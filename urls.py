@@ -8,8 +8,6 @@ from django.contrib import admin
 
 from apps.realms import get_realms_urls, build_sitetree  # Здесь относительный импорт работать не будет.
 
-
-admin.autodiscover()
 autodiscover_siteprefs()
 
 
