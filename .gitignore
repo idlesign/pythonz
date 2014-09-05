@@ -4,6 +4,5 @@
 .tox
 __pycache__
 /data/media/
-/data/static/
 /data/db/
 /settings/prod.py
