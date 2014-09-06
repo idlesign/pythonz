@@ -4,6 +4,7 @@ from uuid import uuid4
 
 from bleach import clean
 from siteflags.models import ModelWithFlag
+from django.contrib.auth.models import AbstractUser
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.conf import settings
@@ -168,6 +169,9 @@ class RealmBaseModel(ModelWithFlag):
         :param kwargs:
         :return:
         """
+        if isinstance(self, AbstractUser):  # Пропускаем модели пользователей.
+            super().save(*args, **kwargs)
+
         initial_pk = self.pk
         just_published = False
 
