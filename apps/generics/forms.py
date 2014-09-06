@@ -21,7 +21,10 @@ class RealmEditBaseForm(CommonEntityForm):
         super().__init__(*args, **kwargs)
 
         if not user.is_superuser and not user.is_staff:
-            del self.fields['status']
+            try:
+                del self.fields['status']
+            except KeyError:  # Нет такого поля на форме.
+                pass
 
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
