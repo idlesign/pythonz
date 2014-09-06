@@ -159,6 +159,7 @@ class DetailsView(RealmView):
         """
         self._attach_bookmark_data(item, request)
         self._attach_support_data(item, request)
+        self._attach_opinions_data(item, request)
 
     def rate_opinion(self, request, opinion_id, action, xross=None):
         """Используется xross. Реализует оценку мнения.
