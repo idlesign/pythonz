@@ -169,9 +169,6 @@ class RealmBaseModel(ModelWithFlag):
         :param kwargs:
         :return:
         """
-        if isinstance(self, AbstractUser):  # Пропускаем модели пользователей.
-            super().save(*args, **kwargs)
-
         initial_pk = self.pk
         just_published = False
 
@@ -187,11 +184,17 @@ class RealmBaseModel(ModelWithFlag):
             self._consider_modified = True
         super().save(*args, **kwargs)
 
-        if not initial_pk and self.pk:
-            signal_new_entity.send(self.__class__, entity=self)
+        try:
+            if not initial_pk and self.pk:
+                signal_new_entity.send(self.__class__, entity=self)
+        except AttributeError:
+            pass  # Пропускаем модели, в которых нет нужных атрибутов.
 
-        if just_published:
-            signal_entity_published.send(self.__class__, entity=self)
+        try:
+            if just_published:
+                signal_entity_published.send(self.__class__, entity=self)
+        except AttributeError:
+            pass  # Пропускаем модели, в которых нет нужных атрибутов.
 
     @classmethod
     def get_actual(cls):
