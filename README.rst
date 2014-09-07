@@ -55,6 +55,7 @@ https://github.com/idlesign/pythonz
 * requests
 * bleach
 * twitter
+* pytz
 
 
 *Приложения для Django*
