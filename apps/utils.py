@@ -1,14 +1,33 @@
 import requests
+from datetime import timedelta
 
 from sitemessage.toolbox import schedule_messages, recipients
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.utils.text import Truncator
+from django.utils import timezone
 
-from .sitemessages import PythonzTwitterMessage, PythonzEmailNewEntity
+from .sitemessages import PythonzTwitterMessage, PythonzEmailNewEntity, PythonzEmailDigest
 
 
 PROJECT_SOURCE_URL = 'https://github.com/idlesign/pythonz'
+
+
+def create_digest():
+    """Создаёт депеши для рассылки еженедельного дайджеста.
+
+    Реальная компиляция дайджеста происходит в PythonzEmailDigest.compile().
+
+    :return:
+    """
+    from .models import User
+    date_till = timezone.now()
+    date_from = date_till-timedelta(days=7)
+    context = {'date_from': date_from.timestamp(), 'date_till': date_till.timestamp()}
+    format_date = lambda d: d.date().strftime('%d.%m.%Y')
+    m = PythonzEmailDigest(get_email_full_subject('Дайджест %s-%s' % (format_date(date_from), format_date(date_till))), context)
+    subscribers = User.get_digest_subsribers()
+    schedule_messages(m, recipients('smtp', subscribers))
 
 
 def get_admins_emails():

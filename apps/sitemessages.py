@@ -2,9 +2,15 @@
 Здесь настраиваются средства доставки сообщений.
 Конфигурирование производится в settings.py проекта.
 """
+from datetime import datetime
+from collections import OrderedDict
+
 from sitemessage.utils import register_messenger_objects, register_message_types, override_message_type_for_app
 from sitemessage.messages import EmailHtmlMessage, PlainTextMessage
 from django.conf import settings
+from django.utils import timezone
+
+from .realms import get_realms
 
 
 def register_messengers():
@@ -68,6 +74,21 @@ class PythonzEmailDigest(PythonzEmailMessage):
     alias = 'digest'
     priority = 7  # Рассылается раз в семь дней.
     send_retry_limit = 1  # Нет смысла пытаться повторно неделю спустя.
+
+    def compile(cls, message, messenger, dispatch=None):
+        context = message.context
+        realms_data = OrderedDict
+        get_date = lambda s: datetime.fromtimestamp(s, tz=timezone.get_current_timezone())
+        for realm in get_realms():
+            if realm.ready_for_digest:
+                date_from = get_date(context.get('date_from'))
+                date_till = get_date(context.get('date_till'))
+                entries = realm.model.get_actual().filter(time_published__gte=date_from, time_published__lte=date_till)
+                if entries:
+                    realms_data[realm.model.get_verbose_name_plural()] = entries
+
+        context.update({'realms': realms_data})
+        return super().compile(message, messenger, dispatch=dispatch)
 
 
 # Регистрируем наши типы сообщений.

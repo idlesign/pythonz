@@ -87,7 +87,7 @@ class User(RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
 
     place = models.ForeignKey(Place, verbose_name='Место', help_text='Место вашего пребывания (страна, город, село), чтобы pythonz мог фильтровать интересную вам информацию.', related_name='users', null=True, blank=True)
-    digest_enabled = models.BooleanField('Получать дайджест', help_text='Включает/отключает еженедельную рассылку с подборкой новых материалов сайта.', default=True)
+    digest_enabled = models.BooleanField('Получать дайджест', help_text='Включает/отключает еженедельную рассылку с подборкой новых материалов сайта.', default=True, db_index=True)
     comments_enabled = models.BooleanField('Разрешить комментарии', help_text='Включает/отключает систему комментирования Disqus на страницах ваших публикаций.', default=False)
     disqus_shortname = models.CharField('Идентификатор Disqus', help_text='Короткое имя (shortname), под которым вы зарегистрировали форум на Disqus.', max_length=100, null=True, blank=True)
     disqus_category_id = models.CharField('Идентификтаор категории Disqus', help_text='Если ваш форум на Disqus использует категории, можете указать нужный номер здесь. Это не обязательно.', max_length=30, null=True, blank=True)
@@ -98,6 +98,14 @@ class User(RealmBaseModel, AbstractUser):
 
     txt_promo = 'Вокруг люди &#8211; это они пишут статьи и книги, организовывают встречи и делятся мнениями, это они могут помочь, подсказать, научить. Здесь упомянуты некоторые.'
     txt_form_edit = 'Изменить настройки'
+
+    @classmethod
+    def get_digest_subsribers(cls):
+        """Возвращает выборку пользователей, подписанных на еженедельный дайджест.
+
+        :return:
+        """
+        return cls.objects.filter(is_active=True, digest_enabled=True).all()
 
     @classmethod
     def get_actual(cls):

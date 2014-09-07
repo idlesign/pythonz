@@ -24,6 +24,9 @@ class RealmBase(object):
     # Кеш элементов древа сайта для данной области.
     sitetree_items = None
 
+    # Указывает на готовность области попасть в еженедельный дайджест.
+    ready_for_digest = True
+
     # Указание на то, доступна ли синдикация.
     syndication_enabled = True
 
