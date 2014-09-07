@@ -2,9 +2,8 @@
 Здесь настраиваются средства доставки сообщений.
 Конфигурирование производится в settings.py проекта.
 """
-from sitemessage.utils import register_messenger_objects, register_message_types
+from sitemessage.utils import register_messenger_objects, register_message_types, override_message_type_for_app
 from sitemessage.messages import EmailHtmlMessage, PlainTextMessage
-from sitemessage.toolbox import schedule_messages, recipients
 from django.conf import settings
 
 
@@ -41,11 +40,20 @@ class PythonzTwitterMessage(PlainTextMessage):
 
 
 class PythonzEmailMessage(EmailHtmlMessage):
-    """Базовый класс для сообщений, рассылаемых pythonz по электронной почте."""
+    """Базовый класс для сообщений, рассылаемых pythonz по электронной почте.
+
+    Этот же класс используется для рассылки писем от sitegate,
+
+    """
 
     alias = 'simple'
     priority = 1  # Рассылается ежеминутно.
     send_retry_limit = 4
+
+    def __init__(self, subject, html_or_dict, template_path=None):
+        if not isinstance(html_or_dict, dict):
+            html_or_dict = {'text': html_or_dict.replace('\n', '<br>')}
+        super(PythonzEmailMessage, self).__init__(subject, html_or_dict, template_path=template_path)
 
 
 class PythonzEmailNewEntity(PythonzEmailMessage):
@@ -62,54 +70,9 @@ class PythonzEmailDigest(PythonzEmailMessage):
     send_retry_limit = 1  # Нет смысла пытаться повторно неделю спустя.
 
 
-register_message_types(PythonzEmailNewEntity, PythonzEmailDigest)
+# Регистрируем наши типы сообщений.
+register_message_types(PythonzEmailMessage, PythonzEmailNewEntity, PythonzEmailDigest)
 
 
-##########
-
-
-def get_admins_emails():
-    """Возвращает адреса электронной почты администраторов проекта.
-
-    :return:
-    """
-    to = []
-    for item in settings.ADMINS:
-        to.append(item[1])  # Адрес электронной почты админа.
-    return to
-
-
-def get_email_full_subject(subject):
-    """Возвращает полный заголовок для электронного письма.
-
-    :param subject:
-    :return:
-    """
-    return 'pythonz.net: %s' % subject
-
-
-def notify_entity_published(entity):
-    """Отсылает оповещение о публикации сущности.
-
-    :param RealmBaseModel entity:
-    :return:
-    """
-    message = 'Новое: %s «%s» %s' % (entity.get_verbose_name(), entity.title, entity.get_absolute_url())
-    schedule_messages(PythonzTwitterMessage(message), recipients('twitter', ''))
-
-
-def notify_new_entity(entity):
-    """Отсылает оповещение о создании новой сущности.
-
-    Рассылается администраторам проекта.
-
-    :param RealmBaseModel entity:
-    :return:
-    """
-    context = {
-        'entity_title': entity.title,
-        'entity_url': entity.get_absolute_url()
-    }
-    m = PythonzEmailNewEntity(get_email_full_subject('Добавлена новая сущность - %s' % entity.title), context)
-    schedule_messages(m, recipients('smtp', get_admins_emails()))
-
+# Заменяем тип сообщений, отсылаемых sitegate на свой.
+override_message_type_for_app('sitegate', 'email_plain', 'simple')

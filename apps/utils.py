@@ -1,9 +1,59 @@
 import requests
 
+from sitemessage.toolbox import schedule_messages, recipients
+from django.conf import settings
 from django.core.files.base import ContentFile
+
+from .sitemessages import PythonzTwitterMessage, PythonzEmailNewEntity
 
 
 PROJECT_SOURCE_URL = 'https://github.com/idlesign/pythonz'
+
+
+def get_admins_emails():
+    """Возвращает адреса электронной почты администраторов проекта.
+
+    :return:
+    """
+    to = []
+    for item in settings.ADMINS:
+        to.append(item[1])  # Адрес электронной почты админа.
+    return to
+
+
+def get_email_full_subject(subject):
+    """Возвращает полный заголовок для электронного письма.
+
+    :param subject:
+    :return:
+    """
+    return 'pythonz.net: %s' % subject
+
+
+def notify_entity_published(entity):
+    """Отсылает оповещение о публикации сущности.
+
+    :param RealmBaseModel entity:
+    :return:
+    """
+    message = 'Новое: %s «%s» %s' % (entity.get_verbose_name(), entity.title, entity.get_absolute_url())
+    schedule_messages(PythonzTwitterMessage(message), recipients('twitter', ''))
+
+
+def notify_new_entity(entity):
+    """Отсылает оповещение о создании новой сущности.
+
+    Рассылается администраторам проекта.
+
+    :param RealmBaseModel entity:
+    :return:
+    """
+    context = {
+        'entity_title': entity.title,
+        'entity_url': entity.get_absolute_url()
+    }
+    m = PythonzEmailNewEntity(get_email_full_subject('Добавлена новая сущность - %s' % entity.title), context)
+    schedule_messages(m, recipients('smtp', get_admins_emails()))
 
 
 def get_image_from_url(url):

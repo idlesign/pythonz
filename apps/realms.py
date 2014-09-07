@@ -7,7 +7,7 @@ from .generics.realms import RealmBase
 from .models import User, Opinion, Book, Video, Event, Place, Article
 from .forms import BookForm, VideoForm, EventForm, UserForm, OpinionForm, ArticleForm
 from .signals import signal_new_entity, signal_entity_published
-from .sitemessages import notify_new_entity, notify_entity_published
+from .utils import notify_new_entity, notify_entity_published
 from .zen import *  # Регистрируем блок сайта с дзеном
 
 
