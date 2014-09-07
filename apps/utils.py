@@ -3,6 +3,7 @@ import requests
 from sitemessage.toolbox import schedule_messages, recipients
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.utils.text import Truncator
 
 from .sitemessages import PythonzTwitterMessage, PythonzEmailNewEntity
 
@@ -36,7 +37,11 @@ def notify_entity_published(entity):
     :param RealmBaseModel entity:
     :return:
     """
-    message = 'Новое: %s «%s» %s' % (entity.get_verbose_name(), entity.title, entity.get_absolute_url())
+    MAX_LEN = 139  # Максимальная длина тивта. Для верности меньше.
+    prefix = 'Новое: %s «' % entity.get_verbose_name()
+    postfix = '» %s' % entity.get_absolute_url()
+    title = Truncator(entity.title).chars(MAX_LEN - len(prefix) - len(postfix))
+    message = '%s%s%s' % (prefix, title, postfix)
     schedule_messages(PythonzTwitterMessage(message), recipients('twitter', ''))
 
 
