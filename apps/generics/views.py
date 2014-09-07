@@ -11,6 +11,7 @@ from .models import ModelWithCompiledText
 from ..models import ModelWithOpinions, User, Opinion
 from ..forms import OpinionForm
 from ..exceptions import RedirectRequired
+from ..shortcuts import message_warning, message_success
 
 
 class RealmView(View):
@@ -298,6 +299,8 @@ class EditView(RealmView):
 
             form.submit_title = self.realm.model.txt_form_edit
 
+        message_warning(request, 'Обратите внимание, что на данном этапе развития проекта добавляемые материалы проходят модерацию, прежде чем появиться на сайте.')
+
         if form.is_valid():
             if item is None:
                 item = form.save(commit=False)
@@ -306,6 +309,7 @@ class EditView(RealmView):
                 form.save_m2m()
             else:
                 form.save()
+                message_success(request, 'Спасибо за участие! Материал зарегистрирован и появится на сайте после модерации.')
             return redirect(item, permanent=True)
 
         return self.render(request, {'form': form, self.realm.name: item})
