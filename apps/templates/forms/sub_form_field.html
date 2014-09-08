@@ -1,16 +1,27 @@
 <div class="form-group {% if field.errors %}has-error{% endif %}">
     {% if field.label %}
-    <label class="col-lg-2 control-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="cl__green">*</span>{% endif %}</label>
-    <div class="col-lg-10">
+        {% if not field.field.is_checkbox %}
+            <label class="col-lg-2 control-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="cl__green">*</span>{% endif %}</label>
+        {% else %}
+            <div class="col-lg-2">{{ field }}</div>
+        {% endif %}
+        <div class="col-lg-10">
     {% else %}
-    <div class="col-lg-12">
+        <div class="col-lg-12">
     {% endif %}
 
-        {% if field.errors %}
-            <div class="label label-danger">{{ field.errors.0 }}</div>
-        {% endif %}
-        {{ field }}
-        {% if field.help_text %}<span class="help-block"><small>{{ field.help_text|safe }}</small></span>{% endif %}
-        <div id="xross_{{ field.name }}"></div>
-    </div>
+            {% if field.errors %}
+                <div class="label label-danger">{{ field.errors.0 }}</div>
+            {% endif %}
+
+
+            {% if field.field.is_checkbox %}
+                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% else %}
+                {{ field }}
+            {% endif %}
+
+            {% if field.help_text %}<span class="help-block"><small>{{ field.help_text|safe }}</small></span>{% endif %}
+            <div id="xross_{{ field.name }}"></div>
+        </div>
 </div>

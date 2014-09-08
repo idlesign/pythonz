@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django import forms
-
+from django.forms.widgets import CheckboxInput
 
 class CommonEntityForm(forms.ModelForm):
     """Базовый класс для форм создания/редактирования сущностей."""
@@ -27,4 +27,6 @@ class RealmEditBaseForm(CommonEntityForm):
                 pass
 
         for field in self.fields:
+            if isinstance(self.fields[field].widget, CheckboxInput):
+                self.fields[field].is_checkbox = True
             self.fields[field].widget.attrs['class'] = 'form-control'
