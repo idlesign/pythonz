@@ -90,7 +90,7 @@ class User(RealmBaseModel, AbstractUser):
     digest_enabled = models.BooleanField('Получать дайджест', help_text='Включает/отключает еженедельную рассылку с подборкой новых материалов сайта.', default=True, db_index=True)
     comments_enabled = models.BooleanField('Разрешить комментарии', help_text='Включает/отключает систему комментирования Disqus на страницах ваших публикаций.', default=False)
     disqus_shortname = models.CharField('Идентификатор Disqus', help_text='Короткое имя (shortname), под которым вы зарегистрировали форум на Disqus.', max_length=100, null=True, blank=True)
-    disqus_category_id = models.CharField('Идентификтаор категории Disqus', help_text='Если ваш форум на Disqus использует категории, можете указать нужный номер здесь. Это не обязательно.', max_length=30, null=True, blank=True)
+    disqus_category_id = models.CharField('Идентификатор категории Disqus', help_text='Если ваш форум на Disqus использует категории, можете указать нужный номер здесь. Это не обязательно.', max_length=30, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Персона'
