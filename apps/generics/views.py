@@ -9,7 +9,6 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from .models import ModelWithCompiledText
 from ..models import ModelWithOpinions, User, Opinion
-from ..forms import OpinionForm
 from ..exceptions import RedirectRequired
 from ..shortcuts import message_warning, message_success
 
@@ -96,6 +95,7 @@ class DetailsView(RealmView):
         :param request:
         :return:
         """
+        from ..forms import OpinionForm  # Потакаем поведению Django 1.7 при загрузке приложений.
         opinion_form = OpinionForm(request.POST or None, user=request.user)
 
         if opinion_form.is_valid():

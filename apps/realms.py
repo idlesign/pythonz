@@ -1,13 +1,11 @@
 from django.conf.urls import patterns, url
 
-from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree
 from sitetree.utils import tree, item
 
 from .generics.realms import RealmBase
 from .models import User, Opinion, Book, Video, Event, Place, Article
 from .forms import BookForm, VideoForm, EventForm, UserForm, OpinionForm, ArticleForm
 from .signals import signal_new_entity, signal_entity_published
-from .utils import notify_new_entity, notify_entity_published
 from .zen import *  # Регистрируем блок сайта с дзеном
 
 
@@ -33,6 +31,7 @@ def connect_signals():
 
     :return:
     """
+    from .utils import notify_new_entity, notify_entity_published  # Потакаем поведению Django 1.7 при загрузке приложений.
     notify_handler = lambda sender, **kwargs: notify_new_entity(kwargs['entity'])
     signal_new_entity.connect(notify_handler, dispatch_uid='cfg_new_entity', weak=False)
 
@@ -89,6 +88,7 @@ def build_sitetree():
 
     :return:
     """
+    from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree  # Потакаем поведению Django 1.7 при загрузке приложений.
     register_dynamic_trees(
         compose_dynamic_tree((
             tree('main', 'Основное дерево', (
