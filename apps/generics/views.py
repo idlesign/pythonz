@@ -115,7 +115,7 @@ class DetailsView(RealmView):
         :param request:
         :return:
         """
-        if isinstance(item, ModelWithOpinions):
+        if item.has_opinions:
             opinions = item.opinions.order_by('-supporters_num', '-time_created').all()
             opinions_rates = item.get_suppport_for_objects(opinions, user=request.user)
 
@@ -223,10 +223,18 @@ class DetailsView(RealmView):
         self._attach_support_data(item, self.request)
         return render(self.request, 'sub_box_rating.html', {'item': item})
 
+    def _update_context(self, context):
+        """Используется для дополнения контекста шаблона данными.
+
+        :param dict context:
+        :return:
+        """
+
     @xross_view(list_opinions, set_rate, toggle_bookmark, rate_opinion)
     def get(self, request, obj_id):
 
         item = self.get_object_or_404(obj_id)
+        item.has_opinions = False
 
         if isinstance(item, ModelWithOpinions):
             item.has_opinions = True
@@ -246,7 +254,9 @@ class DetailsView(RealmView):
 
         # Нарочно передаём item под двумя разными именами.
         # Требуется для упрощения наслования шаблонов.
-        return self.render(request, {self.realm.name: item, 'item': item, 'item_edit_allowed': item_edit_allowed})
+        context = {self.realm.name: item, 'item': item, 'item_edit_allowed': item_edit_allowed}
+        self._update_context(context)
+        return self.render(request, context)
 
 
 class TagsView(ListingView):
