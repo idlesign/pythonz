@@ -59,7 +59,7 @@ class PythonzEmailMessage(EmailHtmlMessage):
     def __init__(self, subject, html_or_dict, template_path=None):
         if not isinstance(html_or_dict, dict):
             html_or_dict = {'text': html_or_dict.replace('\n', '<br>')}
-        super(PythonzEmailMessage, self).__init__(subject, html_or_dict, template_path=template_path)
+        super().__init__(subject, html_or_dict, template_path=template_path)
 
 
 class PythonzEmailNewEntity(PythonzEmailMessage):
