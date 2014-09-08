@@ -25,7 +25,7 @@ def create_digest():
     date_from = date_till-timedelta(days=7)
     context = {'date_from': date_from.timestamp(), 'date_till': date_till.timestamp()}
     format_date = lambda d: d.date().strftime('%d.%m.%Y')
-    m = PythonzEmailDigest(get_email_full_subject('Дайджест %s-%s' % (format_date(date_from), format_date(date_till))), context)
+    m = PythonzEmailDigest(get_email_full_subject('Подборка материалов %s-%s' % (format_date(date_from), format_date(date_till))), context)
     subscribers = User.get_digest_subsribers()
     schedule_messages(m, recipients('smtp', subscribers))
 
