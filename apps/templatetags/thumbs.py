@@ -44,5 +44,4 @@ def thumbs_get_thumb_url(context, image, width, height, realm, as_=None, as_name
         img.thumbnail((width, height), Image.ANTIALIAS)
         img.save(thumb_file)
 
-    url = os.path.join(settings.MEDIA_URL, thumb_file_base)
-    return get_result(url)
+    return get_result(os.path.join(settings.MEDIA_URL, thumb_file_base))

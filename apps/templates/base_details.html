@@ -29,7 +29,7 @@
                 <div class="marg__b_mid block">
                     {% block cover %}
                         <div class="cover_img">
-                            {% thumbs_get_thumb_url item.cover 180 236 item.realm as thumb_url %}
+                            {% thumbs_get_thumb_url item.cover 180 236 item.realm as "thumb_url" %}
                             {% if thumb_url %}
                             <img src="{{ thumb_url }}" class="img-thumbnail" alt="{{ item.title }}">
                             {% else %}
