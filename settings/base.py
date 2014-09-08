@@ -42,6 +42,8 @@ LANGUAGE_CODE = 'ru'
 ROOT_URLCONF = 'urls'
 WSGI_APPLICATION = 'wsgi.application'
 
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
