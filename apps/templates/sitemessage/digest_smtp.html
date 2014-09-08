@@ -1,17 +1,20 @@
 {% extends "sitemessage/_base.html" %}
 
 {% block contents %}
-    {% for realm_name, entries in realms %}
-        <div>
+    {% for realm_name, entries in realms.items %}
+        <div style="margin-bottom: 15px;">
             <h3>{{ realm_name }}</h3>
             <ul>
                 {% for entry in entries %}
-                    <li>
-                        <a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a>
-                        <div style="font-size:12px;color:#666;"><i>{{ entry.description }}</i></div>
+                    <li style="margin-bottom: 10px;">
+                        <a href="http://pythonz.net{{ entry.get_absolute_url }}">{{ entry.title }}</a>
+                        <div style="font-size:12px;color:#666;margin-top:5px;"><i>{{ entry.description }}</i></div>
                     </li>
                 {% endfor %}
             </ul>
         </div>
     {% endfor %}
+    <div style="font-size: 10px;color: #999;margin-top: 25px;">
+        <i>* Отписаться от рассылки можно на сайте, в настройках вашего профиля.</i>
+    </div>
 {% endblock %}
