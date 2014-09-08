@@ -6,3 +6,8 @@ class PythonzAppsConfig(AppConfig):
 
     name = 'apps'
     verbose_name = 'Сущности pythonz'
+
+    def ready(self):
+        from apps.realms import get_realms
+        for realm in get_realms():
+            realm.model.realm = realm  # Привязываем область к моделям, она понадобится для вычисления URL.

@@ -188,7 +188,6 @@ class RealmBase(object):
         view_attr_name = 'view_%s' % name
         view = getattr(cls, view_attr_name)
         if view is None:
-            cls.model.realm = cls  # Крепим область к модели для облегчения доступа к ней из модели в дальнейшем.
             realm_name, _ = cls.get_names()
             base_view_class = getattr(cls, 'view_%s_base_class' % name)
             class_dict = {
