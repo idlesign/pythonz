@@ -75,9 +75,10 @@ class PythonzEmailDigest(PythonzEmailMessage):
     priority = 7  # Рассылается раз в семь дней.
     send_retry_limit = 1  # Нет смысла пытаться повторно неделю спустя.
 
+    @classmethod
     def compile(cls, message, messenger, dispatch=None):
         context = message.context
-        realms_data = OrderedDict
+        realms_data = OrderedDict()
         get_date = lambda s: datetime.fromtimestamp(s, tz=timezone.get_current_timezone())
         for realm in get_realms():
             if realm.ready_for_digest:
