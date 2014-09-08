@@ -99,6 +99,24 @@ class User(RealmBaseModel, AbstractUser):
     txt_promo = 'Вокруг люди &#8211; это они пишут статьи и книги, организовывают встречи и делятся мнениями, это они могут помочь, подсказать, научить. Здесь упомянуты некоторые.'
     txt_form_edit = 'Изменить настройки'
 
+    def get_bookmarks(self):
+        """Возвращает словарь с избранными пользователем эелементами (закладками).
+        Словарь индексирован классами моделей различных сущностей, в значениях - списки с самими сущностями.
+
+        :return:
+        """
+        from siteflags.utils import get_flag_model
+        from .realms import get_realms
+
+        FLAG_MODEL = get_flag_model()
+        realm_models = [r.model for r in get_realms()]
+        bookmarks = FLAG_MODEL.get_flags_for_types(realm_models, user=self, status=RealmBaseModel.FLAG_STATUS_BOOKMARK)
+        for realm_model, flags in bookmarks.items():
+            ids = [flag.object_id for flag in flags]
+            items = realm_model.objects.filter(id__in=ids)
+            bookmarks[realm_model] = items
+        return bookmarks
+
     @classmethod
     def get_digest_subsribers(cls):
         """Возвращает выборку пользователей, подписанных на еженедельный дайджест.
@@ -117,6 +135,7 @@ class User(RealmBaseModel, AbstractUser):
 
     def get_display_name(self):
         return self.get_full_name() or self.get_username_partial()
+    title = property(get_display_name)
 
     def get_username_partial(self):
         return self.username.split('@')[0]

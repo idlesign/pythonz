@@ -2,10 +2,11 @@ from django.conf.urls import patterns, url
 
 from sitetree.utils import tree, item
 
+from .forms import BookForm, VideoForm, EventForm, UserForm, OpinionForm, ArticleForm
 from .generics.realms import RealmBase
 from .models import User, Opinion, Book, Video, Event, Place, Article
-from .forms import BookForm, VideoForm, EventForm, UserForm, OpinionForm, ArticleForm
 from .signals import signal_new_entity, signal_entity_published
+from .views_custom import UserDetailsView
 from .zen import *  # Регистрируем блок сайта с дзеном
 
 
@@ -197,6 +198,7 @@ class UserRealm(RealmBase):
     syndication_enabled = False
     sitemap_date_field = 'date_joined'
     sitemap_changefreq = 'daily'
+    view_details_base_class = UserDetailsView
 
     @classmethod
     def get_sitetree_details_item(cls):

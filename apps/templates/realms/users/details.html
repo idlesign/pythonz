@@ -21,6 +21,23 @@
             <span class="marg__r_mid">Дата регистрации: {{ user.date_joined }}</span>
         </small>
     </div>
+    <div class="marg__t_max">
+        {% if bookmarks %}
+        <h3>Избранное</h3>
+        {% for realm_model, bookmark_list in bookmarks.items %}
+            {% if bookmark_list %}
+            <div class="marg__l_mid marg__t_mid">
+                <h4>{{ realm_model.get_verbose_name_plural }}</h4>
+                <ul>
+                    {% for item in bookmark_list %}
+                        <li><a href="">{{ item.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        {% endfor %}
+        {% endif %}
+    </div>
 {%  endblock %}
 
 
