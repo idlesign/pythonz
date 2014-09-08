@@ -4,13 +4,11 @@ from uuid import uuid4
 
 from bleach import clean
 from siteflags.models import ModelWithFlag
-from django.contrib.auth.models import AbstractUser
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
 
-from ..utils import get_image_from_url
 from ..signals import signal_new_entity, signal_entity_published
 
 
@@ -99,6 +97,7 @@ class CommonEntityModel(models.Model):
         :param url:
         :return:
         """
+        from ..utils import get_image_from_url  # Потакаем поведению Django 1.7 при загрузке приложений.
         img = get_image_from_url(url)
         self.cover.save(img.name, img, save=False)
 
@@ -282,19 +281,21 @@ class RealmBaseModel(ModelWithFlag):
         """
         self.remove_flag(user, status=self.FLAG_STATUS_BOOKMARK)
 
-    def get_verbose_name(self):
+    @classmethod
+    def get_verbose_name(cls):
         """Возвращает человекоудобное название типа объекта в ед. числе.
 
         :return:
         """
-        return self._meta.verbose_name
+        return cls._meta.verbose_name
 
-    def get_verbose_name_plural(self):
+    @classmethod
+    def get_verbose_name_plural(cls):
         """Возвращает человекоудобное название типа объекта во мн. числе.
 
         :return:
         """
-        return self._meta.verbose_name_plural
+        return cls._meta.verbose_name_plural
 
     def get_listing_url(self):
         """Возвращает URL страницы со списком объектов.
