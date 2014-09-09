@@ -293,7 +293,8 @@ class EditView(RealmView):
 
         xross_listener(item=item)
 
-        form = self.realm.form(request.POST or None, request.FILES or None, instance=item, user=request.user)
+        data = request.POST or None
+        form = self.realm.form(data, request.FILES or None, instance=item, user=request.user)
         if item is None:
             form.submit_title = self.realm.model.txt_form_add
         else:
@@ -309,8 +310,9 @@ class EditView(RealmView):
 
             form.submit_title = self.realm.model.txt_form_edit
 
-        if not self.realm.model in (User, Article, Opinion):
-            message_warning(request, 'Обратите внимание, что на данном этапе развития проекта добавляемые материалы проходят модерацию, прежде чем появиться на сайте.')
+        if data is None:
+            if not self.realm.model in (User, Article, Opinion):
+                message_warning(request, 'Обратите внимание, что на данном этапе развития проекта добавляемые материалы проходят модерацию, прежде чем появиться на сайте.')
 
         if form.is_valid():
             if item is None:
