@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from .models import ModelWithCompiledText
-from ..models import ModelWithOpinions, User, Opinion
+from ..models import ModelWithOpinions, User, Opinion, Article
 from ..exceptions import RedirectRequired
 from ..shortcuts import message_warning, message_success
 
@@ -309,7 +309,7 @@ class EditView(RealmView):
 
             form.submit_title = self.realm.model.txt_form_edit
 
-        if not isinstance(item, User):
+        if not isinstance(item, (User, Article)):
             message_warning(request, 'Обратите внимание, что на данном этапе развития проекта добавляемые материалы проходят модерацию, прежде чем появиться на сайте.')
 
         if form.is_valid():
@@ -320,7 +320,7 @@ class EditView(RealmView):
                 form.save_m2m()
             else:
                 form.save()
-                if not isinstance(item, User):
+                if not isinstance(item, (User, Article)):
                     message_success(request, 'Спасибо за участие! Материал зарегистрирован и появится на сайте после модерации.')
             return redirect(item, permanent=True)
 

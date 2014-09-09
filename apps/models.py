@@ -191,6 +191,10 @@ class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinio
     txt_form_add = 'Написать статью'
     txt_form_edit = 'Редактировать статью'
 
+    def save(self, *args, **kwargs):
+        self.status = self.STATUS_PUBLISHED  # Авторский материал не нуждается в модерации %)
+        super().save(*args, **kwargs)
+
 
 class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithAuthorAndTranslator):
     """Модель сущности `Видео`."""
