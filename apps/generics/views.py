@@ -4,10 +4,11 @@ from django.utils.decorators import method_decorator
 from django.views.generic.base import View
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-from .models import ModelWithCompiledText
+from .models import ModelWithCompiledText, RealmBaseModel
 from ..models import ModelWithOpinions, User, Opinion, Article
 from ..exceptions import RedirectRequired
 from ..shortcuts import message_warning, message_success, message_info
@@ -234,6 +235,13 @@ class DetailsView(RealmView):
     def get(self, request, obj_id):
 
         item = self.get_object_or_404(obj_id)
+
+        if not request.user.is_superuser:
+            if item.status == RealmBaseModel.STATUS_DELETED:  # Запрещаем доступ к удалённым.
+                raise Http404()
+            elif item.status == RealmBaseModel.STATUS_DRAFT and item.submitter != request.user: # Закрываем доступ к чужим черновикам.
+                raise PermissionDenied()
+
         item.has_opinions = False
 
         if isinstance(item, ModelWithOpinions):
