@@ -316,6 +316,11 @@ class EditView(RealmView):
                 if item.submitter != request.user and not request.user.is_superuser:
                     raise PermissionDenied()
 
+                # Запрещаем редактирование опубликованных материалов.
+                if not request.user.is_superuser and item.status == RealmBaseModel.STATUS_PUBLISHED and not self.realm.model in (Article, Opinion):
+                    message_warning(request, 'Этот материал уже прошёл модерацию и был опубликован. На данный момент в проекте запрещено редактирование опубликованных материалов.')
+                    raise PermissionDenied()
+
             form.submit_title = self.realm.model.txt_form_edit
 
         if data is None:
