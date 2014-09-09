@@ -1,0 +1,23 @@
+{% extends "_base.html" %}
+{% load sitetree %}
+
+
+{% block page_description %}{% endblock %}
+{% block page_title %}500 Ошибка сервера{% endblock %}
+
+
+{% block page_contents %}
+
+    <div class="page-header">
+        <h1>500 Ошибка сервера</h1>
+    </div>
+
+    <div class="section">
+        Похоже, что у нас проблемы. На сервере произошла ошибка.<br>
+        Скорее всего мы уже знаем об этом и, может быть даже, занимаемся решеним проблемы.<br>
+        Вы же можете попробовать повторить запрос немного позже.
+    </div>
+
+    {% include "sub_zen.html" %}
+
+{%  endblock %}

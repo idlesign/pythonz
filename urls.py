@@ -7,6 +7,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 from apps.realms import bootstrap_realms  # Здесь относительный импорт работать не будет.
+from apps.views_custom import page_not_found, permission_denied, server_error
 
 autodiscover_siteprefs()
 
@@ -24,6 +25,12 @@ urlpatterns = patterns('',
 urlpatterns += get_sitegate_urls()  # Цепляем URLы от sitegate,
 
 bootstrap_realms(urlpatterns)  # Инициализируем области
+
+
+# Используем собственные страницы ошибок.
+handler403 = permission_denied
+handler404 = page_not_found
+handler500 = server_error
 
 
 if settings.DEBUG:
