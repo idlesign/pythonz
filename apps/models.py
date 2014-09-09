@@ -40,9 +40,13 @@ class Opinion(InheritedModel, RealmBaseModel, ModelWithCompiledText):
     txt_form_add = 'Добавить мнение'
     txt_form_edit = 'Изменить мнение'
 
+    def save(self, *args, **kwargs):
+        self.status = self.STATUS_PUBLISHED  # Авторский материал не нуждается в модерации %)
+        super().save(*args, **kwargs)
+
     @classmethod
     def get_paginator_objects(cls):
-        return cls.objects.select_related('submitter').order_by('-id').all()
+        return cls.objects.select_related('submitter').filter(status=cls.STATUS_PUBLISHED).order_by('-time_created').all()
 
     def __unicode__(self):
         return 'Мнение %s для %s %s' % (self.id, self.content_type, self.object_id)

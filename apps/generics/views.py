@@ -10,7 +10,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import ModelWithCompiledText
 from ..models import ModelWithOpinions, User, Opinion, Article
 from ..exceptions import RedirectRequired
-from ..shortcuts import message_warning, message_success
+from ..shortcuts import message_warning, message_success, message_info
 
 
 class RealmView(View):
@@ -116,7 +116,7 @@ class DetailsView(RealmView):
         :return:
         """
         if item.has_opinions:
-            opinions = item.opinions.order_by('-supporters_num', '-time_created').all()
+            opinions = item.opinions.filter(status=Opinion.STATUS_PUBLISHED).order_by('-supporters_num', '-time_created').all()
             opinions_rates = item.get_suppport_for_objects(opinions, user=request.user)
 
             user_opinion = None
@@ -298,7 +298,7 @@ class EditView(RealmView):
             form.submit_title = self.realm.model.txt_form_add
         else:
 
-            if isinstance(item, User):
+            if self.realm.model == User:
                 # Редактировать пользователей могут только пользователи.
                 if item != request.user:
                     raise PermissionDenied()
@@ -309,7 +309,7 @@ class EditView(RealmView):
 
             form.submit_title = self.realm.model.txt_form_edit
 
-        if not isinstance(item, (User, Article)):
+        if not self.realm.model in (User, Article, Opinion):
             message_warning(request, 'Обратите внимание, что на данном этапе развития проекта добавляемые материалы проходят модерацию, прежде чем появиться на сайте.')
 
         if form.is_valid():
@@ -320,8 +320,9 @@ class EditView(RealmView):
                 form.save_m2m()
             else:
                 form.save()
-                if not isinstance(item, (User, Article)):
-                    message_success(request, 'Спасибо за участие! Материал зарегистрирован и появится на сайте после модерации.')
+                message_success(request, 'Спасибо за участие!')
+                if not self.realm.model in (User, Article, Opinion):
+                    message_info(request, 'Материал зарегистрирован и появится на сайте после модерации.')
             return redirect(item, permanent=True)
 
         return self.render(request, {'form': form, self.realm.name: item})
