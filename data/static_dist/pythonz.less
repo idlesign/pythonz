@@ -272,12 +272,40 @@ nav .submenu {
 }
 
 .tags_box {
+  margin-top: @gap__max;
   font-family: Verdana, Arial, helvetica, sans-serif;
-  a {
-    color: #fff;
+  ul {
+    list-style-type: none;
+    display: inline;
+    padding: 0;
+    vertical-align: middle;
   }
-  span {
-    font-weight: normal;
+  .categories_box {
+    margin-bottom: @gap__min;
+    font-size: 14px;
+  }
+  .btn_remove {
+    margin-right: @gap__min;
+  }
+  form {
+    display: inline;
+  }
+  .title {
+    color: @cl__gray;
+    min-width: 50px;
+    font-size: @gap__min;
+    display: inline;
+    float: left;
+    margin-right: @gap__min;
+  }
+  .editor {
+    margin-top: @gap__min;
+    margin-left: 58px;
+  }
+  li {
+    margin: 0;
+    padding: 0;
+    display: inline;
   }
 }
 
