@@ -260,6 +260,11 @@ class DetailsView(RealmView):
         except AttributeError:
             item_edit_allowed = (request.user == item)
 
+        #TODO уменьшить число sql для списка мнений
+        #TODO вынимать с объектом автора на стр. детальной информации
+
+        item.set_category_lists_init_kwargs({'show_title': True, 'cat_html_class': 'label label-default'})
+
         # Нарочно передаём item под двумя разными именами.
         # Требуется для упрощения наслования шаблонов.
         context = {self.realm.name: item, 'item': item, 'item_edit_allowed': item_edit_allowed}
@@ -271,7 +276,8 @@ class TagsView(ListingView):
     """Список меток (категорий) для объекта."""
 
     def get_paginator_objects(self):
-        return self.realm.model.get_categorized().order_by('title').all()
+        category_id = self.kwargs['category_id']
+        return self.realm.model.get_from_category_qs(category_id).order_by('title').all()
 
 
 class EditView(RealmView):
@@ -300,6 +306,19 @@ class EditView(RealmView):
             item = self.get_object_or_404(obj_id)
 
         xross_listener(item=item)
+
+        from sitecats.toolbox import get_category_aliases_under
+        item.enable_category_lists_editor(request,
+                            additional_parents_aliases=get_category_aliases_under(),
+                            handler_init_kwargs={'error_messages_extra_tags': 'alert alert-danger'},
+                            lists_init_kwargs={'show_title': True, 'cat_html_class': 'label label-default'},
+                            editor_init_kwargs={
+                                'allow_add': True,
+                                'allow_new': True,
+                                'allow_remove': True,
+                                'category_separator': ';',
+                                'show_existing_categories_hint': True  # TODO
+                            })
 
         data = request.POST or None
         form = self.realm.form(data, request.FILES or None, instance=item, user=request.user)
@@ -340,7 +359,7 @@ class EditView(RealmView):
                     message_info(request, 'Материал зарегистрирован и появится на сайте после модерации.')
             return redirect(item, permanent=True)
 
-        return self.render(request, {'form': form, self.realm.name: item})
+        return self.render(request, {'form': form, self.realm.name: item, 'item': item})
 
 
 class AddView(EditView):

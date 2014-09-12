@@ -16,8 +16,6 @@
 
             {% block details_contents %}{% endblock %}
             <div class="marg__b_mid"><i>{{ item.description }}</i></div>
-
-            {% include "sub_box_tags.html" %}
             {% if item.has_opinions %}
             <div id="list_opinions" class="{% if item.has_opinions %}xross-fixme{% endif %} marg__t_max" data-xcomplete="pythonz.xrossreinit">
                 {% include "opinions/sub_opinions.html" with opinions=item.opinions_data%}
@@ -25,8 +23,8 @@
             {% endif %}
         </div>
         <div class="col-md-3">
-            <div class="marg__b_mid text-center">
-                <div class="marg__b_mid block">
+            <div class="text-center">
+                <div class="block marg__b_mid">
                     {% block cover %}
                         <div class="cover_img">
                             {% thumbs_get_thumb_url item.cover 180 236 item.realm as "thumb_url" %}
@@ -38,8 +36,9 @@
                         </div>
                     {% endblock %}
                 </div>
-                {% include "sub_box_controls.html" %}
             </div>
+            {% include "sub_box_tags.html" %}
+            {% include "sub_box_controls.html" %}
             {% block details_linked %}
                 {% with linked=item.get_linked %}
                     {% if linked.count %}

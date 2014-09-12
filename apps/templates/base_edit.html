@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-{% load thumbs %}
+{% load thumbs sitecats %}
 
 {% block page_contents %}
 
@@ -22,6 +22,9 @@
                     {% block hint %}{% endblock %}
                 </div>
             </div>
+            {% block categories_editor %}
+                {% include "sub_box_tags.html" %}
+            {% endblock %}
         </div>
     </div>
 {%  endblock %}
