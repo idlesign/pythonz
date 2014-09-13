@@ -9,7 +9,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from .models import ModelWithCompiledText, RealmBaseModel
-from ..models import ModelWithOpinions, User, Opinion, Article
+from ..models import ModelWithOpinions, ModelWithCategory, User, Opinion, Article
 from ..exceptions import RedirectRequired
 from ..shortcuts import message_warning, message_success, message_info
 
@@ -263,7 +263,9 @@ class DetailsView(RealmView):
         #TODO уменьшить число sql для списка мнений
         #TODO вынимать с объектом автора на стр. детальной информации
 
-        item.set_category_lists_init_kwargs({'show_title': True, 'cat_html_class': 'label label-default'})
+        if isinstance(item, ModelWithCategory):
+            item.has_categories = True
+            item.set_category_lists_init_kwargs({'show_title': True, 'cat_html_class': 'label label-default'})
 
         # Нарочно передаём item под двумя разными именами.
         # Требуется для упрощения наслования шаблонов.
@@ -317,7 +319,7 @@ class EditView(RealmView):
                                 'allow_new': True,
                                 'allow_remove': True,
                                 'category_separator': ';',
-                                'show_existing_categories_hint': True  # TODO
+                                # 'show_existing_categories_hint': True  # TODO
                             })
 
         data = request.POST or None
