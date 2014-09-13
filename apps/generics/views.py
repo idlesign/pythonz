@@ -57,7 +57,7 @@ class RealmView(View):
         :param obj_id:
         :return:
         """
-        return get_object_or_404(self.realm.model, pk=obj_id)
+        return get_object_or_404(self.realm.model.objects.select_related('submitter'), pk=obj_id)
 
 
 class ListingView(RealmView):
@@ -261,7 +261,6 @@ class DetailsView(RealmView):
             item_edit_allowed = (request.user == item)
 
         #TODO уменьшить число sql для списка мнений
-        #TODO вынимать с объектом автора на стр. детальной информации
 
         if isinstance(item, ModelWithCategory):
             item.has_categories = True
