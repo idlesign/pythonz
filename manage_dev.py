@@ -8,6 +8,6 @@ if __name__ == '__main__':
     PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
     sys.path = [os.path.dirname(PROJECT_PATH), PROJECT_PATH] + sys.path
 
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.prod')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.dev')
     from django.core.management import execute_from_command_line
     execute_from_command_line(sys.argv)
