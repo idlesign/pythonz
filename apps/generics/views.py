@@ -118,13 +118,14 @@ class DetailsView(RealmView):
         """
         if item.has_opinions:
             opinions = item.opinions.filter(status=Opinion.STATUS_PUBLISHED).order_by('-supporters_num', '-time_created').all()
-            opinions_rates = item.get_suppport_for_objects(opinions, user=request.user)
-
             user_opinion = None
-            for opinion in opinions:
-                opinion.my_support = opinions_rates[opinion.id]
-                if opinion.submitter_id == request.user.id:
-                    user_opinion = opinion
+
+            if request.user.id:
+                opinions_rates = item.get_suppport_for_objects(opinions, user=request.user)
+                for opinion in opinions:
+                    opinion.my_support = opinions_rates[opinion.id]
+                    if opinion.submitter_id == request.user.id:
+                        user_opinion = opinion
 
             opinion_form = self._handle_opinion_form(item, request)
 
