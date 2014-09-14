@@ -117,7 +117,7 @@ class DetailsView(RealmView):
         :return:
         """
         if item.has_opinions:
-            opinions = item.opinions.filter(status=Opinion.STATUS_PUBLISHED).order_by('-supporters_num', '-time_created').all()
+            opinions = item.opinions.select_related('submitter').filter(status=Opinion.STATUS_PUBLISHED).order_by('-supporters_num', '-time_created').all()
             user_opinion = None
 
             if request.user.id:
