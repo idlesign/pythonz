@@ -293,14 +293,23 @@ nav .submenu {
   .title {
     color: @cl__gray;
     min-width: 50px;
+    max-width: 50px;
     font-size: @gap__min;
     display: inline;
     float: left;
     margin-right: @gap__min;
   }
+  .choice {
+    margin-right: @gap__min;
+    font-size: 12px;
+    color: @cl__blue;
+    border-bottom: 1px dashed @cl__blue;
+    cursor: pointer;
+  }
   .editor {
-    margin-top: @gap__min;
-    margin-left: 58px;
+    margin: @gap__min 0 @gap__min 58px;
+    padding-bottom: @gap__min;
+    border-bottom: 1px solid lighten(@cl__gray, 40%);
   }
   li {
     margin: 0;
