@@ -10,7 +10,6 @@ pythonz = {
     },
 
     xrossreinit: function() {
-        console.log('Dummy. Fix me.');
         //pythonz.bootstrap();
     },
 

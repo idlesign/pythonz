@@ -45,32 +45,34 @@ https://github.com/idlesign/pythonz
 
 *База*
 
-* Python 3.2+
-* Django 1.7+
+* `Python 3.2+ <https://www.python.org/>`_
+* `Django 1.7+ <https://www.djangoproject.com/>`_
 
 
 *Модули*
 
-* Pillow
-* requests
-* bleach
-* twitter
-* pytz
+* `Pillow <https://github.com/python-pillow/Pillow>`_
+* `requests <https://github.com/kennethreitz/requests>`_
+* `bleach <https://github.com/jsocol/bleach>`_
+* `twitter <https://github.com/sixohsix/twitter>`_
+* `pytz <http://pythonhosted.org/pytz>`_
 
 
 *Приложения для Django*
 
-* django-admirarchy
-* django-debug-toolbar
-* django-siteblocks
-* django-sitegate
-* django-sitemessage
-* django-sitemetrics
-* django-siteprefs
-* django-xross
+* `django-debug-toolbar <https://github.com/django-debug-toolbar/django-debug-toolbar>`_
+* `django-admirarchy <https://github.com/idlesign/django-admirarchy>`_
+* `django-siteblocks <https://github.com/idlesign/django-siteblocks>`_
+* `django-sitecats <https://github.com/idlesign/django-sitecats>`_
+* `django-sitegate <https://github.com/idlesign/django-sitegate>`_
+* `django-sitemessage <https://github.com/idlesign/django-sitemessage>`_
+* `django-sitemetrics <https://github.com/idlesign/django-sitemetrics>`_
+* `django-siteprefs <https://github.com/idlesign/django-siteprefs>`_
+* `django-xross <https://github.com/idlesign/django-xross>`_
 
 
 *Оформление*
 
-* Twitter Bootstrap 3
-* Foundation Icon Fonts 3
+* `Twitter Bootstrap 3 <http://getbootstrap.com/>`_
+* `Foundation Icon Fonts 3 <http://zurb.com/playground/foundation-icon-fonts-3>`_
+* `Google Fonts <http://www.google.com/fonts/>`_

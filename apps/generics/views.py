@@ -261,8 +261,6 @@ class DetailsView(RealmView):
         except AttributeError:
             item_edit_allowed = (request.user == item)
 
-        #TODO уменьшить число sql для списка мнений
-
         if isinstance(item, ModelWithCategory):
             item.has_categories = True
             item.set_category_lists_init_kwargs({'show_title': True, 'cat_html_class': 'label label-default'})
