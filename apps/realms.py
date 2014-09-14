@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import patterns, url
 
 from sitetree.utils import tree, item
@@ -35,6 +36,9 @@ def connect_signals():
     from .utils import notify_new_entity, notify_entity_published  # Потакаем поведению Django 1.7 при загрузке приложений.
     notify_handler = lambda sender, **kwargs: notify_new_entity(kwargs['entity'])
     signal_new_entity.connect(notify_handler, dispatch_uid='cfg_new_entity', weak=False)
+
+    if settings.DEBUG:  # На всякий случай, чем чёрт не шутит.
+        return False
 
     notify_handler = lambda sender, **kwargs: notify_entity_published(kwargs['entity'])
     signal_entity_published.connect(notify_handler, dispatch_uid='cfg_entity_published', weak=False)

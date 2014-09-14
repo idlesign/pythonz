@@ -20,6 +20,8 @@ def create_digest():
 
     :return:
     """
+    if settings.DEBUG:  # На всякий случай, чем чёрт не шутит.
+        return False
     from .models import User
     date_till = timezone.now()
     date_from = date_till-timedelta(days=7)
