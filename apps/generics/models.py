@@ -34,8 +34,8 @@ class ModelWithCompiledText(models.Model):
     RE_CODE = re.compile('\.\.\s*code::\s*([^\n]+)\n\n(.+?)\n\n', re.S)
     RE_ACCENT = re.compile('`{2}([^`.,]+)`{2}')
     RE_QUOTE = re.compile('`{3}\n*([^`]+)\n*`{3}')
-    RE_BOLD = re.compile('\*{2}([^*.,]+)\*{2}')
-    RE_ITALIC = re.compile('\*([^*.,]+)\*')
+    RE_BOLD = re.compile('\*{2}([^*.]+)\*{2}')
+    RE_ITALIC = re.compile('\*([^*.]+)\*')
     RE_URL = re.compile('(http[^\s]+)')
 
     class Meta:
