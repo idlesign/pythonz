@@ -91,6 +91,16 @@ class CommonEntityModel(models.Model):
     class Meta:
         abstract = True
 
+    def save(self, *args, **kwargs):
+        """Перекрыт, чтобы привести заголовок в порядок.
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        self.title = self.title.strip()
+        super().save(*args, **kwargs)
+
     def update_cover_from_url(self, url):
         """Забирает обложку с указанного URL.
 
