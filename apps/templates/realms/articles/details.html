@@ -34,9 +34,9 @@
                     <small>{{ article.time_created }} (<abbr title="Дата последнего редактирования">ред.</abbr> {{ article.time_modified }})</small>
                 </div>
 
-                {% include "sub_box_tags.html" %}
                 <div class="lead">{{ article.description|linebreaksbr }}</div>
                 <div class="py_user">{{ article.text|safe }}</div>
+                {% include "sub_box_tags.html" %}
             </div>
         </div>
     </div>
