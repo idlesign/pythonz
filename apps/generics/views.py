@@ -240,7 +240,7 @@ class DetailsView(RealmView):
         if not request.user.is_superuser:
             if item.status == RealmBaseModel.STATUS_DELETED:  # Запрещаем доступ к удалённым.
                 raise Http404()
-            elif item.status == RealmBaseModel.STATUS_DRAFT and item.submitter != request.user: # Закрываем доступ к чужим черновикам.
+            elif item.status == RealmBaseModel.STATUS_DRAFT and hasattr(item, 'submitter') and item.submitter != request.user: # Закрываем доступ к чужим черновикам.
                 raise PermissionDenied()
 
         item.has_opinions = False
