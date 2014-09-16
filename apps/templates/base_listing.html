@@ -13,13 +13,13 @@
         <div class="col-md-12">
             {% for item in items %}
                 <div class="listing_item">
-                    <div class="rating"><span class="label label-success">{{ item.supporters_num|floatformat }}</span></div>
+                    <div class="rating"><span class="label label-default">{{ item.supporters_num|floatformat }}</span></div>
                     <div class="cover_img float-right">
                     <a href="{{ item.get_absolute_url }}">
                         {% thumbs_get_thumb_url item.cover 100 131 item.realm as "thumb_url" %}
                         <b>{{ abra }}</b>
                         {% if thumb_url %}
-                        <img src="{{ thumb_url }}" class="img-thumbnail">
+                        <img src="{{ thumb_url }}" class="img-thumbnail faded">
                         {% else %}
                             <span class="img-thumbnail icon_entity glyphicon glyphicon-{{ realm.icon }}"></span>
                         {% endif %}
