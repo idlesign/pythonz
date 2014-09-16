@@ -295,7 +295,8 @@ class EditView(RealmView):
         :param xross:
         :return:
         """
-        if isinstance(xross.attrs['item'], ModelWithCompiledText):
+        item = xross.attrs['item']
+        if item is None or isinstance(item, ModelWithCompiledText):
             return HttpResponse(ModelWithCompiledText.compile_text(text_src))
 
     @xross_view(preview_rst)
