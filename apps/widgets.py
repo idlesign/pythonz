@@ -69,11 +69,9 @@ class RstEdit(forms.Widget):
                         <strong>Цитаты</strong>
                         <div>
                             Для оформления цитаты, обрамите её в тройные апострофы:<br><br>
-<pre><code class="nohighlight">
-```
+<pre><code class="nohighlight">```
 Это цитата.
-```
-</code></pre>
+```</code></pre>
                         </div>
                     </div>
 
@@ -83,8 +81,7 @@ class RstEdit(forms.Widget):
                             Подсветка синтаксиса реализуется путём выделения кода в отдельный параграф, начинающийся с инструкции <b>.. code:: имя_языка</b>,
                             где <i>имя_языка</i> &mdash; название языка программирования, например <i>python</i>:<br><br>
 
-<pre><code class="nohighlight">
-Некий текст.
+<pre><code class="nohighlight">Некий текст.
 
 .. code:: python
 
@@ -92,9 +89,21 @@ class RstEdit(forms.Widget):
         "just a test"
         print 8/2
 
-И снова текст.
-</code></pre>
-                            * Обратите внимание на наличие перевода строки после блока кода.
+И снова текст.</code></pre>
+                            * Обратите внимание на необходимость наличия переноса строки после блока кода.
+                        </div>
+                    </div>
+
+
+                    <div class="marg__b_mid">
+                        <strong>Gist от GitHub</strong>
+                        <div>
+                            Гисты могут быть вставлены в текст при помощи директивы <b>.. gist:: гитхаб_логин/ид_гиста</b>,
+                            где <i>гитхаб_логин</i> &mdash; логин на GitHub, а <i>ид_гиста</i> &mdash; идентификатор гиста.<br>
+                            Например, добавим гист с адреса <a href="https://gist.github.com/idlesign/c1255817bb0234d9971a">https://gist.github.com/idlesign/c1255817bb0234d9971a</a>:<br><br>
+                            <pre><code class="nohighlight">.. gist:: idlesign/c1255817bb0234d9971a</code></pre>
+                            * Обратите внимание на необходимость наличия переноса строки после блока кода.<br>
+                            ** Гисты можно создавать по адресу <a href="https://gist.github.com/" target="_blank">https://gist.github.com/</a>
                         </div>
                     </div>
 

@@ -34,6 +34,7 @@ class ModelWithCompiledText(models.Model):
     text_src = models.TextField('Исходный текст')
 
     RE_CODE = re.compile('\.\.\s*code::\s*([^\n]+)\n\n(.+?)\n\n', re.S)
+    RE_GIST = re.compile('\.\.\s*gist::\s*([^\n]+)\n', re.S)
     RE_ACCENT = re.compile('`{2}([^`.,]+)`{2}')
     RE_QUOTE = re.compile('`{3}\n*([^`]+)\n*`{3}')
     RE_BOLD = re.compile('\*{2}([^*.]+)\*{2}')
@@ -58,6 +59,7 @@ class ModelWithCompiledText(models.Model):
         text = re.sub(cls.RE_QUOTE, '<blockquote>\g<1></blockquote>', text)
         text = re.sub(cls.RE_ACCENT, '<code>\g<1></code>', text)
         text = re.sub(cls.RE_CODE, '<pre><code class="\g<1>">\n\g<2>\n</code></pre>\n', text)
+        text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\g<1>.js"></script>', text)
 
         text = text.replace('\n', '<br>')
         return text
