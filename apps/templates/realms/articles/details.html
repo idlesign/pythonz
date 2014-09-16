@@ -36,7 +36,9 @@
 
                 <div class="lead">{{ article.description|linebreaksbr }}</div>
                 <div class="py_user">{{ article.text|safe }}</div>
+
                 {% include "sub_box_tags.html" %}
+                {% include "sub_box_share.html" %}
             </div>
         </div>
     </div>

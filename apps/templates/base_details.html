@@ -16,6 +16,7 @@
 
             {% block details_contents %}{% endblock %}
             <div class="marg__b_mid"><i>{{ item.description|linebreaksbr }}</i></div>
+            {% block details_share %}{% include "sub_box_share.html" %}{% endblock %}
             {% if item.has_opinions %}
             <div id="list_opinions" class="{% if item.has_opinions %}xross-fixme{% endif %} marg__t_max" data-xcomplete="pythonz.xrossreinit">
                 {% include "opinions/sub_opinions.html" with opinions=item.opinions_data%}
