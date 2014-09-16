@@ -37,7 +37,7 @@
                     {% endblock %}
                 </div>
             </div>
-            {% include "sub_box_tags.html" %}
+            {% block details_tags %}{% include "sub_box_tags.html" %}{% endblock %}
             {% include "sub_box_controls.html" %}
             {% block details_linked %}
                 {% with linked=item.get_linked %}
