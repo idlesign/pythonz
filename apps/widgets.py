@@ -22,7 +22,7 @@ class RstEdit(forms.Widget):
         return format_html('''
             <ul class="nav nav-tabs">
                 <li class="active"><a data-toggle="tab" href="#rst_src"><span class="glyphicon glyphicon-edit"></span> Редактирование</a></li>
-                <li><a data-toggle="tab" href="#rst_preview" id="preview_rst" class="xross" data-xevent="click" data-xtarget="rst_preview" data-xform="edit_form"><span class="glyphicon glyphicon-eye-open"></span> Предпросмотр</a></li>
+                <li><a data-toggle="tab" href="#rst_preview" id="preview_rst" class="xross" data-xevent="click" data-xmethod="POST" data-xtarget="rst_preview" data-xform="edit_form"><span class="glyphicon glyphicon-eye-open"></span> Предпросмотр</a></li>
                 <li><a data-toggle="tab" href="#rst_help"><span class="glyphicon glyphicon-question-sign"></span> Справка по форматированию</a></li>
             </ul>
             <div class="tab-content">
