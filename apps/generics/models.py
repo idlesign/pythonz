@@ -18,8 +18,10 @@ USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 class ModelWithAuthorAndTranslator(models.Model):
     """Класс-примесь для моделей, требующих поля с автором и переводчиком."""
 
-    author = models.CharField('Автор', help_text='Предпочтительно имя и фамилия. Можно указать несколько, разделяя запятыми.', max_length=255)
-    translator = models.CharField('Перевод', help_text='Укажите переводчиков, если материал переведён на русский с другого языка.', max_length=255, blank=True, null=True)
+    _hint_userlink = '<br><b>[u:<ид>:<имя>]</b> формирует ссылку на профиль пользователя pythonz. Например: [u:1:идле].'
+
+    author = models.CharField('Автор', help_text='Предпочтительно имя и фамилия. Можно указать несколько, разделяя запятыми.%s' % _hint_userlink, max_length=255)
+    translator = models.CharField('Перевод', help_text='Укажите переводчиков, если материал переведён на русский с другого языка. Если переводчик неизвестен, можно указать главного редактора.%s' % _hint_userlink, max_length=255, blank=True, null=True)
 
     class Meta:
         abstract = True

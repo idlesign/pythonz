@@ -29,7 +29,7 @@
                         <a href="{{ item.get_absolute_url }}" title="{{ item.title }}">{{ item.title|truncatechars:55 }}</a>
                         <div class="small">
                             <strong>{{ item.year }}</strong><br>
-                            {{ item.author }}
+                            <span class="py_user">{{ item.author }}</span>
                         </div>
                     </div>
                 </div>
