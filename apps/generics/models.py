@@ -39,7 +39,7 @@ class ModelWithCompiledText(models.Model):
     RE_QUOTE = re.compile('`{3}\n*([^`]+)\n*`{3}')
     RE_BOLD = re.compile('\*{2}([^*.]+)\*{2}')
     RE_ITALIC = re.compile('\*([^*.]+)\*')
-    RE_URL = re.compile('(http[^\s]+)')
+    RE_URL = re.compile('(http[^\s\)]+)')
 
     class Meta:
         abstract = True
@@ -51,11 +51,14 @@ class ModelWithCompiledText(models.Model):
         :param text:
         :return:
         """
+        from ..utils import url_mangle
+        href_replacer = lambda match: '<a href="%s" target="_blank">%s</a>' % (match.group(1), url_mangle(match.group(1)))
+
         text = clean(text, strip=True)
         text = text.replace('\r\n', '\n')
         text = re.sub(cls.RE_BOLD, '<b>\g<1></b>', text)
         text = re.sub(cls.RE_ITALIC, '<i>\g<1></i>', text)
-        text = re.sub(cls.RE_URL, '<a href="\g<1>" target="_blank">\g<1></a>', text)
+        text = re.sub(cls.RE_URL, href_replacer, text)
         text = re.sub(cls.RE_QUOTE, '<blockquote>\g<1></blockquote>', text)
         text = re.sub(cls.RE_ACCENT, '<code>\g<1></code>', text)
         text = re.sub(cls.RE_CODE, '<pre><code class="\g<1>">\n\g<2>\n</code></pre>\n', text)

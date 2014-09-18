@@ -1,6 +1,7 @@
-import requests
+from urllib.parse import urlsplit, urlunsplit
 from datetime import timedelta
 
+import requests
 from sitemessage.toolbox import schedule_messages, recipients
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -11,6 +12,23 @@ from .sitemessages import PythonzTwitterMessage, PythonzEmailNewEntity, PythonzE
 
 
 PROJECT_SOURCE_URL = 'https://github.com/idlesign/pythonz'
+
+
+def url_mangle(url):
+    """Усекает URL практически до неузноваемости, делая нефункциональным, но коротким.
+    Всё ради уменьшения длины строки.
+
+    :param url:
+    :return:
+    """
+    path, qs, frag = 2, 3, 4
+    splitted = list(urlsplit(url))
+    splitted[qs] = ''
+    splitted[frag] = ''
+    if splitted[path].lstrip('/'):
+        splitted[path] = '<...>%s' % splitted[path].split('/')[-1]  # Последний кусок пути.
+    mangled = urlunsplit(splitted)
+    return mangled
 
 
 def create_digest():
