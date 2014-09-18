@@ -31,7 +31,10 @@
                     {% include "sub_box_controls.html" %}
                 </div>
                 <div class="marg__b_mid text-muted">
-                    <small>{{ article.time_created }} (<abbr title="Дата последнего редактирования">ред.</abbr> {{ article.time_modified }})</small>
+                    <small>
+                        {{ article.time_created }}
+                        {% if article.time_modified %}(<abbr title="Дата последнего редактирования">ред.</abbr> {{ article.time_modified }}){% endif %}
+                    </small>
                 </div>
 
                 <div class="lead">{{ article.description|linebreaksbr }}</div>

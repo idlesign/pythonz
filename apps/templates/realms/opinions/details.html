@@ -20,7 +20,10 @@
                 </div>
                 <a href="{{ opinion.linked_object.get_absolute_url }}">{% model_meta_verbose_name opinion.linked_object %} «{{ opinion.linked_object.title }}»</a>
                 <div class="marg__b_mid text-muted">
-                    <small>{{ opinion.time_created }} (<abbr title="Дата последнего редактирования">ред.</abbr> {{ opinion.time_modified }})</small>
+                    <small>
+                        {{ opinion.time_created }}
+                        {% if opinion.time_modified %}(<abbr title="Дата последнего редактирования">ред.</abbr> {{ opinion.time_modified }}){% endif %}
+                    </small>
                 </div>
                 <div class="py_user">{{ opinion.text|safe }}</div>
             </div>
