@@ -185,10 +185,6 @@ class OpinionRealm(RealmBase):
     allowed_views = ('listing', 'details', 'edit')
     syndication_enabled = False
 
-    @classmethod
-    def get_sitetree_details_item(cls):
-        return item('{{ opinion.submitter.get_display_name }} про «{{ opinion.linked_object.title }}»', 'opinions:details opinion.id', children=(cls.get_sitetree_edit_item(),), in_menu=False, in_sitetree=False)
-
 
 class UserRealm(RealmBase):
     """

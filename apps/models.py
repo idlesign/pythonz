@@ -40,6 +40,14 @@ class Opinion(InheritedModel, RealmBaseModel, ModelWithCompiledText):
     txt_form_add = 'Добавить мнение'
     txt_form_edit = 'Изменить мнение'
 
+    def get_title(self):
+        """Формирует и возвращает заголовок для мнения.
+
+        :return:
+        """
+        return '%s про «%s»' % (self.submitter.get_display_name(), self.linked_object.title)
+    title = property(get_title)
+
     def save(self, *args, **kwargs):
         self.status = self.STATUS_PUBLISHED  # Авторский материал не нуждается в модерации %)
         super().save(*args, **kwargs)
