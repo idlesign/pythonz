@@ -2,6 +2,7 @@ from django.conf import settings
 from django.conf.urls import patterns, url
 
 from sitetree.utils import tree, item
+# from sitecats.models import Category
 
 from .forms import BookForm, VideoForm, EventForm, UserForm, OpinionForm, ArticleForm
 from .generics.realms import RealmBase
@@ -120,6 +121,10 @@ class BookRealm(RealmBase):
     Область с книгами.
     """
 
+    txt_promo = 'Времена и люди сменяют друг друга, а книги остаются. Взгляните на них &#8211; фолианты, книжицы и книжонки. Ходят слухи, что здесь можно отыскать даже гримуары.'
+    txt_form_add = 'Добавить книгу'
+    txt_form_edit = 'Изменить данные книги'
+
     model = Book
     form = BookForm
     icon = 'book'
@@ -130,6 +135,10 @@ class VideoRealm(RealmBase):
     Область с видео.
     """
 
+    txt_promo = 'Видео уникально в плане возможностей по усвоению материала: оно заставляет смотреть, слушать, и даже читать. Попробуйте, вам должно понравится.'
+    txt_form_add = 'Добавить видео'
+    txt_form_edit = 'Изменить данные видео'
+
     model = Video
     form = VideoForm
     icon = 'film'
@@ -139,6 +148,10 @@ class VideoRealm(RealmBase):
 #     """
 #     Область с событиями.
 #     """
+#
+#     txt_promo = 'События разнообразят жизнь: встречи, лекции, беседы, обмен опытом позволяют расширить кругозор, установить связи, приятно провести время. Приобщайтесь.'
+#     txt_form_add = 'Добавить событие'
+#     txt_form_edit = 'Изменить событие'
 #
 #     model = Event
 #     form = EventForm
@@ -158,6 +171,10 @@ class ArticleRealm(RealmBase):
     Область со статьями.
     """
 
+    txt_promo = 'Статьи похожи на рассказы. Хорошие статьи, как и хорошие рассказы, хочется читать часто, много и даже с наслаждением.'
+    txt_form_add = 'Написать статью'
+    txt_form_edit = 'Редактировать статью'
+
     model = Article
     form = ArticleForm
     icon = 'file'
@@ -168,6 +185,7 @@ class ArticleRealm(RealmBase):
 #     """
 #     Область с [географическими] местами.
 #     """
+#     txt_promo = 'В какую точку земного шара ни ткни, почти наверняка там найдутся интересные люди. Отправлятесь искать клад.'
 #
 #     model = Place
 #     form = VideoForm
@@ -178,6 +196,10 @@ class OpinionRealm(RealmBase):
     """
     Область со мнениями.
     """
+
+    txt_promo = 'Мнения отражают картину мира людей. Делитесь своим, уважайте чужое. Добро пожаловать в картинную галерею.'
+    txt_form_add = 'Добавить мнение'
+    txt_form_edit = 'Изменить мнение'
 
     model = Opinion
     form = OpinionForm
@@ -191,6 +213,9 @@ class UserRealm(RealmBase):
     Область с персоналиями.
     """
 
+    txt_promo = 'Вокруг люди &#8211; это они пишут статьи и книги, организовывают встречи и делятся мнениями, это они могут помочь, подсказать, научить. Здесь упомянуты некоторые.'
+    txt_form_edit = 'Изменить настройки'
+
     model = User
     form = UserForm
     icon = 'user'
@@ -203,6 +228,23 @@ class UserRealm(RealmBase):
     @classmethod
     def get_sitetree_details_item(cls):
         return item('{{ user.get_display_name }}', 'users:details user.id', in_menu=False, in_sitetree=False)
+
+
+# class CategoryRealm(RealmBase):
+#     """
+#     Область с категориями.
+#     """
+#
+#     txt_promo = 'Если всё разложить по полочкам, вероятность найти нужное возрастает. На наших полочках сплошь нужные вещи.'
+#
+#     model = Category
+#     icon = 'tags'
+#     name = 'category'
+#     name_plural = 'categories'
+#     allowed_views = ('listing', 'details')
+#     ready_for_digest = False
+#     sitemap_enabled = False  # TODO
+#     syndication_enabled = False  # TODO
 
 
 register_realms(BookRealm, VideoRealm, ArticleRealm, UserRealm, OpinionRealm)

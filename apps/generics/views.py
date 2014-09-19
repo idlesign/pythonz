@@ -320,7 +320,7 @@ class EditView(RealmView):
         data = request.POST or None
         form = self.realm.form(data, request.FILES or None, instance=item, user=request.user)
         if item is None:
-            form.submit_title = self.realm.model.txt_form_add
+            form.submit_title = self.realm.txt_form_add
         else:
 
             if self.realm.model == User:
@@ -337,7 +337,7 @@ class EditView(RealmView):
                     message_warning(request, 'Этот материал уже прошёл модерацию и был опубликован. На данный момент в проекте запрещено редактирование опубликованных материалов.')
                     raise PermissionDenied()
 
-            form.submit_title = self.realm.model.txt_form_edit
+            form.submit_title = self.realm.txt_form_edit
 
         if data is None:
             if not self.realm.model in (User, Article, Opinion):

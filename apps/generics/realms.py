@@ -48,6 +48,10 @@ class RealmBase(object):
     # Предполагаемая периодичность обновления данных (для карты сайта).
     sitemap_changefreq = 'weekly'
 
+    txt_promo = 'Если вы это читаете, значит здесь требуется нормальное описание.'
+    txt_form_add = 'Добавить элемент'
+    txt_form_edit = 'Редактировать элемент'
+
     # Представление списка.
     view_listing = None
     view_listing_base_class = ListingView
@@ -135,7 +139,7 @@ class RealmBase(object):
         :return:
         """
         realm_name, realm_name_plural = cls.get_names()
-        return item(cls.model.txt_form_edit, '%s:edit %s.id' % (realm_name_plural, realm_name), in_menu=False, in_sitetree=False, access_loggedin=True)
+        return item(cls.txt_form_edit, '%s:edit %s.id' % (realm_name_plural, realm_name), in_menu=False, in_sitetree=False, access_loggedin=True)
 
     @classmethod
     def get_sitetree_add_item(cls):
@@ -144,7 +148,7 @@ class RealmBase(object):
         :return:
         """
         realm_name, realm_name_plural = cls.get_names()
-        return item(cls.model.txt_form_add, '%s:add' % realm_name_plural, access_loggedin=True)
+        return item(cls.txt_form_add, '%s:add' % realm_name_plural, access_loggedin=True)
 
     @classmethod
     def get_sitetree_tags_item(cls):

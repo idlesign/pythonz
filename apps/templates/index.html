@@ -11,7 +11,7 @@
                 <div class="col-md-4 text-center box">
                     <a href="{{ realm.model.get_listing_url }}"><i class="glyphicon glyphicon-{{ realm.icon }}"></i></a>
                     <h4>{% model_meta_verbose_name_plural realm.model %}</h4>
-                    <p>{{ realm.model.txt_promo|safe }}</p>
+                    <p>{{ realm.txt_promo|safe }}</p>
                 </div>
             {% endfor %}
         </div>

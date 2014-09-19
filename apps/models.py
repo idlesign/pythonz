@@ -36,10 +36,6 @@ class Opinion(InheritedModel, RealmBaseModel, ModelWithCompiledText):
     class Fields:
         text = 'Мнение'
 
-    txt_promo = 'Мнения отражают картину мира людей. Делитесь своим, уважайте чужое. Добро пожаловать в картинную галерею.'
-    txt_form_add = 'Добавить мнение'
-    txt_form_edit = 'Изменить мнение'
-
     def get_title(self):
         """Формирует и возвращает заголовок для мнения.
 
@@ -92,8 +88,6 @@ class Place(RealmBaseModel):
         verbose_name = 'Место'
         verbose_name_plural = 'Места'
 
-    txt_promo = 'В какую точку земного шара ни ткни, почти наверняка там найдутся интересные люди. Отправлятесь искать клад.'
-
 
 class User(RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
@@ -107,9 +101,6 @@ class User(RealmBaseModel, AbstractUser):
     class Meta:
         verbose_name = 'Персона'
         verbose_name_plural = 'Люди'
-
-    txt_promo = 'Вокруг люди &#8211; это они пишут статьи и книги, организовывают встречи и делятся мнениями, это они могут помочь, подсказать, научить. Здесь упомянуты некоторые.'
-    txt_form_edit = 'Изменить настройки'
 
     def get_bookmarks(self):
         """Возвращает словарь с избранными пользователем эелементами (закладками).
@@ -177,10 +168,6 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions,
         }
         year = 'Год издания'
 
-    txt_promo = 'Времена и люди сменяют друг друга, а книги остаются. Взгляните на них &#8211; фолианты, книжицы и книжонки. Ходят слухи, что здесь можно отыскать даже гримуары.'
-    txt_form_add = 'Добавить книгу'
-    txt_form_edit = 'Изменить данные книги'
-
 
 class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithCompiledText):
     """Модель сущности `Статья`."""
@@ -198,10 +185,6 @@ class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinio
             'verbose_name': 'Связанные статьи',
             'help_text': 'Выберите статьи, которые имеют отношение к данной. Так, например, можно объединить статьи цикла.',
         }
-
-    txt_promo = 'Статьи похожи на рассказы. Хорошие статьи, как и хорошие рассказы, хочется читать часто, много и даже с наслаждением.'
-    txt_form_add = 'Написать статью'
-    txt_form_edit = 'Редактировать статью'
 
     def save(self, *args, **kwargs):
         self.status = self.STATUS_PUBLISHED  # Авторский материал не нуждается в модерации %)
@@ -232,10 +215,6 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions
             'help_text': 'Выберите видео, которые имеют отношение к данному. Например, можно связать несколько эпизодов видео.',
         }
         year = 'Год съёмок'
-
-    txt_promo = 'Видео уникально в плане возможностей по усвоению материала: оно заставляет смотреть, слушать, и даже читать. Попробуйте, вам должно понравится.'
-    txt_form_add = 'Добавить видео'
-    txt_form_edit = 'Изменить данные видео'
 
     _supported_hostings = OrderedDict(sorted({
         'Vimeo': ('vimeo.com', 'vimeo'),
@@ -335,7 +314,3 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions
     class Fields:
         text = 'Описание'
         text_src = 'Описание'
-
-    txt_promo = 'События разнообразят жизнь: встречи, лекции, беседы, обмен опытом позволяют расширить кругозор, установить связи, приятно провести время. Приобщайтесь.'
-    txt_form_add = 'Добавить событие'
-    txt_form_edit = 'Изменить событие'
