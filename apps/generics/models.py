@@ -157,7 +157,7 @@ class RealmBaseModel(ModelWithFlag):
         abstract = True
 
     realm = None  # Во время исполнения здесь будет объект области (Realm).
-    items_per_page = 16  # Количество объектов для вывода на страницах списков.
+    items_per_page = 15  # Количество объектов для вывода на страницах списков.
     edit_form = None  # Во время исполнения здесь будет форма редактирования.
 
     def mark_unmodified(self):
