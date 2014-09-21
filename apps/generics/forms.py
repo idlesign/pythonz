@@ -3,6 +3,9 @@ from datetime import datetime
 from django import forms
 from django.forms.widgets import CheckboxInput
 
+from ..models import Article
+
+
 class CommonEntityForm(forms.ModelForm):
     """Базовый класс для форм создания/редактирования сущностей."""
 
@@ -20,11 +23,12 @@ class RealmEditBaseForm(CommonEntityForm):
     def __init__(self, *args, user, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if not user.is_superuser and not user.is_staff:
-            try:
-                del self.fields['status']
-            except KeyError:  # Нет такого поля на форме.
-                pass
+        if self._meta.model is not Article:  # Запрещаем управлять статусом везде, кроме Статей.
+            if not user.is_superuser and not user.is_staff:
+                try:
+                    del self.fields['status']
+                except KeyError:  # Нет такого поля на форме.
+                    pass
 
         for field in self.fields:
             if isinstance(self.fields[field].widget, CheckboxInput):

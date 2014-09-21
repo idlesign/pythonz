@@ -186,10 +186,6 @@ class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinio
             'help_text': 'Выберите статьи, которые имеют отношение к данной. Так, например, можно объединить статьи цикла.',
         }
 
-    def save(self, *args, **kwargs):
-        self.status = self.STATUS_PUBLISHED  # Авторский материал не нуждается в модерации %)
-        super().save(*args, **kwargs)
-
 
 class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithAuthorAndTranslator):
     """Модель сущности `Видео`."""
