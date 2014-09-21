@@ -80,6 +80,8 @@ def notify_entity_published(entity):
     prefix = 'Новое: %s «' % entity.get_verbose_name()
     url = 'http://pythonz.net%s' % entity.get_absolute_url()
     postfix = '» %s' % url
+    if settings.AGRESSIVE_MODE:
+        postfix = '%s #python #dev' % postfix
     title = Truncator(entity.title).chars(MAX_LEN - len(prefix) - len(postfix))
     message = '%s%s%s' % (prefix, title, postfix)
     schedule_messages(PythonzTwitterMessage(message), recipients('twitter', ''))
