@@ -96,7 +96,6 @@
 // Bootstrap overrides.
 
 .footer {
-  border-top: 2px solid @cl__gray;
   border-bottom: none;
   margin-top: @gap__max;
   padding-top: @gap__mid;
@@ -108,15 +107,22 @@
 
 }
 
-.page-header {
-  margin-top: 0;
+.panel {
+  font-size: 14px;
+  .panel-title {
+    font-size: 16px;
+  }
+  .panel-body {
+    color: lighten(@cl__black, 30%);
+    ul, ol {
+      padding-left: inherit;
+      padding-right: inherit;
+    }
+  }
 }
 
-.panel-body {
-  color: lighten(@cl__black, 30%);
-  ul {
-    padding-left: inherit;
-  }
+.page-header {
+  margin-top: 0;
 }
 
 .navbar {
@@ -217,10 +223,6 @@ nav .submenu {
   margin-right: @gap__mid;
   float: left;
   color: @cl__blue;
-}
-
-.features_row {
-  padding-top: @gap__max;
 }
 
 .form_table td {
@@ -339,6 +341,13 @@ nav .submenu {
 
 .features {
   margin-top: @gap__max;
+  .features_row {
+    padding-top: @gap__min;
+    div {
+      min-height: 250px;
+      max-height: 250px;
+    }
+  }
   p {
     color: @cl__gray;
     font-size: 12px;
@@ -380,14 +389,14 @@ nav .submenu {
 
 .listing_item {
   padding: @gap__min;
-  min-width: 260px;
-  max-width: 260px;
+  min-width: 350px;
+  max-width: 350px;
   min-height: 150px;
   max-height: 150px;
   float: left;
   margin-right: @gap__mid;
   margin-top: @gap__mid;
-  border-right: 1px solid lighten(@cl__gray, 20%);
+  border-right: 1px solid lighten(@cl__gray, 40%);
   img {
     margin-right: @gap__mid;
     float: left;

@@ -1,9 +1,9 @@
 {% load sitecats %}
+{% if item.has_categories %}
 <div class="tags_box marg__b_mid">
     <hr>
     <h4>Категории</h4>
-    {% if item.has_categories %}
     {% sitecats_categories from item %}
-    {% endif %}
     <hr>
 </div>
+{% endif %}
