@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-{% load thumbs sitetree %}
+{% load thumbs sitetree siteblocks %}
 
 {% block meta_og %}
     <meta property="og:description" content="{% sitetree_page_description from "main" %}" />
@@ -55,6 +55,19 @@
                     </div>
                     {% endif %}
                 {% endwith %}
+            {% endblock %}
+            {% block right_bar %}
+                {% siteblock "hints" as hint %}
+                {% if hint %}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Если вам интересно</h3>
+                    </div>
+                    <div class="panel-body">
+                        {{ hint }}
+                    </div>
+                </div>
+                {% endif %}
             {% endblock %}
         </div>
     </div>
