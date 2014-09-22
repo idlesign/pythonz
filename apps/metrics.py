@@ -3,10 +3,16 @@ from sitemetrics.providers import Yandex
 
 class MyYandex(Yandex):
     """Модифицированный класс управления счётчиком.
-    Подключаем все возможные плюшки, которые умеет счётчик.
-
+    Подключаем некоторые плюшки из тех, что умеет счётчик.
     """
 
-    @classmethod
-    def get_params(cls):
-        return {}
+    params = {
+        'webvisor': False,
+        'clickmap': False,
+        'track_links': True,
+        'accurate_bounce': True,
+        'no_index': False,
+        'track_hash': False,
+        'xml': False,
+        'user_params': False,
+    }
