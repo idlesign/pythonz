@@ -21,7 +21,7 @@
     <div class="row">
         <div class="col-md-12">
             <div>
-                <div class="pull-right marg__l_mid marg__b_mid">
+                <div class="pull-right marg__l_mid marg__b_mid float_panel">
                     <div class="well marg__b_mid text-center">
                         {% with article.submitter.get_absolute_url as article_url %}
                         <a href="{{ article_url }}">{% gravatar_get_img article.submitter 64 %}</a><br>
@@ -29,6 +29,7 @@
                         {% endwith %}
                     </div>
                     {% include "sub_box_controls.html" %}
+                    {% include "sub_box_tags.html" %}
                 </div>
                 <div class="marg__b_mid text-muted">
                     <small>
@@ -40,7 +41,6 @@
                 <div class="lead">{{ article.description|linebreaksbr }}</div>
                 <div class="py_user">{{ article.text|safe }}</div>
 
-                {% include "sub_box_tags.html" %}
                 {% include "sub_box_share.html" %}
             </div>
         </div>
