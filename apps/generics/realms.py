@@ -112,13 +112,31 @@ class RealmBase(object):
         return cls.sitemap
 
     @classmethod
+    def get_listing_urlname(cls):
+        """Возвращает название URL страницы со списком объектов.
+
+        :return:
+        """
+        _tmp, realm_name_plural = cls.get_names()
+        return '%s:listing' % realm_name_plural
+
+    @classmethod
     def get_sitetree_listing_item(cls):
         """Возвращает элемент древа сайта, указывающий на страницу со списком объектов.
 
         :return:
         """
-        realm_name, realm_name_plural = cls.get_names()
-        return item('Список', '%s:listing' % realm_name_plural, in_menu=False)
+        return item('Список', cls.get_listing_urlname(), in_menu=False)
+
+
+    @classmethod
+    def get_details_urlname(cls):
+        """Возвращает название URL страницы с детальной информацией об объекте.
+
+        :return:
+        """
+        _tmp, realm_name_plural = cls.get_names()
+        return '%s:details' % realm_name_plural
 
     @classmethod
     def get_sitetree_details_item(cls):
@@ -130,7 +148,7 @@ class RealmBase(object):
         children = []
         if 'edit' in cls.allowed_views:
             children.append(cls.get_sitetree_edit_item())
-        return item('{{ %s.title }}' % realm_name, '%s:details %s.id' % (realm_name_plural, realm_name), children=children, in_menu=False, in_sitetree=False)
+        return item('{{ %s.title }}' % realm_name, '%s %s.id' % (cls.get_details_urlname(), realm_name), children=children, in_menu=False, in_sitetree=False)
 
     @classmethod
     def get_sitetree_edit_item(cls):
@@ -151,13 +169,21 @@ class RealmBase(object):
         return item(cls.txt_form_add, '%s:add' % realm_name_plural, access_loggedin=True)
 
     @classmethod
+    def get_tags_urlname(cls):
+        """Возвращает название URL страницы со списком объектов в определённой категории.
+
+        :return:
+        """
+        _tmp, realm_name_plural = cls.get_names()
+        return '%s:tags' % realm_name_plural
+
+    @classmethod
     def get_sitetree_tags_item(cls):
         """Возвращает элемент древа сайта, указывающий на страницу разбивки объектов по метке (категории).
 
         :return:
         """
-        realm_name, realm_name_plural = cls.get_names()
-        return item('Категория «{{ category.title }}»', '%s:tags category.id' % realm_name_plural, in_menu=False, in_sitetree=False)
+        return item('Категория «{{ category.title }}»', '%s category.id' % cls.get_tags_urlname(), in_menu=False, in_sitetree=False)
 
     @classmethod
     def get_sitetree_items(cls):
