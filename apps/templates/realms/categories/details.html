@@ -1,0 +1,21 @@
+{% extends "realms/categories/_base.html" %}
+{% load sitecats %}
+
+
+{% block workarea %}
+    <div class="col-md-12">
+        {% for realm in realm_list %}
+            <div class="marg__l_mid marg__t_mid">
+                <h4>{{ realm.realm.model.get_verbose_name_plural }}</h4>
+                <div class="marg__l_mid">
+                    <ul>
+                        {% for item in realm.objects %}
+                            <li><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></li>
+                        {% endfor %}
+                        <li>и <a href="{{ realm.url }}">другие&hellip;</a></li>
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

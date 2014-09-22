@@ -1,0 +1,11 @@
+{% extends "realms/categories/_base.html" %}
+{% load sitecats %}
+
+
+{% block workarea %}
+    <div class="col-md-12 tags_box">
+        <div class="big">
+            {% sitecats_categories from item %}
+        </div>
+    </div>
+{% endblock %}
