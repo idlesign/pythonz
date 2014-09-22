@@ -276,8 +276,7 @@ class TagsView(ListingView):
     """Список меток (категорий) для объекта."""
 
     def get_paginator_objects(self):
-        category_id = self.kwargs['category_id']
-        return self.realm.model.get_from_category_qs(category_id).order_by('title').all()
+        return self.realm.model.get_objects_in_category(self.kwargs['category_id'])
 
 
 class EditView(RealmView):

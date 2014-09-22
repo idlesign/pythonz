@@ -2,13 +2,13 @@ from django.conf import settings
 from django.conf.urls import patterns, url
 
 from sitetree.utils import tree, item
-# from sitecats.models import Category
+from sitecats.models import Category
 
 from .forms import BookForm, VideoForm, EventForm, UserForm, OpinionForm, ArticleForm
 from .generics.realms import RealmBase
 from .models import User, Opinion, Book, Video, Event, Place, Article
 from .signals import signal_new_entity, signal_entity_published
-from .views_custom import UserDetailsView
+from .views_custom import UserDetailsView, CategoryListingView
 from .zen import *  # Регистрируем блок сайта с дзеном
 
 
@@ -230,21 +230,27 @@ class UserRealm(RealmBase):
         return item('{{ user.get_display_name }}', 'users:details user.id', in_menu=False, in_sitetree=False)
 
 
-# class CategoryRealm(RealmBase):
-#     """
-#     Область с категориями.
-#     """
-#
-#     txt_promo = 'Если всё разложить по полочкам, вероятность найти нужное возрастает. На наших полочках сплошь нужные вещи.'
-#
-#     model = Category
-#     icon = 'tags'
-#     name = 'category'
-#     name_plural = 'categories'
-#     allowed_views = ('listing', 'details')
-#     ready_for_digest = False
-#     sitemap_enabled = False  # TODO
-#     syndication_enabled = False  # TODO
+class CategoryRealm(RealmBase):
+    """
+    Область с категориями.
+    """
+
+    txt_promo = 'Если всё разложить по полочкам, вероятность найти нужное возрастает. На наших полочках сплошь нужные вещи.'
+
+    model = Category
+    icon = 'tag'
+    name = 'category'
+    name_plural = 'categories'
+    allowed_views = ('listing', 'details')
+    ready_for_digest = False
+    sitemap_enabled = False  # TODO
+    syndication_enabled = False  # TODO
+    view_listing_base_class = CategoryListingView
+    view_details_base_class = CategoryListingView
+
+    @classmethod
+    def get_sitetree_details_item(cls):
+        return item('Категория «{{ category.parent.title }} - {{ category.title }}»', 'categories:details category.id', in_menu=False, in_sitetree=False)
 
 
-register_realms(BookRealm, VideoRealm, ArticleRealm, UserRealm, OpinionRealm)
+register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, UserRealm, OpinionRealm)

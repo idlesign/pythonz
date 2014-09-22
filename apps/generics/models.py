@@ -239,6 +239,15 @@ class RealmBaseModel(ModelWithFlag):
         """
         return self.is_flagged(user, status=self.FLAG_STATUS_SUPPORT)
 
+    @classmethod
+    def get_objects_in_category(cls, category):
+        """Возвращает объекты из указанной категории.
+
+        :param category:
+        :return:
+        """
+        return cls.get_from_category_qs(category).filter(status=RealmBaseModel.STATUS_PUBLISHED).order_by('-time_published')
+
     def set_support(self, user):
         """Устанавливает флаг поддержки данным пользователем данной сущности.
 
@@ -309,14 +318,6 @@ class RealmBaseModel(ModelWithFlag):
         :return:
         """
         return cls._meta.verbose_name_plural
-
-    def get_listing_url(self):
-        """Возвращает URL страницы со списком объектов.
-
-        :return:
-        """
-        tmp, realm_name_plural = self.realm.get_names()
-        return reverse('%s:listing' % realm_name_plural)
 
     def get_absolute_url(self):
         """Возвращает URL страницы с детальной информацией об объекте.
