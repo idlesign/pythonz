@@ -7,7 +7,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 from apps.realms import bootstrap_realms  # Здесь относительный импорт работать не будет.
-from apps.views_custom import page_not_found, permission_denied, server_error
+from apps.views import page_not_found, permission_denied, server_error
 
 autodiscover_siteprefs()
 
