@@ -9,7 +9,7 @@
         <div class="row features_row">
             {% for realm in realms %}
                 <div class="col-md-4 text-center box">
-                    <a href="{{ realm.model.get_listing_url }}"><i class="glyphicon glyphicon-{{ realm.icon }}"></i></a>
+                    <a href="{% url realm.get_listing_urlname %}"><i class="glyphicon glyphicon-{{ realm.icon }}"></i></a>
                     <h4>{% model_meta_verbose_name_plural realm.model %}</h4>
                     <p>{{ realm.txt_promo|safe }}</p>
                 </div>
