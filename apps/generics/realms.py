@@ -88,7 +88,7 @@ class RealmBase(object):
             type_dict = {
                 'title': name,
                 'description': 'PYTHONZ. Новое в разделе «%s»' % name,
-                'link': lambda self: reverse('%s:listing' % cls.name_plural),
+                'link': lambda self: reverse(cls.get_listing_urlname()),
                 'items': lambda self: cls.model.get_actual(),
                 'item_title': lambda self, item: item.title,
                 'item_link': lambda self, item: item.get_absolute_url(),
@@ -192,9 +192,10 @@ class RealmBase(object):
         :return:
         """
         if cls.sitetree_items is None:
-            realm_name, realm_name_plural = cls.get_names()
-            cls.sitetree_items = item(cls.model._meta.verbose_name_plural, '%s:listing' % realm_name_plural,
-                                children=[getattr(cls, 'get_sitetree_%s_item' % view_name)() for view_name in cls.allowed_views if view_name != 'edit'])
+            cls.sitetree_items = item(
+                cls.model._meta.verbose_name_plural, cls.get_listing_urlname(),
+                children=[getattr(cls, 'get_sitetree_%s_item' % view_name)() for view_name in cls.allowed_views if view_name != 'edit']
+            )
         return cls.sitetree_items
 
     @classmethod

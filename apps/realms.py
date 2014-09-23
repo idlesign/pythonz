@@ -250,7 +250,7 @@ class CategoryRealm(RealmBase):
 
     @classmethod
     def get_sitetree_details_item(cls):
-        return item('Категория «{{ category.parent.title }} - {{ category.title }}»', 'categories:details category.id', in_menu=False, in_sitetree=False)
+        return item('Категория «{{ category.parent.title }} — {{ category.title }}»', 'categories:details category.id', in_menu=False, in_sitetree=False)
 
 
 register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, UserRealm, OpinionRealm)
