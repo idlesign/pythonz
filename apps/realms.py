@@ -111,6 +111,7 @@ def build_sitetree():
                 item('Что такое Python', '/promo/', url_as_pattern=False),
                 item('О проекте', '/about/', url_as_pattern=False),
                 item('Карта сайта', '/sitemap/', url_as_pattern=False),
+                item('Поиск по сайту', '/search/', url_as_pattern=False),
             ))
         ))
     )
