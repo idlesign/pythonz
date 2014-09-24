@@ -128,7 +128,6 @@ class RealmBase(object):
         """
         return item('Список', cls.get_listing_urlname(), in_menu=False)
 
-
     @classmethod
     def get_details_urlname(cls):
         """Возвращает название URL страницы с детальной информацией об объекте.
@@ -193,7 +192,7 @@ class RealmBase(object):
         """
         if cls.sitetree_items is None:
             cls.sitetree_items = item(
-                cls.model._meta.verbose_name_plural, cls.get_listing_urlname(),
+                str(cls.model._meta.verbose_name_plural), cls.get_listing_urlname(),
                 children=[getattr(cls, 'get_sitetree_%s_item' % view_name)() for view_name in cls.allowed_views if view_name != 'edit']
             )
         return cls.sitetree_items

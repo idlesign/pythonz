@@ -237,14 +237,16 @@ class CategoryRealm(RealmBase):
 
     txt_promo = 'Если всё разложить по полочкам, вероятность найти нужное возрастает. На наших полочках сплошь нужные вещи.'
 
+    # TODO разобраться с выводом в sitetree
+
     model = Category
     icon = 'tag'
     name = 'category'
     name_plural = 'categories'
     allowed_views = ('listing', 'details')
     ready_for_digest = False
-    sitemap_enabled = False  # TODO
-    syndication_enabled = False  # TODO
+    sitemap_enabled = False
+    syndication_enabled = False
     view_listing_base_class = CategoryListingView
     view_details_base_class = CategoryListingView
 
