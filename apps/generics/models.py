@@ -33,13 +33,14 @@ class ModelWithCompiledText(models.Model):
     text = models.TextField('Текст')
     text_src = models.TextField('Исходный текст')
 
-    RE_CODE = re.compile('\.\.\s*code::\s*([^\n]+)\n\n(.+?)\n\n', re.S)
-    RE_GIST = re.compile('\.\.\s*gist::\s*([^\n]+)\n', re.S)
-    RE_ACCENT = re.compile('`{2}([^`.,]+)`{2}')
-    RE_QUOTE = re.compile('`{3}\n*([^`]+)\n*`{3}')
-    RE_BOLD = re.compile('\*{2}([^*.]+)\*{2}')
-    RE_ITALIC = re.compile('\*([^*.]+)\*')
-    RE_URL = re.compile('(http[^\s\)]+)')
+    RE_CODE = re.compile('\.{2}\s*code::\s*([^\n]+)\n\n(.+?)\n{3}(?=\S)', re.S)
+    RE_GIST = re.compile('\.{2}\s*gist::\s*([^\n]+)\n', re.S)
+    RE_ACCENT = re.compile('`{2}([^`\n,]+)`{2}')
+    RE_QUOTE = re.compile('`{3}\n+([^`]+)\n+`{3}')
+    RE_BOLD = re.compile('\*{2}([^*\n]+)\*{2}')
+    RE_ITALIC = re.compile('\*([^*\n]+)\*')
+    RE_URL = re.compile('(?<!["])(http[^\s\)]+)')
+    RE_URL_WITH_TITLE = re.compile('`([^\[]+)\n*\[([^\]]+)\]`_')
 
     class Meta:
         abstract = True
@@ -54,14 +55,20 @@ class ModelWithCompiledText(models.Model):
         from ..utils import url_mangle
         href_replacer = lambda match: '<a href="%s" target="_blank">%s</a>' % (match.group(1), url_mangle(match.group(1)))
 
+        # Заменяем некоторые символы для правила RE_URL_WITH_TITLE, чтобы их не устранил bleach.
+        text = text.replace('<ht', '[ht')
+        text = text.replace('>`', ']`')
+
         text = clean(text, strip=True)
+
         text = text.replace('\r\n', '\n')
         text = re.sub(cls.RE_BOLD, '<b>\g<1></b>', text)
         text = re.sub(cls.RE_ITALIC, '<i>\g<1></i>', text)
-        text = re.sub(cls.RE_URL, href_replacer, text)
         text = re.sub(cls.RE_QUOTE, '<blockquote>\g<1></blockquote>', text)
         text = re.sub(cls.RE_ACCENT, '<code>\g<1></code>', text)
         text = re.sub(cls.RE_CODE, '<pre><code class="\g<1>">\n\g<2>\n</code></pre>\n', text)
+        text = re.sub(cls.RE_URL_WITH_TITLE, '<a href="\g<2>" target="_blank">\g<1></a>', text)
+        text = re.sub(cls.RE_URL, href_replacer, text)
         text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\g<1>.js"></script>', text)
 
         text = text.replace('\n', '<br>')
