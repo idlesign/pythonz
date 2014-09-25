@@ -179,7 +179,6 @@ class ArticleRealm(RealmBase):
     model = Article
     form = ArticleForm
     icon = 'file'
-    sitemap_changefreq = 'monthly'
 
 
 # class PlaceRealm(RealmBase):
@@ -223,7 +222,6 @@ class UserRealm(RealmBase):
     allowed_views = ('listing', 'details', 'edit')
     syndication_enabled = False
     sitemap_date_field = 'date_joined'
-    sitemap_changefreq = 'daily'
     view_details_base_class = UserDetailsView
 
     @classmethod
