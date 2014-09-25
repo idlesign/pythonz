@@ -113,7 +113,8 @@ def build_sitetree():
                 item('Карта сайта', '/sitemap/', url_as_pattern=False),
                 item('Поиск по сайту', '/search/', url_as_pattern=False),
             ))
-        ))
+        )),
+        reset_cache=True
     )
 
 
@@ -235,8 +236,6 @@ class CategoryRealm(RealmBase):
     """
 
     txt_promo = 'Если всё разложить по полочкам, вероятность найти нужное возрастает. На наших полочках сплошь нужные вещи.'
-
-    # TODO разобраться с выводом в sitetree
 
     model = Category
     icon = 'tag'
