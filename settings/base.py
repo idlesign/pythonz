@@ -29,6 +29,8 @@ SITEMESSAGES_SETTINGS = {
     'smtp': []
 }
 
+GOOGLE_API_KEY = 'not_a_secret'
+
 # Переводит проект в агрессивный режим: задействует различную машинерию для привлечения внимания к проекту.
 AGRESSIVE_MODE = False
 

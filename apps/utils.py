@@ -114,6 +114,27 @@ def get_image_from_url(url):
     return ContentFile(requests.get(url).content, url.rsplit('/', 1)[-1])
 
 
+def get_timezone_name(lat, lng):
+    """Возвращает имя часового пояса по геокоординатам.
+    Использует Сервис Google Time Zone API.
+
+    :param lat: широта
+    :param lng: долгота
+    :return:
+    """
+    url = 'https://maps.googleapis.com/maps/api/timezone/json?location=%(lat)s,%(lng)s&timestamp=%(ts)s&key=%(api_key)s' % {
+        'lat': lat,
+        'lng': lng,
+        'ts': timezone.now().timestamp(),
+        'api_key': settings.GOOGLE_API_KEY,
+    }
+    result = requests.get(url)
+
+    doc = result.json()
+    tz_name = doc['timeZoneId']
+    return tz_name
+
+
 def get_location_data(location_name):
     """Возвращает геоданные об объекте по его имени, используя API Яндекс.Карт.
 
@@ -121,7 +142,8 @@ def get_location_data(location_name):
     :return:
     """
 
-    result = requests.get('http://geocode-maps.yandex.ru/1.x/?results=1&format=json&geocode=%s' % location_name)
+    url = 'http://geocode-maps.yandex.ru/1.x/?results=1&format=json&geocode=%s' % location_name
+    result = requests.get(url)
 
     doc = result.json()
 
