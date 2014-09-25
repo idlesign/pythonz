@@ -3,6 +3,15 @@ from django.forms.utils import flatatt
 from django.utils.html import format_html, force_text
 
 
+class ReadOnly(forms.Widget):
+    """Представляет поле только для чтения."""
+
+    def render(self, name, value, attrs=None):
+        if hasattr(self, 'initial'):
+            value = self.initial
+        return '%s' % (value or '')
+
+
 class RstEdit(forms.Widget):
     """Реализует виджет для редактирования и предпросмотра текста в rst-подобном формате."""
 
