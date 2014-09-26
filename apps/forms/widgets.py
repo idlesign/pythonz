@@ -3,7 +3,7 @@ from django.forms.widgets import TextInput
 from django.forms.utils import flatatt
 from django.utils.html import format_html, force_text
 
-from .models import Place
+from ..models import Place
 
 
 class ReadOnly(forms.Widget):

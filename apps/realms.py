@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url
 from sitetree.utils import tree, item
 from sitecats.models import Category
 
-from .forms import BookForm, VideoForm, UserForm, OpinionForm, ArticleForm
+from .forms.forms import BookForm, VideoForm, UserForm, OpinionForm, ArticleForm
 from .generics.realms import RealmBase
 from .models import User, Opinion, Book, Video, Place, Article
 from .signals import signal_new_entity, signal_entity_published

@@ -96,7 +96,7 @@ class DetailsView(RealmView):
         :param request:
         :return:
         """
-        from ..forms import OpinionForm  # Потакаем поведению Django 1.7 при загрузке приложений.
+        from ..forms.forms import OpinionForm  # Потакаем поведению Django 1.7 при загрузке приложений.
         opinion_form = OpinionForm(request.POST or None, user=request.user)
 
         if opinion_form.is_valid():

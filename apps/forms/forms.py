@@ -1,8 +1,8 @@
 from django import forms
 
-from .models import Book, Video, Event, Opinion, User, Article
+from ..models import Book, Video, Event, Opinion, User, Article
+from ..generics.forms import RealmEditBaseForm
 from .widgets import RstEdit, ReadOnly, PlaceWidget
-from .generics.forms import RealmEditBaseForm
 
 
 class OpinionForm(RealmEditBaseForm):
