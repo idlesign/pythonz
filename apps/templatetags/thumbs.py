@@ -31,7 +31,7 @@ def thumbs_get_thumb_url(context, image, width, height, realm, as_=None, as_name
     base_path = os.path.join('img', realm.name_plural, 'thumbs', '%sx%s' % (width, height))
     try:
         thumb_file_base = os.path.join(base_path, os.path.basename(image.path))
-    except ValueError:
+    except (ValueError, AttributeError):
         return get_result('')
     thumb_file = os.path.join(settings.MEDIA_ROOT, thumb_file_base)
 
