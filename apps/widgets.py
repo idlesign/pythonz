@@ -1,15 +1,46 @@
 from django import forms
+from django.forms.widgets import TextInput
 from django.forms.utils import flatatt
 from django.utils.html import format_html, force_text
+
+from .models import Place
 
 
 class ReadOnly(forms.Widget):
     """Представляет поле только для чтения."""
 
+    def value_from_datadict(self, data, files, name):
+        return getattr(self.model, self.field_name)  # Чтобы поле не считалось изменённым.
+
     def render(self, name, value, attrs=None):
         if hasattr(self, 'initial'):
             value = self.initial
         return '%s' % (value or '')
+
+
+class PlaceWidget(TextInput):
+    """Представляет поле для редактирования местом."""
+
+    def render(self, name, value, attrs=None):
+        if value:
+            value = self.model.place.geo_title  # Выводим полное название места.
+        return super().render(name, value, attrs=attrs)
+
+    def value_from_datadict(self, data, files, name):
+        """Здесь получаем из строки наименования места объект места.
+
+        :param data:
+        :param files:
+        :param name:
+        :return:
+        """
+        place_name = data.get(name, None)
+        if not place_name:
+            return ''
+        place = Place.create_place_from_name(place_name)
+        if place is None:
+            return ''
+        return place.id
 
 
 class RstEdit(forms.Widget):
