@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import Book, Video, Event, Opinion, User, Article
-from .widgets import RstEdit
+from .widgets import RstEdit, ReadOnly, PlaceWidget
 from .generics.forms import RealmEditBaseForm
 
 
@@ -118,7 +118,18 @@ class UserForm(RealmEditBaseForm):
             'last_name',
             'email',
             'digest_enabled',
+            'place',
+            'timezone',
             'comments_enabled',
             'disqus_shortname',
             'disqus_category_id',
         )
+        widgets = {
+            'place': PlaceWidget(),
+            'timezone': ReadOnly(),
+        }
+
+    def save(self, commit=True):
+        if 'place' in self.changed_data:
+            self.instance.set_timezone_from_place()
+        super().save(commit=commit)

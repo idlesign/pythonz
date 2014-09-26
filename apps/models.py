@@ -3,7 +3,7 @@ from collections import OrderedDict
 import requests
 from etc.models import InheritedModel
 from sitecats.models import ModelWithCategory
-from django.db import models
+from django.db import models, IntegrityError
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.models import ContentType
@@ -79,7 +79,7 @@ class Place(RealmBaseModel):
     )
 
     user_title = models.CharField('Название', max_length=255)
-    geo_title = models.TextField('Полное название', null=True, blank=True)
+    geo_title = models.TextField('Полное название', null=True, blank=True, unique=True)
     geo_bounds = models.CharField('Пределы', max_length=255, null=True, blank=True)
     geo_pos = models.CharField('Координаты', max_length=255, null=True, blank=True)
     geo_type = models.CharField('Тип', max_length=25, null=True, blank=True, choices=TYPES, db_index=True)
@@ -88,20 +88,57 @@ class Place(RealmBaseModel):
         verbose_name = 'Место'
         verbose_name_plural = 'Места'
 
+    @classmethod
+    def create_place_from_name(cls, name):
+        """Создаёт место по его имени.
+
+        :param name:
+        :return:
+        """
+        from .utils import get_location_data
+        loc_data = get_location_data(name)
+        if loc_data is None:
+            return None
+
+        full_title = loc_data['name']
+        place = cls(
+            user_title=loc_data['requested_name'],
+            geo_title=full_title,
+            geo_bounds=loc_data['bounds'],
+            geo_pos=loc_data['pos'],
+            geo_type=loc_data['type']
+        )
+        try:
+            place.save()
+        except IntegrityError:
+            place = cls.objects.get(geo_title=full_title)
+        return place
+
+    def __unicode__(self):
+        return self.geo_title
+
 
 class User(RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
 
-    place = models.ForeignKey(Place, verbose_name='Место', help_text='Место вашего пребывания (страна, город, село), чтобы pythonz мог фильтровать интересную вам информацию.', related_name='users', null=True, blank=True)
+    place = models.ForeignKey(Place, verbose_name='Место', help_text='Место вашего пребывания (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».', related_name='users', null=True, blank=True)
     digest_enabled = models.BooleanField('Получать дайджест', help_text='Включает/отключает еженедельную рассылку с подборкой новых материалов сайта.', default=True, db_index=True)
     comments_enabled = models.BooleanField('Разрешить комментарии', help_text='Включает/отключает систему комментирования Disqus на страницах ваших публикаций.', default=False)
     disqus_shortname = models.CharField('Идентификатор Disqus', help_text='Короткое имя (shortname), под которым вы зарегистрировали форум на Disqus.', max_length=100, null=True, blank=True)
     disqus_category_id = models.CharField('Идентификатор категории Disqus', help_text='Если ваш форум на Disqus использует категории, можете указать нужный номер здесь. Это не обязательно.', max_length=30, null=True, blank=True)
-    timezone = models.CharField('Часовой пояс', help_text='Название часового пояса. Например: Asia/Novosibirsk.', max_length=150, null=True, blank=True)
+    timezone = models.CharField('Часовой пояс', help_text='Название часового пояса. Например: Asia/Novosibirsk.<br>* Устанавливается автоматически в зависимости от места пребывания (см. выше).', max_length=150, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Персона'
         verbose_name_plural = 'Люди'
+
+    def set_timezone_from_place(self):
+        if self.place is None:
+            self.timezone = None
+            return True
+        from .utils import get_timezone_name
+        lat, lng = reversed(self.place.geo_pos.split(' '))
+        self.timezone = get_timezone_name(lat, lng)
 
     def get_bookmarks(self):
         """Возвращает словарь с избранными пользователем эелементами (закладками).
