@@ -78,6 +78,15 @@ class RealmBase(object):
     view_tags_url = r'^tags/(?P<category_id>\d+)/$'
 
     @classmethod
+    def is_allowed_edit(cls):
+        """Возвращает флаг, указывающий на возможность редактирования объектов
+        в данной области.
+
+        :return:
+        """
+        return 'edit' in cls.allowed_views
+
+    @classmethod
     def get_syndication_feed(cls):
         """Возвращает объект потока синдикации (RSS).
 

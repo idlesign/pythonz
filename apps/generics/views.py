@@ -257,9 +257,9 @@ class DetailsView(RealmView):
             return redirect(item, permanent=True)
 
         try:
-            item_edit_allowed = (request.user.is_superuser or request.user == item.submitter)
+            item_edit_allowed = (self.realm.is_allowed_edit() and (request.user.is_superuser or request.user == item.submitter))
         except AttributeError:
-            item_edit_allowed = (request.user == item)
+            item_edit_allowed = (self.realm.is_allowed_edit() and request.user == item)
 
         if isinstance(item, ModelWithCategory):
             item.has_categories = True
