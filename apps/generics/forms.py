@@ -30,7 +30,15 @@ class RealmEditBaseForm(CommonEntityForm):
                 except KeyError:  # Нет такого поля на форме.
                     pass
 
-        for field in self.fields:
-            if isinstance(self.fields[field].widget, CheckboxInput):
-                self.fields[field].is_checkbox = True
-            self.fields[field].widget.attrs['class'] = 'form-control'
+        instance = kwargs.get('instance', None)
+        for field_name in self.fields:
+            fld = self.fields[field_name]
+
+            # Эти изменения нужны для стилизации форм.
+            if isinstance(self.fields[field_name].widget, CheckboxInput):
+                self.fields[field_name].is_checkbox = True
+            fld.widget.attrs['class'] = 'form-control'
+
+            # Эти связи потребуются в некоторых виджетах.
+            fld.widget.model = instance
+            fld.widget.field_name = field_name
