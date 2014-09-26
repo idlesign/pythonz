@@ -2,17 +2,17 @@
     {% if request.user.is_authenticated %}
         {% if item.my_support %}
             <button id="set_rate" data-xaction="0" data-xtarget="rate_box" data-xsuccess="replace" class="xross btn btn-block btn-success">
-                &nbsp; <span class="label label-success" title="Рейтинг">{{ item.supporters_num|floatformat }}</span> &nbsp; Сбросить оценку &nbsp;
+                &nbsp; <span class="label label-success" title="Рейтинг">{{ item.supporters_num }}</span> &nbsp; Сбросить оценку &nbsp;
             </button>
         {% else %}
             <button id="set_rate" data-xaction="1" data-xtarget="rate_box" data-xsuccess="replace" class="xross btn btn-block btn-default">
-                &nbsp; <span class="label label-success" title="Рейтинг">{{ item.supporters_num|floatformat }}</span> &nbsp; Рекомендую! &nbsp;
+                &nbsp; <span class="label label-success" title="Рейтинг">{{ item.supporters_num }}</span> &nbsp; Рекомендую! &nbsp;
             </button>
         {% endif %}
     {% else %}
         <form action="{% url "login" %}">
             <button class="btn btn-block btn-default">
-                &nbsp; <span class="label label-success" title="Рейтинг">{{ item.supporters_num|floatformat }}</span> &nbsp; Рекомендую! &nbsp;
+                &nbsp; <span class="label label-success" title="Рейтинг">{{ item.supporters_num }}</span> &nbsp; Рекомендую! &nbsp;
             </button>
         </form>
     {% endif %}

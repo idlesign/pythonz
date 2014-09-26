@@ -16,7 +16,7 @@
                 <div class="listing_item small">
                     <a href="{{ user.get_absolute_url }}">{% gravatar_get_img user %}</a>
                     <div class="description">
-                        <a href="{{ user.get_absolute_url }}">{{ user.get_display_name }}</a> <sup>{{ user.supporters_num|floatformat }}</sup>
+                        <a href="{{ user.get_absolute_url }}">{{ user.get_display_name }}</a> <sup title="поддержка">{{ user.supporters_num }}</sup>
                         <div class="small">
                             {{ user.get_username_partial }}
                         </div>
