@@ -79,6 +79,7 @@ class Place(RealmBaseModel, ModelWithOpinions):
     )
 
     title = models.CharField('Название', max_length=255)
+    description = models.TextField('Описание', blank=True, null=True)
     geo_title = models.TextField('Полное название', null=True, blank=True, unique=True)
     geo_bounds = models.CharField('Пределы', max_length=255, null=True, blank=True)
     geo_pos = models.CharField('Координаты', max_length=255, null=True, blank=True)
