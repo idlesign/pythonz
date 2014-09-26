@@ -9,12 +9,6 @@
     <meta property="og:site_name" content="pythonz" />
     <meta property="og:url" content="{{ request.build_absolute_uri }}" />
 
-    {% block head %}
-        {% if realm.syndication_enabled %}
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ realm.get_syndication_url }}" />
-        {% endif %}
-    {% endblock %}
-
     {% block meta_og %}{% endblock %}
 
     <script src="http://yandex.st/jquery/2.1.1/jquery.min.js"></script>
@@ -27,6 +21,12 @@
 
     <link href='http://fonts.googleapis.com/css?family=Belleza' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=PT+Serif&subset=cyrillic' rel='stylesheet' type='text/css'>
+
+    {% block head %}
+        {% if realm.syndication_enabled %}
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ realm.get_syndication_url }}" />
+        {% endif %}
+    {% endblock %}
 
     <title>{% block page_title %}{% sitetree_breadcrumbs from "main" template "sitetree/breadcrumbs-title.html" %}{% endblock %}</title>
 
