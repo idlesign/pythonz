@@ -4,11 +4,12 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 
-from .models import Book, Video, Event, User, Article
+from .models import Book, Video, Event, User, Article, Place
 
 
 ##################################################################################
 # Делаем возможным редактировение пользователей (модель изменена нами) в административной части.
+# Пользователи отобразятся в разделе текущего приложения.
 # Взято из http://stackoverflow.com/a/17496836/308265
 
 
@@ -46,6 +47,16 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(User, UserAdmin)
 
 ##################################################################################
+
+
+class PlaceAdmin(admin.ModelAdmin):
+
+    list_display = ('geo_title', 'title', 'status', 'time_created')
+    search_fields = ['title', 'geo_title']
+    list_filter = ['time_created', 'status', 'geo_type']
+    ordering = ['geo_title']
+
+admin.site.register(Place, PlaceAdmin)
 
 
 class ArticleAdmin(admin.ModelAdmin):
