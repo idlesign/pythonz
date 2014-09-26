@@ -22,7 +22,8 @@
                         {% for place in places %}
                             {{ place.id }}: {
                                 coords: [{{ place.geo_pos }}],
-                                title: '{{ place.title }}'
+                                title: '{{ place.title }}',
+                                link: '<a href="{{ place.get_absolute_url }}">Страница места</a>'
                             }
                             {% if not forloop.last %},{% endif %}
                         {% endfor %}
