@@ -21,6 +21,9 @@ class ReadOnly(forms.Widget):
 class PlaceWidget(TextInput):
     """Представляет поле для редактирования местом."""
 
+    _place_cached = False
+    _place_cache = None
+
     def render(self, name, value, attrs=None):
         if value:
             value = self.model.place.geo_title  # Выводим полное название места.
@@ -37,10 +40,14 @@ class PlaceWidget(TextInput):
         place_name = data.get(name, None)
         if not place_name:
             return ''
-        place = Place.create_place_from_name(place_name)
-        if place is None:
+
+        if not self._place_cached:  # value_from_datadict может быть вызван несколько раз. Кешируем.
+            self._place_cached = True
+            self._place_cache = Place.create_place_from_name(place_name)
+
+        if self._place_cache is None:
             return ''
-        return place.id
+        return self._place_cache.id
 
 
 class RstEdit(forms.Widget):
