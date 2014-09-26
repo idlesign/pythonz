@@ -2,7 +2,25 @@
 {% load sitecats %}
 
 
-{% block details_linked %}{% endblock %}
+{% block head %}
+    {{ block.super }}
+    <script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+{% endblock %}
+
+
+{% block cover %}
+    <div id="cover_map" style="width: 260px; height: 300px;"></div>
+    <script type="text/javascript">
+        ymaps.ready(function() {
+            var pos = [{{ item.geo_pos }}],
+                title = '{{ item.title }}',
+                cover_map = new ymaps.Map('cover_map', {center: pos, zoom: 2, controls: ['zoomControl']}),
+                place_mark = new ymaps.Placemark(pos, {iconContent: title}, {preset: 'islands#darkBlueStretchyIcon'});
+            cover_map.geoObjects.add(place_mark);
+        });
+    </script>
+{% endblock %}
+
 
 {% block details_contents_after %}
     <div class="marg__b_mid marg__t_min">
@@ -16,3 +34,5 @@
     {% endif %}
     </div>
 {% endblock %}
+
+{% block details_linked %}{% endblock %}
