@@ -1,5 +1,6 @@
-from django.utils import timezone
 from pytz import UnknownTimeZoneError
+from django.utils import timezone
+from django.contrib.auth.models import AnonymousUser
 
 
 class TimezoneMiddleware(object):
@@ -10,7 +11,7 @@ class TimezoneMiddleware(object):
         current_timezone = default_timezone
 
         user = getattr(request, 'user', None)
-        if user is not None and user.is_authenticated:
+        if user is not None and not isinstance(user, AnonymousUser):
             if user.timezone:
                 current_timezone = user.timezone
 
