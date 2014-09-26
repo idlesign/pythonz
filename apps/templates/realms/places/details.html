@@ -1,0 +1,16 @@
+{% extends "base_details.html" %}
+{% load sitecats %}
+
+
+{% block details_linked %}{% endblock %}
+
+{% block details_contents %}
+    {% if users %}
+        <h4>Люди</h4>
+        <ul>
+        {% for user in users %}
+            <li><a href="{{ user.get_absolute_url }}">{{ user.get_display_name }}</a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

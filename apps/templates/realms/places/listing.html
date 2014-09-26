@@ -1,0 +1,47 @@
+{% extends "_base.html" %}
+
+
+{% block head %}
+    {{ block.super }}
+    <script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+{% endblock %}
+
+{% block page_contents %}
+    <div class="row">
+        <div class="col-md-12">
+            {% include "sub_title_block.html" %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {% if places %}
+                <div id="map" style="width: 100%; height: 350px;"></div>
+                <script type="text/javascript">
+                    var places = {
+                        {% for place in places %}
+                            {{ place.id }}: {
+                                coords: [{{ place.geo_pos }}],
+                                title: '{{ place.title }}'
+                            }
+                            {% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                        };
+
+                    $(function(){
+                        new pythonz.Map('map', places);
+                    });
+                </script>
+                <ul class="marg__t_max">
+                    {% for place in places %}
+                        <li>
+                            <a href="{{ place.get_absolute_url }}">{{ place.title }}</a> <sup title="поддержка">{{ place.supporters_num }}</sup>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="jumbotron">Как только нам будет, что вам показать, здесь появится карта местности.</div>
+            {% endif %}
+        </div>
+    </div>
+{%  endblock %}

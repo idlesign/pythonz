@@ -4,11 +4,11 @@ from django.conf.urls import patterns, url
 from sitetree.utils import tree, item
 from sitecats.models import Category
 
-from .forms import BookForm, VideoForm, EventForm, UserForm, OpinionForm, ArticleForm
+from .forms import BookForm, VideoForm, UserForm, OpinionForm, ArticleForm
 from .generics.realms import RealmBase
-from .models import User, Opinion, Book, Video, Event, Place, Article
+from .models import User, Opinion, Book, Video, Place, Article
 from .signals import signal_new_entity, signal_entity_published
-from .views import UserDetailsView, CategoryListingView
+from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView
 from .zen import *  # Регистрируем блок сайта с дзеном
 
 
@@ -182,15 +182,21 @@ class ArticleRealm(RealmBase):
     icon = 'file'
 
 
-# class PlaceRealm(RealmBase):
-#     """
-#     Область с [географическими] местами.
-#     """
-#     txt_promo = 'В какую точку земного шара ни ткни, почти наверняка там найдутся интересные люди. Отправлятесь искать клад.'
-#
-#     model = Place
-#     form = VideoForm
-#     icon = 'globe'
+class PlaceRealm(RealmBase):
+    """
+    Область с географическими объектами (местами).
+    """
+    txt_promo = 'В какую точку земного шара ни ткни, почти наверняка там найдутся интересные люди, события, места. Вот вам карта.'
+
+    model = Place
+    form = VideoForm
+    icon = 'picture'
+    allowed_views = ('listing', 'details')
+    ready_for_digest = False
+    sitemap_enabled = False
+    syndication_enabled = False
+    view_listing_base_class = PlaceListingView
+    view_details_base_class = PlaceDetailsView
 
 
 class OpinionRealm(RealmBase):
@@ -253,4 +259,4 @@ class CategoryRealm(RealmBase):
         return item('Категория «{{ category.parent.title }} — {{ category.title }}»', 'categories:details category.id', in_menu=False, in_sitetree=False)
 
 
-register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, UserRealm, OpinionRealm)
+register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, PlaceRealm, UserRealm, OpinionRealm)

@@ -9,6 +9,7 @@ from django.views.defaults import page_not_found as dj_page_not_found, \
     server_error as dj_server_error
 
 from .generics.views import DetailsView, RealmView
+from .models import Place, User
 
 
 class UserDetailsView(DetailsView):
@@ -18,6 +19,24 @@ class UserDetailsView(DetailsView):
     def _update_context(self, context):
         user = context['item']
         context['bookmarks'] = user.get_bookmarks()  # TODO проверить наполнение, возможно убрать области без закладок
+
+
+class PlaceDetailsView(DetailsView):
+    """Перекрываем представление с детальной информацией,
+    чтобы поместить в контекст шаблона дополнительную информацию."""
+
+    def _update_context(self, context):
+        place = context['item']
+        users = User.get_actual().filter(place=place)
+        context['users'] = users
+
+
+class PlaceListingView(RealmView):
+    """Представление с картой и списком всех известных мест."""
+
+    def get(self, request):
+        places = Place.get_actual().order_by('-supporters_num')
+        return self.render(request, {self.realm.name_plural: places})
 
 
 class CategoryListingView(RealmView):
