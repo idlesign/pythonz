@@ -65,7 +65,7 @@ class ModelWithOpinions(models.Model):
         abstract = True
 
 
-class Place(RealmBaseModel):
+class Place(RealmBaseModel, ModelWithOpinions):
     """Географическое место. Для людей, событий и пр."""
 
     TYPE_COUNTRY = 'country'
@@ -78,7 +78,7 @@ class Place(RealmBaseModel):
         (TYPE_HOUSE, 'Здание'),
     )
 
-    user_title = models.CharField('Название', max_length=255)
+    title = models.CharField('Название', max_length=255)
     geo_title = models.TextField('Полное название', null=True, blank=True, unique=True)
     geo_bounds = models.CharField('Пределы', max_length=255, null=True, blank=True)
     geo_pos = models.CharField('Координаты', max_length=255, null=True, blank=True)
@@ -102,7 +102,7 @@ class Place(RealmBaseModel):
 
         full_title = loc_data['name']
         place = cls(
-            user_title=loc_data['requested_name'],
+            title=loc_data['requested_name'],
             geo_title=full_title,
             geo_bounds=loc_data['bounds'],
             geo_pos=loc_data['pos'],
