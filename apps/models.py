@@ -137,7 +137,7 @@ class User(RealmBaseModel, AbstractUser):
             self.timezone = None
             return True
         from .utils import get_timezone_name
-        lat, lng = reversed(self.place.geo_pos.split(' '))
+        lat, lng = self.place.geo_pos.split(',')
         self.timezone = get_timezone_name(lat, lng)
 
     def get_bookmarks(self):

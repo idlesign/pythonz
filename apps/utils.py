@@ -145,7 +145,7 @@ def get_location_data(location_name):
     :return:
     """
 
-    url = 'http://geocode-maps.yandex.ru/1.x/?results=1&format=json&geocode=%s' % location_name
+    url = 'http://geocode-maps.yandex.ru/1.x/?results=1&sco=latlong&format=json&geocode=%s' % location_name
     try:
         result = requests.get(url)
         doc = result.json()
@@ -165,7 +165,7 @@ def get_location_data(location_name):
         'type': object_metadata_dict['kind'],
         'name': object_metadata_dict['text'],
         'country': object_metadata_dict['AddressDetails']['Country']['CountryName'],
-        'pos': object_dict['Point']['pos'],
+        'pos': object_dict['Point']['pos'].replace(' ', ','),
         'bounds': '%s|%s' % (object_bounds_dict['lowerCorner'], object_bounds_dict['upperCorner']),
     }
 
