@@ -348,12 +348,14 @@ class EditView(RealmView):
                 item.submitter = request.user
                 item.save()
                 form.save_m2m()
+                message_success(request, 'Материал добавлен.')
+                if not self.realm.model in (User, Article, Opinion):
+                    message_info(request, 'Материал появится на сайте после модерации.')
+                return redirect(item, permanent=True)
             else:
                 form.save()
-                message_success(request, 'Спасибо за участие!')
-                if not self.realm.model in (User, Article, Opinion):
-                    message_info(request, 'Материал зарегистрирован и появится на сайте после модерации.')
-            return redirect(item, permanent=True)
+                message_success(request, 'Данные сохранены.')
+                return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 
         return self.render(request, {'form': form, self.realm.name: item, 'item': item})
 

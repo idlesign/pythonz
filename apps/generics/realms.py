@@ -159,13 +159,22 @@ class RealmBase(object):
         return item('{{ %s.title }}' % realm_name, '%s %s.id' % (cls.get_details_urlname(), realm_name), children=children, in_menu=False, in_sitetree=False)
 
     @classmethod
+    def get_edit_urlname(cls):
+        """Возвращает название URL страницы редактирования объекта.
+
+        :return:
+        """
+        _tmp, realm_name_plural = cls.get_names()
+        return '%s:edit' % realm_name_plural
+
+    @classmethod
     def get_sitetree_edit_item(cls):
         """Возвращает элемент древа сайта, указывающий на страницу редактирования объекта.
 
         :return:
         """
-        realm_name, realm_name_plural = cls.get_names()
-        return item(cls.txt_form_edit, '%s:edit %s.id' % (realm_name_plural, realm_name), in_menu=False, in_sitetree=False, access_loggedin=True)
+        realm_name, _tmp = cls.get_names()
+        return item(cls.txt_form_edit, '%s %s.id' % (cls.get_edit_urlname(), realm_name), in_menu=False, in_sitetree=False, access_loggedin=True)
 
     @classmethod
     def get_sitetree_add_item(cls):
