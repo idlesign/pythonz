@@ -115,7 +115,7 @@ def get_image_from_url(url):
 
 
 def get_timezone_name(lat, lng):
-    """Возвращает имя часового пояса по геокоординатам.
+    """Возвращает имя часового пояса по геокоординатам, либо None.
     Использует Сервис Google Time Zone API.
 
     :param lat: широта
@@ -128,30 +128,40 @@ def get_timezone_name(lat, lng):
         'ts': timezone.now().timestamp(),
         'api_key': settings.GOOGLE_API_KEY,
     }
-    result = requests.get(url)
-
-    doc = result.json()
-    tz_name = doc['timeZoneId']
+    try:
+        result = requests.get(url)
+        doc = result.json()
+        tz_name = doc['timeZoneId']
+    except Exception:
+        return None
     return tz_name
 
 
 def get_location_data(location_name):
-    """Возвращает геоданные об объекте по его имени, используя API Яндекс.Карт.
+    """Возвращает геоданные об объекте по его имени, либо None.
+    Использует API Яндекс.Карт.
 
     :param location_name:
     :return:
     """
 
     url = 'http://geocode-maps.yandex.ru/1.x/?results=1&format=json&geocode=%s' % location_name
-    result = requests.get(url)
+    try:
+        result = requests.get(url)
+        doc = result.json()
+    except Exception:
+        return None
 
-    doc = result.json()
+    found = doc['response']['GeoObjectCollection']['metaDataProperty']['GeocoderResponseMetaData']['found']
+    if not int(found):
+        return None
 
     object_dict = doc['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
     object_bounds_dict = object_dict['boundedBy']['Envelope']
     object_metadata_dict = object_dict['metaDataProperty']['GeocoderMetaData']
 
     location_data = {
+        'requested_name': location_name,
         'type': object_metadata_dict['kind'],
         'name': object_metadata_dict['text'],
         'country': object_metadata_dict['AddressDetails']['Country']['CountryName'],
