@@ -2,7 +2,7 @@ from django import forms
 
 from ..models import Book, Video, Event, Opinion, User, Article
 from ..generics.forms import RealmEditBaseForm
-from .widgets import RstEdit, ReadOnly, PlaceWidget
+from .widgets import RstEditWidget, ReadOnlyWidget, PlaceWidget
 
 
 class OpinionForm(RealmEditBaseForm):
@@ -11,7 +11,7 @@ class OpinionForm(RealmEditBaseForm):
         model = Opinion
         fields = ('text_src',)
         labels = {'text_src': ''}
-        widgets = {'text_src': RstEdit(attrs={'rows': 15})}
+        widgets = {'text_src': RstEditWidget(attrs={'rows': 15})}
 
 
 class ArticleForm(RealmEditBaseForm):
@@ -30,7 +30,7 @@ class ArticleForm(RealmEditBaseForm):
         }
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3}),
-            'text_src': RstEdit(attrs={'rows': 25}),
+            'text_src': RstEditWidget(attrs={'rows': 25}),
         }
 
 
@@ -126,7 +126,7 @@ class UserForm(RealmEditBaseForm):
         )
         widgets = {
             'place': PlaceWidget(),
-            'timezone': ReadOnly(),
+            'timezone': ReadOnlyWidget(),
         }
 
     def save(self, commit=True):

@@ -6,7 +6,7 @@ from django.utils.html import format_html, force_text
 from ..models import Place
 
 
-class ReadOnly(forms.Widget):
+class ReadOnlyWidget(forms.Widget):
     """Представляет поле только для чтения."""
 
     def value_from_datadict(self, data, files, name):
@@ -50,7 +50,7 @@ class PlaceWidget(TextInput):
         return self._place_cache.id
 
 
-class RstEdit(forms.Widget):
+class RstEditWidget(forms.Widget):
     """Реализует виджет для редактирования и предпросмотра текста в rst-подобном формате."""
 
     def __init__(self, attrs=None):
