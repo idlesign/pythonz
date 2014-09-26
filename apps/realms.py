@@ -192,9 +192,7 @@ class PlaceRealm(RealmBase):
     form = VideoForm
     icon = 'picture'
     allowed_views = ('listing', 'details')
-    ready_for_digest = False
-    sitemap_enabled = False
-    syndication_enabled = False
+    sitemap_changefreq = 'monthly'
     view_listing_base_class = PlaceListingView
     view_details_base_class = PlaceDetailsView
 
