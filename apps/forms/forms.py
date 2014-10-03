@@ -86,7 +86,7 @@ class VideoForm(RealmEditBaseForm):
         }
 
     def clean_url(self):
-        from .utils import PROJECT_SOURCE_URL  # Потакаем поведению Django 1.7 при загрузке приложений.
+        from ..utils import PROJECT_SOURCE_URL  # Потакаем поведению Django 1.7 при загрузке приложений.
         url = self.cleaned_data['url']
         if not Video.get_hosting_for_url(url):
             raise forms.ValidationError('К сожалению, мы не умеем работать с этим видео-хостингом. Если знаете, как это исправить, приходите <a href="%s">сюда</a>.' % PROJECT_SOURCE_URL)
