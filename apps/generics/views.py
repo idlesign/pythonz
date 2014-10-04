@@ -352,19 +352,15 @@ class EditView(RealmView):
 
         if form.is_valid():
             if item is None:
-                item = form.save(commit=False)
-                item.submitter = request.user
-                item.save()
-                form.save_m2m()
+                form.instance.submitter = request.user
+                item = form.save()
                 message_success(request, 'Объект добавлен.')
                 if show_modetation_hint:
                     message_info(request, 'Данный объект появится на сайте после модерации.')
                 return redirect(item, permanent=True)
             else:
-                item = form.save(commit=False)
-                item.last_editor = request.user
-                item.save()
-                form.save_m2m()
+                form.instance.last_editor = request.user
+                form.save()
                 message_success(request, 'Данные сохранены.')
                 return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 
