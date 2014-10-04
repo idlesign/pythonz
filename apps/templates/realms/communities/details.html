@@ -12,7 +12,7 @@
     <div class="text-muted marg__b_mid">
         {% if community.url %}<div><a href="{{ community.url }}">{{ community.url }}</a></div>{% endif %}
         {% if community.place %}<div>Место: <a href="{{ community.place.get_absolute_url }}">{{ community.place.title }}</a></div>{% endif %}
-        <div class="py_user">Контактные лица: {{ community.contacts }}</div>
+        {% if community.contacts %}<div class="py_user">Контактные лица: {{ community.contacts }}</div>{% endif %}
     </div>
 
     <div class="py_user marg__b_mid well">
