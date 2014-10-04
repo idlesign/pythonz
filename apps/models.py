@@ -128,6 +128,8 @@ class User(RealmBaseModel, AbstractUser):
     disqus_shortname = models.CharField('Идентификатор Disqus', help_text='Короткое имя (shortname), под которым вы зарегистрировали форум на Disqus.', max_length=100, null=True, blank=True)
     disqus_category_id = models.CharField('Идентификатор категории Disqus', help_text='Если ваш форум на Disqus использует категории, можете указать нужный номер здесь. Это не обязательно.', max_length=30, null=True, blank=True)
     timezone = models.CharField('Часовой пояс', help_text='Название часового пояса. Например: Asia/Novosibirsk.<br>* Устанавливается автоматически в зависимости от места пребывания (см. выше).', max_length=150, null=True, blank=True)
+    url = models.URLField('Страница в сети', null=True, blank=True)
+    email_public = models.EmailField('Почта', help_text='Адрес электронной почты для показа посетителям сайта.', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Персона'

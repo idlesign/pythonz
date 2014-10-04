@@ -19,6 +19,13 @@
         <small>
             <span class="marg__r_mid">Имя пользователя: {{ user.get_username_partial }}</span>
             <span class="marg__r_mid">Дата регистрации: {{ user.date_joined }}</span>
+            {% if user.email_public %}
+                <span class="marg__r_mid">Эл. почта: <a href="mailto:{{ user.email_public }}">{{ user.email_public }}</a></span>
+            {% endif %}
+            <br>
+            {% if user.url %}
+                <span class="marg__r_mid"><a href="{{ user.url }}">{{ user.url }}</a></span>
+            {% endif %}
         </small>
     </div>
     <div class="marg__t_max">

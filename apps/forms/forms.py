@@ -116,7 +116,8 @@ class UserForm(RealmEditBaseForm):
         fields = (
             'first_name',
             'last_name',
-            'email',
+            'url',
+            'email_public',
             'digest_enabled',
             'place',
             'timezone',

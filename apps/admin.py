@@ -40,8 +40,12 @@ class UserAdmin(BaseUserAdmin):
 
     fieldsets = BaseUserAdmin.fieldsets + ((None, {'fields': (
             'comments_enabled',
+            'digest_enabled',
             'disqus_shortname',
             'disqus_category_id',
+            'timezone',
+            'url',
+            'email_public'
     )}),)
 
 admin.site.register(User, UserAdmin)
