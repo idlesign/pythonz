@@ -305,20 +305,6 @@ class EditView(RealmView):
         if obj_id is not None:
             item = self.get_object_or_404(obj_id)
 
-        xross_listener(item=item)
-
-        from sitecats.toolbox import get_category_aliases_under
-        if isinstance(item, ModelWithCategory):
-            item.has_categories = True
-            category_handled = item.enable_category_lists_editor(request,
-                                additional_parents_aliases=get_category_aliases_under(),
-                                handler_init_kwargs={'error_messages_extra_tags': 'alert alert-danger'},
-                                lists_init_kwargs={'show_title': True, 'cat_html_class': 'label label-default'},
-                                editor_init_kwargs={'allow_add': True, 'allow_new': request.user.is_superuser, 'allow_remove': True,})
-
-            if category_handled:  # Добавилась категория, перенаправим на эту же страницу.
-                return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
-
         data = request.POST or None
         form = self.realm.form(data, request.FILES or None, instance=item, user=request.user)
         if item is None:
@@ -340,6 +326,20 @@ class EditView(RealmView):
                     raise PermissionDenied()
 
             form.submit_title = self.realm.txt_form_edit
+
+        xross_listener(item=item)
+
+        from sitecats.toolbox import get_category_aliases_under
+        if isinstance(item, ModelWithCategory):
+            item.has_categories = True
+            category_handled = item.enable_category_lists_editor(request,
+                                additional_parents_aliases=get_category_aliases_under(),
+                                handler_init_kwargs={'error_messages_extra_tags': 'alert alert-danger'},
+                                lists_init_kwargs={'show_title': True, 'cat_html_class': 'label label-default'},
+                                editor_init_kwargs={'allow_add': True, 'allow_new': request.user.is_superuser, 'allow_remove': True,})
+
+            if category_handled:  # Добавилась категория, перенаправим на эту же страницу.
+                return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 
         if data is None:
             if not self.realm.model in (User, Article, Opinion):
