@@ -124,7 +124,7 @@ class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpin
 
     place = models.ForeignKey(Place, verbose_name='Место', help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».', related_name='communities', null=True, blank=True)
     url = models.URLField('Страница в сети', null=True, blank=True)
-    contacts = models.CharField('Контактные лица', help_text='Контактные лица через запятую, представляющие сообщество, координаторы, основатели.%s' % ModelWithAuthorAndTranslator._hint_userlink, max_length=255)
+    contacts = models.CharField('Контактные лица', help_text='Контактные лица через запятую, представляющие сообщество, координаторы, основатели.%s' % ModelWithAuthorAndTranslator._hint_userlink, null=True, blank=True, max_length=255)
 
     class Meta:
         verbose_name = 'Сообщество'
