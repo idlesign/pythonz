@@ -310,11 +310,14 @@ class EditView(RealmView):
         from sitecats.toolbox import get_category_aliases_under
         if isinstance(item, ModelWithCategory):
             item.has_categories = True
-            item.enable_category_lists_editor(request,
+            category_handled = item.enable_category_lists_editor(request,
                                 additional_parents_aliases=get_category_aliases_under(),
                                 handler_init_kwargs={'error_messages_extra_tags': 'alert alert-danger'},
                                 lists_init_kwargs={'show_title': True, 'cat_html_class': 'label label-default'},
                                 editor_init_kwargs={'allow_add': True, 'allow_new': request.user.is_superuser, 'allow_remove': True,})
+
+            if category_handled:  # Добавилась категория, перенаправим на эту же страницу.
+                return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 
         data = request.POST or None
         form = self.realm.form(data, request.FILES or None, instance=item, user=request.user)
