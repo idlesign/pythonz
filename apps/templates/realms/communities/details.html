@@ -1,0 +1,31 @@
+{% extends "base_details.html" %}
+
+
+{% block meta_og %}
+    <meta property="og:type" content="object" />
+    <meta property="og:title" content="{{ community.title }}" />
+    {{ block.super }}
+{% endblock %}
+
+
+{% block details_contents_after %}
+    <div class="text-muted marg__b_mid">
+        {% if community.url %}<div><a href="{{ community.url }}">{{ community.url }}</a></div>{% endif %}
+        {% if community.place %}<div>Место: <a href="{{ community.place.get_absolute_url }}">{{ community.place.title }}</a></div>{% endif %}
+        <div class="py_user">Контактные лица: {{ community.contacts }}</div>
+    </div>
+
+    <div class="py_user marg__b_mid well">
+        {{ community.text|safe }}
+    </div>
+
+    <div class="text-muted pull-right">
+        <small>
+            {% if community.time_modified %}
+                <abbr title="Автор и дата последнего редактирования">ред.</abbr>
+                <a href="{{ community.last_editor.get_absolute_url }}">{{ community.last_editor.get_display_name }}</a>
+                {{ community.time_modified }}
+            {% endif %}
+        </small>
+    </div>
+{% endblock %}

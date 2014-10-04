@@ -1,6 +1,6 @@
 from django import forms
 
-from ..models import Book, Video, Event, Opinion, User, Article
+from ..models import Book, Video, Event, Opinion, User, Article, Community
 from ..generics.forms import RealmEditBaseForm
 from .widgets import RstEditWidget, ReadOnlyWidget, PlaceWidget
 
@@ -134,3 +134,24 @@ class UserForm(RealmEditBaseForm):
         if 'place' in self.changed_data:
             self.instance.set_timezone_from_place()
         super().save(commit=commit)
+
+
+class CommunityForm(RealmEditBaseForm):
+
+    class Meta:
+        model = Community
+        fields = (
+            'title',
+            'url',
+            'description',
+            'text_src',
+            'contacts',
+            'place',
+            'year',
+            'status',
+        )
+        widgets = {
+            'place': PlaceWidget(),
+            'text_src': RstEditWidget(attrs={'rows': 10})
+        }
+

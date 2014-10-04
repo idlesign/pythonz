@@ -1,0 +1,38 @@
+{% extends "_base.html" %}
+
+
+{% block page_contents %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {% include "sub_title_block.html" %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            {% if communities %}
+                <ul>
+                {% for community in communities %}
+                    <li class="marg__b_mid">
+                        <h4><a href="{{ community.get_absolute_url }}">{{ community.title }}</a></h4>
+                        <div class="marg__b_min"><i>{{ community.description }}</i></div>
+                        <small class="text-muted">
+                            <span class="label label-success">Поддержка: {{ community.supporters_num }}</span> &nbsp;&nbsp;
+                            {% if community.url %}
+                                <span>Сайт: <a href="{{ community.url }}">{{ community.url }}</a></span>
+                            {% endif %}
+                        </small>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <div class="alert alert-info">Нет сообществ для отображения.</div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% include "sub_paginator.html" with paginator=communities %}
+{%  endblock %}

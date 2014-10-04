@@ -23,15 +23,30 @@
 
 
 {% block details_contents_after %}
-    <div class="marg__b_mid marg__t_min">
+    <div class="marg__b_mid marg__t_mid">
+
     {% if users %}
-        <h4>Люди</h4>
-        <ul>
-        {% for user in users %}
-            <li><a href="{{ user.get_absolute_url }}">{{ user.get_display_name }}</a></li>
-        {% endfor %}
-        </ul>
+        <div>
+            <h4>Люди</h4>
+            <ul>
+            {% for user in users %}
+                <li><a href="{{ user.get_absolute_url }}">{{ user.get_display_name }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
     {% endif %}
+
+    {% if communities %}
+        <div>
+            <h4>Сообщества</h4>
+            <ul>
+            {% for community in communities %}
+                <li><a href="{{ community.get_absolute_url }}">{{ community.title }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
     </div>
 {% endblock %}
 

@@ -9,7 +9,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from .models import ModelWithCompiledText, RealmBaseModel
-from ..models import ModelWithOpinions, ModelWithCategory, User, Opinion, Article
+from ..models import ModelWithOpinions, ModelWithCategory, User, Opinion, Article, Community
 from ..exceptions import RedirectRequired
 from ..shortcuts import message_warning, message_success, message_info
 
@@ -298,6 +298,23 @@ class EditView(RealmView):
         if item is None or isinstance(item, ModelWithCompiledText):
             return HttpResponse(ModelWithCompiledText.compile_text(text_src))
 
+    def check_edit_permissions(self, request, item):
+        """Производит проверку прав пользователя для доступа к редактированию объекта.
+
+        :param Request request:
+        :param Model item:
+        :return:
+        """
+        # Редактирование объектов разрешено их создателям и суперпользвоателям.
+        if item.submitter != request.user and not request.user.is_superuser:
+            raise PermissionDenied()
+
+        # Запрещаем редактирование опубликованных материалов.
+        if not request.user.is_superuser and item.status == RealmBaseModel.STATUS_PUBLISHED and \
+                not self.realm.model in (Article, Opinion, Community):
+            message_warning(request, 'Этот материал уже прошёл модерацию и был опубликован. На данный момент в проекте запрещено редактирование опубликованных материалов.')
+            raise PermissionDenied()
+
     @xross_view(preview_rst)
     def get(self, request, obj_id=None):
         item = None
@@ -310,21 +327,7 @@ class EditView(RealmView):
         if item is None:
             form.submit_title = self.realm.txt_form_add
         else:
-
-            if self.realm.model == User:
-                # Редактировать пользователей могут только пользователи.
-                if item != request.user:
-                    raise PermissionDenied()
-            else:
-                # Редактирование объектов разрешено их создателям и суперпользвоателям.
-                if item.submitter != request.user and not request.user.is_superuser:
-                    raise PermissionDenied()
-
-                # Запрещаем редактирование опубликованных материалов.
-                if not request.user.is_superuser and item.status == RealmBaseModel.STATUS_PUBLISHED and not self.realm.model in (Article, Opinion):
-                    message_warning(request, 'Этот материал уже прошёл модерацию и был опубликован. На данный момент в проекте запрещено редактирование опубликованных материалов.')
-                    raise PermissionDenied()
-
+            self.check_edit_permissions(request, item)
             form.submit_title = self.realm.txt_form_edit
 
         xross_listener(item=item)
@@ -341,8 +344,10 @@ class EditView(RealmView):
             if category_handled:  # Добавилась категория, перенаправим на эту же страницу.
                 return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 
+        show_modetation_hint = self.realm.model not in (User, Article, Opinion, Community)
+
         if data is None:
-            if not self.realm.model in (User, Article, Opinion):
+            if show_modetation_hint:
                 message_warning(request, 'Обратите внимание, что на данном этапе развития проекта добавляемые материалы проходят модерацию, прежде чем появиться на сайте.')
 
         if form.is_valid():
@@ -351,12 +356,15 @@ class EditView(RealmView):
                 item.submitter = request.user
                 item.save()
                 form.save_m2m()
-                message_success(request, 'Материал добавлен.')
-                if not self.realm.model in (User, Article, Opinion):
-                    message_info(request, 'Материал появится на сайте после модерации.')
+                message_success(request, 'Объект добавлен.')
+                if show_modetation_hint:
+                    message_info(request, 'Данный объект появится на сайте после модерации.')
                 return redirect(item, permanent=True)
             else:
-                form.save()
+                item = form.save(commit=False)
+                item.last_editor = request.user
+                item.save()
+                form.save_m2m()
                 message_success(request, 'Данные сохранены.')
                 return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 

@@ -3,13 +3,14 @@ from sitegate.signup_flows.classic import SimpleClassicWithEmailSignup
 from sitecats.toolbox import get_category_model, get_category_lists, get_category_aliases_under
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django.views.defaults import page_not_found as dj_page_not_found, \
     permission_denied as dj_permission_denied, \
     server_error as dj_server_error
 
-from .generics.views import DetailsView, RealmView
-from .models import Place, User
+from .generics.views import DetailsView, RealmView, EditView
+from .models import Place, User, Community
 
 
 class UserDetailsView(DetailsView):
@@ -21,14 +22,31 @@ class UserDetailsView(DetailsView):
         context['bookmarks'] = user.get_bookmarks()  # TODO проверить наполнение, возможно убрать области без закладок
 
 
+class UserEditView(EditView):
+    """Перекрытое представление редактирования."""
+
+    def check_edit_permissions(self, request, item):
+        # Пользователи не могут редактировать других пользователей.
+        if item != request.user:
+            raise PermissionDenied()
+
+
+class CommunityEditView(EditView):
+    """Перекрываем представление редактирования."""
+
+    def check_edit_permissions(self, request, item):
+        # Убирает тиранскую проверку прав.
+        pass
+
+
 class PlaceDetailsView(DetailsView):
     """Перекрываем представление с детальной информацией,
     чтобы поместить в контекст шаблона дополнительную информацию."""
 
     def _update_context(self, context):
         place = context['item']
-        users = User.get_actual().filter(place=place)
-        context['users'] = users
+        context['users'] = User.get_actual().filter(place=place)
+        context['communities'] = Community.get_actual().filter(place=place)
 
 
 class PlaceListingView(RealmView):

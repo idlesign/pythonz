@@ -119,6 +119,31 @@ class Place(RealmBaseModel, ModelWithOpinions):
         return self.geo_title
 
 
+class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithCompiledText):
+    """Модель сообществ. Формально объединяет некоторую группу людей."""
+
+    place = models.ForeignKey(Place, verbose_name='Место', help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».', related_name='communities', null=True, blank=True)
+    url = models.URLField('Страница в сети', null=True, blank=True)
+    contacts = models.CharField('Контактные лица', help_text='Контактные лица через запятую, представляющие сообщество, координаторы, основатели.%s' % ModelWithAuthorAndTranslator._hint_userlink, max_length=255)
+
+    class Meta:
+        verbose_name = 'Сообщество'
+        verbose_name_plural = 'Сообщества'
+
+    class Fields:
+        title = 'Название сообщества'
+        text_src = 'Описание, контактная информация'
+        description = {
+            'verbose_name': 'Кратко',
+            'help_text': 'Сжатая предварительная информация о сообществе, например, направление деятельности.',
+        }
+        linked = {
+            'verbose_name': 'Связанные сообщества',
+            'help_text': 'Выберите сообщества, имеющие отношение к данному.',
+        }
+        year = 'Год образования'
+
+
 class User(RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
 

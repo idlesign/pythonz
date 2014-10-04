@@ -4,11 +4,12 @@ from django.conf.urls import patterns, url
 from sitetree.utils import tree, item
 from sitecats.models import Category
 
-from .forms.forms import BookForm, VideoForm, UserForm, OpinionForm, ArticleForm
+from .forms.forms import BookForm, VideoForm, UserForm, OpinionForm, ArticleForm, CommunityForm
 from .generics.realms import RealmBase
-from .models import User, Opinion, Book, Video, Place, Article
+from .models import User, Opinion, Book, Video, Place, Article, Community
 from .signals import signal_new_entity, signal_entity_published
-from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView
+from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, \
+    CommunityEditView, UserEditView
 from .zen import *  # Регистрируем блок сайта с дзеном
 
 
@@ -228,6 +229,7 @@ class UserRealm(RealmBase):
     syndication_enabled = False
     sitemap_date_field = 'date_joined'
     view_details_base_class = UserDetailsView
+    view_edit_base_class = UserEditView
 
     @classmethod
     def get_sitetree_details_item(cls):
@@ -257,4 +259,21 @@ class CategoryRealm(RealmBase):
         return item('Категория «{{ category.parent.title }} — {{ category.title }}»', 'categories:details category.id', in_menu=False, in_sitetree=False)
 
 
-register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, PlaceRealm, UserRealm, OpinionRealm)
+class CommunityRealm(RealmBase):
+    """
+    Область с сообществами.
+    """
+
+    txt_promo = 'Чтобы общаться, узнавать новое и развиваться, люди часто объединяются в сообщества по интересам. Всптупайте в имеющиеся, создавайте свои.'
+    txt_form_add = 'Зарегистрировать сообщество'
+    txt_form_edit = 'Редактировать сообщество'
+
+    name = 'community'
+    name_plural = 'communities'
+    model = Community
+    form = CommunityForm
+    icon = 'home'
+    sitemap_changefreq = 'daily'
+    view_edit_base_class = CommunityEditView
+
+register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, PlaceRealm, CommunityRealm, UserRealm, OpinionRealm)
