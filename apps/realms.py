@@ -99,7 +99,9 @@ def build_sitetree():
     register_dynamic_trees(
         compose_dynamic_tree((
             tree('main', 'Основное дерево', (
-                item('PYTHONZ', '/', alias='topmenu', url_as_pattern=False, children=(realm.get_sitetree_items() for realm in get_realms())),
+                item('PYTHONZ', '/', alias='topmenu', url_as_pattern=False,
+                     description='Материалы по языку программирования Python. Книги, видео, сообщества и многое другое.',
+                     children=(realm.get_sitetree_items() for realm in get_realms())),
                 item('Вход', 'login', access_guest=True, in_menu=False, in_breadcrumbs=False),
                 item('Личное меню', '#', alias='personal', url_as_pattern=False, access_loggedin=True, in_menu=False, in_sitetree=False, children=(
                     item('Профиль', 'users:details request.user.id', access_loggedin=True, in_breadcrumbs=False, in_sitetree=False),
@@ -109,14 +111,17 @@ def build_sitetree():
 
             )),
             tree('about', 'О проекте', (
-                item('Что такое Python', '/promo/', url_as_pattern=False),
-                item('О проекте', '/about/', url_as_pattern=False),
-                item('Карта сайта', '/sitemap/', url_as_pattern=False),
+                item('Что такое Python', '/promo/', description='Краткие сведения о языке программирования Python.', url_as_pattern=False),
+                item('О проекте', '/about/', description='Информация о проекте pythonz.net.', url_as_pattern=False),
+                item('Карта сайта', '/sitemap/', description='Список разделов проекта pythonz.net.', url_as_pattern=False),
                 item('Поиск по сайту', '/search/', url_as_pattern=False),
             ))
         )),
         reset_cache=True
     )
+
+
+BASE_KEYWORDS = 'pythonz, pythonz.net, python, питон, programming, прораммирование, разработка,'
 
 
 class BookRealm(RealmBase):
@@ -127,6 +132,9 @@ class BookRealm(RealmBase):
     txt_promo = 'Времена и люди сменяют друг друга, а книги остаются. Взгляните на них &#8211; фолианты, книжицы и книжонки. Ходят слухи, что здесь можно отыскать даже гримуары.'
     txt_form_add = 'Добавить книгу'
     txt_form_edit = 'Изменить данные книги'
+
+    view_listing_description = 'Книги по прораммированию на языке Python. И просто книги по программированию.'
+    view_listing_keywords = '%s книга, books, книги по программированию на питоне' % BASE_KEYWORDS
 
     model = Book
     form = BookForm
@@ -141,6 +149,9 @@ class VideoRealm(RealmBase):
     txt_promo = 'Видео уникально в плане возможностей по усвоению материала: оно заставляет смотреть, слушать, и даже читать. Попробуйте, вам должно понравится.'
     txt_form_add = 'Добавить видео'
     txt_form_edit = 'Изменить данные видео'
+
+    view_listing_description = 'Видео. Лекции, курсы, доклады, связанные с языком программирования Python.'
+    view_listing_keywords = '%s видео, videos, видео по программированию на питоне' % BASE_KEYWORDS
 
     model = Video
     form = VideoForm
@@ -178,6 +189,9 @@ class ArticleRealm(RealmBase):
     txt_form_add = 'Написать статью'
     txt_form_edit = 'Редактировать статью'
 
+    view_listing_description = 'Статьи, связанные с языком программирования Python.'
+    view_listing_keywords = '%s статья, заметки, articles, статьи по программированию на питоне' % BASE_KEYWORDS
+
     model = Article
     form = ArticleForm
     icon = 'file'
@@ -188,6 +202,9 @@ class PlaceRealm(RealmBase):
     Область с географическими объектами (местами).
     """
     txt_promo = 'В какую точку земного шара ни ткни, почти наверняка там найдутся интересные люди, события, места. Вот вам карта.'
+
+    view_listing_description = 'Места, так или иначе связанные с языком программирования Python.'
+    view_listing_keywords = '%s место, местность, город, село, places, места где программируют на питоне' % BASE_KEYWORDS
 
     model = Place
     form = VideoForm
@@ -207,6 +224,9 @@ class OpinionRealm(RealmBase):
     txt_form_add = 'Добавить мнение'
     txt_form_edit = 'Изменить мнение'
 
+    view_listing_description = 'Мнения пользователей о материалах на сайте pythonz.net.'
+    view_listing_keywords = '%s мнение, opinions, мнения о программировании на питоне' % BASE_KEYWORDS
+
     model = Opinion
     form = OpinionForm
     icon = 'comment'
@@ -221,6 +241,9 @@ class UserRealm(RealmBase):
 
     txt_promo = 'Вокруг люди &#8211; это они пишут статьи и книги, организовывают встречи и делятся мнениями, это они могут помочь, подсказать, научить. Здесь упомянуты некоторые.'
     txt_form_edit = 'Изменить настройки'
+
+    view_listing_description = 'Люди, связанные с языком программирования Python.'
+    view_listing_keywords = '%s персона, человек, пользователь, users, программист на питоне' % BASE_KEYWORDS
 
     model = User
     form = UserForm
@@ -242,6 +265,9 @@ class CategoryRealm(RealmBase):
     """
 
     txt_promo = 'Если всё разложить по полочкам, вероятность найти нужное возрастает. На наших полочках сплошь нужные вещи.'
+
+    view_listing_description = 'Категории материалов, связанных с языком программирования Python, представленных на pythonz.net.'
+    view_listing_keywords = '%s категория, метка, categories, материалы по питону' % BASE_KEYWORDS
 
     model = Category
     icon = 'tag'
@@ -268,6 +294,9 @@ class CommunityRealm(RealmBase):
     txt_form_add = 'Зарегистрировать сообщество'
     txt_form_edit = 'Редактировать сообщество'
 
+    view_listing_description = 'Сообщества людей интересующихся и занимающихся программированием на языке Python.'
+    view_listing_keywords = '%s сообщество, люди, community, сообщества питон' % BASE_KEYWORDS
+
     name = 'community'
     name_plural = 'communities'
     model = Community
@@ -275,5 +304,6 @@ class CommunityRealm(RealmBase):
     icon = 'home'
     sitemap_changefreq = 'daily'
     view_edit_base_class = CommunityEditView
+
 
 register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, PlaceRealm, CommunityRealm, UserRealm, OpinionRealm)

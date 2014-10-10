@@ -56,6 +56,8 @@ class RealmBase(object):
     view_listing = None
     view_listing_base_class = ListingView
     view_listing_url = r'^$'
+    view_listing_description = ''
+    view_listing_keywords = ''
 
     # Представление с детальной информацией.
     view_details = None
@@ -135,7 +137,7 @@ class RealmBase(object):
 
         :return:
         """
-        return item('Список', cls.get_listing_urlname(), in_menu=False)
+        return item('Список', cls.get_listing_urlname(), description=cls.view_listing_description, in_menu=False)
 
     @classmethod
     def get_details_urlname(cls):
@@ -211,6 +213,7 @@ class RealmBase(object):
         if cls.sitetree_items is None:
             cls.sitetree_items = item(
                 str(cls.model._meta.verbose_name_plural), cls.get_listing_urlname(),
+                description=cls.view_listing_description,
                 children=[getattr(cls, 'get_sitetree_%s_item' % view_name)() for view_name in cls.allowed_views if view_name != 'edit']
             )
         return cls.sitetree_items
