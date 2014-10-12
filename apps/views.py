@@ -21,6 +21,9 @@ class UserDetailsView(DetailsView):
         user = context['item']
         context['bookmarks'] = user.get_bookmarks()  # TODO проверить наполнение, возможно убрать области без закладок
 
+    def get_object_or_404(self, obj_id):
+        return get_object_or_404(self.realm.model.objects.select_related('place'), pk=obj_id)
+
 
 class UserEditView(EditView):
     """Перекрытое представление редактирования."""

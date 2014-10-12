@@ -17,15 +17,32 @@
 {% block details_contents %}
     <div class="marg__b_mid text-muted">
         <small>
-            <span class="marg__r_mid">Имя пользователя: {{ user.get_username_partial }}</span>
-            <span class="marg__r_mid">Дата регистрации: {{ user.date_joined }}</span>
+            <table>
+                <tr>
+                    <td colspan="2">
+                        <span class="marg__r_mid">Имя пользователя: {{ user.get_username_partial }}</span>
+                        <span class="marg__r_mid">Дата регистрации: {{ user.date_joined }}</span>
+                    </td>
+                </tr>
+            {% if user.place %}
+                <tr>
+                    <td width="15%">Место:</td>
+                    <td><a href="{{ user.place.get_absolute_url }}">{{ user.place.title }}</a></td>
+                </tr>
+            {% endif %}
             {% if user.email_public %}
-                <span class="marg__r_mid">Эл. почта: <a href="mailto:{{ user.email_public }}">{{ user.email_public }}</a></span>
+                <tr>
+                    <td>Эл. почта:</td>
+                    <td><a href="mailto:{{ user.email_public }}">{{ user.email_public }}</a></td>
+                </tr>
             {% endif %}
-            <br>
             {% if user.url %}
-                <span class="marg__r_mid"><a href="{{ user.url }}">{{ user.url }}</a></span>
+                <tr>
+                    <td>Сайт:</td>
+                    <td><a href="{{ user.url }}">{{ user.url }}</a></td>
+                </tr>
             {% endif %}
+            </table>
         </small>
     </div>
     <div class="marg__t_max">
