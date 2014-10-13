@@ -34,6 +34,9 @@ class RealmEditBaseForm(CommonEntityForm):
         for field_name in self.fields:
             fld = self.fields[field_name]
 
+            if field_name == 'description':
+                fld.widget = forms.Textarea(attrs={'rows': 3})
+
             # Эти изменения нужны для стилизации форм.
             if isinstance(self.fields[field_name].widget, CheckboxInput):
                 self.fields[field_name].is_checkbox = True
