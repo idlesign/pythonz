@@ -4,9 +4,9 @@ from django.conf.urls import patterns, url
 from sitetree.utils import tree, item
 from sitecats.models import Category
 
-from .forms.forms import BookForm, VideoForm, UserForm, OpinionForm, ArticleForm, CommunityForm
+from .forms.forms import BookForm, VideoForm, UserForm, OpinionForm, ArticleForm, CommunityForm, EventForm
 from .generics.realms import RealmBase
-from .models import User, Opinion, Book, Video, Place, Article, Community
+from .models import User, Opinion, Book, Video, Place, Article, Community, Event
 from .signals import signal_new_entity, signal_entity_published
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, \
     CommunityEditView, UserEditView
@@ -158,19 +158,19 @@ class VideoRealm(RealmBase):
     icon = 'film'
 
 
-# class EventRealm(RealmBase):
-#     """
-#     Область с событиями.
-#     """
-#
-#     txt_promo = 'События разнообразят жизнь: встречи, лекции, беседы, обмен опытом позволяют расширить кругозор, установить связи, приятно провести время. Приобщайтесь.'
-#     txt_form_add = 'Добавить событие'
-#     txt_form_edit = 'Изменить событие'
-#
-#     model = Event
-#     form = EventForm
-#     icon = 'calendar'
-#     sitemap_changefreq = 'daily'
+class EventRealm(RealmBase):
+    """
+    Область с событиями.
+    """
+
+    txt_promo = 'События разнообразят жизнь: встречи, лекции, беседы, обмен опытом позволяют расширить кругозор, установить связи, приятно провести время. Приобщайтесь.'
+    txt_form_add = 'Добавить событие'
+    txt_form_edit = 'Изменить событие'
+
+    model = Event
+    form = EventForm
+    icon = 'calendar'
+    sitemap_changefreq = 'daily'
 
 
 # class OpeningRealm(RealmBase):
@@ -306,4 +306,4 @@ class CommunityRealm(RealmBase):
     view_edit_base_class = CommunityEditView
 
 
-register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, PlaceRealm, CommunityRealm, UserRealm, OpinionRealm)
+register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, PlaceRealm, EventRealm, CommunityRealm, UserRealm, OpinionRealm)

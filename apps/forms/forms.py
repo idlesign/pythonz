@@ -103,10 +103,20 @@ class EventForm(RealmEditBaseForm):
         model = Event
         fields = (
             'title',
-            'cover',
             'type',
+            'url',
+            'time_start',
+            'time_finish',
+            'description',
+            'cover',
+            'contacts',
+            'place',
             'text_src',
         )
+        widgets = {
+            'place': PlaceWidget(),
+            'text_src': RstEditWidget(attrs={'rows': 10})
+        }
 
 
 class UserForm(RealmEditBaseForm):

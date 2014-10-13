@@ -4,7 +4,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 
-from .models import Book, Video, Event, User, Article, Place
+from .models import Book, Video, Event, User, Article, Place, Community
 
 
 ##################################################################################
@@ -83,11 +83,21 @@ class BookAdmin(admin.ModelAdmin):
 admin.site.register(Book, BookAdmin)
 
 
+class CommunityAdmin(admin.ModelAdmin):
+
+    list_display = ('time_created', 'title', 'submitter')
+    search_fields = ['title', 'description']
+    list_filter = ['time_created', 'status']
+    ordering = ['-time_created']
+
+admin.site.register(Community, CommunityAdmin)
+
+
 class EventAdmin(admin.ModelAdmin):
 
-    list_display = ('time_created', 'title', 'submitter',)
-    search_fields = ['title']
-    list_filter = ['time_created', 'status']
+    list_display = ('time_created', 'title', 'submitter', 'type')
+    search_fields = ['title', 'description', 'text']
+    list_filter = ['time_created', 'status', 'type']
     ordering = ['-time_created']
 
 admin.site.register(Event, EventAdmin)

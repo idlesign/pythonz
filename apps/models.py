@@ -122,7 +122,8 @@ class Place(RealmBaseModel, ModelWithOpinions):
 class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithCompiledText):
     """Модель сообществ. Формально объединяет некоторую группу людей."""
 
-    place = models.ForeignKey(Place, verbose_name='Место', help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».', related_name='communities', null=True, blank=True)
+    place = models.ForeignKey(Place, verbose_name='Место', related_name='communities', null=True, blank=True,
+        help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
     url = models.URLField('Страница в сети', null=True, blank=True)
     contacts = models.CharField('Контактные лица', help_text='Контактные лица через запятую, представляющие сообщество, координаторы, основатели.%s' % ModelWithAuthorAndTranslator._hint_userlink, null=True, blank=True, max_length=255)
 
@@ -341,18 +342,6 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions
         self.update_cover_from_url(cover_url)
 
 
-class EventDetails(models.Model):
-    """Модель детальной информации для сущности `Событие`."""
-
-    place = models.ForeignKey(Place, verbose_name='Место', related_name='events')
-    time_start = models.DateTimeField('Начало', null=True)
-    time_finish = models.DateTimeField('Завершение', null=True)
-
-    class Meta:
-        verbose_name = 'Деталь события'
-        verbose_name_plural = 'Детали событий'
-
-
 class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCompiledText):
     """Модель сущности `Событие`."""
 
@@ -366,8 +355,13 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions
         (TYPE_CONFERENCE, 'Конференция'),
     )
 
+    url = models.URLField('Страница в сети', null=True, blank=True)
+    contacts = models.CharField('Контактные лица', help_text='Контактные лица через запятую, координирующие/устраивающие событие.%s' % ModelWithAuthorAndTranslator._hint_userlink, null=True, blank=True, max_length=255)
     type = models.PositiveIntegerField('Тип', choices=TYPES, default=TYPE_MEETING)
-    details = models.ManyToManyField(EventDetails, verbose_name='Место и время', null=True, blank=True)
+    time_start = models.DateTimeField('Начало', null=True, blank=True)
+    time_finish = models.DateTimeField('Завершение', null=True, blank=True)
+    place = models.ForeignKey(Place, verbose_name='Место', related_name='events', null=True, blank=True,
+          help_text='Укажите место проведения мероприятия.<br><b>Конкретный адрес следует указывать в описании.</b><br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
 
     class Meta:
         verbose_name = 'Событие'
@@ -376,3 +370,4 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions
     class Fields:
         text = 'Описание'
         text_src = 'Описание'
+        cover = 'Логотип'
