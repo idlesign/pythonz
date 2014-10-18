@@ -98,6 +98,12 @@ class VideoForm(RealmEditBaseForm):
         return super().save(*args, **kwargs)
 
 
+CALENDAR_OPTIONS = {
+    'todayHighlight': True,
+    'weekStart': 1
+}
+
+
 class EventForm(RealmEditBaseForm):
 
     class Meta:
@@ -119,8 +125,8 @@ class EventForm(RealmEditBaseForm):
         widgets = {
             'place': PlaceWidget(),
             'text_src': RstEditWidget(attrs={'rows': 10}),
-            'time_start': DateTimeWidget(usel10n=True, bootstrap_version=3),
-            'time_finish': DateTimeWidget(usel10n=True, bootstrap_version=3),
+            'time_start': DateTimeWidget(usel10n=True, options=CALENDAR_OPTIONS, bootstrap_version=3),
+            'time_finish': DateTimeWidget(usel10n=True, options=CALENDAR_OPTIONS, bootstrap_version=3),
         }
 
 
