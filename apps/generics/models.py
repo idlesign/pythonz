@@ -20,8 +20,11 @@ class ModelWithAuthorAndTranslator(models.Model):
 
     _hint_userlink = '<br><b>[u:<ид>:<имя>]</b> формирует ссылку на профиль пользователя pythonz. Например: [u:1:идле].'
 
-    author = models.CharField('Автор', help_text='Предпочтительно имя и фамилия. Можно указать несколько, разделяя запятыми.%s' % _hint_userlink, max_length=255)
-    translator = models.CharField('Перевод', help_text='Укажите переводчиков, если материал переведён на русский с другого языка. Если переводчик неизвестен, можно указать главного редактора.%s' % _hint_userlink, max_length=255, blank=True, null=True)
+    author = models.CharField('Автор', max_length=255,
+                              help_text='Предпочтительно имя и фамилия. Можно указать несколько, разделяя запятыми.%s' % _hint_userlink)
+
+    translator = models.CharField('Перевод', max_length=255, blank=True, null=True,
+                                  help_text='Укажите переводчиков, если материал переведён на русский с другого языка. Если переводчик неизвестен, можно указать главного редактора.%s' % _hint_userlink)
 
     class Meta:
         abstract = True
@@ -98,9 +101,11 @@ class CommonEntityModel(models.Model):
     title = models.CharField('Название', max_length=255, unique=True)
     description = models.TextField('Описание', blank=False, null=False)
     submitter = models.ForeignKey(USER_MODEL, related_name='%(class)s_submitters', verbose_name='Добавил')
-    linked = models.ManyToManyField('self', verbose_name='Связанные объекты', help_text='Выберите объекты, имеющие отношение к данному.', blank=True)
     cover = models.ImageField('Обложка', max_length=255, upload_to=get_upload_to, null=True, blank=True)
     year = models.CharField('Год', max_length=10, null=True, blank=True)
+
+    linked = models.ManyToManyField('self', verbose_name='Связанные объекты', blank=True,
+                                    help_text='Выберите объекты, имеющие отношение к данному.')
 
     class Meta:
         abstract = True
@@ -159,7 +164,9 @@ class RealmBaseModel(ModelWithFlag):
     time_modified = models.DateTimeField('Дата редактирования', null=True, editable=False)
     status = models.PositiveIntegerField('Статус', choices=STATUSES, default=STATUS_DRAFT)
     supporters_num = models.PositiveIntegerField('Количество поддержавших', default=0)
-    last_editor = models.ForeignKey(USER_MODEL, related_name='%(class)s_editors', verbose_name='Редактор', help_text='Пользователь, последним отредактировавший объект.', null=True, blank=True)
+
+    last_editor = models.ForeignKey(USER_MODEL, verbose_name='Редактор', related_name='%(class)s_editors', null=True, blank=True,
+                                    help_text='Пользователь, последним отредактировавший объект.')
 
     class Meta:
         abstract = True
@@ -230,6 +237,7 @@ class RealmBaseModel(ModelWithFlag):
 
         :return:
         """
+        # TODO не использовать related там, где не нужно
         return cls.objects.select_related('submitter').filter(status=cls.STATUS_PUBLISHED).order_by('-supporters_num', '-time_created').all()
 
     def get_linked(self):

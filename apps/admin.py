@@ -85,7 +85,7 @@ admin.site.register(Book, BookAdmin)
 
 class CommunityAdmin(admin.ModelAdmin):
 
-    list_display = ('time_created', 'title', 'submitter')
+    list_display = ('time_created', 'title', 'submitter', 'status')
     search_fields = ['title', 'description']
     list_filter = ['time_created', 'status']
     ordering = ['-time_created']
@@ -95,9 +95,9 @@ admin.site.register(Community, CommunityAdmin)
 
 class EventAdmin(admin.ModelAdmin):
 
-    list_display = ('time_created', 'title', 'submitter', 'type')
+    list_display = ('time_created', 'title', 'status', 'submitter', 'type', 'specialization')
     search_fields = ['title', 'description', 'text']
-    list_filter = ['time_created', 'status', 'type']
+    list_filter = ['time_created', 'status', 'type', 'specialization']
     ordering = ['-time_created']
 
 admin.site.register(Event, EventAdmin)

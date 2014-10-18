@@ -9,9 +9,12 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from .models import ModelWithCompiledText, RealmBaseModel
-from ..models import ModelWithOpinions, ModelWithCategory, User, Opinion, Article, Community
+from ..models import ModelWithOpinions, ModelWithCategory, User, Opinion, Article, Community, Event
 from ..exceptions import RedirectRequired
 from ..shortcuts import message_warning, message_success, message_info
+
+# todo рефакторить шаблоны списков.
+# todo применять базовые правила типографики к тестам.
 
 
 class RealmView(View):
@@ -311,7 +314,7 @@ class EditView(RealmView):
 
         # Запрещаем редактирование опубликованных материалов.
         if not request.user.is_superuser and item.status == RealmBaseModel.STATUS_PUBLISHED and \
-                not self.realm.model in (Article, Opinion, Community):
+                not self.realm.model in (Article, Opinion, Community, Event):
             message_warning(request, 'Этот материал уже прошёл модерацию и был опубликован. На данный момент в проекте запрещено редактирование опубликованных материалов.')
             raise PermissionDenied()
 
@@ -344,7 +347,7 @@ class EditView(RealmView):
             if category_handled:  # Добавилась категория, перенаправим на эту же страницу.
                 return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 
-        show_modetation_hint = self.realm.model not in (User, Article, Opinion, Community)
+        show_modetation_hint = self.realm.model not in (User, Article, Opinion, Community, Event)
 
         if data is None:
             if show_modetation_hint:

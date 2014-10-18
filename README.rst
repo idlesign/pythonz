@@ -61,6 +61,7 @@ https://github.com/idlesign/pythonz
 *Приложения для Django*
 
 * `django-debug-toolbar <https://github.com/django-debug-toolbar/django-debug-toolbar>`_
+* `django-datetime-widget <https://github.com/asaglimbeni/django-datetime-widget>`_
 * `django-admirarchy <https://github.com/idlesign/django-admirarchy>`_
 * `django-siteblocks <https://github.com/idlesign/django-siteblocks>`_
 * `django-sitecats <https://github.com/idlesign/django-sitecats>`_

@@ -1,31 +1,58 @@
 {% extends "base_details.html" %}
-{% load goodreads %}
 
 
 {% block meta_og %}
-    <meta property="og:type" content="book" />
-    <meta property="og:title" content="{{ book.title }}" />
-    <meta property="og:author" content="{{ book.author }}" />
-    <meta property="og:release_date" content="{{ book.year }}" />
-    <meta property="og:isbn" content="{{ book.isbn|default:book.isbn_ebook }}" />
+    <meta property="og:type" content="event" />
+    <meta property="og:title" content="{{ event.title }}" />
     {{ block.super }}
 {% endblock %}
 
 
 {% block details_contents %}
-    <small>
-        <div class="marg__b_mid text-muted">
-            <span class="marg__r_mid">Автор: {{ book.author }}</span>
-            <span class="marg__r_mid">Год: {{ book.year }}</span>
-            {% if book.isbn or book.isbn_ebook %}
-                <span>
-                    {% if book.isbn %}<span class="marg__r_mid">ISBN {% goodreads_get_search_tag book.isbn %}: {{ book.isbn }}</span>{% endif %}
-                    {% if book.isbn_ebook %}<span class="marg__r_mid">ISBN эл.{% goodreads_get_search_tag book.isbn_ebook %}: {{ book.isbn_ebook }}</span>{% endif %}
-                </span>
+    <div class="marg__b_mid">
+        <h4>
+            {{ event.get_display_type }} <span class="cl__gray">&#8212; {{ event.get_display_specialization }}</span>
+            <div class="pull-right">
+            {% if event.fee %}
+                <span class="label label-danger" title="За участие взымается плата">Платно</span>
+            {% else %}
+                <span class="label label-success" title="Участие беслатное">Бесплатно</span>
             {% endif %}
-            {%  if book.translator %}
-                Перевод: {{ book.translator }}
+            </div>
+        </h4>
+        <div class="small">
+            {% if event.place %}
+                <div><a href="{{ event.place.get_absolute_url }}">{{ event.place.title }}</a></div>
+            {% endif %}
+            {% if event.time_start %}
+                {{ event.time_start|date:"d E H:i" }}
+                {% if event.time_finish %}
+                    &#8212; {{ event.time_finish|date:"d E H:i" }}
+                {% endif %}
+                <span class="cl__gray">&nbsp; [{{ event.time_start|timeuntil }} до начала]</span>
             {% endif %}
         </div>
-    </small>
-{%  endblock %}
+    </div>
+{% endblock %}
+
+
+{% block details_contents_after %}
+    <div class="text-muted marg__b_mid small">
+        {% if event.url %}<div><a href="{{ event.url }}">{{ event.url }}</a></div>{% endif %}
+        {% if event.contacts %}<div class="py_user">Контактные лица: {{ event.contacts }}</div>{% endif %}
+    </div>
+
+    <div class="py_user marg__b_mid">
+        {{ event.text|safe }}
+    </div>
+
+    <div class="text-muted pull-right">
+        <small>
+            {% if event.time_modified %}
+                <abbr title="Автор и дата последнего редактирования">ред.</abbr>
+                <a href="{{ event.last_editor.get_absolute_url }}">{{ event.last_editor.get_display_name }}</a>
+                {{ event.time_modified }}
+            {% endif %}
+        </small>
+    </div>
+{% endblock %}

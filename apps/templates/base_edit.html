@@ -1,6 +1,10 @@
 {% extends "_base.html" %}
 {% load thumbs sitecats %}
 
+{% block head %}
+    {{ form.media }}
+{% endblock %}
+
 {% block page_contents %}
 
     <div class="row">

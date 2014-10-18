@@ -1,4 +1,5 @@
 from django import forms
+from datetimewidget.widgets import DateTimeWidget
 
 from ..models import Book, Video, Event, Opinion, User, Article, Community
 from ..generics.forms import RealmEditBaseForm
@@ -104,6 +105,8 @@ class EventForm(RealmEditBaseForm):
         fields = (
             'title',
             'type',
+            'specialization',
+            'fee',
             'url',
             'time_start',
             'time_finish',
@@ -115,7 +118,9 @@ class EventForm(RealmEditBaseForm):
         )
         widgets = {
             'place': PlaceWidget(),
-            'text_src': RstEditWidget(attrs={'rows': 10})
+            'text_src': RstEditWidget(attrs={'rows': 10}),
+            'time_start': DateTimeWidget(usel10n=True, bootstrap_version=3),
+            'time_finish': DateTimeWidget(usel10n=True, bootstrap_version=3),
         }
 
 

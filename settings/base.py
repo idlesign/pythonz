@@ -70,10 +70,11 @@ STATICFILES_FINDERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'apps.middleware.TimezoneMiddleware',
 )
 
@@ -108,7 +109,9 @@ INSTALLED_APPS = (
     'siteprefs',
     'sitemessage',
     'xross',
-    'etc'
+    'etc',
+
+    'datetimewidget',
 )
 
 

@@ -2,6 +2,7 @@ Django>=1.7
 Pillow
 bleach
 django-admirarchy
+django-datetime-widget
 django-debug-toolbar
 django-etc
 django-siteblocks

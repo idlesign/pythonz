@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 import requests
 from etc.models import InheritedModel
+from etc.toolbox import choices_list, get_choices
 from sitecats.models import ModelWithCategory
 from django.db import models, IntegrityError
 from django.conf import settings
@@ -123,9 +124,12 @@ class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpin
     """Модель сообществ. Формально объединяет некоторую группу людей."""
 
     place = models.ForeignKey(Place, verbose_name='Место', related_name='communities', null=True, blank=True,
-        help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
+                              help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
+
+    contacts = models.CharField('Контактные лица', null=True, blank=True, max_length=255,
+                                help_text='Контактные лица через запятую, представляющие сообщество, координаторы, основатели.%s' % ModelWithAuthorAndTranslator._hint_userlink)
+
     url = models.URLField('Страница в сети', null=True, blank=True)
-    contacts = models.CharField('Контактные лица', help_text='Контактные лица через запятую, представляющие сообщество, координаторы, основатели.%s' % ModelWithAuthorAndTranslator._hint_userlink, null=True, blank=True, max_length=255)
 
     class Meta:
         verbose_name = 'Сообщество'
@@ -148,14 +152,28 @@ class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpin
 class User(RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
 
-    place = models.ForeignKey(Place, verbose_name='Место', help_text='Место вашего пребывания (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».', related_name='users', null=True, blank=True)
-    digest_enabled = models.BooleanField('Получать дайджест', help_text='Включает/отключает еженедельную рассылку с подборкой новых материалов сайта.', default=True, db_index=True)
-    comments_enabled = models.BooleanField('Разрешить комментарии', help_text='Включает/отключает систему комментирования Disqus на страницах ваших публикаций.', default=False)
-    disqus_shortname = models.CharField('Идентификатор Disqus', help_text='Короткое имя (shortname), под которым вы зарегистрировали форум на Disqus.', max_length=100, null=True, blank=True)
-    disqus_category_id = models.CharField('Идентификатор категории Disqus', help_text='Если ваш форум на Disqus использует категории, можете указать нужный номер здесь. Это не обязательно.', max_length=30, null=True, blank=True)
-    timezone = models.CharField('Часовой пояс', help_text='Название часового пояса. Например: Asia/Novosibirsk.<br>* Устанавливается автоматически в зависимости от места пребывания (см. выше).', max_length=150, null=True, blank=True)
+    place = models.ForeignKey(Place, verbose_name='Место', related_name='users', null=True, blank=True,
+                              help_text='Место вашего пребывания (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
+
+    digest_enabled = models.BooleanField('Получать дайджест', default=True, db_index=True,
+                                         help_text='Включает/отключает еженедельную рассылку с подборкой новых материалов сайта.')
+
+    comments_enabled = models.BooleanField('Разрешить комментарии',
+                                           help_text='Включает/отключает систему комментирования Disqus на страницах ваших публикаций.', default=False)
+
+    disqus_shortname = models.CharField('Идентификатор Disqus', max_length=100, null=True, blank=True,
+                                        help_text='Короткое имя (shortname), под которым вы зарегистрировали форум на Disqus.')
+
+    disqus_category_id = models.CharField('Идентификатор категории Disqus', max_length=30, null=True, blank=True,
+                                          help_text='Если ваш форум на Disqus использует категории, можете указать нужный номер здесь. Это не обязательно.')
+
+    timezone = models.CharField('Часовой пояс', max_length=150, null=True, blank=True,
+                                help_text='Название часового пояса. Например: Asia/Novosibirsk.<br>* Устанавливается автоматически в зависимости от места пребывания (см. выше).')
+
+    email_public = models.EmailField('Почта', null=True, blank=True,
+                                     help_text='Адрес электронной почты для показа посетителям сайта.')
+
     url = models.URLField('Страница в сети', null=True, blank=True)
-    email_public = models.EmailField('Почта', help_text='Адрес электронной почты для показа посетителям сайта.', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Персона'
@@ -345,29 +363,58 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions
 class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCompiledText):
     """Модель сущности `Событие`."""
 
+
+    SPEC_DEDICATED = 1
+    SPEC_HAS_SECTION = 2
+    SPEC_HAS_SOME = 3
+
+    SPECS = choices_list(
+        (SPEC_DEDICATED, 'Только Python'),
+        (SPEC_HAS_SECTION, 'Есть секция/отделение про Python'),
+        (SPEC_HAS_SOME, 'Есть упоминания про Python'),
+    )
+
     TYPE_MEETING = 1
     TYPE_CONFERENCE = 2
     TYPE_LECTURE = 3
 
-    TYPES = (
+    TYPES = choices_list(
         (TYPE_MEETING, 'Встреча'),
         (TYPE_LECTURE, 'Лекция'),
         (TYPE_CONFERENCE, 'Конференция'),
     )
 
     url = models.URLField('Страница в сети', null=True, blank=True)
-    contacts = models.CharField('Контактные лица', help_text='Контактные лица через запятую, координирующие/устраивающие событие.%s' % ModelWithAuthorAndTranslator._hint_userlink, null=True, blank=True, max_length=255)
-    type = models.PositiveIntegerField('Тип', choices=TYPES, default=TYPE_MEETING)
-    time_start = models.DateTimeField('Начало', null=True, blank=True)
-    time_finish = models.DateTimeField('Завершение', null=True, blank=True)
+
+    contacts = models.CharField('Контактные лица', null=True, blank=True, max_length=255,
+                                help_text='Контактные лица через запятую, координирующие/устраивающие событие.%s' % ModelWithAuthorAndTranslator._hint_userlink)
+
     place = models.ForeignKey(Place, verbose_name='Место', related_name='events', null=True, blank=True,
-          help_text='Укажите место проведения мероприятия.<br><b>Конкретный адрес следует указывать в описании.</b><br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
+                              help_text='Укажите место проведения мероприятия.<br><b>Конкретный адрес следует указывать в описании.</b><br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
+
+    specialization = models.PositiveIntegerField('Специализация', choices=get_choices(SPECS), default=SPEC_DEDICATED)
+    type = models.PositiveIntegerField('Тип', choices=get_choices(TYPES), default=TYPE_MEETING)
+    time_start = models.DateTimeField('Начало', null=True, blank=True)
+    time_finish = models.DateTimeField('Завершение', null=True, blank=True,
+                                       help_text='Дату завершения можно и не указывать.')
+    fee = models.BooleanField('Участие платное', default=False, db_index=True)
 
     class Meta:
         verbose_name = 'Событие'
         verbose_name_plural = 'События'
 
     class Fields:
+        description = 'Краткое описание'
         text = 'Описание'
         text_src = 'Описание'
         cover = 'Логотип'
+
+    def get_display_type(self):
+        return self.TYPES[self.type]
+
+    def get_display_specialization(self):
+        return self.SPECS[self.specialization]
+
+    @classmethod
+    def get_paginator_objects(cls):
+        return cls.objects.filter(status=cls.STATUS_PUBLISHED).order_by('-time_start', '-supporters_num', '-time_created').all()

@@ -9,7 +9,7 @@
 
 
 {% block details_contents_after %}
-    <div class="text-muted marg__b_mid">
+    <div class="text-muted marg__b_mid small">
         {% if community.url %}<div><a href="{{ community.url }}">{{ community.url }}</a></div>{% endif %}
         {% if community.place %}<div>Место: <a href="{{ community.place.get_absolute_url }}">{{ community.place.title }}</a></div>{% endif %}
         {% if community.contacts %}<div class="py_user">Контактные лица: {{ community.contacts }}</div>{% endif %}
