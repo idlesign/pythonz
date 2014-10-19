@@ -1,4 +1,5 @@
 {% extends "base_details.html" %}
+{% load model_field %}
 
 
 {% block meta_og %}
@@ -16,10 +17,10 @@
     </div>
     <div class="marg__b_mid text-muted">
         <small>
-            <span class="marg__r_mid py_user">Автор: {{ video.author }}</span>
-            <span class="marg__r_mid">Год: {{ video.year }}</span>
+            <span class="marg__r_mid py_user">{% model_field_verbose_name from video.author %}: {{ video.author }}</span>
+            <span class="marg__r_mid">{% model_field_verbose_name from video.year %}: {{ video.year }}</span>
             {%  if video.translator %}
-                <span class="py_user">Перевод/озвучание: {{ video.translator }}</span>
+                <span class="py_user">{% model_field_verbose_name from video.translator %}: {{ video.translator }}</span>
             {% endif %}
         </small>
     </div>

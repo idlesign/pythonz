@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-
+{% load model_field %}
 
 {% block page_keywords %}{{ realm.view_listing_keywords }}{% endblock %}
 
@@ -22,9 +22,9 @@
                         <h4><a href="{{ community.get_absolute_url }}">{{ community.title }}</a></h4>
                         <div class="marg__b_min"><i>{{ community.description }}</i></div>
                         <small class="text-muted">
-                            <span class="label label-default">Поддержка: {{ community.supporters_num }}</span> &nbsp;&nbsp;
+                            <span class="label label-default">{% model_field_verbose_name from community.supporters_num %}: {{ community.supporters_num }}</span> &nbsp;&nbsp;
                             {% if community.url %}
-                                <span>Сайт: <a href="{{ community.url }}">{{ community.url }}</a></span>
+                                <span>{% model_field_verbose_name from community.url %}: <a href="{{ community.url }}">{{ community.url }}</a></span>
                             {% endif %}
                         </small>
                     </li>

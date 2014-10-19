@@ -1,5 +1,5 @@
 {% extends "base_details.html" %}
-{% load gravatar sitetree %}
+{% load gravatar sitetree model_field %}
 
 
 {% block meta_og %}
@@ -20,25 +20,25 @@
             <table>
                 <tr>
                     <td colspan="2">
-                        <span class="marg__r_mid">Имя пользователя: {{ user.get_username_partial }}</span>
-                        <span class="marg__r_mid">Дата регистрации: {{ user.date_joined }}</span>
+                        <span class="marg__r_mid">{% model_field_verbose_name from user.username %}: {{ user.get_username_partial }}</span>
+                        <span class="marg__r_mid">{% model_field_verbose_name from user.date_joined %}: {{ user.date_joined }}</span>
                     </td>
                 </tr>
             {% if user.place %}
                 <tr>
-                    <td width="15%">Место:</td>
+                    <td width="25%">{% model_field_verbose_name from user.place %}:</td>
                     <td><a href="{{ user.place.get_absolute_url }}">{{ user.place.title }}</a></td>
                 </tr>
             {% endif %}
             {% if user.email_public %}
                 <tr>
-                    <td>Эл. почта:</td>
+                    <td width="25%">{% model_field_verbose_name from user.email_public %}:</td>
                     <td><a href="mailto:{{ user.email_public }}">{{ user.email_public }}</a></td>
                 </tr>
             {% endif %}
             {% if user.url %}
                 <tr>
-                    <td>Сайт:</td>
+                    <td width="25%">{% model_field_verbose_name from user.url %}:</td>
                     <td><a href="{{ user.url }}">{{ user.url }}</a></td>
                 </tr>
             {% endif %}

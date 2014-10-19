@@ -1,5 +1,5 @@
 {% extends "base_details.html" %}
-{% load goodreads %}
+{% load goodreads model_field %}
 
 
 {% block meta_og %}
@@ -15,16 +15,18 @@
 {% block details_contents %}
     <div class="marg__b_mid text-muted">
         <small>
-            <span class="marg__r_mid py_user">Автор: {{ book.author }}</span>
-            <span class="marg__r_mid">Год: {{ book.year }}</span>
+            <span class="marg__r_mid py_user">{% model_field_verbose_name from book.author %}: {{ book.author }}</span>
+            <span class="marg__r_mid">{% model_field_verbose_name from book.year %}: {{ book.year }}</span>
             {% if book.isbn or book.isbn_ebook %}
                 <span>
-                    {% if book.isbn %}<span class="marg__r_mid">ISBN {% goodreads_get_search_tag book.isbn %}: {{ book.isbn }}</span>{% endif %}
-                    {% if book.isbn_ebook %}<span class="marg__r_mid">ISBN эл.{% goodreads_get_search_tag book.isbn_ebook %}: {{ book.isbn_ebook }}</span>{% endif %}
+                    {% if book.isbn %}<span class="marg__r_mid">{% model_field_verbose_name from book.isbn %} {% goodreads_get_search_tag book.isbn %}: {{ book.isbn }}</span>{% endif %}
+                    {% if book.isbn_ebook %}
+                        <span class="marg__r_mid">{% model_field_verbose_name from book.isbn_ebook %} {% goodreads_get_search_tag book.isbn_ebook %}: {{ book.isbn_ebook }}</span>
+                    {% endif %}
                 </span>
             {% endif %}
             {%  if book.translator %}
-                <span class="py_user">Перевод: {{ book.translator }}</span>
+                <span class="py_user">{% model_field_verbose_name from book.translator %}: {{ book.translator }}</span>
             {% endif %}
         </small>
     </div>

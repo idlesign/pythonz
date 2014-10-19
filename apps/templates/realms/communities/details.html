@@ -1,4 +1,5 @@
 {% extends "base_details.html" %}
+{% load model_field %}
 
 
 {% block meta_og %}
@@ -11,8 +12,8 @@
 {% block details_contents_after %}
     <div class="text-muted marg__b_mid small">
         {% if community.url %}<div><a href="{{ community.url }}">{{ community.url }}</a></div>{% endif %}
-        {% if community.place %}<div>Место: <a href="{{ community.place.get_absolute_url }}">{{ community.place.title }}</a></div>{% endif %}
-        {% if community.contacts %}<div class="py_user">Контактные лица: {{ community.contacts }}</div>{% endif %}
+        {% if community.place %}<div>{% model_field_verbose_name from community.place %}: <a href="{{ community.place.get_absolute_url }}">{{ community.place.title }}</a></div>{% endif %}
+        {% if community.contacts %}<div class="py_user">{% model_field_verbose_name from community.contacts %}: {{ community.contacts }}</div>{% endif %}
     </div>
 
     <div class="py_user marg__b_mid well">

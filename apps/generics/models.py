@@ -163,7 +163,7 @@ class RealmBaseModel(ModelWithFlag):
     time_published = models.DateTimeField('Дата публикации', null=True, editable=False)
     time_modified = models.DateTimeField('Дата редактирования', null=True, editable=False)
     status = models.PositiveIntegerField('Статус', choices=STATUSES, default=STATUS_DRAFT)
-    supporters_num = models.PositiveIntegerField('Количество поддержавших', default=0)
+    supporters_num = models.PositiveIntegerField('Поддержка', default=0)
 
     last_editor = models.ForeignKey(USER_MODEL, verbose_name='Редактор', related_name='%(class)s_editors', null=True, blank=True,
                                     help_text='Пользователь, последним отредактировавший объект.')

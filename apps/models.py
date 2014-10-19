@@ -170,7 +170,7 @@ class User(RealmBaseModel, AbstractUser):
     timezone = models.CharField('Часовой пояс', max_length=150, null=True, blank=True,
                                 help_text='Название часового пояса. Например: Asia/Novosibirsk.<br>* Устанавливается автоматически в зависимости от места пребывания (см. выше).')
 
-    email_public = models.EmailField('Почта', null=True, blank=True,
+    email_public = models.EmailField('Эл. почта', null=True, blank=True,
                                      help_text='Адрес электронной почты для показа посетителям сайта.')
 
     url = models.URLField('Страница в сети', null=True, blank=True)
@@ -288,6 +288,7 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions
 
     class Fields:
         title = 'Название видео'
+        translator = 'Перевод/озвучание'
         description = {
             'help_text': 'Краткое описание того, о чём это видео. Без обозначения личного отношения.',
         }
