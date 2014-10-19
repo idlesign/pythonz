@@ -361,7 +361,7 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions
         self.update_cover_from_url(cover_url)
 
 
-class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCompiledText):
+class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithCompiledText):
     """Модель сущности `Событие`."""
 
 
