@@ -378,11 +378,13 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions
     TYPE_MEETING = 1
     TYPE_CONFERENCE = 2
     TYPE_LECTURE = 3
+    TYPE_SPRINT = 4
 
     TYPES = choices_list(
         (TYPE_MEETING, 'Встреча'),
         (TYPE_LECTURE, 'Лекция'),
         (TYPE_CONFERENCE, 'Конференция'),
+        (TYPE_SPRINT, 'Спринт'),
     )
 
     url = models.URLField('Страница в сети', null=True, blank=True)
