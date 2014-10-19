@@ -16,15 +16,17 @@
         <div class="col-md-12">
 
             {% if communities %}
+                {% model_field_verbose_name from communities.supporters_num as title_supporters %}
+                {% model_field_verbose_name from communities.url as title_url %}
                 <ul>
                 {% for community in communities %}
                     <li class="marg__b_mid">
                         <h4><a href="{{ community.get_absolute_url }}">{{ community.title }}</a></h4>
                         <div class="marg__b_min"><i>{{ community.description }}</i></div>
                         <small class="text-muted">
-                            <span class="label label-default">{% model_field_verbose_name from community.supporters_num %}: {{ community.supporters_num }}</span> &nbsp;&nbsp;
+                            <span class="label label-default">{{ title_supporters }}: {{ community.supporters_num }}</span> &nbsp;&nbsp;
                             {% if community.url %}
-                                <span>{% model_field_verbose_name from community.url %}: <a href="{{ community.url }}">{{ community.url }}</a></span>
+                                <span>{{ title_url }}: <a href="{{ community.url }}">{{ community.url }}</a></span>
                             {% endif %}
                         </small>
                     </li>
