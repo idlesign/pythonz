@@ -1,3 +1,5 @@
+import re
+from collections import  OrderedDict
 from urllib.parse import urlsplit, urlunsplit
 from datetime import timedelta
 
@@ -12,6 +14,40 @@ from .sitemessages import PythonzTwitterMessage, PythonzEmailNewEntity, PythonzE
 
 
 PROJECT_SOURCE_URL = 'https://github.com/idlesign/pythonz'
+
+
+class BasicTypograph(object):
+    """Содержит базовые правила типографики.
+    Позволяет применить эти правила к строке.
+
+    """
+
+    rules = OrderedDict((
+        ('QUOTES_REPLACE', (re.compile('(„|“|”|(\'\'))', re.M | re.U), '"')),
+        ('DASH_REPLACE', (re.compile('(-|­|–|—|―|−|--)', re.M | re.U), '-')),
+
+        ('SEQUENTIAL_SPACES', (re.compile('(\s+|\t+)', re.M | re.U), ' ')),
+
+        ('DASH_EM', (re.compile('(\s|,)-\s', re.M | re.U), '\g<1>— ')),
+        ('DASH_EN', (re.compile('(\d+)\s*-\s*(\d+)', re.M | re.U), '\g<1>–\g<2>')),
+
+        ('HELLIP', (re.compile('\.{2,3}', re.M | re.U), '…')),
+        ('COPYRIGHT', (re.compile('\((c|с)\)', re.M | re.U), '©')),
+        ('TRADEMARK', (re.compile('\(tm\)', re.M | re.U), '™')),
+        ('TRADEMARK_R', (re.compile('\(r\)', re.M | re.U), '®')),
+
+        ('QUOTES_CYR_CLOSE', (re.compile('(\S+)"', re.M | re.U), '\g<1>»')),
+        ('QUOTES_CYR_OPEN', (re.compile('"(\S+)', re.M | re.U), '«\g<1>')),
+    ))
+
+    @classmethod
+    def apply_to(cls, input_str):
+        input_str = ' %s ' % input_str.strip()
+
+        for name, (regexp, replacement) in cls.rules.items():
+            input_str = re.sub(regexp, replacement, input_str)
+
+        return input_str.strip()
 
 
 def url_mangle(url):

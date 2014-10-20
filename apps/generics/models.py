@@ -117,7 +117,11 @@ class CommonEntityModel(models.Model):
         :param kwargs:
         :return:
         """
-        self.title = self.title.strip()
+        from ..utils import BasicTypograph
+
+        self.title = BasicTypograph.apply_to(self.title)
+        self.description = BasicTypograph.apply_to(self.description)
+
         super().save(*args, **kwargs)
 
     def update_cover_from_url(self, url):

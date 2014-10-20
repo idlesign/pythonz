@@ -14,7 +14,6 @@ from ..exceptions import RedirectRequired
 from ..shortcuts import message_warning, message_success, message_info
 
 # todo рефакторить шаблоны списков.
-# todo применять базовые правила типографики к тестам.
 
 
 class RealmView(View):

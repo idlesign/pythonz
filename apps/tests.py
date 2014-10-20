@@ -3,7 +3,7 @@ from uuid import uuid4
 
 
 from .generics.models import ModelWithCompiledText
-from .utils import url_mangle
+from .utils import url_mangle, BasicTypograph
 from .models import User, Opinion
 
 
@@ -20,6 +20,23 @@ class UtilsTest(unittest.TestCase):
         self.assertEqual(url_mangle('http://some.com/path/to/some/resource/which/ends?with=this#stuff'), 'http://some.com/<...>ends')
         self.assertEqual(url_mangle('http://some.com/'), 'http://some.com/')
         self.assertEqual(url_mangle('http://some.com'), 'http://some.com')
+
+    def test_typography(self):
+        input_str = "Мама     ''мыла'' раму. " \
+                    'Фабрика “Красная Заря”. ' \
+                    '"Маме - раму!",- кричал Иван. ' \
+                    'Температура повысилась на 7-8 градусов. ' \
+                    '(c), (r), (tm) заменяем на правильные. ' \
+                    '"строка'
+
+        expected_str = 'Мама «мыла» раму. ' \
+                       'Фабрика «Красная Заря». ' \
+                       '«Маме — раму!»,— кричал Иван. ' \
+                       'Температура повысилась на 7–8 градусов. ' \
+                       '©, ®, ™ заменяем на правильные. ' \
+                       '«строка'
+
+        self.assertEqual(expected_str, BasicTypograph.apply_to(input_str))
 
 
 class ModelWithCompiledTextTest(unittest.TestCase):
