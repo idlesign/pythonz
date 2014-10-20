@@ -8,8 +8,7 @@ from .forms.forms import BookForm, VideoForm, UserForm, OpinionForm, ArticleForm
 from .generics.realms import RealmBase
 from .models import User, Opinion, Book, Video, Place, Article, Community, Event
 from .signals import signal_new_entity, signal_entity_published
-from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, \
-    NoPermissionsCheckEditView, UserEditView
+from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView
 from .zen import *  # Регистрируем блок сайта с дзеном
 
 
