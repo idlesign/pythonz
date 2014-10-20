@@ -33,7 +33,7 @@ class RealmView(View):
         if not self.realm.is_allowed_edit():  # Область не поддерживает редактирования.
             raise PermissionDenied()
 
-        if not request.user:  # Неавторизованные пользователи не могут ничего.
+        if not request.user.is_authenticated():  # Неавторизованные пользователи не могут ничего.
             raise PermissionDenied()
 
         if not request.user.is_superuser:
