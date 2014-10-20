@@ -240,6 +240,13 @@ class RealmBaseModel(ModelWithFlag):
         # TODO не использовать related там, где не нужно
         return cls.objects.select_related('submitter').filter(status=cls.STATUS_PUBLISHED).order_by('-supporters_num', '-time_created').all()
 
+    def is_published(self):
+        """Возвращает булево указывающее на то, опубликована ли сущность.
+
+        :return:
+        """
+        return self.status == self.STATUS_PUBLISHED
+
     def get_linked(self):
         """Возвращает связанные объекты.
 
