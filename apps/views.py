@@ -42,6 +42,7 @@ class PlaceDetailsView(DetailsView):
         place = context['item']
         context['users'] = User.get_actual().filter(place=place)
         context['communities'] = Community.get_actual().filter(place=place)
+        context['events'] = Event.get_actual().filter(place=place)
 
 
 class PlaceListingView(RealmView):

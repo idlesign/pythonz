@@ -1,0 +1,10 @@
+{% if items %}
+    <div class="marg__b_max">
+        <h4>{{ title }}</h4>
+        <ul>
+        {% for item in items %}
+            <li><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endif %}
