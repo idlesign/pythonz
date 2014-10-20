@@ -23,6 +23,38 @@ class RealmView(View):
     realm = None  # Во время исполнения будет содержать ссылку на объект области Realm
     name = None  # Во время исполнения будет содержать алиас этого представления (н.п. edit).
 
+    def check_edit_permissions(self, request, item):
+        """Производит проверку прав пользователя для доступа к редактированию объекта.
+
+        :param Request request:
+        :param Model item:
+        :return:
+        """
+        if not self.realm.is_allowed_edit():  # Область не поддерживает редактирования.
+            raise PermissionDenied()
+
+        if not request.user:  # Неавторизованные пользователи не могут ничего.
+            raise PermissionDenied()
+
+        if not request.user.is_superuser:
+
+            try:
+                edit_by_owner = (request.user == item.submitter)
+            except AttributeError:
+                edit_by_owner = (request.user == item)  # Модель User
+
+            if not edit_by_owner:
+                personal_edit_models = User, Article, Opinion
+                if self.realm.model in personal_edit_models:
+                    raise PermissionDenied()
+
+                # Запрещаем редактирование опубликованных материалов.
+                public_edit_models = Community, Event
+                if item.is_published() and self.realm.model not in public_edit_models:
+                    message_warning(request, 'Этот материал уже прошёл модерацию и был опубликован. '
+                                             'На данный момент в проекте запрещено редактирование опубликованных материалов.')
+                    raise PermissionDenied()
+
     def get_template_path(self):
         """Возвращает путь к шаблону страницы.
 
@@ -260,9 +292,10 @@ class DetailsView(RealmView):
             return redirect(item, permanent=True)
 
         try:
-            item_edit_allowed = (self.realm.is_allowed_edit() and (request.user.is_superuser or request.user == item.submitter))
-        except AttributeError:
-            item_edit_allowed = (self.realm.is_allowed_edit() and request.user == item)
+            self.check_edit_permissions(request, item)
+            item_edit_allowed = True
+        except PermissionDenied:
+            item_edit_allowed = False
 
         if isinstance(item, ModelWithCategory):
             item.has_categories = True
@@ -300,23 +333,6 @@ class EditView(RealmView):
         item = xross.attrs['item']
         if item is None or isinstance(item, ModelWithCompiledText):
             return HttpResponse(ModelWithCompiledText.compile_text(text_src))
-
-    def check_edit_permissions(self, request, item):
-        """Производит проверку прав пользователя для доступа к редактированию объекта.
-
-        :param Request request:
-        :param Model item:
-        :return:
-        """
-        # Редактирование объектов разрешено их создателям и суперпользвоателям.
-        if item.submitter != request.user and not request.user.is_superuser:
-            raise PermissionDenied()
-
-        # Запрещаем редактирование опубликованных материалов.
-        if not request.user.is_superuser and item.status == RealmBaseModel.STATUS_PUBLISHED and \
-                not self.realm.model in (Article, Opinion, Community, Event):
-            message_warning(request, 'Этот материал уже прошёл модерацию и был опубликован. На данный момент в проекте запрещено редактирование опубликованных материалов.')
-            raise PermissionDenied()
 
     @xross_view(preview_rst)
     def get(self, request, obj_id=None):
