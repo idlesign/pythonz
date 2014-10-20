@@ -10,7 +10,7 @@ from django.views.defaults import page_not_found as dj_page_not_found, \
     server_error as dj_server_error
 
 from .generics.views import DetailsView, RealmView, EditView
-from .models import Place, User, Community
+from .models import Place, User, Community, Event
 
 
 class UserDetailsView(DetailsView):
@@ -32,14 +32,6 @@ class UserEditView(EditView):
         # Пользователи не могут редактировать других пользователей.
         if item != request.user:
             raise PermissionDenied()
-
-
-class CommunityEditView(EditView):
-    """Перекрываем представление редактирования."""
-
-    def check_edit_permissions(self, request, item):
-        # Убирает тиранскую проверку прав.
-        pass
 
 
 class PlaceDetailsView(DetailsView):

@@ -9,7 +9,7 @@ from .generics.realms import RealmBase
 from .models import User, Opinion, Book, Video, Place, Article, Community, Event
 from .signals import signal_new_entity, signal_entity_published
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, \
-    CommunityEditView, UserEditView
+    NoPermissionsCheckEditView, UserEditView
 from .zen import *  # Регистрируем блок сайта с дзеном
 
 
@@ -303,7 +303,6 @@ class CommunityRealm(RealmBase):
     form = CommunityForm
     icon = 'home'
     sitemap_changefreq = 'daily'
-    view_edit_base_class = CommunityEditView
 
 
 register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, PlaceRealm, EventRealm, CommunityRealm, UserRealm, OpinionRealm)
