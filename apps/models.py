@@ -16,6 +16,8 @@ from .exceptions import PythonzException
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 
+HINT_IMPERSONAL_REQUIRED = '<strong>Без обозначения личного отношения. Личное отношение можно выразить во Мнениях.</strong>'
+
 
 class Opinion(InheritedModel, RealmBaseModel, ModelWithCompiledText):
     """Модель мнений. Пользователи могут поделится своим менением по попову той или иной сущности на сайте.
@@ -137,10 +139,13 @@ class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpin
 
     class Fields:
         title = 'Название сообщества'
-        text_src = 'Описание, контактная информация'
         description = {
             'verbose_name': 'Кратко',
-            'help_text': 'Сжатая предварительная информация о сообществе, например, направление деятельности.',
+            'help_text': 'Сжатая предварительная информация о сообществе (например, направление деятельности). %s' % HINT_IMPERSONAL_REQUIRED,
+        }
+        text_src = {
+            'verbose_name': 'Описание, принципы работы, правила, контактная информация',
+            'help_text': '%s' % HINT_IMPERSONAL_REQUIRED,
         }
         linked = {
             'verbose_name': 'Связанные сообщества',
@@ -245,7 +250,7 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions,
         title = 'Название книги'
         description = {
             'verbose_name': 'Аннотация',
-            'help_text': 'Аннотация к книге, или другое краткое описание. Без обозначения личного отношения.',
+            'help_text': 'Аннотация к книге, или другое краткое описание. %s' % HINT_IMPERSONAL_REQUIRED,
         }
         linked = {
             'verbose_name': 'Связанные книги',
@@ -290,7 +295,7 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions
         title = 'Название видео'
         translator = 'Перевод/озвучание'
         description = {
-            'help_text': 'Краткое описание того, о чём это видео. Без обозначения личного отношения.',
+            'help_text': 'Краткое описание того, о чём это видео. %s' % HINT_IMPERSONAL_REQUIRED,
         }
         linked = {
             'verbose_name': 'Связанные видео',
@@ -407,9 +412,14 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions
         verbose_name_plural = 'События'
 
     class Fields:
-        description = 'Краткое описание'
-        text = 'Описание'
-        text_src = 'Описание'
+        description = {
+            'verbose_name': 'Краткое описание',
+            'help_text': 'Краткое описание события. %s' % HINT_IMPERSONAL_REQUIRED,
+        }
+        text_src = {
+            'verbose_name': 'Описание, контактная информация',
+            'help_text': '%s' % HINT_IMPERSONAL_REQUIRED,
+        }
         cover = 'Логотип'
 
     def get_display_type(self):
