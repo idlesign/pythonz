@@ -1,15 +1,15 @@
 from django import forms
 from datetimewidget.widgets import DateTimeWidget
 
-from ..models import Book, Video, Event, Opinion, User, Article, Community
+from ..models import Book, Video, Event, Discussion, User, Article, Community
 from ..generics.forms import RealmEditBaseForm
 from .widgets import RstEditWidget, ReadOnlyWidget, PlaceWidget
 
 
-class OpinionForm(RealmEditBaseForm):
+class DiscussionForm(RealmEditBaseForm):
 
     class Meta:
-        model = Opinion
+        model = Discussion
         fields = ('text_src',)
         labels = {'text_src': ''}
         widgets = {'text_src': RstEditWidget(attrs={'rows': 15})}

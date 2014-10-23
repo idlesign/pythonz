@@ -47,7 +47,9 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            {% include "sub_disqus.html" with author=article.submitter entity_name='article' entity_id=article.id %}
+            {% with article.submitter as author %}
+                {% include "sub_disqus.html" with shortname=author.disqus_shortname comments_enabled=author.comments_enabled category_id=author.disqus_category_id entity_name='article' entity_id=article.id %}
+            {% endwith %}
         </div>
     </div>
 {%  endblock %}

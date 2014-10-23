@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from .generics.models import ModelWithCompiledText
 from .utils import url_mangle, BasicTypograph
-from .models import User, Opinion
+from .models import User, Discussion
 
 
 def create_user():
@@ -90,11 +90,11 @@ http://some.url/
         self.assertEqual(expected.strip('\n'), ModelWithCompiledText.compile_text(src.strip('\n')))
 
 
-class ModelOpinionTest(unittest.TestCase):
+class ModelDiscussionTest(unittest.TestCase):
 
     def test_new(self):
         user = create_user()
-        o = Opinion(submitter=user, linked_object=user, text_src='проба пера')
+        o = Discussion(submitter=user, linked_object=user, text_src='проба пера')
         o.save()
 
         self.assertIsNone(o.time_modified)

@@ -4,9 +4,9 @@ from django.conf.urls import patterns, url
 from sitetree.utils import tree, item
 from sitecats.models import Category
 
-from .forms.forms import BookForm, VideoForm, UserForm, OpinionForm, ArticleForm, CommunityForm, EventForm
+from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm
 from .generics.realms import RealmBase
-from .models import User, Opinion, Book, Video, Place, Article, Community, Event
+from .models import User, Discussion, Book, Video, Place, Article, Community, Event
 from .signals import signal_new_entity, signal_entity_published
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView
 from .zen import *  # Регистрируем блок сайта с дзеном
@@ -214,23 +214,21 @@ class PlaceRealm(RealmBase):
     view_details_base_class = PlaceDetailsView
 
 
-class OpinionRealm(RealmBase):
+class DiscussionRealm(RealmBase):
     """
-    Область со мнениями.
+    Область обсуждений.
     """
 
-    txt_promo = 'Мнения отражают картину мира людей. Делитесь своим, уважайте чужое. Добро пожаловать в картинную галерею.'
-    txt_form_add = 'Добавить мнение'
-    txt_form_edit = 'Изменить мнение'
+    txt_promo = 'Обсуждения позволяют обмениваться опытом и получать ответы на интересующие вопросы и, конечно, делиться своим мнением.'
+    txt_form_add = 'Создать обсуждение'
+    txt_form_edit = 'Редактировать обсуждение'
 
-    view_listing_description = 'Мнения пользователей о материалах на сайте pythonz.net.'
-    view_listing_keywords = '%s мнение, opinions, мнения о программировании на питоне' % BASE_KEYWORDS
+    view_listing_description = 'Обсуждения тем, связанных с программированием на pythonz.net.'
+    view_listing_keywords = '%s обсуждение, discussions, обсуждения питона' % BASE_KEYWORDS
 
-    model = Opinion
-    form = OpinionForm
-    icon = 'comment'
-    allowed_views = ('listing', 'details', 'edit')
-    syndication_enabled = False
+    model = Discussion
+    form = DiscussionForm
+    icon = 'list'
 
 
 class UserRealm(RealmBase):
@@ -304,4 +302,4 @@ class CommunityRealm(RealmBase):
     sitemap_changefreq = 'daily'
 
 
-register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, PlaceRealm, EventRealm, CommunityRealm, UserRealm, OpinionRealm)
+register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, DiscussionRealm, PlaceRealm, EventRealm, CommunityRealm, UserRealm)

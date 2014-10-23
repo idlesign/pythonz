@@ -1,0 +1,24 @@
+{% extends "_base.html" %}
+
+
+{% block page_keywords %}{{ realm.view_listing_keywords }}{% endblock %}
+
+
+{% block page_contents %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {% include "sub_title_block.html" %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="discussions marg__t_mid">
+                {% include "realms/discussions/sub_discussions.html" with discussions=discussions %}
+            </div>
+        </div>
+    </div>
+
+    {% include "sub_paginator.html" with paginator=discussions %}
+{%  endblock %}

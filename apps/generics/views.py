@@ -9,7 +9,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from .models import ModelWithCompiledText, RealmBaseModel
-from ..models import ModelWithOpinions, ModelWithCategory, User, Opinion, Article, Community, Event
+from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event
 from ..exceptions import RedirectRequired
 from ..shortcuts import message_warning, message_success, message_info
 
@@ -43,7 +43,7 @@ class RealmView(View):
                 edit_by_owner = (request.user == item)  # Модель User
 
             if not edit_by_owner:
-                personal_edit_models = User, Article, Opinion
+                personal_edit_models = User, Article, Discussion
                 if self.realm.model in personal_edit_models:
                     raise PermissionDenied()
 
@@ -123,51 +123,16 @@ class ListingView(RealmView):
 class DetailsView(RealmView):
     """Дательная информация об объекте."""
 
-    def _handle_opinion_form(self, target_obj, request):
-        """Реализует обработку данных формы со мнением.
-
-        :param target_obj:
-        :param request:
-        :return:
-        """
-        from ..forms.forms import OpinionForm  # Потакаем поведению Django 1.7 при загрузке приложений.
-        opinion_form = OpinionForm(request.POST or None, user=request.user)
-
-        if opinion_form.is_valid():
-            opinion = opinion_form.save(commit=False)
-            opinion.submitter = request.user
-            opinion.linked_object = target_obj
-            opinion.text = opinion.text_src
-            opinion_form.save()
-            raise RedirectRequired()
-
-        return opinion_form
-
-    def _attach_opinions_data(self, item, request):
+    def _attach_discussions_data(self, item, request):
         """Цепляет к объекту данные о привязанных к нему мнениях.
 
         :param item:
         :param request:
         :return:
         """
-        if item.has_opinions:
-            opinions = item.opinions.select_related('submitter').filter(status=Opinion.STATUS_PUBLISHED).order_by('-supporters_num', '-time_created').all()
-            user_opinion = None
-
-            if request.user.id:
-                opinions_rates = item.get_suppport_for_objects(opinions, user=request.user)
-                for opinion in opinions:
-                    opinion.my_support = opinions_rates[opinion.id]
-                    if opinion.submitter_id == request.user.id:
-                        user_opinion = opinion
-
-            opinion_form = self._handle_opinion_form(item, request)
-
-            item.opinions_data = {
-                'all': opinions,
-                'my': user_opinion,
-                'form': opinion_form
-            }
+        if item.has_discussions:
+            discussions = item.discussions.select_related('submitter').filter(status=Discussion.STATUS_PUBLISHED).order_by('-supporters_num', '-time_created').all()
+            item.discussions = discussions
 
     def _attach_support_data(self, item, request):
         """Цепляет к объекту данные о поданном за него голосе пользователя.
@@ -196,27 +161,9 @@ class DetailsView(RealmView):
         """
         self._attach_bookmark_data(item, request)
         self._attach_support_data(item, request)
-        self._attach_opinions_data(item, request)
+        self._attach_discussions_data(item, request)
 
-    def rate_opinion(self, request, opinion_id, action, xross=None):
-        """Используется xross. Реализует оценку мнения.
-
-        :param request:
-        :param opinion_id:
-        :param action:
-        :param xross:
-        :return:
-        """
-        opinion = Opinion.objects.get(pk=opinion_id)
-        if action == 1:
-            opinion.my_support = True
-            opinion.set_support(request.user)
-        elif action == 0:
-            opinion.my_support = False
-            opinion.remove_support(request.user)
-        return render(request, 'opinions/sub_rating.html', {'opinion': opinion})
-
-    def list_opinions(self, request, xross=None):
+    def list_discussions(self, request, xross=None):
         """Используется xross. Реализует получение списка мнений.
 
         :param request:
@@ -224,8 +171,8 @@ class DetailsView(RealmView):
         :return:
         """
         item = xross.attrs['item']
-        self._attach_opinions_data(item, request)
-        return render(request, 'opinions/sub_opinions.html', {'opinions': item.opinions_data})
+        self._attach_discussions_data(item, request)
+        return render(request, 'realms/discussions/sub_discussions.html', {'discussions': item.discussions_data})
 
     def toggle_bookmark(self, request, action, xross=None):
         """Используется xross. Реализует занесение/изъятие объекта в/из избранного..
@@ -266,7 +213,7 @@ class DetailsView(RealmView):
         :return:
         """
 
-    @xross_view(list_opinions, set_rate, toggle_bookmark, rate_opinion)
+    @xross_view(list_discussions, set_rate, toggle_bookmark)
     def get(self, request, obj_id):
 
         item = self.get_object_or_404(obj_id)
@@ -277,15 +224,14 @@ class DetailsView(RealmView):
             elif item.status == RealmBaseModel.STATUS_DRAFT and hasattr(item, 'submitter') and item.submitter != request.user: # Закрываем доступ к чужим черновикам.
                 raise PermissionDenied()
 
-        item.has_opinions = False
+        item.has_discussions = False
 
-        if isinstance(item, ModelWithOpinions):
-            item.has_opinions = True
+        if isinstance(item, ModelWithDiscussions):
+            item.has_discussions = True
 
         xross_listener(item=item)
 
         try:
-            self._handle_opinion_form(item, request)
             self._attach_data(item, request)
         except RedirectRequired:
             return redirect(item, permanent=True)
@@ -362,7 +308,7 @@ class EditView(RealmView):
             if category_handled:  # Добавилась категория, перенаправим на эту же страницу.
                 return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 
-        show_modetation_hint = self.realm.model not in (User, Article, Opinion, Community, Event)
+        show_modetation_hint = self.realm.model not in (User, Article, Discussion, Community, Event)
 
         if data is None:
             if show_modetation_hint:

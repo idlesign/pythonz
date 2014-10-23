@@ -19,33 +19,32 @@ USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 HINT_IMPERSONAL_REQUIRED = '<strong>Без обозначения личного отношения. Личное отношение можно выразить во Мнениях.</strong>'
 
 
-class Opinion(InheritedModel, RealmBaseModel, ModelWithCompiledText):
-    """Модель мнений. Пользователи могут поделится своим менением по попову той или иной сущности на сайте.
-    Фактически - комментарии.
+class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCompiledText):
+    """Модель обсуждений. Пользователи могут обсудить желаемые темы и привязать обсужедние к сущности на сайте.
+    Фактически - форум.
     """
 
-    submitter = models.ForeignKey(USER_MODEL, verbose_name='Автор')
-
-    object_id = models.PositiveIntegerField(verbose_name='ID объекта', db_index=True)
-    content_type = models.ForeignKey(ContentType, verbose_name='Тип содержимого', related_name='%(class)s_opinions')
+    object_id = models.PositiveIntegerField(verbose_name='ID объекта', db_index=True, null=True, blank=True)
+    content_type = models.ForeignKey(ContentType, verbose_name='Тип содержимого', related_name='%(class)s_discussions', null=True, blank=True)
 
     linked_object = generic.GenericForeignKey()
 
     class Meta:
-        verbose_name = 'Мнение'
-        verbose_name_plural = 'Мнения'
+        verbose_name = 'Обсуждение'
+        verbose_name_plural = 'Обсуждения'
         unique_together = ('content_type', 'object_id', 'submitter')
 
     class Fields:
-        text = 'Мнение'
+        text = 'Обсуждение'
 
     def get_title(self):
         """Формирует и возвращает заголовок для мнения.
 
         :return:
         """
-        return '%s про «%s»' % (self.submitter.get_display_name(), self.linked_object.title)
-    title = property(get_title)
+        if self.linked_object:
+            return '%s про «%s»' % (self.submitter.get_display_name(), self.linked_object.title)
+        return self.title
 
     def save(self, *args, **kwargs):
         self.status = self.STATUS_PUBLISHED  # Авторский материал не нуждается в модерации %)
@@ -56,19 +55,19 @@ class Opinion(InheritedModel, RealmBaseModel, ModelWithCompiledText):
         return cls.objects.select_related('submitter').filter(status=cls.STATUS_PUBLISHED).order_by('-time_created').all()
 
     def __unicode__(self):
-        return 'Мнение %s для %s %s' % (self.id, self.content_type, self.object_id)
+        return 'Обсуждение %s для %s %s' % (self.id, self.content_type, self.object_id)
 
 
-class ModelWithOpinions(models.Model):
+class ModelWithDiscussions(models.Model):
     """Класс-примесь к моделям сущностей, для который разрешено оставление мнений."""
 
-    opinions = generic.GenericRelation(Opinion)
+    discussions = generic.GenericRelation(Discussion)
 
     class Meta:
         abstract = True
 
 
-class Place(RealmBaseModel, ModelWithOpinions):
+class Place(RealmBaseModel, ModelWithDiscussions):
     """Географическое место. Для людей, событий и пр."""
 
     TYPE_COUNTRY = 'country'
@@ -122,7 +121,7 @@ class Place(RealmBaseModel, ModelWithOpinions):
         return self.geo_title
 
 
-class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithCompiledText):
+class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory, ModelWithCompiledText):
     """Модель сообществ. Формально объединяет некоторую группу людей."""
 
     place = models.ForeignKey(Place, verbose_name='Место', related_name='communities', null=True, blank=True,
@@ -234,7 +233,7 @@ class User(RealmBaseModel, AbstractUser):
         return self.username.split('@')[0]
 
 
-class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithAuthorAndTranslator):
+class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory, ModelWithAuthorAndTranslator):
     """Модель сущности `Книга`."""
 
     COVER_UPLOAD_TO = 'books'
@@ -259,7 +258,7 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions,
         year = 'Год издания'
 
 
-class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithCompiledText):
+class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory, ModelWithCompiledText):
     """Модель сущности `Статья`."""
 
     class Meta:
@@ -277,7 +276,7 @@ class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinio
         }
 
 
-class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithAuthorAndTranslator):
+class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory, ModelWithAuthorAndTranslator):
     """Модель сущности `Видео`."""
 
     EMBED_WIDTH = 560
@@ -366,7 +365,7 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions
         self.update_cover_from_url(cover_url)
 
 
-class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithOpinions, ModelWithCategory, ModelWithCompiledText):
+class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory, ModelWithCompiledText):
     """Модель сущности `Событие`."""
 
 
