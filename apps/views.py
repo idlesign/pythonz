@@ -72,7 +72,7 @@ class CategoryListingView(RealmView):
         category = get_object_or_404(category_model.objects.select_related('parent'), pk=obj_id)
 
         realm_list = []
-        for realm in get_realms():
+        for realm in get_realms().values():
             if hasattr(realm.model, 'categories'):  # ModelWithCategory
                 objs = realm.model.get_objects_in_category(category)[:5]
                 if objs:
@@ -93,7 +93,7 @@ server_error = lambda request: dj_server_error(request, template_name='static/50
 
 def index(request):
     from .realms import get_realms
-    return render(request, 'index.html', {'realms': get_realms()})
+    return render(request, 'index.html', {'realms': get_realms().values()})
 
 
 @redirect_signedin

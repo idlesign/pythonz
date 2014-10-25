@@ -26,7 +26,7 @@ def bootstrap_realms(urlpatterns):
     return urlpatterns
 
 
-REALMS_REGISTRY = []
+REALMS_REGISTRY = {}
 
 
 def connect_signals():
@@ -52,11 +52,12 @@ def register_realms(*classes):
     :return:
     """
     for cls in classes:
-        REALMS_REGISTRY.append(cls)
+        REALMS_REGISTRY[cls.get_names()[0]] = cls
 
 
 def get_realms():
-    """Возвращает список зарегистрированных областей сайта.
+    """Возвращает словарь зарегистрированных областей сайта,
+    индексированный именами областей.
 
     :return:
     """
@@ -69,7 +70,7 @@ def get_sitemaps():
     :return:
     """
     sitemaps = {}
-    for realm in get_realms():
+    for realm in get_realms().values():
         if realm.sitemap_enabled:
             sitemaps[realm.name_plural] = realm.get_sitemap()
     return sitemaps
@@ -81,7 +82,7 @@ def get_realms_urls():
     :return:
     """
     url_patterns = []
-    for realm in get_realms():
+    for realm in get_realms().values():
         url_patterns += realm.get_urls()
     sitemaps = get_sitemaps()
     if sitemaps:
@@ -100,7 +101,7 @@ def build_sitetree():
             tree('main', 'Основное дерево', (
                 item('PYTHONZ', '/', alias='topmenu', url_as_pattern=False,
                      description='Материалы по языку программирования Python. Книги, видео, сообщества и многое другое.',
-                     children=(realm.get_sitetree_items() for realm in get_realms())),
+                     children=(realm.get_sitetree_items() for realm in get_realms().values())),
                 item('Вход', 'login', access_guest=True, in_menu=False, in_breadcrumbs=False),
                 item('Личное меню', '#', alias='personal', url_as_pattern=False, access_loggedin=True, in_menu=False, in_sitetree=False, children=(
                     item('Профиль', 'users:details request.user.id', access_loggedin=True, in_breadcrumbs=False, in_sitetree=False),

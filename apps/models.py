@@ -45,15 +45,6 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
             self.status = self.STATUS_PUBLISHED
         super().save(*args, **kwargs)
 
-    def get_title(self):
-        """Формирует и возвращает заголовок для мнения.
-
-        :return:
-        """
-        if self.linked_object:
-            return '%s про «%s»' % (self.submitter.get_display_name(), self.linked_object.title)
-        return self.title
-
     @classmethod
     def get_paginator_objects(cls):
         return cls.objects.select_related('submitter').filter(status=cls.STATUS_PUBLISHED).order_by('-time_created').all()
@@ -207,7 +198,7 @@ class User(RealmBaseModel, AbstractUser):
         from .realms import get_realms
 
         FLAG_MODEL = get_flag_model()
-        realm_models = [r.model for r in get_realms()]
+        realm_models = [r.model for r in get_realms().values()]
         bookmarks = FLAG_MODEL.get_flags_for_types(realm_models, user=self, status=RealmBaseModel.FLAG_STATUS_BOOKMARK)
         for realm_model, flags in bookmarks.items():
             ids = [flag.object_id for flag in flags]

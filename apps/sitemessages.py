@@ -80,7 +80,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
         context = message.context
         realms_data = OrderedDict()
         get_date = lambda s: datetime.fromtimestamp(s, tz=timezone.get_current_timezone())
-        for realm in get_realms():
+        for realm in get_realms().values():
             if realm.ready_for_digest:
                 date_from = get_date(context.get('date_from'))
                 date_till = get_date(context.get('date_till'))

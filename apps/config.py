@@ -9,5 +9,5 @@ class PythonzAppsConfig(AppConfig):
 
     def ready(self):
         from apps.realms import get_realms
-        for realm in get_realms():
+        for realm in get_realms().values():
             realm.model.realm = realm  # Привязываем область к моделям, она понадобится для вычисления URL.
