@@ -10,7 +10,10 @@ class DiscussionForm(RealmEditBaseForm):
 
     class Meta:
         model = Discussion
-        fields = ('text_src',)
+        fields = (
+            'title',
+            'text_src',
+        )
         labels = {'text_src': ''}
         widgets = {'text_src': RstEditWidget(attrs={'rows': 15})}
 

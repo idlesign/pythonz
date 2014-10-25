@@ -1,24 +1,20 @@
-{% load gravatar %}
 <h3>Обсуждения</h3>
-<div class="discussions marg__t_mid">
-    {% for discussion in discussions.all %}
-        <div class="discussion">
-            <a href="{{ discussion.submitter.get_absolute_url }}">{% gravatar_get_img discussion.submitter %}</a>
-            <div class="box">
-                <div class="toolbar">
-                    &nbsp;<a href="{% url "discussions:details" discussion.id %}" class="item" title="Страница обсуждения"><span class="fi-link"></span></a>
-                </div>
-                <div class="author">{{ discussion.submitter.get_display_name }}</div>
-                <div class="text py_user">{{ discussion.text|safe|truncatewords_html:30 }}</div>
-            </div>
-            <div class="clearfix"></div>
-        </div>
-    {% empty %}
+<div class="marg__t_mid">
+    {% if discussions %}
+        <ul class="discussions">
+            {% for discussion in discussions %}
+                <li class="discussion">
+                    <small class="cl__gray">{{ discussion.time_created|date:"d E H:i" }}</small><br>
+                    <a href="{% url "discussions:details" discussion.id %}" class="item" title="Страница обсуждения">{{ discussion.title }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
         <div class="well well-sm">
             Нет обсуждений для отображения.
             {% if not request.user.is_authenticated %}
             <br>Если у вас есть, что сказать, можете <a href="{% url "login" %}">представиться</a> и исправить ситуацию.
             {% endif %}
         </div>
-    {% endfor %}
+    {% endif %}
 </div>

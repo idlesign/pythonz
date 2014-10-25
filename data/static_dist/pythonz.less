@@ -177,10 +177,6 @@ input[type=checkbox] {
 //------------------------------------------
 // Custom elements.
 
-#list_discussions {
-  border-top: 1px dashed lighten(@cl__gray, 20%);
-}
-
 #rate_box {
   font-size: 30px;
   vertical-align: middle;
@@ -251,35 +247,13 @@ nav .submenu {
 
 
 .discussions {
+  list-style-type: none;
+  padding: 0;
   .well {
     background-color: @cl__white;
   }
   .discussion {
-    padding: @gap__mid;
-    margin-bottom: @gap__mid;
-    border-bottom: 1px dashed lighten(@cl__gray, 20%);
-    .box {
-      overflow: hidden;
-      background-color: inherit;
-    }
-    img {
-      float: left;
-      margin-right: @gap__mid;
-    }
-    .author {
-      color: @cl__gray;
-      font-size: @gap__min;
-    }
-    .toolbar {
-      float: right;
-      .item {
-        vertical-align: middle;
-        margin-left: @gap__min;
-        a {
-          color: #fff;
-        }
-      }
-    }
+    padding: @gap__min;
   }
   .discussion:hover {
     background-color: lighten(@cl__green, 50%);

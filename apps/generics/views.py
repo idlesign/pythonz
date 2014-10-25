@@ -123,17 +123,6 @@ class ListingView(RealmView):
 class DetailsView(RealmView):
     """Дательная информация об объекте."""
 
-    def _attach_discussions_data(self, item, request):
-        """Цепляет к объекту данные о привязанных к нему мнениях.
-
-        :param item:
-        :param request:
-        :return:
-        """
-        if item.has_discussions:
-            discussions = item.discussions.select_related('submitter').filter(status=Discussion.STATUS_PUBLISHED).order_by('-supporters_num', '-time_created').all()
-            item.discussions = discussions
-
     def _attach_support_data(self, item, request):
         """Цепляет к объекту данные о поданном за него голосе пользователя.
 
@@ -161,18 +150,6 @@ class DetailsView(RealmView):
         """
         self._attach_bookmark_data(item, request)
         self._attach_support_data(item, request)
-        self._attach_discussions_data(item, request)
-
-    def list_discussions(self, request, xross=None):
-        """Используется xross. Реализует получение списка мнений.
-
-        :param request:
-        :param xross:
-        :return:
-        """
-        item = xross.attrs['item']
-        self._attach_discussions_data(item, request)
-        return render(request, 'realms/discussions/sub_discussions.html', {'discussions': item.discussions_data})
 
     def toggle_bookmark(self, request, action, xross=None):
         """Используется xross. Реализует занесение/изъятие объекта в/из избранного..
@@ -213,7 +190,7 @@ class DetailsView(RealmView):
         :return:
         """
 
-    @xross_view(list_discussions, set_rate, toggle_bookmark)
+    @xross_view(set_rate, toggle_bookmark)
     def get(self, request, obj_id):
 
         item = self.get_object_or_404(obj_id)

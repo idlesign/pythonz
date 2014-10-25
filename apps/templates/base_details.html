@@ -19,8 +19,8 @@
             {% block details_contents_after %}{% endblock %}
             {% block details_share %}{% include "sub_box_share.html" %}{% endblock %}
             {% if item.has_discussions %}
-            <div id="list_discussions" class="marg__t_max">
-                {% include "realms/discussions/sub_discussions.html" with discussions=item.discussions%}
+            <div class="marg__t_max">
+                {% include "realms/discussions/sub_discussions.html" with discussions=item.discussions.all%}
             </div>
             {% endif %}
         </div>

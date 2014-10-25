@@ -23,9 +23,9 @@
             <div>
                 <div class="pull-right marg__l_mid marg__b_mid float_panel">
                     <div class="well marg__b_mid text-center">
-                        {% with article.submitter.get_absolute_url as article_url %}
-                        <a href="{{ article_url }}">{% gravatar_get_img article.submitter 64 %}</a><br>
-                        <small><a href="{{ article_url }}">{{ article.submitter.get_display_name }}</a></small>
+                        {% with article.submitter.get_absolute_url as submitter_url %}
+                        <a href="{{ submitter_url }}">{% gravatar_get_img article.submitter 64 %}</a><br>
+                        <small><a href="{{ submitter_url }}">{{ article.submitter.get_display_name }}</a></small>
                         {% endwith %}
                     </div>
                     {% include "sub_box_controls.html" %}

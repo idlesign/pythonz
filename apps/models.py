@@ -19,7 +19,7 @@ USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 HINT_IMPERSONAL_REQUIRED = '<strong>Без обозначения личного отношения. Личное отношение можно выразить во Мнениях.</strong>'
 
 
-class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCompiledText):
+class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCategory, ModelWithCompiledText):
     """Модель обсуждений. Пользователи могут обсудить желаемые темы и привязать обсужедние к сущности на сайте.
     Фактически - форум.
     """

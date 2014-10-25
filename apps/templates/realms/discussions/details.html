@@ -8,21 +8,28 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-2">
-            <div class="marg__b_mid text-center">
-                <a href="{{ discussion.submitter.get_absolute_url }}" title="{{ discussion.submitter.get_display_name }}">{% gravatar_get_img discussion.submitter 128 %}</a>
-            </div>
-        </div>
-        <div class="col-md-10">
+        <div class="col-md-12">
             <div>
-                <div class="pull-right marg__l_mid marg__b_mid">
+                <div class="pull-right marg__l_mid marg__b_mid float_panel">
+                    <div class="well marg__b_mid text-center">
+                        {% with discussion.submitter.get_absolute_url as submitter_url %}
+                        <a href="{{ submitter_url }}">{% gravatar_get_img discussion.submitter 64 %}</a><br>
+                        <small><a href="{{ submitter_url }}">{{ discussion.submitter.get_display_name }}</a></small>
+                        {% endwith %}
+                    </div>
                     {% include "sub_box_controls.html" %}
+                    {% include "sub_box_tags.html" %}
                 </div>
-                <a href="{{ discussion.linked_object.get_absolute_url }}">{% model_meta_verbose_name discussion.linked_object %} «{{ discussion.linked_object.title }}»</a>
-                <div class="marg__b_mid text-muted">
-                    <small>
+                <div class="marg__b_min ">
+                    <small class="text-muted">
                         {{ discussion.time_created }}
                         {% if discussion.time_modified %}(<abbr title="Дата последнего редактирования">ред.</abbr> {{ discussion.time_modified }}){% endif %}
+                        <div>
+                            {% if discussion.linked_object %}
+                                Навеяно объектом
+                                <a href="{{ discussion.linked_object.get_absolute_url }}">{% model_meta_verbose_name discussion.linked_object %} «{{ discussion.linked_object.title }}»</a>
+                            {% endif %}
+                        </div>
                     </small>
                 </div>
                 <div class="py_user">{{ discussion.text|safe }}</div>
