@@ -6,7 +6,11 @@
         <ul class="discussions">
             {% for discussion in discussions %}
                 <li class="discussion">
-                    <small class="cl__gray">{{ discussion.time_created|date:"d E H:i" }}</small><br>
+                    <small class="cl__gray">{{ discussion.time_created|date:"d E H:i" }}</small>
+                    {% if request.user.id == discussion.submitter_id %}
+                        <small class="pull-right"><span class="label label-success">моё</span></small>
+                    {% endif %}
+                    <br>
                     <a href="{% url "discussions:details" discussion.id %}" class="item" title="Страница обсуждения">{{ discussion.title }}</a>
                 </li>
             {% endfor %}
