@@ -64,6 +64,23 @@ def get_realms():
     return REALMS_REGISTRY
 
 
+def get_realm(name):
+    """Вернёт объет области по её имени, либо None.
+
+    :param str name:
+    :return:
+    """
+    realms = get_realms()
+    realm = None
+
+    try:
+        realm = realms[name]
+    except KeyError:
+        pass
+
+    return realm
+
+
 def get_sitemaps():
     """Возвращает словарь с sitemap-директивами для поисковых систем.
 
