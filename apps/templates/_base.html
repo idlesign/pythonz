@@ -41,7 +41,7 @@
             {% with template_path="sitetree/menu_top.html" %}
                 {% sitetree_menu from "main" include "topmenu" template template_path %}
 
-                <div class="submenu navbar-nav navbar-left marg__l_mid">
+                <div class="submenu navbar-nav navbar-left marg__l_mid bg-success">
                 {% if view_type == 'listing' %}
                     {% sitetree_menu from "main" include "this-children" template template_path %}
                 {% else %}
