@@ -179,13 +179,21 @@ class RealmBase(object):
         return item(cls.txt_form_edit, '%s %s.id' % (cls.get_edit_urlname(), realm_name), in_menu=False, in_sitetree=False, access_loggedin=True)
 
     @classmethod
+    def get_add_urlname(cls):
+        """Возвращает название URL страницы добавления объекта.
+
+        :return:
+        """
+        _tmp, realm_name_plural = cls.get_names()
+        return '%s:add' % realm_name_plural
+
+    @classmethod
     def get_sitetree_add_item(cls):
         """Возвращает элемент древа сайта, указывающий на страницу добавления объекта.
 
         :return:
         """
-        realm_name, realm_name_plural = cls.get_names()
-        return item(cls.txt_form_add, '%s:add' % realm_name_plural, access_loggedin=True)
+        return item(cls.txt_form_add, cls.get_add_urlname(), access_loggedin=True)
 
     @classmethod
     def get_tags_urlname(cls):
