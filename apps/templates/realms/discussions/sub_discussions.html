@@ -1,5 +1,7 @@
-<h3>Обсуждения</h3>
+<hr>
+<h4>Связанные обсуждения</h4>
 <div class="marg__t_mid">
+    {% include "realms/discussions/sub_form.html" %}
     {% if discussions %}
         <ul class="discussions">
             {% for discussion in discussions %}

@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.contenttypes.models import ContentType
 from datetimewidget.widgets import DateTimeWidget
 
 from ..models import Book, Video, Event, Discussion, User, Article, Community
@@ -13,9 +14,57 @@ class DiscussionForm(RealmEditBaseForm):
         fields = (
             'title',
             'text_src',
+            'object_id',
+            'content_type',
         )
         labels = {'text_src': ''}
-        widgets = {'text_src': RstEditWidget(attrs={'rows': 15})}
+        widgets = {
+            'object_id': forms.HiddenInput(),
+            'content_type': forms.HiddenInput(),
+            'text_src': RstEditWidget(attrs={'rows': 15})
+        }
+
+    @classmethod
+    def _get_realm_item(cls, realm, item_id):
+        """Вернёт объект из указанной области по иднетификтаору, либо None.
+
+        :param RealmBase realm:
+        :param int item_id:
+        :return:
+        """
+        item = None
+        try:
+            item = realm.model.objects.get(pk=item_id)
+        except realm.model.DoesNotExist:
+            pass
+        return item
+
+    def __init__(self, *args, **kwargs):
+        data = args[0]
+
+        if data and ('related_item_realm' in data and 'related_item_id' in data):
+            # Вызов со страницы сущности одной из областей.
+            # Связываем сущность с обсуждением.
+
+            from ..realms import get_realm
+
+            realm = get_realm(data['related_item_realm'])
+            if realm is not None:
+                item_id = data['related_item_id']
+                item = self._get_realm_item(realm, item_id)
+
+                if item is not None:
+                    data = dict(data)
+
+                    data['object_id'] = item_id
+                    data['content_type'] = ContentType.objects.get_for_model(item).id
+
+                    data['title'] = '%s про «%s»' % (kwargs['user'].get_display_name(), item.title)
+
+                    args = list(args)
+                    args[0] = data
+
+        super().__init__(*args, **kwargs)
 
 
 class ArticleForm(RealmEditBaseForm):
