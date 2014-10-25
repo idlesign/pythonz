@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.conf import settings
 from django.conf.urls import patterns, url
 
@@ -26,7 +28,7 @@ def bootstrap_realms(urlpatterns):
     return urlpatterns
 
 
-REALMS_REGISTRY = {}
+REALMS_REGISTRY = OrderedDict()
 
 
 def connect_signals():
