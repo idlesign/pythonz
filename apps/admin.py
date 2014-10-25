@@ -63,61 +63,55 @@ class PlaceAdmin(admin.ModelAdmin):
 admin.site.register(Place, PlaceAdmin)
 
 
-class ArticleAdmin(admin.ModelAdmin):
+class EntityBaseAdmin(admin.ModelAdmin):
 
     list_display = ('time_created', 'title', 'submitter',)
+    raw_id_fields = ('submitter',)
     search_fields = ['title', 'description']
     list_filter = ['time_created', 'status']
     ordering = ['-time_created']
 
+
+class ArticleAdmin(EntityBaseAdmin):
+
+    pass
+
 admin.site.register(Article, ArticleAdmin)
 
 
-class BookAdmin(admin.ModelAdmin):
+class BookAdmin(EntityBaseAdmin):
 
-    list_display = ('time_created', 'title', 'isbn', 'submitter',)
-    search_fields = ['isbn', 'title']
-    list_filter = ['time_created', 'status']
-    ordering = ['-time_created']
+    list_display = ('time_created', 'title', 'submitter', 'isbn')
+    search_fields = ['title', 'isbn']
 
 admin.site.register(Book, BookAdmin)
 
 
-class CommunityAdmin(admin.ModelAdmin):
+class CommunityAdmin(EntityBaseAdmin):
 
-    list_display = ('time_created', 'title', 'submitter', 'status')
     search_fields = ['title', 'description', 'text']
-    list_filter = ['time_created', 'status']
-    ordering = ['-time_created']
 
 admin.site.register(Community, CommunityAdmin)
 
 
-class DiscussionAdmin(admin.ModelAdmin):
+class DiscussionAdmin(EntityBaseAdmin):
 
-    list_display = ('time_created', 'title', 'status', 'submitter')
-    search_fields = ['title', 'text']
-    list_filter = ['time_created', 'status']
-    ordering = ['-time_created']
+    search_fields = ['title', 'description', 'text']
 
 admin.site.register(Discussion, DiscussionAdmin)
 
 
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(EntityBaseAdmin):
 
-    list_display = ('time_created', 'title', 'status', 'submitter', 'type', 'specialization')
+    list_display = ('time_created', 'title', 'submitter', 'type', 'specialization')
     search_fields = ['title', 'description', 'text']
     list_filter = ['time_created', 'status', 'type', 'specialization']
-    ordering = ['-time_created']
 
 admin.site.register(Event, EventAdmin)
 
 
-class VideoAdmin(admin.ModelAdmin):
+class VideoAdmin(EntityBaseAdmin):
 
-    list_display = ('time_created', 'title', 'author', 'submitter',)
-    search_fields = ['title']
-    list_filter = ['time_created', 'status']
-    ordering = ['-time_created']
+    pass
 
 admin.site.register(Video, VideoAdmin)
