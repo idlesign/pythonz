@@ -37,6 +37,14 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCom
     class Fields:
         text = 'Обсуждение'
 
+    def __unicode__(self):
+        return 'Обсуждение %s для %s %s' % (self.id, self.content_type, self.object_id)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.status = self.STATUS_PUBLISHED
+        super().save(*args, **kwargs)
+
     def get_title(self):
         """Формирует и возвращает заголовок для мнения.
 
@@ -46,16 +54,9 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCom
             return '%s про «%s»' % (self.submitter.get_display_name(), self.linked_object.title)
         return self.title
 
-    def save(self, *args, **kwargs):
-        self.status = self.STATUS_PUBLISHED  # Авторский материал не нуждается в модерации %)
-        super().save(*args, **kwargs)
-
     @classmethod
     def get_paginator_objects(cls):
         return cls.objects.select_related('submitter').filter(status=cls.STATUS_PUBLISHED).order_by('-time_created').all()
-
-    def __unicode__(self):
-        return 'Обсуждение %s для %s %s' % (self.id, self.content_type, self.object_id)
 
 
 class ModelWithDiscussions(models.Model):
@@ -151,6 +152,11 @@ class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
             'help_text': 'Выберите сообщества, имеющие отношение к данному.',
         }
         year = 'Год образования'
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.status = self.STATUS_PUBLISHED
+        super().save(*args, **kwargs)
 
 
 class User(RealmBaseModel, AbstractUser):
@@ -420,6 +426,11 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
             'help_text': '%s' % HINT_IMPERSONAL_REQUIRED,
         }
         cover = 'Логотип'
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.status = self.STATUS_PUBLISHED
+        super().save(*args, **kwargs)
 
     def get_display_type(self):
         return self.TYPES[self.type]

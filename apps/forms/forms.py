@@ -169,7 +169,6 @@ class CommunityForm(RealmEditBaseForm):
             'contacts',
             'place',
             'year',
-            'status',
         )
         widgets = {
             'place': PlaceWidget(),
