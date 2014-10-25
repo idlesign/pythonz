@@ -32,7 +32,6 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
     class Meta:
         verbose_name = 'Обсуждение'
         verbose_name_plural = 'Обсуждения'
-        unique_together = ('content_type', 'object_id', 'submitter')
 
     class Fields:
         text = 'Обсуждение'
