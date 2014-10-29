@@ -176,12 +176,24 @@ class DetailsView(RealmView):
         :return:
         """
         item = xross.attrs['item']
-        if action == 1:
-            item.set_support(self.request.user)
-        elif action == 0:
-            item.remove_support(self.request.user)
+        if self._is_rating_allowed(request, item):
+            if action == 1:
+                item.set_support(self.request.user)
+            elif action == 0:
+                item.remove_support(self.request.user)
         self._attach_support_data(item, self.request)
         return render(self.request, 'sub_box_rating.html', {'item': item})
+
+    @classmethod
+    def _is_rating_allowed(cls, request, item):
+        """Возвращает флаг, указывающий на то, можно
+        ли рекомендовать данную сущность (материал).
+
+        :param request:
+        :param item:
+        :return:
+        """
+        return request.user != item  # Пользователи не могут рекомендовать себя %)
 
     def _update_context(self, context):
         """Используется для дополнения контекста шаблона данными.
@@ -198,7 +210,7 @@ class DetailsView(RealmView):
         if not request.user.is_superuser:
             if item.status == RealmBaseModel.STATUS_DELETED:  # Запрещаем доступ к удалённым.
                 raise Http404()
-            elif item.status == RealmBaseModel.STATUS_DRAFT and hasattr(item, 'submitter') and item.submitter != request.user: # Закрываем доступ к чужим черновикам.
+            elif item.status == RealmBaseModel.STATUS_DRAFT and hasattr(item, 'submitter') and item.submitter != request.user:  # Закрываем доступ к чужим черновикам.
                 raise PermissionDenied()
 
         item.has_discussions = False
@@ -213,6 +225,8 @@ class DetailsView(RealmView):
         except RedirectRequired:
             return redirect(item, permanent=True)
 
+        item_rating_allowed = self._is_rating_allowed(request, item)
+
         try:
             self.check_edit_permissions(request, item)
             item_edit_allowed = True
@@ -225,7 +239,12 @@ class DetailsView(RealmView):
 
         # Нарочно передаём item под двумя разными именами.
         # Требуется для упрощения наслования шаблонов.
-        context = {self.realm.name: item, 'item': item, 'item_edit_allowed': item_edit_allowed}
+        context = {
+            self.realm.name: item,
+            'item': item,
+            'item_edit_allowed': item_edit_allowed,
+            'item_rating_allowed': item_rating_allowed
+        }
         self._update_context(context)
         return self.render(request, context)
 

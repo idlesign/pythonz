@@ -1,5 +1,7 @@
 <div class="well well-sm">
-    {% include "sub_box_rating.html" %}
+    {% if item_rating_allowed %}
+        {% include "sub_box_rating.html" %}
+    {% endif %}
     {% include "sub_box_bookmark.html" %}
     {% if item_edit_allowed %}
         <form role="form" action="edit/">

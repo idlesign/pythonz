@@ -1,6 +1,6 @@
 {% load model_meta %}
 {% if request.user.is_authenticated %}
-<div id="bookmark_box" class="marg__t_mid">
+<div id="bookmark_box" class="marg__b_mid">
     {% if item.is_bookmarked %}
     <button id="toggle_bookmark" data-xaction="0" data-xtarget="bookmark_box" data-xsuccess="replace" class="xross btn btn-sm btn-block btn-warning" title="{% model_meta_verbose_name item %} в избранном. Нажмите для отмены."><span class="glyphicon glyphicon-star"></span> В избранном</button>
     {% else %}
