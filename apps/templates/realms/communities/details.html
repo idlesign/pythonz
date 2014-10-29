@@ -19,14 +19,4 @@
     <div class="py_user marg__b_mid well">
         {{ community.text|safe }}
     </div>
-
-    <div class="text-muted pull-right">
-        <small>
-            {% if community.time_modified %}
-                <abbr title="Автор и дата последнего редактирования">ред.</abbr>
-                <a href="{{ community.last_editor.get_absolute_url }}">{{ community.last_editor.get_display_name }}</a>
-                {{ community.time_modified }}
-            {% endif %}
-        </small>
-    </div>
 {% endblock %}

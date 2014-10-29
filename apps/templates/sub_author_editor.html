@@ -1,0 +1,15 @@
+<small>
+    <small>
+    {% if item.submitter %}
+    <abbr title="Пользователь, добавивший материал">доб.</abbr> <a href="{{ item.submitter.get_absolute_url }}">{{ item.submitter.get_display_name }}</a>
+    {% endif %}
+    {% if item.time_modified %}
+        /
+        <abbr title="Автор и дата последнего редактирования">ред.</abbr>
+        {% if item.submitter != item.last_editor %}
+        <a href="{{ item.last_editor.get_absolute_url }}">{{ item.last_editor.get_display_name }}</a>
+        {% endif %}
+        {{ item.time_modified }}
+    {% endif %}
+    </small>
+</small>

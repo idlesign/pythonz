@@ -46,14 +46,4 @@
     <div class="py_user marg__b_mid">
         {{ event.text|safe }}
     </div>
-
-    <div class="text-muted pull-right">
-        <small>
-            {% if event.time_modified %}
-                <abbr title="Автор и дата последнего редактирования">ред.</abbr>
-                <a href="{{ event.last_editor.get_absolute_url }}">{{ event.last_editor.get_display_name }}</a>
-                {{ event.time_modified }}
-            {% endif %}
-        </small>
-    </div>
 {% endblock %}
