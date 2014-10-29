@@ -22,19 +22,20 @@ class UtilsTest(unittest.TestCase):
         self.assertEqual(url_mangle('http://some.com'), 'http://some.com')
 
     def test_typography(self):
+        self.maxDiff = None  # Для наглядности.
         input_str = "Мама     ''мыла'' раму. " \
                     'Фабрика “Красная Заря”. ' \
-                    '"Маме - раму!",- кричал Иван. ' \
+                    '"Маме - раму!",- кричал\tИван. ' \
                     'Температура повысилась на 7-8 градусов. ' \
                     '(c), (r), (tm) заменяем на правильные. ' \
-                    '"строка'
+                    '"строка\nперенесена'
 
         expected_str = 'Мама «мыла» раму. ' \
                        'Фабрика «Красная Заря». ' \
                        '«Маме — раму!»,— кричал Иван. ' \
                        'Температура повысилась на 7–8 градусов. ' \
                        '©, ®, ™ заменяем на правильные. ' \
-                       '«строка'
+                       '«строка\nперенесена'
 
         self.assertEqual(expected_str, BasicTypograph.apply_to(input_str))
 
@@ -102,4 +103,4 @@ class ModelDiscussionTest(unittest.TestCase):
         self.assertIsNotNone(o.time_created)
         self.assertEqual(o.status, o.STATUS_PUBLISHED)
         self.assertEqual(o.text_src, 'проба пера')
-        self.assertEqual(o.title, '%s про «%s»' % (user.get_display_name(), o.linked_object.title))
+        self.assertEqual(o.title, '')

@@ -23,21 +23,21 @@ class BasicTypograph(object):
     """
 
     rules = OrderedDict((
-        ('QUOTES_REPLACE', (re.compile('(„|“|”|(\'\'))', re.M | re.U), '"')),
-        ('DASH_REPLACE', (re.compile('(-|­|–|—|―|−|--)', re.M | re.U), '-')),
+        ('QUOTES_REPLACE', (re.compile('(„|“|”|(\'\'))'), '"')),
+        ('DASH_REPLACE', (re.compile('(-|­|–|—|―|−|--)'), '-')),
 
-        ('SEQUENTIAL_SPACES', (re.compile('(\s+|\t+)', re.M | re.U), ' ')),
+        ('SEQUENTIAL_SPACES', (re.compile('([ \t]+)'), ' ')),
 
-        ('DASH_EM', (re.compile('(\s|,)-\s', re.M | re.U), '\g<1>— ')),
-        ('DASH_EN', (re.compile('(\d+)\s*-\s*(\d+)', re.M | re.U), '\g<1>–\g<2>')),
+        ('DASH_EM', (re.compile('([ ,])-[ ]'), '\g<1>— ')),
+        ('DASH_EN', (re.compile('(\d+)[ ]*-[ ]*(\d+)'), '\g<1>–\g<2>')),
 
-        ('HELLIP', (re.compile('\.{2,3}', re.M | re.U), '…')),
-        ('COPYRIGHT', (re.compile('\((c|с)\)', re.M | re.U), '©')),
-        ('TRADEMARK', (re.compile('\(tm\)', re.M | re.U), '™')),
-        ('TRADEMARK_R', (re.compile('\(r\)', re.M | re.U), '®')),
+        ('HELLIP', (re.compile('\.{2,3}'), '…')),
+        ('COPYRIGHT', (re.compile('\((c|с)\)'), '©')),
+        ('TRADEMARK', (re.compile('\(tm\)'), '™')),
+        ('TRADEMARK_R', (re.compile('\(r\)'), '®')),
 
-        ('QUOTES_CYR_CLOSE', (re.compile('(\S+)"', re.M | re.U), '\g<1>»')),
-        ('QUOTES_CYR_OPEN', (re.compile('"(\S+)', re.M | re.U), '«\g<1>')),
+        ('QUOTES_CYR_CLOSE', (re.compile('(\S+)"', re.U), '\g<1>»')),
+        ('QUOTES_CYR_OPEN', (re.compile('"(\S+)', re.U), '«\g<1>')),
     ))
 
     @classmethod
