@@ -15,30 +15,38 @@
 
 
 {% block details_contents %}
-    <div class="marg__b_mid text-muted">
+    <h4>Информация</h4>
+    <div class="marg__b_mid text-muted marg__l_mid">
         <small>
             <table>
                 <tr>
+                    <td width="45%">{% model_field_verbose_name from user.username %}:</td>
+                    <td>{{ user.get_username_partial }}</td>
+                </tr>
+                <tr>
+                    <td>{% model_field_verbose_name from user.date_joined %}:</td>
+                    <td>{{ user.date_joined }}</td>
+                </tr>
+                <tr>
                     <td colspan="2">
-                        <span class="marg__r_mid">{% model_field_verbose_name from user.username %}: {{ user.get_username_partial }}</span>
-                        <span class="marg__r_mid">{% model_field_verbose_name from user.date_joined %}: {{ user.date_joined }}</span>
+                        &nbsp;
                     </td>
                 </tr>
             {% if user.place %}
                 <tr>
-                    <td width="25%">{% model_field_verbose_name from user.place %}:</td>
+                    <td>{% model_field_verbose_name from user.place %}:</td>
                     <td><a href="{{ user.place.get_absolute_url }}">{{ user.place.title }}</a></td>
                 </tr>
             {% endif %}
             {% if user.email_public %}
                 <tr>
-                    <td width="25%">{% model_field_verbose_name from user.email_public %}:</td>
+                    <td>{% model_field_verbose_name from user.email_public %}:</td>
                     <td><a href="mailto:{{ user.email_public }}">{{ user.email_public }}</a></td>
                 </tr>
             {% endif %}
             {% if user.url %}
                 <tr>
-                    <td width="25%">{% model_field_verbose_name from user.url %}:</td>
+                    <td>{% model_field_verbose_name from user.url %}:</td>
                     <td><a href="{{ user.url }}">{{ user.url }}</a></td>
                 </tr>
             {% endif %}
@@ -47,11 +55,12 @@
     </div>
     <div class="marg__t_max">
         {% if bookmarks %}
-        <h3>Избранное</h3>
+        <hr>
+        <h4>Избранное</h4>
         {% for realm_model, bookmark_list in bookmarks.items %}
             {% if bookmark_list %}
             <div class="marg__l_mid marg__t_mid">
-                <h4>{{ realm_model.get_verbose_name_plural }}</h4>
+                <h5>{{ realm_model.get_verbose_name_plural }}</h5>
                 <ul>
                     {% for item in bookmark_list %}
                         <li><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></li>
