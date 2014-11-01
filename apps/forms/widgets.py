@@ -158,6 +158,17 @@ class RstEditWidget(forms.Widget):
                     </div>
 
 
+                    <div class="marg__b_mid">
+                        <strong>Подкаст с podster.fm</strong>
+                        <div>
+                            Встроить проигрыватель можно при помощи директивы <b>.. podster:: url_страницы_подкаста</b>.<br>
+                            Добавим подкаст по страницы <a href="http://mtpod.podster.fm/5">http://mtpod.podster.fm/5</a>:<br><br>
+                            <pre><code class="nohighlight">.. podster:: http://mtpod.podster.fm/5</code></pre>
+                            * Обратите внимание на необходимость наличия переноса строки после блока кода.<br>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
             ''', flatatt(final_attrs), force_text(value))

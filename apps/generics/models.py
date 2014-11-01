@@ -38,11 +38,12 @@ class ModelWithCompiledText(models.Model):
 
     RE_CODE = re.compile('\.{2}\s*code::\s*([^\n]+)\n\n(.+?)\n{3}(?=\S)', re.S)
     RE_GIST = re.compile('\.{2}\s*gist::\s*([^\n]+)\n', re.S)
+    RE_PODSTER = re.compile('\.{2}\s*podster::\s*([^\n]+)[/]*\n', re.S)
     RE_ACCENT = re.compile('`{2}([^`\n,]+)`{2}')
     RE_QUOTE = re.compile('`{3}\n+([^`]+)\n+`{3}')
     RE_BOLD = re.compile('\*{2}([^*\n]+)\*{2}')
     RE_ITALIC = re.compile('\*([^*\n]+)\*')
-    RE_URL = re.compile('(?<!["])(http[^\s\)]+)')
+    RE_URL = re.compile('(?<!["])(http[s]*[^\s\)]+)')
     RE_URL_WITH_TITLE = re.compile('`([^\[]+)\n*\[([^\]]+)\]`_')
 
     class Meta:
@@ -71,8 +72,9 @@ class ModelWithCompiledText(models.Model):
         text = re.sub(cls.RE_ACCENT, '<code>\g<1></code>', text)
         text = re.sub(cls.RE_CODE, '<pre><code class="\g<1>">\n\g<2>\n</code></pre>\n', text)
         text = re.sub(cls.RE_URL_WITH_TITLE, '<a href="\g<2>" target="_blank">\g<1></a>', text)
-        text = re.sub(cls.RE_URL, href_replacer, text)
         text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\g<1>.js"></script>', text)
+        text = re.sub(cls.RE_PODSTER, '<iframe width="100%" height="85" src="\g<1>/embed/13?link=1" frameborder="0" allowtransparency="true"></iframe>', text)
+        text = re.sub(cls.RE_URL, href_replacer, text)
 
         text = text.replace('\n', '<br>')
         return text
