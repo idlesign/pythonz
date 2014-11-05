@@ -23,6 +23,8 @@
     <link href='http://fonts.googleapis.com/css?family=Belleza' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=PT+Serif&subset=cyrillic' rel='stylesheet' type='text/css'>
 
+    <link href="{{ STATIC_URL }}img/favicon.gif" rel="icon" type="image/gif" />
+
     {% block head %}
         {% if realm.syndication_enabled %}
         <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ realm.get_syndication_url }}" />
