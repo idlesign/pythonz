@@ -6,11 +6,33 @@ pythonz = {
         xross.automate();
         $(function(){
             pythonz.mark_user();
+
+            pythonz.make_cloud();
         });
     },
 
-    xrossreinit: function() {
-        //pythonz.bootstrap();
+    make_cloud: function() {
+        var max_ties = 0,
+            font_size_max = 35,
+            $entries = $('.list_entry', '#tags_box');
+            total = $entries.length;
+
+        $entries.each(function(idx, item){
+            var ties_num = $(item).data('tiesnum');
+            if (ties_num > max_ties) {
+                max_ties = ties_num;
+            }
+        });
+
+        $entries.each(function(idx, item){
+            var $item = $(item),
+                ties_num = $item.data('tiesnum'),
+                font_size = (font_size_max * ties_num) / max_ties;
+
+            console.log(font_size);
+            $item.css('font-size', font_size + 'px');
+        });
+
     },
 
     mark_user: function() {
