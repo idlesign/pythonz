@@ -110,7 +110,7 @@ def get_realms_urls():
 
 
 def build_sitetree():
-    """Строит древо сайта, исходя из достпных областей сайта.
+    """Строит древо сайта, исходя из доступных областей сайта.
 
     :return:
     """
@@ -118,7 +118,7 @@ def build_sitetree():
     register_dynamic_trees(
         compose_dynamic_tree((
             tree('main', 'Основное дерево', (
-                item('PYTHONZ', '/', alias='topmenu', url_as_pattern=False,
+                item('Про Python', '/', alias='topmenu', url_as_pattern=False,
                      description='Материалы по языку программирования Python. Книги, видео, сообщества и многое другое.',
                      children=(realm.get_sitetree_items() for realm in get_realms().values())),
                 item('Вход', 'login', access_guest=True, in_menu=False, in_breadcrumbs=False),
