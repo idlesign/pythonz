@@ -13,6 +13,7 @@ pythonz = {
 
     make_cloud: function() {
         var max_ties = 0,
+            font_size_min = 10,
             font_size_max = 35,
             $entries = $('.list_entry', '#tags_box');
             total = $entries.length;
@@ -29,7 +30,9 @@ pythonz = {
                 ties_num = $item.data('tiesnum'),
                 font_size = (font_size_max * ties_num) / max_ties;
 
-            console.log(font_size);
+            if (font_size < font_size_min) {
+                font_size = font_size_min;
+            }
             $item.css('font-size', font_size + 'px');
         });
 
