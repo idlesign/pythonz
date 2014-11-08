@@ -1,4 +1,4 @@
-<div class="form-group {% if field.errors %}has-error{% endif %}">
+<div class="form-group {% if field.errors %}has-error{% endif %}" data-fieldname="{{ field.name }}">
     {% if field.label %}
         {% if not field.field.is_checkbox %}
             <label class="col-lg-2 control-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="cl__green">*</span>{% endif %}</label>
