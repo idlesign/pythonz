@@ -43,7 +43,7 @@ class RealmEditBaseForm(CommonEntityForm):
             # Эти изменения нужны для стилизации форм.
             if isinstance(self.fields[field_name].widget, CheckboxInput):
                 self.fields[field_name].is_checkbox = True
-            fld.widget.attrs['class'] = 'form-control'
+            fld.widget.attrs['class'] = 'form-control input-sm'
 
             # Эти связи потребуются в некоторых виджетах.
             fld.widget.model = instance
