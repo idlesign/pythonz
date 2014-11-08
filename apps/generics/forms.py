@@ -4,6 +4,7 @@ from django import forms
 from django.forms.widgets import CheckboxInput
 
 from ..models import Article
+from ..forms.widgets import RstEditWidget
 
 
 class CommonEntityForm(forms.ModelForm):
@@ -36,6 +37,8 @@ class RealmEditBaseForm(CommonEntityForm):
 
             if field_name == 'description':
                 fld.widget = forms.Textarea(attrs={'rows': 3})
+            elif field_name == 'text_src':
+                fld.widget = RstEditWidget(attrs={'rows': 12})
 
             # Эти изменения нужны для стилизации форм.
             if isinstance(self.fields[field_name].widget, CheckboxInput):
