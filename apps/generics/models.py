@@ -145,7 +145,7 @@ class CommonEntityModel(models.Model):
         """
         raise NotImplementedError()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 
@@ -244,6 +244,7 @@ class RealmBaseModel(ModelWithFlag):
         :return:
         """
         # TODO не использовать related там, где не нужно
+        # TODO причесать фильтрацию по опубликованным
         return cls.objects.select_related('submitter').filter(status=cls.STATUS_PUBLISHED).order_by('-supporters_num', '-time_created').all()
 
     def is_published(self):
