@@ -1,7 +1,20 @@
 <hr>
+{% if show_form_for %}
+    {% if request.user.is_authenticated %}
+        <div class="pull-right">
+            <form method="post" action="{% url "discussions:add" %}">
+                {% csrf_token %}
+                <input type="hidden" name="related_item_realm" value="{{ show_form_for.realm.name }}">
+                <input type="hidden" name="related_item_id" value="{{ show_form_for.id }}">
+                <button class="btn btn-sm">
+                    <span class="glyphicon glyphicon-list"></span> Обсудить&hellip;
+                </button>
+            </form>
+        </div>
+    {% endif %}
+{% endif %}
 <h4>Связанные обсуждения</h4>
 <div class="marg__t_mid">
-    {% include "realms/discussions/sub_form.html" %}
     {% if discussions %}
         <ul class="discussions">
             {% for discussion in discussions %}
@@ -16,11 +29,11 @@
             {% endfor %}
         </ul>
     {% else %}
-        <div class="well well-sm">
+        <small class="text-muted">
             Нет обсуждений для отображения.
             {% if not request.user.is_authenticated %}
             <br>Если у вас есть, что сказать, можете <a href="{% url "login" %}">представиться</a> и исправить ситуацию.
             {% endif %}
-        </div>
+        </small>
     {% endif %}
 </div>
