@@ -272,6 +272,114 @@ class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         }
 
 
+class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
+
+    current = models.BooleanField('Текущая', default=False, db_index=True)
+
+    class Fields:
+        title = 'Номер'
+        description = {
+            'verbose_name': 'Введение',
+            'help_text': 'Краткое описание основных изменений в версии.',
+        }
+        text_src = {
+            'verbose_name': 'Описание',
+            'help_text': 'Обзорное, более полное описание нововведений и изменений, произошедших в версии. %s' % HINT_IMPERSONAL_REQUIRED,
+        }
+
+    class Meta:
+        verbose_name = 'Версия Python'
+        verbose_name_plural = 'Версии Python'
+
+
+class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
+    """Модель сущности `Справочник`."""
+
+    TYPE_CHAPTER = 1
+    TYPE_PACKAGE = 2
+    TYPE_MODULE = 3
+    TYPE_FUNCTION = 4
+    TYPE_CLASS = 5
+    TYPE_METHOD = 6
+
+    TYPES = choices_list(
+        (TYPE_CHAPTER, 'Раздел справки'),
+        (TYPE_PACKAGE, 'Описание пакета'),
+        (TYPE_MODULE, 'Описание модуля'),
+        (TYPE_FUNCTION, 'Описание функции'),
+        (TYPE_CLASS, 'Описание класса или типа'),
+        (TYPE_METHOD, 'Описание метода класса или типа'),
+    )
+
+    type = models.PositiveIntegerField('Тип статьи', choices=get_choices(TYPES), default=TYPE_CHAPTER,
+                                       help_text='Служит для структурирования информации. Справочные статьи разных типов могут выглядеть по-разному.')
+
+    parent = models.ForeignKey('self', related_name='children', verbose_name='Родитель', db_index=True, null=True, blank=True,
+                               help_text='Укажите родительский раздел. Например, для модуля можно указать раздел справки, в которому он относится; для метода &#8212; класс.')
+
+    version_added = models.ForeignKey(Version, related_name='%(class)s_added', verbose_name='Добавлено в', null=True, blank=True,
+                                      help_text='Версия Python, для которой впервые стала актульна данная статья<br>'
+                                                '(версия, где впервые появился модуль, пакет, класс, функция).')
+
+    version_deprecated = models.ForeignKey(Version, related_name='%(class)s_deprecated', verbose_name='Устарело в', null=True, blank=True,
+                                           help_text='Версия Python, для которой впервые данная статья перестала быть актуальной<br>'
+                                                     '(версия, где модуль, пакет, класс, функция были объявлены устаревшими).')
+
+    func_proto = models.CharField('Прототип', max_length=250, null=True, blank=True,
+                                  help_text='Для функций/методов. Описание интерфейса, например: <i>my_func(arg, kwarg=None)</i>')
+
+    func_params = models.TextField('Параметры', null=True, blank=True,
+                                   help_text='Для функций/методов. Описание параметров функции.')
+
+    func_result = models.CharField('Результат', max_length=250, null=True, blank=True,
+                                   help_text='Для функций/методов. Описание результата, например: <i>int</i>.')
+
+    class Meta:
+        verbose_name = 'Статья справочника'
+        verbose_name_plural = 'Справочник'
+
+    class Fields:
+        title = {
+            'verbose_name': 'Название',
+            'help_text': 'Здесь следует указать название раздела справки или пакета, модуля, класса, метода, функции и т.п.',
+        }
+        description = {
+            'verbose_name': 'Кратко',
+            'help_text': 'Краткое описание для раздела или пакета, модуля, класса, метода, функции и т.п.',
+        }
+        text_src = {
+            'verbose_name': 'Описание',
+            'help_text': 'Подробное описание. Здесь же следует располагать примеры кода.',
+        }
+
+    def is_type_callable(self):
+        return self.type in (self.TYPE_METHOD, self.TYPE_FUNCTION)
+
+    def is_type_method(self):
+        return self.type == self.TYPE_METHOD
+
+    def is_type_class(self):
+        return self.type == self.TYPE_CLASS
+
+    def is_type_chapter(self):
+        return self.type == self.TYPE_CHAPTER
+
+    @classmethod
+    def get_actual(cls, parent=None, exclude_id=None):
+        filter_kwargs = {
+            'status': cls.STATUS_PUBLISHED,
+        }
+        if parent is not None:
+            filter_kwargs['parent'] = parent
+
+        qs = cls.objects.filter(**filter_kwargs)
+
+        if exclude_id is not None:
+            qs = qs.exclude(pk=exclude_id)
+
+        return qs.order_by('-time_published').all()
+
+
 class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory, ModelWithAuthorAndTranslator):
     """Модель сущности `Видео`."""
 

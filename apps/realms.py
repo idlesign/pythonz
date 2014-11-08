@@ -6,11 +6,12 @@ from django.conf.urls import patterns, url
 from sitetree.utils import tree, item
 from sitecats.models import Category
 
-from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm
+from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm, ReferenceForm
 from .generics.realms import RealmBase
-from .models import User, Discussion, Book, Video, Place, Article, Community, Event
+from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference
 from .signals import signal_new_entity, signal_entity_published
-from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView
+from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
+    ReferenceListingView, ReferenceDetailsView
 from .zen import *  # Регистрируем блок сайта с дзеном
 
 
@@ -199,6 +200,28 @@ class EventRealm(RealmBase):
 #     icon = 'briefcase'
 
 
+class ReferenceRealm(RealmBase):
+    """
+    Область со справочниками.
+    """
+
+    allowed_views = ('listing', 'details', 'add', 'edit')
+
+    txt_promo = 'Справочные материалы помогают ориентироваться в языке, узнавать о его возможностях.'
+    txt_form_add = 'Дополнить справочник'
+    txt_form_edit = 'Редактировать статью'
+
+    view_listing_description = 'Справочные материалы по языку программирования Python.'
+    view_listing_keywords = '%s справка, reference, справочник по питону' % BASE_KEYWORDS
+
+    view_listing_base_class = ReferenceListingView
+    view_details_base_class = ReferenceDetailsView
+
+    model = Reference
+    form = ReferenceForm
+    icon = 'search'
+
+
 class ArticleRealm(RealmBase):
     """
     Область со статьями.
@@ -322,4 +345,4 @@ class CommunityRealm(RealmBase):
     sitemap_changefreq = 'daily'
 
 
-register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, DiscussionRealm, PlaceRealm, EventRealm, CommunityRealm, UserRealm)
+register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, ReferenceRealm, EventRealm, CommunityRealm, UserRealm, PlaceRealm, DiscussionRealm)

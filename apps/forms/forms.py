@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.contenttypes.models import ContentType
 from datetimewidget.widgets import DateTimeWidget
 
-from ..models import Book, Video, Event, Discussion, User, Article, Community
+from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference
 from ..generics.forms import RealmEditBaseForm
 from .widgets import RstEditWidget, ReadOnlyWidget, PlaceWidget
 
@@ -21,7 +21,6 @@ class DiscussionForm(RealmEditBaseForm):
         widgets = {
             'object_id': forms.HiddenInput(),
             'content_type': forms.HiddenInput(),
-            'text_src': RstEditWidget(attrs={'rows': 15})
         }
 
     @classmethod
@@ -82,7 +81,6 @@ class ArticleForm(RealmEditBaseForm):
             'text_src': ''
         }
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 3}),
             'text_src': RstEditWidget(attrs={'rows': 25}),
         }
 
@@ -176,7 +174,6 @@ class EventForm(RealmEditBaseForm):
         )
         widgets = {
             'place': PlaceWidget(),
-            'text_src': RstEditWidget(attrs={'rows': 10}),
             'time_start': DateTimeWidget(usel10n=True, options=CALENDAR_OPTIONS, bootstrap_version=3),
             'time_finish': DateTimeWidget(usel10n=True, options=CALENDAR_OPTIONS, bootstrap_version=3),
         }
@@ -224,6 +221,25 @@ class CommunityForm(RealmEditBaseForm):
         )
         widgets = {
             'place': PlaceWidget(),
-            'text_src': RstEditWidget(attrs={'rows': 10})
         }
 
+
+class ReferenceForm(RealmEditBaseForm):
+
+    class Meta:
+        model = Reference
+        fields = (
+            'type',
+            'parent',
+            'title',
+            'description',
+            'func_proto',
+            'func_params',
+            'func_result',
+            'text_src',
+            'version_added',
+            'version_deprecated',
+        )
+        widgets = {
+            'func_params': forms.Textarea(attrs={'rows': 4}),
+        }

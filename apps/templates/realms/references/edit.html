@@ -1,0 +1,35 @@
+{% extends "base_edit.html" %}
+
+
+{% block head %}
+    {{ block.super }}
+    <script type="text/javascript">
+
+        function toggle_form_fields() {
+            var show = $.inArray($('#id_type').val(), ['4', '6']) > -1;
+
+            $('.form-group', '#edit_form').each(function(idx, el){
+                var $el = $(el);
+                if ($el.data('fieldname').indexOf('func_')===0) {
+                    $el.hide();
+                    if (show) {
+                        $el.show();
+                    }
+                }
+            });
+        }
+
+        $(function(){
+            $('#id_type').on('change', toggle_form_fields);
+            toggle_form_fields();
+        });
+    </script>
+{% endblock %}
+
+
+{% block hint %}
+    <ol>
+        <li>Заполняйте форму аккуратно;</li>
+        <li>Обратите особое внимание на правильность заполнения поля &laquo;Тип статьи&raquo;.</li>
+    </ol>
+{%  endblock %}

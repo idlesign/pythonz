@@ -1,0 +1,107 @@
+{% extends "base_details.html" %}
+{% load model_field %}
+
+
+{% block details_contents %}
+
+    <div class="marg__b_mid pull-right">
+        {% if reference.version_added %}
+        <div class="label label-info">{% model_field_verbose_name from reference.version_added %} {{ reference.version_added }}</div>
+        {% endif %}
+        {% if reference.version_deprecated %}
+        <div class="label label-danger">{% model_field_verbose_name from reference.version_deprecated %} {{ reference.version_deprecated }}</div>
+        {% endif %}
+    </div>
+
+    {% if reference.parent %}
+        <div class="text-muted marg__b_min">
+            <small>
+                Материал относится к разделу <a href="{% url "references:details" reference.parent.id %}">{{ reference.parent.title }}</a>
+            </small>
+        </div>
+        <hr>
+    {% endif %}
+
+{%  endblock %}
+
+
+{% block details_contents_after %}
+
+    {% if reference.is_type_callable %}
+        <div class="marg__b_mid">
+
+            {% if reference.func_proto %}
+            <div class="well well-sm marg__b_mid">
+                {{ reference.func_proto }}
+            </div>
+            {% endif %}
+
+            {% if reference.func_params %}
+            <div class="marg__b_mid">
+                <h4>Параметры</h4>
+                <div>
+                    {{ reference.func_params }}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if reference.func_result %}
+            <div class="marg__b_mid">
+                <h4>Возвращаемое значение</h4>
+                <div>
+                    {{ reference.func_result }}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    {% endif %}
+
+    <h4>Описание</h4>
+    <div>
+        {{ reference.text|safe }}
+    </div>
+
+    {% if children %}
+    <div class="marg__t_max">
+    {% if reference.is_type_class %}
+        <h4>Методы</h4>
+    {% else %}
+        <h4>Содержание</h4>
+    {% endif %}
+    {% include "realms/references/sub_list.html" with items=children %}
+    </div>
+    {% endif %}
+
+{%  endblock %}
+
+
+{% block right_bar %}
+
+    <div class="text-center">
+    {% include "sub_box_share.html" %}
+    </div>
+
+    {% if siblings %}
+    <div class="marg__t_max">
+    {% if reference.is_type_method %}
+        <h4>Остальные методы</h4>
+    {% else %}
+        <h4>Смотрите также</h4>
+    {% endif %}
+    {% include "realms/references/sub_list.html" with items=siblings %}
+    </div>
+    {% endif %}
+
+{% endblock %}
+
+
+{% block details_share %}{% endblock %}
+
+
+
+
+{% block details_linked %}{% endblock %}
+
+
+{% block cover %}{% endblock %}

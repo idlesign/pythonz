@@ -4,18 +4,17 @@ from sitecats.toolbox import get_category_model, get_category_lists, get_categor
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.defaults import page_not_found as dj_page_not_found, \
     permission_denied as dj_permission_denied, \
     server_error as dj_server_error
 
 from .generics.views import DetailsView, RealmView, EditView
-from .models import Place, User, Community, Event
+from .models import Place, User, Community, Event, Reference
 
 
 class UserDetailsView(DetailsView):
-    """Перекрываем представление с детальной информацией для пользователей,
-    чтобы поместить в контекст шаблона дополнительную информацию."""
+    """Представление с детальной информацией о пользователе."""
 
     def _update_context(self, context):
         user = context['item']
@@ -26,7 +25,7 @@ class UserDetailsView(DetailsView):
 
 
 class UserEditView(EditView):
-    """Перекрытое представление редактирования."""
+    """Представление редактирования пользователя."""
 
     def check_edit_permissions(self, request, item):
         # Пользователи не могут редактировать других пользователей.
@@ -35,8 +34,7 @@ class UserEditView(EditView):
 
 
 class PlaceDetailsView(DetailsView):
-    """Перекрываем представление с детальной информацией,
-    чтобы поместить в контекст шаблона дополнительную информацию."""
+    """Представление с детальной информацией о месте."""
 
     def _update_context(self, context):
         place = context['item']
@@ -51,6 +49,27 @@ class PlaceListingView(RealmView):
     def get(self, request):
         places = Place.get_actual().order_by('-supporters_num')
         return self.render(request, {self.realm.name_plural: places})
+
+
+class ReferenceListingView(RealmView):
+    """Представление со списком справочников."""
+
+    def get(self, request):
+        # Справочник один, поэтому перенаправляем сразу на него.
+        return redirect(self.realm.get_details_urlname(), 1, permanent=True)
+
+
+class ReferenceDetailsView(DetailsView):
+    """Представление статьи справочника."""
+
+    def _update_context(self, context):
+        reference = context['item']
+        context['children'] = reference.get_actual(reference)
+        if reference.parent is not None:
+            context['siblings'] = reference.get_actual(reference.parent, exclude_id=reference.id)
+
+    def get_object_or_404(self, obj_id):
+        return get_object_or_404(self.realm.model.objects.select_related('parent', 'submitter'), pk=obj_id)
 
 
 class CategoryListingView(RealmView):

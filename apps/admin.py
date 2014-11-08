@@ -4,7 +4,9 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 
-from .models import Book, Video, Event, User, Article, Place, Community, Discussion
+from admirarchy.toolbox import HierarchicalModelAdmin
+
+from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version
 
 
 ##################################################################################
@@ -115,3 +117,19 @@ class VideoAdmin(EntityBaseAdmin):
     pass
 
 admin.site.register(Video, VideoAdmin)
+
+
+class ReferenceAdmin(HierarchicalModelAdmin, EntityBaseAdmin):
+
+    hierarchy = True
+    list_display = ('title', 'submitter', 'type')
+    list_filter = ['time_created', 'status', 'type', 'version_added', 'version_deprecated']
+
+admin.site.register(Reference, ReferenceAdmin)
+
+
+class VersionAdmin(EntityBaseAdmin):
+
+    list_display = ('title', 'current')
+
+admin.site.register(Version, VersionAdmin)
