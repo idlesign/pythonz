@@ -1,5 +1,10 @@
-<ul class="list-unstyled">
+<table class="text-muted">
 {% for item in items %}
-    <li><a href="{% url "references:details" item.id %}">{{ item.title }}</a></li>
+    <tr>
+        <td><a href="{% url "references:details" item.id %}">{{ item.title }}</a></td>
+        {% if show_descriptions %}
+            <td>&nbsp; <small>&#8212; {{ item.description }}</small></td>
+        {% endif %}
+    </tr>
 {% endfor %}
-</ul>
+</table>

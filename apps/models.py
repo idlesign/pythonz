@@ -364,6 +364,9 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     def is_type_method(self):
         return self.type == self.TYPE_METHOD
 
+    def is_type_module(self):
+        return self.type == self.TYPE_MODULE
+
     def is_type_class(self):
         return self.type == self.TYPE_CLASS
 

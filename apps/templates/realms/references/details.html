@@ -64,7 +64,11 @@
             <h6>Содержание</h6>
         {% endif %}
 
-        {% include "realms/references/sub_list.html" with items=children %}
+        {% if reference.is_type_class or reference.is_type_module %}
+            {% include "realms/references/sub_list.html" with items=children show_descriptions=1 %}
+        {% else %}
+            {% include "realms/references/sub_list.html" with items=children %}
+        {% endif %}
     </div>
     {% endif %}
 
