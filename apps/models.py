@@ -290,6 +290,7 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
     class Meta:
         verbose_name = 'Версия Python'
         verbose_name_plural = 'Версии Python'
+        ordering = ('title',)
 
 
 class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
@@ -337,6 +338,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     class Meta:
         verbose_name = 'Статья справочника'
         verbose_name_plural = 'Справочник'
+        ordering = ('parent_id', 'title')
 
     class Fields:
         title = {

@@ -206,6 +206,7 @@ class ReferenceRealm(RealmBase):
     """
 
     allowed_views = ('listing', 'details', 'add', 'edit')
+    syndication_enabled = False
 
     txt_promo = 'Справочные материалы помогают ориентироваться в языке, узнавать о его возможностях.'
     txt_form_add = 'Дополнить справочник'
