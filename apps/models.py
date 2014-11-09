@@ -46,7 +46,7 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
 
     @classmethod
     def get_paginator_objects(cls):
-        return cls.objects.select_related('submitter').filter(status=cls.STATUS_PUBLISHED).order_by('-time_created').all()
+        return cls.objects.published().select_related('submitter').order_by('-time_created').all()
 
 
 class ModelWithDiscussions(models.Model):
@@ -366,13 +366,10 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
 
     @classmethod
     def get_actual(cls, parent=None, exclude_id=None):
-        filter_kwargs = {
-            'status': cls.STATUS_PUBLISHED,
-        }
-        if parent is not None:
-            filter_kwargs['parent'] = parent
+        qs = cls.objects.published()
 
-        qs = cls.objects.filter(**filter_kwargs)
+        if parent is not None:
+            qs = qs.filter(parent=parent)
 
         if exclude_id is not None:
             qs = qs.exclude(pk=exclude_id)
@@ -538,4 +535,4 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
 
     @classmethod
     def get_paginator_objects(cls):
-        return cls.objects.filter(status=cls.STATUS_PUBLISHED).order_by('-time_start', '-supporters_num', '-time_created').all()
+        return cls.objects.published().order_by('-time_start', '-supporters_num', '-time_created').all()

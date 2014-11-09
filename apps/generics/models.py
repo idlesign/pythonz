@@ -149,6 +149,17 @@ class CommonEntityModel(models.Model):
         return self.title
 
 
+class RealmsManager(models.Manager):
+    """Менеджер объектов областей."""
+
+    def published(self):
+        """Возвращает только опубликованные сущности.
+
+        :return:
+        """
+        return super(RealmsManager, self).get_queryset().filter(status=RealmBaseModel.STATUS_PUBLISHED)
+
+
 class RealmBaseModel(ModelWithFlag):
     """Базовый класс для моделей, использующихся в областях (realms) сайта."""
 
@@ -164,6 +175,8 @@ class RealmBaseModel(ModelWithFlag):
 
     FLAG_STATUS_BOOKMARK = 1  # Фильтр флагов-закладок.
     FLAG_STATUS_SUPPORT = 2  # Фильтр флагов-голосов-поддержки.
+
+    objects = RealmsManager()
 
     time_created = models.DateTimeField('Дата создания', auto_now_add=True, editable=False)
     time_published = models.DateTimeField('Дата публикации', null=True, editable=False)
@@ -235,7 +248,7 @@ class RealmBaseModel(ModelWithFlag):
 
         :return:
         """
-        return cls.objects.filter(status=cls.STATUS_PUBLISHED).order_by('-time_published').all()
+        return cls.objects.published().order_by('-time_published').all()
 
     @classmethod
     def get_paginator_objects(cls):
@@ -244,8 +257,7 @@ class RealmBaseModel(ModelWithFlag):
         :return:
         """
         # TODO не использовать related там, где не нужно
-        # TODO причесать фильтрацию по опубликованным
-        return cls.objects.select_related('submitter').filter(status=cls.STATUS_PUBLISHED).order_by('-supporters_num', '-time_created').all()
+        return cls.objects.published().select_related('submitter').order_by('-supporters_num', '-time_created').all()
 
     def is_published(self):
         """Возвращает булево указывающее на то, опубликована ли сущность.
@@ -259,7 +271,7 @@ class RealmBaseModel(ModelWithFlag):
 
         :return:
         """
-        return self.linked.filter(status=self.STATUS_PUBLISHED).all()
+        return self.linked.published().all()
 
     def is_supported_by(self, user):
         """Возвращает указание на то, поддерживает ли данный пользователь данную сущность.
@@ -276,7 +288,7 @@ class RealmBaseModel(ModelWithFlag):
         :param category:
         :return:
         """
-        return cls.get_from_category_qs(category).filter(status=RealmBaseModel.STATUS_PUBLISHED).order_by('-time_published')
+        return cls.get_from_category_qs(category).published().order_by('-time_published')
 
     def set_support(self, user):
         """Устанавливает флаг поддержки данным пользователем данной сущности.
