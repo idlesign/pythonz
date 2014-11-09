@@ -289,7 +289,7 @@ class RealmBaseModel(ModelWithFlag):
         :param category:
         :return:
         """
-        return cls.get_from_category_qs(category).published().order_by('-time_published')
+        return cls.get_from_category_qs(category).filter(status=RealmBaseModel.STATUS_PUBLISHED).order_by('-time_published')
 
     def set_support(self, user):
         """Устанавливает флаг поддержки данным пользователем данной сущности.
