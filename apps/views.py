@@ -64,9 +64,9 @@ class ReferenceDetailsView(DetailsView):
 
     def _update_context(self, context):
         reference = context['item']
-        context['children'] = reference.get_actual(reference)
+        context['children'] = reference.get_actual(reference).order_by('title')
         if reference.parent is not None:
-            context['siblings'] = reference.get_actual(reference.parent, exclude_id=reference.id)
+            context['siblings'] = reference.get_actual(reference.parent, exclude_id=reference.id).order_by('title')
 
     def get_object_or_404(self, obj_id):
         return get_object_or_404(self.realm.model.objects.select_related('parent', 'submitter'), pk=obj_id)
