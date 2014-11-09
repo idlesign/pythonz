@@ -3,7 +3,7 @@
     <tr>
         <td><a href="{% url "references:details" item.id %}">{{ item.title }}</a></td>
         {% if show_descriptions %}
-            <td>&nbsp; <small>&#8212; {{ item.description }}</small></td>
+            <td>&nbsp; <small>&#8212; {{ item.description|truncatechars:85 }}</small></td>
         {% endif %}
     </tr>
 {% endfor %}
