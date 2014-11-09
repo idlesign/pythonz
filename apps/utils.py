@@ -114,6 +114,10 @@ def notify_entity_published(entity):
     :param RealmBaseModel entity:
     :return:
     """
+
+    if not entity.notify_on_publish:
+        return False
+
     MAX_LEN = 139  # Максимальная длина тивта. Для верности меньше.
     prefix = 'Новое: %s «' % entity.get_verbose_name()
     url = 'http://pythonz.net%s' % entity.get_absolute_url()

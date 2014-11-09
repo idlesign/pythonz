@@ -292,6 +292,8 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         verbose_name_plural = 'Версии Python'
         ordering = ('title',)
 
+    notify_on_publish = False
+
 
 class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
     """Модель сущности `Справочник`."""
@@ -353,6 +355,8 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
             'verbose_name': 'Описание',
             'help_text': 'Подробное описание. Здесь же следует располагать примеры кода.',
         }
+
+    notify_on_publish = False
 
     def is_type_callable(self):
         return self.type in (self.TYPE_METHOD, self.TYPE_FUNCTION)
