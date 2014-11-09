@@ -229,6 +229,7 @@ class ReferenceForm(RealmEditBaseForm):
     class Meta:
         model = Reference
         fields = (
+            'status',
             'type',
             'parent',
             'title',
