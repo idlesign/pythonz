@@ -2,6 +2,15 @@
 {% load model_field %}
 
 
+{% block js_bottom %}
+    <script type="text/javascript">
+        $(function(){
+            pythonz.Reference.decorate();
+        });
+    </script>
+{% endblock %}
+
+
 {% block details_contents %}
 
     <div class="marg__b_mid pull-right">
@@ -24,7 +33,7 @@
             {% if reference.func_proto %}
             <div class="marg__b_mid">
                 <h6>Прототип</h6>
-                <div>
+                <div id="area_func_proto">
                     {{ reference.func_proto }}
                 </div>
             </div>
@@ -33,7 +42,7 @@
             {% if reference.func_params %}
             <div class="marg__b_mid">
                 <h6>Параметры</h6>
-                <div>
+                <div id="area_func_params">
                     {{ reference.func_params|linebreaksbr }}
                 </div>
             </div>
@@ -42,7 +51,7 @@
             {% if reference.func_result %}
             <div class="marg__b_mid">
                 <h6>Результат</h6>
-                <div>
+                <div id="area_func_result">
                     {{ reference.func_result }}
                 </div>
             </div>

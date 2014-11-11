@@ -45,6 +45,38 @@ pythonz = {
         });
     },
 
+    Reference: {
+
+        decorate: function() {
+            this.decorate_func_params();
+        },
+
+        decorate_func_params: function() {
+            var $area = $('#area_func_params'),
+                html = $area.html(),
+
+                func_process_args = function (match_str, arg_name, separator) {
+                    arg_name = arg_name.replace(/([^=]+)(=.+)/g, '$1<span class="text-muted">$2</span>');
+                    return '<span class="glyphicon glyphicon-certificate"></span> <b>' + arg_name + '</b>' + separator;
+                },
+
+                replace_rules = [
+                    [/([^>\s]+)(\s--)/g, func_process_args],
+                    [/--/g, ':'],
+                    [/-py([\w\.]+)/g, '<div class="label label-danger" title="Устрело в версии">$1</div>'],
+                    [/\+py([\w\.]+)/g, '<div class="label label-default" title="Актуально с версии">$1</div>'],
+                    [/'([^']+)'/g, '<strong class="cl__green">$1</strong>']
+                ];
+
+            $.each(replace_rules, function(idx, rule) {
+                html = html.replace(rule[0], rule[1]);
+            });
+
+            $area.html(html);
+        }
+
+    },
+
     Map: function (map_el_id, objects) {
 
         var self = this,
