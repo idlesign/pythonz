@@ -6,7 +6,7 @@ from etc.toolbox import choices_list, get_choices
 from sitecats.models import ModelWithCategory
 from django.db import models, IntegrityError
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
@@ -151,6 +151,8 @@ class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
 
 class User(RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
+
+    objects = UserManager()
 
     place = models.ForeignKey(Place, verbose_name='Место', related_name='users', null=True, blank=True,
                               help_text='Место вашего пребывания (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
