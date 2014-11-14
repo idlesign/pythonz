@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
+from simple_history.admin import SimpleHistoryAdmin
 
 from admirarchy.toolbox import HierarchicalModelAdmin
 
@@ -65,7 +66,7 @@ class PlaceAdmin(admin.ModelAdmin):
 admin.site.register(Place, PlaceAdmin)
 
 
-class EntityBaseAdmin(admin.ModelAdmin):
+class EntityBaseAdmin(SimpleHistoryAdmin):
 
     list_display = ('time_created', 'title', 'submitter',)
     raw_id_fields = ('submitter',)

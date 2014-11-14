@@ -4,6 +4,7 @@ import requests
 from etc.models import InheritedModel
 from etc.toolbox import choices_list, get_choices
 from sitecats.models import ModelWithCategory
+from simple_history.models import HistoricalRecords
 from django.db import models, IntegrityError
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
@@ -338,6 +339,8 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
 
     func_result = models.CharField('Результат', max_length=250, null=True, blank=True,
                                    help_text='Для функций/методов. Описание результата, например: <i>int</i>.')
+
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Статья справочника'

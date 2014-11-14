@@ -5,6 +5,7 @@ django-admirarchy
 django-datetime-widget
 django-debug-toolbar
 django-etc
+django-simple-history
 django-siteblocks
 django-sitecats
 django-siteflags

@@ -76,6 +76,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'apps.middleware.TimezoneMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 )
 
 
@@ -112,6 +113,7 @@ INSTALLED_APPS = (
     'etc',
 
     'datetimewidget',
+    'simple_history',
 )
 
 
