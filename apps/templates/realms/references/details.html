@@ -5,7 +5,9 @@
 {% block js_bottom %}
     <script type="text/javascript">
         $(function(){
-            pythonz.Reference.decorate();
+            pythonz.Reference.decorate_description('area_description');
+            pythonz.Reference.decorate_func_params('area_func_params');
+            pythonz.Reference.decorate_func_result('area_func_result');
         });
     </script>
 {% endblock %}
@@ -61,7 +63,7 @@
     {% endif %}
 
     <h6>Описание</h6>
-    <div>
+    <div id="area_description">
         {{ reference.text|safe }}
     </div>
 

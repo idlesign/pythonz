@@ -47,32 +47,63 @@ pythonz = {
 
     Reference: {
 
-        decorate: function() {
-            this.decorate_func_params();
+        RULE_PYVERSION_ADDED: [/\+py([\w\.]+)/g, '<small><div class="label label-info" title="Актуально с версии">$1</div></small>'],
+        RULE_PYVERSION_REMOVED: [/-py([\w\.]+)/g, '<small><div class="label label-danger" title="Устрело в версии">$1</div></small>'],
+        RULE_LITERAL: [/'([^']+)'/g, '<strong class="cl__green">$1</strong>'],
+        RULE_UNDERMETHOD: [/(__[^\s]+__)/g, '<i>$1</i>'],
+        RULE_BASE_TYPES: [/(int|str|dict|tuple|list|set|iterable|callable)(\s+)/g, '<small><code>$1</code></small>$2'],
+        RULE_EMDASH: [/\s+-\s+/g, ' &#8212; '],
+
+        decorate_description: function(area_id) {
+            this.decorate_area(area_id,
+                [
+                    this.RULE_PYVERSION_REMOVED,
+                    this.RULE_PYVERSION_ADDED,
+                    this.RULE_BASE_TYPES,
+                    this.RULE_EMDASH
+                ]
+            )
         },
 
-        decorate_func_params: function() {
-            var $area = $('#area_func_params'),
-                html = $area.html(),
+        decorate_func_result: function(area_id) {
+            this.decorate_area(area_id,
+                [
+                    this.RULE_BASE_TYPES,
+                    this.RULE_EMDASH
+                ]
+            )
+        },
 
-                func_process_args = function (match_str, arg_name, separator) {
+        decorate_func_params: function(area_id) {
+            var func_process_args = function (match_str, arg_name, separator) {
                     arg_name = arg_name.replace(/([^=]+)(=.+)/g, '$1<span class="text-muted">$2</span>');
-                    return '<span class="glyphicon glyphicon-certificate"></span> <b>' + arg_name + '</b>' + separator;
-                },
+                    return '<small><span class="glyphicon glyphicon-certificate"></span></small> <b>' + arg_name + '</b>' + separator;
+                };
 
-                replace_rules = [
+            this.decorate_area(area_id,
+                [
                     [/([^>\s]+)(\s--)/g, func_process_args],
                     [/--/g, ':'],
-                    [/-py([\w\.]+)/g, '<div class="label label-danger" title="Устрело в версии">$1</div>'],
-                    [/\+py([\w\.]+)/g, '<div class="label label-default" title="Актуально с версии">$1</div>'],
-                    [/'([^']+)'/g, '<strong class="cl__green">$1</strong>']
-                ];
+                    this.RULE_PYVERSION_REMOVED,
+                    this.RULE_PYVERSION_ADDED,
+                    this.RULE_LITERAL,
+                    this.RULE_UNDERMETHOD,
+                    this.RULE_BASE_TYPES,
+                    this.RULE_EMDASH
+                ]
+            )
+        },
 
-            $.each(replace_rules, function(idx, rule) {
+        decorate_area: function(area_id, rules) {
+            var $area = $('#' + area_id),
+                html = $area.html();
+
+            $.each(rules, function(idx, rule) {
                 html = html.replace(rule[0], rule[1]);
             });
 
             $area.html(html);
+
         }
 
     },
