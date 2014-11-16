@@ -1,10 +1,25 @@
 <table class="text-muted">
 {% for item in items %}
     <tr>
-        <td><a href="{% url "references:details" item.id %}">{{ item.title }}</a></td>
-        {% if show_descriptions %}
-            <td>&nbsp; <small>&#8212; {{ item.description|truncatechars:85 }}</small></td>
-        {% endif %}
+        <td>
+        {% with item.version_deprecated as del %}
+
+            {% if del %}<del title="Устарело">{% endif %}
+            <a href="{% url "references:details" item.id %}">{{ item.title }}</a>
+            {% if del %}</del>{% endif %}
+
+            </td>
+            {% if show_descriptions %}
+                <td>
+                    &nbsp; <small>&#8212;
+                    {% if del %}<del title="Устарело">{% endif %}
+                    {{ item.description|truncatechars:85 }}
+                    {% if del %}</del>{% endif %}
+                    </small>
+                </td>
+            {% endif %}
+
+        {% endwith %}
     </tr>
 {% endfor %}
 </table>

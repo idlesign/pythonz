@@ -51,7 +51,14 @@ pythonz = {
         RULE_PYVERSION_REMOVED: [/-py([\w\.]+)/g, '<small><div class="label label-danger" title="Устрело в версии">$1</div></small>'],
         RULE_LITERAL: [/'([^']+)'/g, '<strong class="cl__green">$1</strong>'],
         RULE_UNDERMETHOD: [/(__[^\s]+__)/g, '<i>$1</i>'],
-        RULE_BASE_TYPES: [/(int|str|dict|tuple|list|set|iterable|callable)(\s+)/g, '<small><code>$1</code></small>$2'],
+        RULE_BASE_TYPES: [
+            /([^\w])(int|str|dict|tuple|list|set|iterable|callable|None|bool|True|False)([^\w])/g,
+            '$1<small><code>$2</code></small>$3'
+        ],
+        RULE_EXCEPTIONS: [
+            /([^\w])(KeyError|IndexError|ImportError|NotImplementedError|StopIteration|SystemError|SyntaxError|TypeError|UnboundLocalError|ValueError)([^\w])/g,
+            '$1<small><div class="label label-warning">$2</div></small>$3'
+        ],
         RULE_EMDASH: [/\s+-\s+/g, ' &#8212; '],
 
         decorate_description: function(area_id) {
@@ -60,6 +67,7 @@ pythonz = {
                     this.RULE_PYVERSION_REMOVED,
                     this.RULE_PYVERSION_ADDED,
                     this.RULE_BASE_TYPES,
+                    this.RULE_EXCEPTIONS,
                     this.RULE_EMDASH
                 ]
             )
@@ -68,6 +76,8 @@ pythonz = {
         decorate_func_result: function(area_id) {
             this.decorate_area(area_id,
                 [
+                    this.RULE_PYVERSION_REMOVED,
+                    this.RULE_PYVERSION_ADDED,
                     this.RULE_BASE_TYPES,
                     this.RULE_EMDASH
                 ]
@@ -89,6 +99,7 @@ pythonz = {
                     this.RULE_LITERAL,
                     this.RULE_UNDERMETHOD,
                     this.RULE_BASE_TYPES,
+                    this.RULE_EXCEPTIONS,
                     this.RULE_EMDASH
                 ]
             )
