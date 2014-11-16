@@ -9,7 +9,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from .models import ModelWithCompiledText, RealmBaseModel
-from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event
+from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event, Reference
 from ..exceptions import RedirectRequired
 from ..shortcuts import message_warning, message_success, message_info
 
@@ -48,7 +48,7 @@ class RealmView(View):
                     raise PermissionDenied()
 
                 # Запрещаем редактирование опубликованных материалов.
-                public_edit_models = Community, Event
+                public_edit_models = Community, Event, Reference
                 if item.is_published() and self.realm.model not in public_edit_models:
                     message_warning(request, 'Этот материал уже прошёл модерацию и был опубликован. '
                                              'На данный момент в проекте запрещено редактирование опубликованных материалов.')
