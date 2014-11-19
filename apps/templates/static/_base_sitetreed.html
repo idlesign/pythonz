@@ -1,0 +1,11 @@
+{% extends "static/_base.html" %}
+{% load sitetree %}
+
+
+{% block page_title %}{{ block.super }}{% sitetree_page_title from "about" %}{% endblock %}
+
+
+{% block page_description %}{% sitetree_page_description from "about" %}{% endblock %}
+
+
+{% block heading %}{% sitetree_page_title from "about" %}{% endblock %}

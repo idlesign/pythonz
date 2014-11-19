@@ -1,21 +1,10 @@
-{% extends "_base.html" %}
-{% load sitetree %}
+{% extends "static/_base.html" %}
 
 
-{% block page_description %}{% endblock %}
-{% block page_title %}PYTHONZ - 403 Доступ запрещен{% endblock %}
+{% block page_title %}{{ block.super }}403 Доступ запрещен{% endblock %}
 
 
-{% block page_contents %}
+{% block heading %}403 Доступ запрещен{% endblock %}
 
-    <div class="page-header">
-        <h1>403 Доступ запрещен</h1>
-    </div>
 
-    <div class="section">
-        К сожалению, мы не можем допустить вас на запрошенную страницу.
-    </div>
-
-    {% include "sub_zen.html" %}
-
-{%  endblock %}
+{% block body %}К сожалению, мы не можем допустить вас на запрошенную страницу.{% endblock %}

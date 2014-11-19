@@ -1,0 +1,21 @@
+{% extends "_base.html" %}
+
+{% block page_description %}{% endblock %}
+{% block page_title %}Про Python - {% endblock %}
+
+
+{% block page_contents %}
+
+    {% block heading_wrap %}
+    <div class="page-header">
+        <h1>{% block heading %}{% endblock %}</h1>
+    </div>
+    {% endblock %}
+
+    <div class="section">
+        {% block body %}{% endblock %}
+    </div>
+
+    {% include "sub_zen.html" %}
+
+{%  endblock %}
