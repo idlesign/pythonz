@@ -52,11 +52,11 @@ pythonz = {
         RULE_LITERAL: [/'([^']+)'/g, '<strong class="cl__green">$1</strong>'],
         RULE_UNDERMETHOD: [/(__[^\s]+__)/g, '<i>$1</i>'],
         RULE_BASE_TYPES: [
-            /([^\w])(int|str|dict|tuple|list|set|iterable|callable|None|bool|True|False)([^\w])/g,
+            /([^\w])(int|str|unicode|dict|tuple|list|set|iterable|callable|None|bool|True|False)([^\w])/g,
             '$1<small><code>$2</code></small>$3'
         ],
         RULE_EXCEPTIONS: [
-            /([^\w])(KeyError|IndexError|ImportError|NotImplementedError|StopIteration|SystemError|SyntaxError|TypeError|UnboundLocalError|ValueError)([^\w])/g,
+            /([^\w])(KeyError|IndexError|ImportError|NotImplementedError|RuntimeError|StopIteration|SystemError|SyntaxError|TypeError|UnboundLocalError|ValueError)([^\w])/g,
             '$1<small><div class="label label-warning">$2</div></small>$3'
         ],
         RULE_EMDASH: [/\s+-\s+/g, ' &#8212; '],
@@ -109,9 +109,11 @@ pythonz = {
             var $area = $('#' + area_id),
                 html = $area.html();
 
-            $.each(rules, function(idx, rule) {
-                html = html.replace(rule[0], rule[1]);
-            });
+            if (html !== undefined) {
+                $.each(rules, function (idx, rule) {
+                    html = html.replace(rule[0], rule[1]);
+                });
+            }
 
             $area.html(html);
 
