@@ -40,6 +40,7 @@ class UserAdmin(BaseUserAdmin):
 
     form = UserChangeForm
     add_form = UserCreationForm
+    list_display = BaseUserAdmin.list_display + ('is_active',)
 
     fieldsets = BaseUserAdmin.fieldsets + ((None, {'fields': (
             'comments_enabled',
