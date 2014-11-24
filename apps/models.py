@@ -31,6 +31,8 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
 
     linked_object = generic.GenericForeignKey()
 
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = 'Обсуждение'
         verbose_name_plural = 'Обсуждения'
@@ -80,6 +82,8 @@ class Place(RealmBaseModel, ModelWithDiscussions):
     geo_pos = models.CharField('Координаты', max_length=255, null=True, blank=True)
     geo_type = models.CharField('Тип', max_length=25, null=True, blank=True, choices=TYPES, db_index=True)
 
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = 'Место'
         verbose_name_plural = 'Места'
@@ -124,6 +128,8 @@ class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
                                 help_text='Контактные лица через запятую, представляющие сообщество, координаторы, основатели.%s' % ModelWithAuthorAndTranslator._hint_userlink)
 
     url = models.URLField('Страница в сети', null=True, blank=True)
+
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Сообщество'
@@ -241,6 +247,8 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussio
     isbn = models.CharField('Код ISBN', max_length=20, unique=True, null=True, blank=True)
     isbn_ebook = models.CharField('Код ISBN эл. книги', max_length=20, unique=True, null=True, blank=True)
 
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = 'Книга'
         verbose_name_plural = 'Книги'
@@ -260,6 +268,8 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussio
 
 class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory, ModelWithCompiledText):
     """Модель сущности `Статья`."""
+
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Статья'
@@ -402,6 +412,8 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
     code = models.TextField('Код')
     url = models.URLField('URL')
 
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = 'Видео'
         verbose_name_plural = 'Видео'
@@ -521,6 +533,8 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
     time_finish = models.DateTimeField('Завершение', null=True, blank=True,
                                        help_text='Дату завершения можно и не указывать.')
     fee = models.BooleanField('Участие платное', default=False, db_index=True)
+
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Событие'
