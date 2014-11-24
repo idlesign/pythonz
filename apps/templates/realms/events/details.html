@@ -14,13 +14,16 @@
         <h4>
             {{ event.get_display_type }} <span class="cl__gray">&#8212; {{ event.get_display_specialization }}</span>
             <div class="pull-right">
-            {% if event.fee %}
-                <span class="label label-danger" title="За участие взымается плата">Платно</span>
-            {% else %}
-                <span class="label label-success" title="Участие беслатное">Бесплатно</span>
-            {% endif %}
+                {% if event.fee %}
+                    <span class="label label-danger" title="За участие взымается плата">Платно</span>
+                {% else %}
+                    <span class="label label-success" title="Участие беслатное">Бесплатно</span>
+                {% endif %}
             </div>
         </h4>
+        {% if event.is_in_past %}
+            <h4><span class="label label-danger">Событие уже в прошлом</span></h4>
+        {% endif %}
         <div class="small">
             {% if event.place %}
                 <div><a href="{{ event.place.get_absolute_url }}">{{ event.place.title }}</a></div>
@@ -30,7 +33,7 @@
                 {% if event.time_finish %}
                     &#8212; {{ event.time_finish|date:"d E H:i" }}
                 {% endif %}
-                <span class="cl__gray">&nbsp; [{{ event.time_start|timeuntil }} до начала]</span>
+                <span class="cl__gray">&nbsp; {% if not event.is_in_past %}[{{ event.time_start|timeuntil }} до начала]{% endif %}</span>
             {% endif %}
         </div>
     </div>

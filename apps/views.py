@@ -10,7 +10,7 @@ from django.views.defaults import page_not_found as dj_page_not_found, \
     server_error as dj_server_error
 
 from .generics.views import DetailsView, RealmView, EditView
-from .models import Place, User, Community, Event, Reference
+from .models import Place, User, Community, Event
 
 
 class UserDetailsView(DetailsView):

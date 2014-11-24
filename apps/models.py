@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.utils import timezone
 
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
 from .exceptions import PythonzException
@@ -547,6 +548,12 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
     def get_display_specialization(self):
         return self.SPECS[self.specialization]
 
+    def is_in_past(self):
+        field = self.time_finish or self.time_start
+        if field is None:
+            return None
+        return field.date() < timezone.now().date()
+
     @classmethod
     def get_paginator_objects(cls):
-        return cls.objects.published().order_by('-time_start', '-supporters_num', '-time_created').all()
+        return cls.objects.published().order_by('-supporters_num', '-time_start', '-time_created').all()
