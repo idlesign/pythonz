@@ -136,6 +136,13 @@ class CommonEntityModel(models.Model):
         img = get_image_from_url(url)
         self.cover.save(img.name, img, save=False)
 
+    def get_linked(self):
+        """Возвращает связанные объекты.
+
+        :return:
+        """
+        return self.linked.all()
+
     @classmethod
     def get_paginator_objects(cls):
         """Возвращает выборку объектов для постраничной навигации.
@@ -266,13 +273,6 @@ class RealmBaseModel(ModelWithFlag):
         :return:
         """
         return self.status == self.STATUS_PUBLISHED
-
-    def get_linked(self):
-        """Возвращает связанные объекты.
-
-        :return:
-        """
-        return self.linked.published().all()
 
     def is_supported_by(self, user):
         """Возвращает указание на то, поддерживает ли данный пользователь данную сущность.
