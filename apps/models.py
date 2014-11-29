@@ -570,4 +570,4 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
 
     @classmethod
     def get_paginator_objects(cls):
-        return cls.objects.published().order_by('-supporters_num', '-time_start', '-time_created').all()
+        return cls.objects.published().order_by('-supporters_num', 'time_start', '-time_created').all()
