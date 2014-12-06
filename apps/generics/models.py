@@ -63,7 +63,7 @@ class ModelWithCompiledText(models.Model):
         text = text.replace('<ht', '[ht')
         text = text.replace('>`', ']`')
 
-        text = clean(text, strip=True)
+        text = clean(text)
 
         text = text.replace('\r\n', '\n')
         text = re.sub(cls.RE_BOLD, '<b>\g<1></b>', text)
