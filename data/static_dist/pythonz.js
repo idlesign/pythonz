@@ -6,36 +6,9 @@ pythonz = {
         xross.automate();
         $(function(){
             pythonz.mark_user();
-
-            pythonz.make_cloud();
+            sitecats.bootstrap();
+            sitecats.make_cloud('tags_box');
         });
-    },
-
-    make_cloud: function() {
-        var max_ties = 0,
-            font_size_min = 10,
-            font_size_max = 35,
-            $entries = $('.list_entry', '#tags_box');
-            total = $entries.length;
-
-        $entries.each(function(idx, item){
-            var ties_num = $(item).data('tiesnum');
-            if (ties_num > max_ties) {
-                max_ties = ties_num;
-            }
-        });
-
-        $entries.each(function(idx, item){
-            var $item = $(item),
-                ties_num = $item.data('tiesnum'),
-                font_size = (font_size_max * ties_num) / max_ties;
-
-            if (font_size < font_size_min) {
-                font_size = font_size_min;
-            }
-            $item.css('font-size', font_size + 'px');
-        });
-
     },
 
     mark_user: function() {
@@ -52,11 +25,11 @@ pythonz = {
         RULE_LITERAL: [/'([^']+)'/g, '<strong class="cl__green">$1</strong>'],
         RULE_UNDERMETHOD: [/(__[^\s]+__)/g, '<i>$1</i>'],
         RULE_BASE_TYPES: [
-            /([^\w])(int|str|unicode|dict|tuple|list|set|iterable|callable|None|bool|True|False)([^\w])/g,
+            /([^\w])(bool|callable|dict|False|int|iterable|iterator|list|None|object|set|str|True|tuple|unicode)([^\w])/g,
             '$1<small><code>$2</code></small>$3'
         ],
         RULE_EXCEPTIONS: [
-            /([^\w])(KeyError|IndexError|ImportError|NotImplementedError|RuntimeError|StopIteration|SystemError|SyntaxError|TypeError|UnboundLocalError|ValueError)([^\w])/g,
+            /([^\w])(AttributeError|ImportError|IndexError|KeyError|NotImplementedError|RuntimeError|StopIteration|SyntaxError|SystemError|TypeError|UnboundLocalError|ValueError)([^\w])/g,
             '$1<small><div class="label label-warning">$2</div></small>$3'
         ],
         RULE_EMDASH: [/\s+-\s+/g, ' &#8212; '],

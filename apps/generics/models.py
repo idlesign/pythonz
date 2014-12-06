@@ -39,7 +39,7 @@ class ModelWithCompiledText(models.Model):
     RE_CODE = re.compile('\.{2}\s*code::\s*([^\n]+)\n\n(.+?)\n{3}(?=\S)', re.S)
     RE_GIST = re.compile('\.{2}\s*gist::\s*([^\n]+)\n', re.S)
     RE_PODSTER = re.compile('\.{2}\s*podster::\s*([^\n]+)[/]*\n', re.S)
-    RE_ACCENT = re.compile('`{2}([^`\n,]+)`{2}')
+    RE_ACCENT = re.compile('`{2}([^`\n]+)`{2}')
     RE_QUOTE = re.compile('`{3}\n+([^`]+)\n+`{3}')
     RE_BOLD = re.compile('\*{2}([^*\n]+)\*{2}')
     RE_ITALIC = re.compile('\*([^*\n]+)\*')
