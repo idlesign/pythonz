@@ -25,7 +25,7 @@ pythonz = {
         RULE_LITERAL: [/'([^']+)'/g, '<strong class="cl__green">$1</strong>'],
         RULE_UNDERMETHOD: [/(__[^\s]+__)/g, '<i>$1</i>'],
         RULE_BASE_TYPES: [
-            /([^\w])(bool|callable|dict|False|int|iterable|iterator|list|None|object|set|str|True|tuple|unicode)([^\w])/g,
+            /([^\w/])(bool|callable|dict|False|int|iterable|iterator|list|None|object|set|str|True|tuple|unicode)([^\w])/g,
             '$1<small><code>$2</code></small>$3'
         ],
         RULE_EXCEPTIONS: [
