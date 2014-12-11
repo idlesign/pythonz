@@ -67,18 +67,18 @@
         {{ reference.text|safe }}
     </div>
 
-    {% if children %}
+    {% if siblings %}
     <div class="marg__t_max">
-        {% if reference.is_type_class %}
-            <h6>Методы</h6>
+        {% if reference.is_type_method %}
+            <h6>Другие методы</h6>
         {% else %}
-            <h6>Содержание</h6>
+            <h6>Соседние темы</h6>
         {% endif %}
 
         {% if reference.is_type_class or reference.is_type_module %}
-            {% include "realms/references/sub_list.html" with items=children show_descriptions=1 %}
+            {% include "realms/references/sub_list.html" with items=siblings show_descriptions=1 %}
         {% else %}
-            {% include "realms/references/sub_list.html" with items=children %}
+            {% include "realms/references/sub_list.html" with items=siblings %}
         {% endif %}
     </div>
     {% endif %}
@@ -89,25 +89,25 @@
 {% block right_bar %}
 
     {% if reference.parent %}
-    <div class="marg__t_max">
+    <div class="marg__t_min">
         <h6>Родительский раздел</h6>
         <a href="{% url "references:details" reference.parent.id %}">{{ reference.parent.title }}</a>
     </div>
     {% endif %}
 
-    {% if siblings %}
+    {% if children %}
     <div class="marg__t_max">
-        {% if reference.is_type_method %}
-            <h6>Другие методы</h6>
+        {% if reference.is_type_class %}
+            <h6>Методы</h6>
         {% else %}
-            <h6>Также в разделе</h6>
+            <h6>Темы раздела</h6>
         {% endif %}
 
-        {% include "realms/references/sub_list.html" with items=siblings %}
+        {% include "realms/references/sub_list.html" with items=children %}
     </div>
     {% endif %}
 
-    <div class="text-center">
+    <div class="text-center marg__t_max">
         {% include "sub_box_share.html" %}
     </div>
 
