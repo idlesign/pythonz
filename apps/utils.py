@@ -1,9 +1,11 @@
+import os
 import re
-from collections import  OrderedDict
+from collections import OrderedDict
 from urllib.parse import urlsplit, urlunsplit
 from datetime import timedelta
 
 import requests
+from PIL import Image  # Для работы с jpg требуется собрать с libjpeg-dev
 from sitemessage.toolbox import schedule_messages, recipients
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -67,6 +69,35 @@ def url_mangle(url):
         splitted[path] = '<...>%s' % splitted[path].split('/')[-1]  # Последний кусок пути.
     mangled = urlunsplit(splitted)
     return mangled
+
+
+def get_thumb_url(realm, image, width, height):
+    """Создаёт на лету уменьшенную копию указанного изображения.
+
+    :param realm:
+    :param image:
+    :param width:
+    :param height:
+    :return:
+    """
+    base_path = os.path.join('img', realm.name_plural, 'thumbs', '%sx%s' % (width, height))
+    try:
+        thumb_file_base = os.path.join(base_path, os.path.basename(image.path))
+    except (ValueError, AttributeError):
+        return ''
+
+    thumb_file = os.path.join(settings.MEDIA_ROOT, thumb_file_base)
+
+    if not os.path.exists(thumb_file):  # TODO Довольно долго. Пересмотреть при случае.
+        try:
+            os.makedirs(os.path.join(settings.MEDIA_ROOT, base_path), mode=0o755)
+        except FileExistsError:
+            pass
+        img = Image.open(image)
+        img.thumbnail((width, height), Image.ANTIALIAS)
+        img.save(thumb_file)
+
+    return os.path.join(settings.MEDIA_URL, thumb_file_base)
 
 
 def create_digest():
