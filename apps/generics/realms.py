@@ -27,6 +27,9 @@ class RealmBase(object):
     # Указывает на готовность области попасть в еженедельный дайджест.
     ready_for_digest = True
 
+    # Код виджета для Яндекса.
+    yawidget_code = None
+
     # Указание на то, доступна ли синдикация.
     syndication_enabled = True
 

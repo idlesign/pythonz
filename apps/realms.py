@@ -239,6 +239,8 @@ class ArticleRealm(RealmBase):
     form = ArticleForm
     icon = 'file'
 
+    yawidget_code = 173163
+
 
 class PlaceRealm(RealmBase):
     """
