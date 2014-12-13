@@ -7,7 +7,7 @@
             <ul>
                 {% for entry in entries %}
                     <li style="margin-bottom: 10px;">
-                        <a href="http://pythonz.net{{ entry.get_absolute_url }}">{{ entry.title }}</a>
+                        <a href="{{ entry.absolute_url }}">{{ entry.title }}</a>
                         <div style="font-size:12px;color:#666;margin-top:5px;"><i>{{ entry.description }}</i></div>
                     </li>
                 {% endfor %}

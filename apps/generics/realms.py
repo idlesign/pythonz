@@ -109,7 +109,7 @@ class RealmBase(object):
                 'link': lambda self: reverse(cls.get_listing_urlname()),
                 'items': lambda self: cls.model.get_actual(),
                 'item_title': lambda self, item: item.title,
-                'item_link': lambda self, item: item.get_absolute_url(),
+                'item_link': lambda self, item: item.get_absolute_url(postfix='fromrss'),
                 'item_description': lambda self, item: item.description,
             }
             cls.syndication_feed = type('%sSyndication' % cls.name, (Feed,), type_dict)()

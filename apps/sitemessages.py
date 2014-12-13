@@ -86,6 +86,8 @@ class PythonzEmailDigest(PythonzEmailMessage):
                 date_till = get_date(context.get('date_till'))
                 entries = realm.model.get_actual().filter(time_published__gte=date_from, time_published__lte=date_till)
                 if entries:
+                    for entry in entries:
+                        entry.absolute_url = entry.get_absolute_url(with_prefix=True, postfix='frommail')
                     realms_data[realm.model.get_verbose_name_plural()] = entries
 
         context.update({'realms': realms_data})

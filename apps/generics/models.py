@@ -362,13 +362,22 @@ class RealmBaseModel(ModelWithFlag):
         """
         return cls._meta.verbose_name_plural
 
-    def get_absolute_url(self):
+    def get_absolute_url(self, with_prefix=False, postfix=None):
         """Возвращает URL страницы с детальной информацией об объекте.
 
+        :param bool with_prefix: Флаг. Следует ли добавлять название хоста к URL.
+        :param None|str postfix: Дополнительные GET параметры для URL.
+            Используются, например в качестве меток источников переходов по URL
+            при сборе статистики посещений.
         :return:
         """
         tmp, realm_name_plural = self.realm.get_names()
-        return reverse('%s:details' % realm_name_plural, args=[str(self.id)])
+        url = reverse('%s:details' % realm_name_plural, args=[str(self.id)])
+        if with_prefix:
+            url = '%s%s' % (settings.URL_PREFIX, url)
+        if postfix is not None:
+            url = '%s?%s' % (url, postfix)
+        return url
 
     def get_category_absolute_url(self, category):
         """Возвращает URL страницы с разбивкой по данной категории.
