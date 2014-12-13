@@ -179,6 +179,8 @@ class VideoRealm(RealmBase):
     form = VideoForm
     icon = 'film'
 
+    yawidget_code = 173167
+
 
 class EventRealm(RealmBase):
     """
