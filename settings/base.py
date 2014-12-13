@@ -11,6 +11,7 @@ PATH_DATA = '%s/data' % PATH_PROJECT
 
 ####################################################################
 
+URL_PREFIX = 'http://pythonz.net/'
 DEBUG = True
 
 SECRET_KEY = 'not_a_secret'

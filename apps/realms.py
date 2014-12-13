@@ -153,12 +153,14 @@ class BookRealm(RealmBase):
     txt_form_add = 'Добавить книгу'
     txt_form_edit = 'Изменить данные книги'
 
-    view_listing_description = 'Книги по прораммированию на языке Python. И просто книги по программированию.'
+    view_listing_description = 'Книги по программированию на языке Python. И просто книги по программированию.'
     view_listing_keywords = '%s книга, books, книги по программированию на питоне' % BASE_KEYWORDS
 
     model = Book
     form = BookForm
     icon = 'book'
+
+    yawidget_code = 173166
 
 
 class VideoRealm(RealmBase):

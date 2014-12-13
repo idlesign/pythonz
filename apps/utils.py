@@ -71,13 +71,14 @@ def url_mangle(url):
     return mangled
 
 
-def get_thumb_url(realm, image, width, height):
+def get_thumb_url(realm, image, width, height, absolute_url=False):
     """Создаёт на лету уменьшенную копию указанного изображения.
 
     :param realm:
     :param image:
     :param width:
     :param height:
+    :param absolute_url:
     :return:
     """
     base_path = os.path.join('img', realm.name_plural, 'thumbs', '%sx%s' % (width, height))
@@ -97,7 +98,11 @@ def get_thumb_url(realm, image, width, height):
         img.thumbnail((width, height), Image.ANTIALIAS)
         img.save(thumb_file)
 
-    return os.path.join(settings.MEDIA_URL, thumb_file_base)
+    url = os.path.join(settings.MEDIA_URL, thumb_file_base)
+    if absolute_url:
+        url = '%s%s' % (settings.URL_PREFIX, url)
+
+    return url
 
 
 def create_digest():
@@ -151,7 +156,7 @@ def notify_entity_published(entity):
 
     MAX_LEN = 139  # Максимальная длина тивта. Для верности меньше.
     prefix = 'Новое: %s «' % entity.get_verbose_name()
-    url = 'http://pythonz.net%s' % entity.get_absolute_url()
+    url = '%s%s' % (settings.URL_PREFIX, entity.get_absolute_url())
     postfix = '» %s' % url
     if settings.AGRESSIVE_MODE:
         postfix = '%s #python #dev' % postfix

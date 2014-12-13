@@ -105,7 +105,7 @@ class RealmBase(object):
                 'description': 'PYTHONZ. Новое в разделе «%s»' % name,
                 'item_enclosure_mime_type': 'image/png',
                 'item_enclosure_length': 50000,
-                'item_enclosure_url': lambda self, item: get_thumb_url(cls, item.cover, 100, 131),
+                'item_enclosure_url': lambda self, item: get_thumb_url(cls, item.cover, 100, 131, absolute_url=True),
                 'link': lambda self: reverse(cls.get_listing_urlname()),
                 'items': lambda self: cls.model.get_actual(),
                 'item_title': lambda self, item: item.title,
