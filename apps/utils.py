@@ -156,7 +156,7 @@ def notify_entity_published(entity):
 
     MAX_LEN = 139  # Максимальная длина тивта. Для верности меньше.
     prefix = 'Новое: %s «' % entity.get_verbose_name()
-    url = entity.get_absolute_url(with_prefix=True, postfix='fromtwee')
+    url = entity.get_absolute_url(with_prefix=True, hash_chunk='fromtwee')
     postfix = '» %s' % url
     if settings.AGRESSIVE_MODE:
         postfix = '%s #python #dev' % postfix
