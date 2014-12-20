@@ -4,12 +4,13 @@ from uuid import uuid4
 
 from bleach import clean
 from siteflags.models import ModelWithFlag
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
 
-from ..signals import signal_new_entity, signal_entity_published
+from ..signals import signal_new_entity, signal_entity_published, signal_support_changed
 
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
@@ -268,10 +269,43 @@ class RealmBaseModel(ModelWithFlag):
         return cls.objects.published().select_related('submitter').order_by('-time_created').all()
 
     @classmethod
+    def cache_get_key_most_voted_objects(cls, class_name=None):
+        """Возвращает ключ кеша, содержащего наиболее популярные материалы раздела.
+
+        :param class_name:
+        :return:
+        """
+        if class_name is None:
+            class_name = cls.__name__
+        return 'most_voted|%s' % class_name
+
+    @classmethod
     def get_most_voted_objects(cls):
-        query = cls.objects.published().filter(supporters_num__gt=0)
-        query = query.select_related('submitter').order_by('-supporters_num')
-        return query.all()[:5]
+        """Возвращает наимболее популярные материалы раздела.
+
+        :return:
+        """
+        cache_key = cls.cache_get_key_most_voted_objects()
+        objects = cache.get(cache_key)
+
+        if objects is None:
+
+            query = cls.objects.published().filter(supporters_num__gt=0)
+            query = query.select_related('submitter').order_by('-supporters_num')
+            objects = query.all()[:5]
+
+            cache.set(cache_key, objects, None)
+
+        return objects
+
+    @classmethod
+    def cache_delete_most_voted_objects(cls, **kwargs):
+        """
+
+        :param kwargs:
+        :return:
+        """
+        cache.delete(cls.cache_get_key_most_voted_objects(kwargs['sender']))
 
     def is_published(self):
         """Возвращает булево указывающее на то, опубликована ли сущность.
@@ -308,6 +342,8 @@ class RealmBaseModel(ModelWithFlag):
         self.mark_unmodified()
         self.save()
 
+        signal_support_changed.send(self.__class__.__name__)
+
     def remove_support(self, user):
         """Убирает флаг поддержки данным пользователем данной сущности.
 
@@ -318,6 +354,8 @@ class RealmBaseModel(ModelWithFlag):
         self.remove_flag(user, status=self.FLAG_STATUS_SUPPORT)
         self.mark_unmodified()
         self.save()
+
+        signal_support_changed.send(self.__class__.__name__)
 
     def get_suppport_for_objects(self, objects_list, user):
         """Возвращает данные о поддержке пользователем(ями) указанного набора сущностей.

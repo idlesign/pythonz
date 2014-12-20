@@ -6,10 +6,12 @@ from django.conf.urls import patterns, url
 from sitetree.utils import tree, item
 from sitecats.models import Category
 
-from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm, ReferenceForm
+from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm, \
+    ReferenceForm
 from .generics.realms import RealmBase
+from .generics.models import RealmBaseModel
 from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference
-from .signals import signal_new_entity, signal_entity_published
+from .signals import signal_new_entity, signal_entity_published, signal_support_changed
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
     ReferenceListingView, ReferenceDetailsView
 from .zen import *  # Регистрируем блок сайта с дзеном
@@ -40,6 +42,8 @@ def connect_signals():
     from .utils import notify_new_entity, notify_entity_published  # Потакаем поведению Django 1.7 при загрузке приложений.
     notify_handler = lambda sender, **kwargs: notify_new_entity(kwargs['entity'])
     signal_new_entity.connect(notify_handler, dispatch_uid='cfg_new_entity', weak=False)
+
+    signal_support_changed.connect(RealmBaseModel.cache_delete_most_voted_objects)
 
     if settings.DEBUG:  # На всякий случай, чем чёрт не шутит.
         return False
