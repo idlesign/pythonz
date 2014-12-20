@@ -352,5 +352,5 @@ class AddView(EditView):
     """Добавление объекта."""
 
     @classmethod
-    def get_template_path(cls, name):
+    def get_template_path(cls, name=None):
         return super().get_template_path('edit')
