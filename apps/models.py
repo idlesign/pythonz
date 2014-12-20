@@ -227,6 +227,12 @@ class User(RealmBaseModel, AbstractUser):
     def get_paginator_objects(cls):
         return cls.objects.order_by('-date_joined').all()
 
+    @classmethod
+    def get_most_voted_objects(cls):
+        query = cls.objects.filter(supporters_num__gt=0)
+        query = query.select_related('submitter').order_by('-supporters_num')
+        return query.all()[:5]
+
     def get_display_name(self):
         return self.get_full_name() or self.get_username_partial()
     title = property(get_display_name)
