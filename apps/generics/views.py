@@ -113,22 +113,49 @@ class ListingView(RealmView):
         """
         return self.realm.model.get_most_voted_objects()
 
+    @classmethod
+    def extend_paginator(cls, page_items):
+        """Дополняет объект постраничной навигации.
+
+        :param page_items:
+        :return:
+        """
+        max_pages_before_after = 5
+        page = page_items.number
+
+        min_page_before = page-max_pages_before_after
+        if min_page_before < 1:
+            min_page_before = 0
+
+        max_page_after = page+max_pages_before_after
+        if max_page_after > page_items.paginator.num_pages:
+            max_page_after = page_items.paginator.num_pages
+
+        page_items.before_current = reversed(range(page-1, min_page_before, -1))
+        page_items.after_current = range(page+1, max_page_after+1)
+
     def get(self, request, category_id=None):
-        page = request.GET.get('p')
+        try:
+            page = int(request.GET.get('p'))
+        except (TypeError, ValueError):
+            page = 1
+
         paginator = Paginator(self.get_paginator_objects(), self.realm.model.items_per_page)
 
         try:
-            items = paginator.page(page)
-        except (PageNotAnInteger, EmptyPage):
-            items = paginator.page(1)
+            page_items = paginator.page(page)
+        except EmptyPage:
+            page_items = paginator.page(1)
+
+        self.extend_paginator(page_items)
 
         category = None
         if category_id is not None:
             category = get_category_model().objects.get(pk=category_id)
 
         return self.render(request, {
-            self.realm.name_plural: items,
-            'items': items,
+            self.realm.name_plural: page_items,
+            'items': page_items,
             'category': category,
             'items_most_voted': self.get_most_voted_objects()
         })
