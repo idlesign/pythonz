@@ -8,6 +8,7 @@ import requests
 from PIL import Image  # Для работы с jpg требуется собрать с libjpeg-dev
 from sitemessage.toolbox import schedule_messages, recipients
 from django.conf import settings
+from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.utils.text import Truncator
 from django.utils import timezone
@@ -87,20 +88,28 @@ def get_thumb_url(realm, image, width, height, absolute_url=False):
     except (ValueError, AttributeError):
         return ''
 
-    thumb_file = os.path.join(settings.MEDIA_ROOT, thumb_file_base)
+    cache_key = 'thumbs|%s|%s' % (thumb_file_base, absolute_url)
 
-    if not os.path.exists(thumb_file):  # TODO Довольно долго. Пересмотреть при случае.
-        try:
-            os.makedirs(os.path.join(settings.MEDIA_ROOT, base_path), mode=0o755)
-        except FileExistsError:
-            pass
-        img = Image.open(image)
-        img.thumbnail((width, height), Image.ANTIALIAS)
-        img.save(thumb_file)
+    url = cache.get(cache_key)
 
-    url = os.path.join(settings.MEDIA_URL, thumb_file_base)
-    if absolute_url:
-        url = '%s%s' % (settings.URL_PREFIX, url)
+    if url is None:
+
+        thumb_file = os.path.join(settings.MEDIA_ROOT, thumb_file_base)
+
+        if not os.path.exists(thumb_file):
+            try:
+                os.makedirs(os.path.join(settings.MEDIA_ROOT, base_path), mode=0o755)
+            except FileExistsError:
+                pass
+            img = Image.open(image)
+            img.thumbnail((width, height), Image.ANTIALIAS)
+            img.save(thumb_file)
+
+        url = os.path.join(settings.MEDIA_URL, thumb_file_base)
+        if absolute_url:
+            url = '%s%s' % (settings.URL_PREFIX, url)
+
+        cache.set(cache_key, url, 86400)
 
     return url
 
