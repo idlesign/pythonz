@@ -1,0 +1,15 @@
+<ul>
+{% for article in items %}
+    <li class="marg__b_mid">
+        <h4><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h4>
+        <div class="marg__b_min"><i>{{ article.description }}</i></div>
+        <small class="text-muted">
+            <div class="pull-left"><span class="label label-success">{{ article.supporters_num }}</span></div>
+            <span class="marg__l_min">
+            {{ article.time_created|date:"j E" }} &nbsp; &nbsp;/
+            {{ article.submitter.get_display_name }}
+            </span>
+        </small>
+    </li>
+{% endfor %}
+</ul>

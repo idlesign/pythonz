@@ -1,6 +1,7 @@
 from sitecats.utils import get_category_model
 from xross.toolbox import xross_view, xross_listener
 from django.utils.decorators import method_decorator
+from django.utils.functional import cached_property
 from django.views.generic.base import View
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -12,8 +13,6 @@ from .models import ModelWithCompiledText, RealmBaseModel
 from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event, Reference
 from ..exceptions import RedirectRequired
 from ..shortcuts import message_warning, message_success, message_info
-
-# todo рефакторить шаблоны списков.
 
 
 class RealmView(View):
@@ -54,12 +53,15 @@ class RealmView(View):
                                              'На данный момент в проекте запрещено редактирование опубликованных материалов.')
                     raise PermissionDenied()
 
-    def get_template_path(self):
+    @classmethod
+    def get_template_path(cls, name=None):
         """Возвращает путь к шаблону страницы.
 
         :return:
         """
-        return 'realms/%s/%s.html' % (self.realm.name_plural, self.name)
+        if name is None:
+            name = cls.name
+        return 'realms/%s/%s.html' % (cls.realm.name_plural, name)
 
     def render(self, request, data_dict):
         """Компилирует страницу представления.
@@ -70,7 +72,7 @@ class RealmView(View):
         """
         data_dict.update({
             'realm': self.realm,
-            'view_type': self.name
+            'view': self
         })
         return render(request, self.get_template_path(), data_dict)
 
@@ -98,11 +100,18 @@ class ListingView(RealmView):
     """Список объектов."""
 
     def get_paginator_objects(self):
-        """Возвращает объект постраницчной навигации.
+        """Возвращает объекты для страницы при постраницчной навигации.
 
         :return:
         """
         return self.realm.model.get_paginator_objects()
+
+    def get_most_voted_objects(self):
+        """Возвращает объекты, за которые было отдано больше всего голосов.
+
+        :return:
+        """
+        return self.realm.model.get_most_voted_objects()
 
     def get(self, request, category_id=None):
         page = request.GET.get('p')
@@ -117,7 +126,16 @@ class ListingView(RealmView):
         if category_id is not None:
             category = get_category_model().objects.get(pk=category_id)
 
-        return self.render(request, {self.realm.name_plural: items, 'category': category})
+        return self.render(request, {
+            self.realm.name_plural: items,
+            'items': items,
+            'category': category,
+            'items_most_voted': self.get_most_voted_objects()
+        })
+
+    @cached_property
+    def template_list_items(self):
+        return self.get_template_path('list_items')
 
 
 class DetailsView(RealmView):
@@ -330,5 +348,6 @@ class EditView(RealmView):
 class AddView(EditView):
     """Добавление объекта."""
 
-    def get_template_path(self):
-        return 'realms/%s/edit.html' % self.realm.name_plural
+    @classmethod
+    def get_template_path(cls, name):
+        return super().get_template_path('edit')

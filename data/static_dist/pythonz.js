@@ -8,6 +8,7 @@ pythonz = {
             pythonz.mark_user();
             sitecats.bootstrap();
             sitecats.make_cloud('tags_box');
+            $('.mod__has_tooltip').tooltip()
         });
     },
 

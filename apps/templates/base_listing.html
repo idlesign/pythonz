@@ -1,11 +1,10 @@
 {% extends "_base.html" %}
-{% load thumbs %}
 
 
 {% block page_keywords %}{{ realm.view_listing_keywords }}{% endblock %}
 
 
-{% block page_contents %}
+{% block page_contents_pre %}
 
     <div class="row">
         <div class="col-md-12">
@@ -14,34 +13,55 @@
     </div>
 
     <div class="row">
-        <div class="col-md-12">
-            {% for item in items %}
-                <div class="listing_item">
-                    <div class="rating"><span class="label label-default">{{ item.supporters_num }}</span></div>
-                    <div class="cover_img float-right">
-                    <a href="{{ item.get_absolute_url }}">
-                        {% thumbs_get_thumb_url item.cover 100 131 item.realm as "thumb_url" %}
-                        <b>{{ abra }}</b>
-                        {% if thumb_url %}
-                        <img src="{{ thumb_url }}" class="img-thumbnail faded">
-                        {% else %}
-                            <span class="img-thumbnail icon_entity glyphicon glyphicon-{{ realm.icon }}"></span>
-                        {% endif %}
-                    </a>
-                    </div>
-                    <div class="description float-right">
-                        <a href="{{ item.get_absolute_url }}" title="{{ item.title }}">{{ item.title|truncatechars:58 }}</a>
-                        <div class="small">
-                            <strong>{{ item.year }}</strong><br>
-                            <span class="py_user">{{ item.author }}</span>
-                        </div>
-                    </div>
-                </div>
-            {% empty %}
-                <div class="alert alert-info">Здесь пока ничего нет.</div>
-            {% endfor %}
+        <div class="col-md-8">
+
+            <div>
+                <h4>
+                    Список
+                    <sup class="small mod__has_tooltip" title="Новые сверху">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                    </sup>
+                </h4><hr>
+            </div>
+
+            <div>
+
+{%  endblock %}
+
+
+{% block page_contents %}
+    {% include view.template_list_items %}
+{%  endblock %}
+
+
+{% block page_contents_post %}
+                {% include "sub_paginator.html" with paginator=items %}
+
+            </div>
+        </div>
+        <div id="bar__most_voted" class="col-md-4">
+
+            <div>
+                <h4>
+                    Лучшие
+                    <sup class="small mod__has_tooltip" title="По мнению пользователей сайта">
+                        <span class="glyphicon glyphicon-question-sign"></span>
+                    </sup>
+                </h4><hr>
+            </div>
+
+            <div class="marg__b_mid">
+                {% block most_voted %}
+                    {% if items_most_voted %}
+                        {% include view.template_list_items with items=items_most_voted %}
+                    {% else %}
+                        Пока этот список не сформирован. Оцените материалы раздела, чтобы исправить ситуацию.
+                    {% endif %}
+                {% endblock %}
+                <div class="clearfix"></div>
+            </div>
+
         </div>
     </div>
 
-    {% include "sub_paginator.html" with paginator=items %}
 {%  endblock %}

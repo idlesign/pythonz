@@ -198,7 +198,7 @@ class RealmBaseModel(ModelWithFlag):
         abstract = True
 
     realm = None  # Во время исполнения здесь будет объект области (Realm).
-    items_per_page = 15  # Количество объектов для вывода на страницах списков.
+    items_per_page = 10  # Количество объектов для вывода на страницах списков.
     edit_form = None  # Во время исполнения здесь будет форма редактирования.
     notify_on_publish = True  # Следует ли оповещать внешние системы о публикации сущности.
 
@@ -265,7 +265,13 @@ class RealmBaseModel(ModelWithFlag):
         :return:
         """
         # TODO не использовать related там, где не нужно
-        return cls.objects.published().select_related('submitter').order_by('-supporters_num', '-time_created').all()
+        return cls.objects.published().select_related('submitter').order_by('-time_created').all()
+
+    @classmethod
+    def get_most_voted_objects(cls):
+        query = cls.objects.published().filter(supporters_num__gt=0)
+        query = query.select_related('submitter').order_by('-supporters_num')
+        return query.all()[:5]
 
     def is_published(self):
         """Возвращает булево указывающее на то, опубликована ли сущность.

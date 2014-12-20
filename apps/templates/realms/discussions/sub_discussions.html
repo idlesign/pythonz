@@ -1,4 +1,3 @@
-<hr>
 {% if show_form_for %}
     {% if request.user.is_authenticated %}
         <div class="pull-right">
@@ -13,11 +12,13 @@
         </div>
     {% endif %}
 {% endif %}
-<h4>Связанные обсуждения</h4>
+
+{% if not no_title %}<h4>Связанные обсуждения</h4>{% endif %}
+
 <div class="marg__t_mid">
-    {% if discussions %}
+    {% if items %}
         <ul class="discussions">
-            {% for discussion in discussions %}
+            {% for discussion in items %}
                 <li class="discussion">
                     <small class="cl__gray">{{ discussion.time_created|date:"d E H:i" }}</small>
                     {% if request.user.id == discussion.submitter_id %}

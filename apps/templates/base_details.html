@@ -24,6 +24,7 @@
             {% endblock %}
             {% block details_share %}{% include "sub_box_share.html" %}{% endblock %}
             {% if item.has_discussions %}
+            <hr>
             <div class="marg__t_max">
                 {% include "realms/discussions/sub_discussions.html" with discussions=item.discussions.all show_form_for=item show_texts=1 %}
             </div>

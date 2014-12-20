@@ -22,6 +22,6 @@
     <i>{% block subheader %}{{ subheader }}{% endblock %}</i>
 </div>
 
-{% if view_type == 'listing' %}
+{% if view.name == 'listing' %}
     <blockquote>{{ realm.txt_promo|safe }}</blockquote>
 {% endif %}

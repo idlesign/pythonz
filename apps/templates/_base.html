@@ -44,7 +44,7 @@
                 {% sitetree_menu from "main" include "topmenu" template template_path %}
 
                 <div class="submenu navbar-nav navbar-left marg__l_mid bg-success">
-                {% if view_type == 'listing' %}
+                {% if view.name == 'listing' %}
                     {% sitetree_menu from "main" include "this-children" template template_path %}
                 {% else %}
                     {% sitetree_menu from "main" include "this-siblings" template template_path %}
@@ -75,7 +75,9 @@
         </div>
         {% endif %}
 
+        {% block page_contents_pre %}{% endblock %}
         {% block page_contents %}{% endblock %}
+        {% block page_contents_post %}{% endblock %}
     </div>
 
     <nav class="footer navbar navbar-default marg__t_max" role="navigation">

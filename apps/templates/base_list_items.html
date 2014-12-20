@@ -1,0 +1,27 @@
+{% load thumbs %}
+
+{% for item in items %}
+
+    <div class="listing_item">
+        <div class="rating"><span class="label label-default">{{ item.supporters_num }}</span></div>
+        <div class="cover_img float-right">
+        <a href="{{ item.get_absolute_url }}">
+            {% thumbs_get_thumb_url item.cover 100 131 item.realm as "thumb_url" %}
+            <b>{{ abra }}</b>
+            {% if thumb_url %}
+            <img src="{{ thumb_url }}" class="img-thumbnail faded">
+            {% else %}
+                <span class="img-thumbnail icon_entity glyphicon glyphicon-{{ realm.icon }}"></span>
+            {% endif %}
+        </a>
+        </div>
+        <div class="description float-right">
+            <a href="{{ item.get_absolute_url }}" title="{{ item.title }}">{{ item.title|truncatechars:58 }}</a>
+            <div class="small">
+                <strong>{{ item.year }}</strong><br>
+                <span class="py_user">{{ item.author }}</span>
+            </div>
+        </div>
+    </div>
+
+{% endfor %}

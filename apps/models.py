@@ -48,10 +48,6 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
             self.status = self.STATUS_PUBLISHED
         super().save(*args, **kwargs)
 
-    @classmethod
-    def get_paginator_objects(cls):
-        return cls.objects.published().select_related('submitter').order_by('-time_created').all()
-
 
 class ModelWithDiscussions(models.Model):
     """Класс-примесь к моделям сущностей, для который разрешено оставление мнений."""
@@ -229,7 +225,7 @@ class User(RealmBaseModel, AbstractUser):
 
     @classmethod
     def get_paginator_objects(cls):
-        return cls.objects.order_by('-supporters_num', '-date_joined').all()
+        return cls.objects.order_by('-date_joined').all()
 
     def get_display_name(self):
         return self.get_full_name() or self.get_username_partial()
@@ -570,4 +566,4 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
 
     @classmethod
     def get_paginator_objects(cls):
-        return cls.objects.published().order_by('-supporters_num', 'time_start', '-time_created').all()
+        return cls.objects.published().order_by('time_start', '-time_created').all()
