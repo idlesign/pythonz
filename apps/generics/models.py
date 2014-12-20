@@ -269,43 +269,49 @@ class RealmBaseModel(ModelWithFlag):
         return cls.objects.published().select_related('submitter').order_by('-time_created').all()
 
     @classmethod
-    def cache_get_key_most_voted_objects(cls, class_name=None):
+    def cache_get_key_most_voted_objects(cls, category=None, class_name=None):
         """Возвращает ключ кеша, содержащего наиболее популярные материалы раздела.
 
+        :param category:
         :param class_name:
         :return:
         """
         if class_name is None:
             class_name = cls.__name__
-        return 'most_voted|%s' % class_name
+        return 'most_voted|%s|%s' % (class_name, category)
 
     @classmethod
-    def get_most_voted_objects(cls):
-        """Возвращает наимболее популярные материалы раздела.
+    def get_most_voted_objects(cls, category=None, base_query=None):
+        """Возвращает наиболее популярные материалы раздела (и, опционально, категории в нём).
 
+        :param category:
+        :param base_query:
         :return:
         """
-        cache_key = cls.cache_get_key_most_voted_objects()
+        cache_key = cls.cache_get_key_most_voted_objects(category=category)
         objects = cache.get(cache_key)
 
         if objects is None:
 
-            query = cls.objects.published().filter(supporters_num__gt=0)
+            if base_query is None:
+                base_query = cls.objects.published()
+
+            query = base_query.filter(supporters_num__gt=0)
             query = query.select_related('submitter').order_by('-supporters_num')
             objects = query.all()[:5]
 
-            cache.set(cache_key, objects, None)
+            cache.set(cache_key, objects, 86400)
 
         return objects
 
     @classmethod
     def cache_delete_most_voted_objects(cls, **kwargs):
-        """
-
+        """Очищает кеш наиболее популярных материлов раздела.
         :param kwargs:
         :return:
         """
-        cache.delete(cls.cache_get_key_most_voted_objects(kwargs['sender']))
+        # TODO Не инвалидирует кеш в категориях раздела. При случае решить, а нужно ли вообще.
+        cache.delete(cls.cache_get_key_most_voted_objects(class_name=kwargs['sender']))
 
     def is_published(self):
         """Возвращает булево указывающее на то, опубликована ли сущность.
@@ -323,13 +329,31 @@ class RealmBaseModel(ModelWithFlag):
         return self.is_flagged(user, status=self.FLAG_STATUS_SUPPORT)
 
     @classmethod
+    def get_category_objects_base_query(cls, category):
+        """Возвращает базовый QuerySet выборки объектов в указанной категории.
+
+        :param category:
+        :return:
+        """
+        return cls.get_from_category_qs(category).filter(status=RealmBaseModel.STATUS_PUBLISHED).select_related('submitter')
+
+    @classmethod
+    def get_most_voted_objects_in_category(cls, category):
+        """Возвращает наиболее популярные объекты из указанной категории.
+
+        :param category:
+        :return:
+        """
+        return cls.get_most_voted_objects(category=category, base_query=cls.get_category_objects_base_query(category))
+
+    @classmethod
     def get_objects_in_category(cls, category):
         """Возвращает объекты из указанной категории.
 
         :param category:
         :return:
         """
-        return cls.get_from_category_qs(category).filter(status=RealmBaseModel.STATUS_PUBLISHED).order_by('-time_published')
+        return cls.get_category_objects_base_query(category).order_by('-time_published')
 
     def set_support(self, user):
         """Устанавливает флаг поддержки данным пользователем данной сущности.

@@ -273,6 +273,9 @@ class TagsView(ListingView):
     def get_paginator_objects(self):
         return self.realm.model.get_objects_in_category(self.kwargs['category_id'])
 
+    def get_most_voted_objects(self):
+        return self.realm.model.get_most_voted_objects_in_category(self.kwargs['category_id'])
+
 
 class EditView(RealmView):
     """Редактирование (и добавление) объекта."""
