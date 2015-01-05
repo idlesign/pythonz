@@ -75,11 +75,7 @@
             <h6>Соседние темы</h6>
         {% endif %}
 
-        {% if reference.is_type_class or reference.is_type_module %}
-            {% include "realms/references/sub_list.html" with items=siblings show_descriptions=1 %}
-        {% else %}
-            {% include "realms/references/sub_list.html" with items=siblings %}
-        {% endif %}
+        {% include "realms/references/sub_list.html" with items=siblings show_descriptions=1 %}
     </div>
     {% endif %}
 
