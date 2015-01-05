@@ -67,6 +67,18 @@
         {{ reference.text|safe }}
     </div>
 
+    {% if children %}
+    <div class="marg__t_max">
+        {% if reference.is_type_class %}
+            <h6>Методы</h6>
+        {% else %}
+            <h6>Темы раздела</h6>
+        {% endif %}
+
+        {% include "realms/references/sub_list.html" with items=children show_descriptions=1 %}
+    </div>
+    {% endif %}
+
     {% if siblings %}
     <div class="marg__t_max">
         {% if reference.is_type_method %}
@@ -88,18 +100,6 @@
     <div class="marg__t_min">
         <h6>Родительский раздел</h6>
         <a href="{% url "references:details" reference.parent.id %}">{{ reference.parent.title }}</a>
-    </div>
-    {% endif %}
-
-    {% if children %}
-    <div class="marg__t_max">
-        {% if reference.is_type_class %}
-            <h6>Методы</h6>
-        {% else %}
-            <h6>Темы раздела</h6>
-        {% endif %}
-
-        {% include "realms/references/sub_list.html" with items=children %}
     </div>
     {% endif %}
 
