@@ -26,7 +26,7 @@
             {% if item.has_discussions %}
             <hr>
             <div class="marg__t_max">
-                {% include "realms/discussions/sub_discussions.html" with discussions=item.discussions.all show_form_for=item show_texts=1 %}
+                {% include "realms/discussions/sub_discussions.html" with items=item.discussions.all show_form_for=item show_texts=1 %}
             </div>
             {% endif %}
         </div>
