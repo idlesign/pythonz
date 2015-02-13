@@ -572,4 +572,7 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
 
     @classmethod
     def get_paginator_objects(cls):
-        return cls.objects.published().order_by('time_start', '-time_created').all()
+        now = timezone.now().date().isoformat()
+        # Сначала грядущие в порядке приближения, потом прошедшие.
+        return cls.objects.published().extra(
+            select={'in_future': "time_finish > '%s'" % now}).order_by('-in_future', 'time_start').all()
