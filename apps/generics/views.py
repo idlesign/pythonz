@@ -240,10 +240,11 @@ class DetailsView(RealmView):
         """
         return request.user != item  # Пользователи не могут рекомендовать себя %)
 
-    def _update_context(self, context):
+    def _update_context(self, context, request):
         """Используется для дополнения контекста шаблона данными.
 
         :param dict context:
+        :param Request request:
         :return:
         """
 
@@ -290,7 +291,7 @@ class DetailsView(RealmView):
             'item_edit_allowed': item_edit_allowed,
             'item_rating_allowed': item_rating_allowed
         }
-        self._update_context(context)
+        self._update_context(context, request)
         return self.render(request, context)
 
 
@@ -323,6 +324,14 @@ class EditView(RealmView):
         if item is None or isinstance(item, ModelWithCompiledText):
             return HttpResponse(ModelWithCompiledText.compile_text(text_src))
 
+    def _update_context(self, context, request):
+        """Используется для дополнения контекста шаблона данными.
+
+        :param dict context:
+        :param Request request:
+        :return:
+        """
+
     @xross_view(preview_rst)
     def get(self, request, obj_id=None):
         item = None
@@ -330,7 +339,10 @@ class EditView(RealmView):
         if obj_id is not None:
             item = self.get_object_or_404(obj_id)
 
-        data = request.POST or None
+        data = None
+        if 'realm_form' in request.POST:
+            data = request.POST
+
         form = self.realm.form(data, request.FILES or None, instance=item, user=request.user)
         if item is None:
             form.submit_title = self.realm.txt_form_add
@@ -372,7 +384,9 @@ class EditView(RealmView):
                 message_success(request, 'Данные сохранены.')
                 return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 
-        return self.render(request, {'form': form, self.realm.name: item, 'item': item})
+        context = {'form': form, self.realm.name: item, 'item': item}
+        self._update_context(context, request)
+        return self.render(request, context)
 
 
 class AddView(EditView):

@@ -2,21 +2,13 @@ import os
 import re
 from collections import OrderedDict
 from urllib.parse import urlsplit, urlunsplit
-from datetime import timedelta
 
 import requests
 from PIL import Image  # Для работы с jpg требуется собрать с libjpeg-dev
-from sitemessage.toolbox import schedule_messages, recipients
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
-from django.utils.text import Truncator
 from django.utils import timezone
-
-from .sitemessages import PythonzTwitterMessage, PythonzEmailNewEntity, PythonzEmailDigest
-
-
-PROJECT_SOURCE_URL = 'https://github.com/idlesign/pythonz'
 
 
 class BasicTypograph(object):
@@ -107,87 +99,11 @@ def get_thumb_url(realm, image, width, height, absolute_url=False):
 
         url = os.path.join(settings.MEDIA_URL, thumb_file_base)
         if absolute_url:
-            url = '%s%s' % (settings.URL_PREFIX, url)
+            url = '%s%s' % (settings.SITE_URL, url)
 
         cache.set(cache_key, url, 86400)
 
     return url
-
-
-def create_digest():
-    """Создаёт депеши для рассылки еженедельного дайджеста.
-
-    Реальная компиляция дайджеста происходит в PythonzEmailDigest.compile().
-
-    :return:
-    """
-    if settings.DEBUG:  # На всякий случай, чем чёрт не шутит.
-        return False
-    from .models import User
-    date_till = timezone.now()
-    date_from = date_till-timedelta(days=7)
-    context = {'date_from': date_from.timestamp(), 'date_till': date_till.timestamp()}
-    format_date = lambda d: d.date().strftime('%d.%m.%Y')
-    m = PythonzEmailDigest(get_email_full_subject('Подборка материалов %s-%s' % (format_date(date_from), format_date(date_till))), context)
-    subscribers = User.get_digest_subsribers()
-    schedule_messages(m, recipients('smtp', subscribers))
-
-
-def get_admins_emails():
-    """Возвращает адреса электронной почты администраторов проекта.
-
-    :return:
-    """
-    to = []
-    for item in settings.ADMINS:
-        to.append(item[1])  # Адрес электронной почты админа.
-    return to
-
-
-def get_email_full_subject(subject):
-    """Возвращает полный заголовок для электронного письма.
-
-    :param subject:
-    :return:
-    """
-    return 'pythonz.net: %s' % subject
-
-
-def notify_entity_published(entity):
-    """Отсылает оповещение о публикации сущности.
-
-    :param RealmBaseModel entity:
-    :return:
-    """
-
-    if not entity.notify_on_publish:
-        return False
-
-    MAX_LEN = 139  # Максимальная длина тивта. Для верности меньше.
-    prefix = 'Новое: %s «' % entity.get_verbose_name()
-    url = entity.get_absolute_url(with_prefix=True, hash_chunk='fromtwee')
-    postfix = '» %s' % url
-    if settings.AGRESSIVE_MODE:
-        postfix = '%s #python #dev' % postfix
-    title = Truncator(entity.title).chars(MAX_LEN - len(prefix) - len(postfix))
-    message = '%s%s%s' % (prefix, title, postfix)
-    schedule_messages(PythonzTwitterMessage(message), recipients('twitter', ''))
-
-
-def notify_new_entity(entity):
-    """Отсылает оповещение о создании новой сущности.
-
-    Рассылается администраторам проекта.
-
-    :param RealmBaseModel entity:
-    :return:
-    """
-    context = {
-        'entity_title': entity.title,
-        'entity_url': entity.get_absolute_url()
-    }
-    m = PythonzEmailNewEntity(get_email_full_subject('Добавлена новая сущность - %s' % entity.title), context)
-    schedule_messages(m, recipients('smtp', get_admins_emails()))
 
 
 def get_image_from_url(url):

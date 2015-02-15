@@ -11,7 +11,9 @@ PATH_DATA = '%s/data' % PATH_PROJECT
 
 ####################################################################
 
-URL_PREFIX = 'http://pythonz.net'
+SITE_URL = 'http://pythonz.net'
+
+PROJECT_SOURCE_URL = 'https://github.com/idlesign/pythonz'
 DEBUG = True
 
 SECRET_KEY = 'not_a_secret'
@@ -36,6 +38,10 @@ GOOGLE_API_KEY = 'not_a_secret'
 AGRESSIVE_MODE = False
 
 ####################################################################
+
+SITEMESSAGE_INIT_BUILTIN_MESSAGE_TYPES = False
+SITEMESSAGE_DEFAULT_SHORTCUT_EMAIL_MESSAGES_TYPE = 'simple'
+EMAIL_BACKEND = 'sitemessage.backends.EmailBackend'
 
 MANAGERS = ADMINS
 

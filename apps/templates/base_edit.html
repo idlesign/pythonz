@@ -15,7 +15,9 @@
 
     <div class="row">
         <div class="col-md-8">
-            {% include "forms/sub_form.html" with form=form %}
+            {% block form %}
+                {% include "forms/sub_form.html" with form=form %}
+            {% endblock %}
         </div>
         <div class="col-md-4">
             <div class="panel panel-info">
@@ -26,6 +28,7 @@
                     {% block hint %}{% endblock %}
                 </div>
             </div>
+            {% block right_bar %}{% endblock %}
             {% block categories_editor %}
                 {% include "sub_box_tags.html" %}
             {% endblock %}

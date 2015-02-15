@@ -1,5 +1,5 @@
 {% extends "base_edit.html" %}
-
+{% load sitemessage %}
 
 {% block hint %}
     <ol>
@@ -8,3 +8,15 @@
         <li>Зарегистрировать форум Disqus для поддержки комментариев к вашим публикациям можно <a href="http://disqus.com/admin/create/">здесь</a>.</li>
     </ol>
 {%  endblock %}
+
+
+{% block right_bar %}
+    {{ block.super }}
+    <h3>Подписка</h3>
+    <form class="form-horizontal" role="form" method="post">
+        {% csrf_token %}
+        {% sitemessage_prefs_table from subscr_prefs template "sitemessage/user_prefs_table-bootstrap.html" %}
+
+        <input type="submit" class="btn btn-default btn-block btn-primary" value="Сохранить настройки" />
+    </form>
+{% endblock %}

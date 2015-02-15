@@ -10,7 +10,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 
-from ..signals import signal_new_entity, signal_entity_published, signal_support_changed
+from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
 
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
@@ -241,13 +241,13 @@ class RealmBaseModel(ModelWithFlag):
 
         try:
             if not initial_pk and self.pk:
-                signal_new_entity.send(self.__class__, entity=self)
+                sig_entity_new.send(self.__class__, entity=self)
         except AttributeError:
             pass  # Пропускаем модели, в которых нет нужных атрибутов.
 
         try:
             if just_published:
-                signal_entity_published.send(self.__class__, entity=self)
+                sig_entity_published.send(self.__class__, entity=self)
         except AttributeError:
             pass  # Пропускаем модели, в которых нет нужных атрибутов.
 
@@ -366,7 +366,7 @@ class RealmBaseModel(ModelWithFlag):
         self.mark_unmodified()
         self.save()
 
-        signal_support_changed.send(self.__class__.__name__)
+        sig_support_changed.send(self.__class__.__name__)
 
     def remove_support(self, user):
         """Убирает флаг поддержки данным пользователем данной сущности.
@@ -379,7 +379,7 @@ class RealmBaseModel(ModelWithFlag):
         self.mark_unmodified()
         self.save()
 
-        signal_support_changed.send(self.__class__.__name__)
+        sig_support_changed.send(self.__class__.__name__)
 
     def get_suppport_for_objects(self, objects_list, user):
         """Возвращает данные о поддержке пользователем(ями) указанного набора сущностей.
@@ -442,7 +442,7 @@ class RealmBaseModel(ModelWithFlag):
         tmp, realm_name_plural = self.realm.get_names()
         url = reverse('%s:details' % realm_name_plural, args=[str(self.id)])
         if with_prefix:
-            url = '%s%s' % (settings.URL_PREFIX, url)
+            url = '%s%s' % (settings.SITE_URL, url)
         if hash_chunk is not None:
             url = '%s#%s' % (url, hash_chunk)
         return url
