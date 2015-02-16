@@ -178,9 +178,6 @@ class PythonzEmailDigest(PythonzEmailMessage):
 
         :return:
         """
-        if settings.DEBUG:  # На всякий случай, чем чёрт не шутит.
-            return False
-
         format_date = lambda d: d.date().strftime('%d.%m.%Y')
         date_till = timezone.now()
         date_from = date_till-timedelta(days=7)

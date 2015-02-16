@@ -355,11 +355,15 @@ class EditView(RealmView):
         from sitecats.toolbox import get_category_aliases_under
         if isinstance(item, ModelWithCategory):
             item.has_categories = True
-            category_handled = item.enable_category_lists_editor(request,
-                                additional_parents_aliases=get_category_aliases_under(),
-                                handler_init_kwargs={'error_messages_extra_tags': 'alert alert-danger'},
-                                lists_init_kwargs={'show_title': True, 'cat_html_class': 'label label-default'},
-                                editor_init_kwargs={'allow_add': True, 'allow_new': request.user.is_superuser, 'allow_remove': True,})
+            category_handled = item.enable_category_lists_editor(
+                request,
+                additional_parents_aliases=get_category_aliases_under(),
+                handler_init_kwargs={'error_messages_extra_tags': 'alert alert-danger'},
+                lists_init_kwargs={'show_title': True, 'cat_html_class': 'label label-default'},
+                editor_init_kwargs={
+                    'allow_add': True, 'allow_new': request.user.is_superuser, 'allow_remove': True,
+                }
+            )
 
             if category_handled:  # Добавилась категория, перенаправим на эту же страницу.
                 return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
@@ -368,7 +372,15 @@ class EditView(RealmView):
 
         if data is None:
             if show_modetation_hint:
-                message_warning(request, 'Обратите внимание, что на данном этапе развития проекта добавляемые материалы проходят модерацию, прежде чем появиться на сайте.')
+                message_warning(
+                    request, 'Обратите внимание, что на данном этапе развития проекта добавляемые '
+                             'материалы проходят модерацию, прежде чем появиться на сайте.'
+                )
+
+        if item is None:
+            redirector = lambda: redirect(item, permanent=True)
+        else:
+            redirector = lambda: redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 
         if form.is_valid():
             if item is None:
@@ -377,15 +389,20 @@ class EditView(RealmView):
                 message_success(request, 'Объект добавлен.')
                 if show_modetation_hint:
                     message_info(request, 'Данный объект появится на сайте после модерации.')
-                return redirect(item, permanent=True)
             else:
                 form.instance.last_editor = request.user
                 form.save()
                 message_success(request, 'Данные сохранены.')
-                return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
+
+            return redirector()
 
         context = {'form': form, self.realm.name: item, 'item': item}
-        self._update_context(context, request)
+
+        try:
+            self._update_context(context, request)
+        except RedirectRequired:
+            return redirector()
+
         return self.render(request, context)
 
 

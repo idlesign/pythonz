@@ -14,6 +14,7 @@ from django.views.defaults import (
 
 from .generics.views import DetailsView, RealmView, EditView
 from .models import Place, User, Community, Event
+from .exceptions import RedirectRequired
 
 
 class UserDetailsView(DetailsView):
@@ -37,18 +38,15 @@ class UserEditView(EditView):
 
     def _update_context(self, context, request):
 
-        # todo
         if request.POST:
-            set_user_preferences_from_request(request)
-
-        def message_filter(m):
-            return m.alias == 'digest'
+            prefs_were_set = set_user_preferences_from_request(request)
+            if prefs_were_set:
+                raise RedirectRequired()
 
         subscr_prefs = get_user_preferences_for_ui(request.user, new_messengers_titles={
             'twitter': '<i class="fi-social-twitter" title="Twitter"></i>',
             'smtp': '<i class="fi-mail" title="Эл. почта"></i>'
-        })#, message_filter=message_filter)
-        #todo
+        }, message_filter=lambda m: m.alias == 'digest')
 
         context['subscr_prefs'] = subscr_prefs
 
