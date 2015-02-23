@@ -2,15 +2,20 @@
 Здесь настраиваются средства доставки сообщений.
 Конфигурирование производится в settings.py проекта.
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import OrderedDict
 
 from sitemessage.utils import register_messenger_objects, register_message_types, override_message_type_for_app
-from sitemessage.messages import EmailHtmlMessage, PlainTextMessage
+from sitemessage.messages.email import EmailHtmlMessage
+from sitemessage.messages.plain import PlainTextMessage
+from sitemessage.signals import sig_unsubscribe_failed, sig_unsubscribe_success
 from django.conf import settings
+from django.contrib import messages
 from django.utils import timezone
+from django.utils.text import Truncator
 
 from .realms import get_realms
+from .signals import sig_entity_published, sig_entity_new
 
 
 def register_messengers():
@@ -38,11 +43,62 @@ def register_messengers():
 register_messengers()
 
 
+def connect_signals():
+    """Подключает обработчики сигналов, связанных с рассылками
+    оповещений.
+
+    :return:
+    """
+
+    def unsubscribe_failed(*args, **kwargs):
+        messages.error(kwargs['request'], 'К сожалению, отменить подписку не удалось.', 'danger error')
+    sig_unsubscribe_failed.connect(unsubscribe_failed, weak=False)
+
+    def unsubscribe_success(*args, **kwargs):
+        messages.success(kwargs['request'], 'Подписка успешно отменена. Спасибо, что читали!', 'success')
+    sig_unsubscribe_success.connect(unsubscribe_success, weak=False)
+
+    notify_handler = lambda sender, **kwargs: PythonzEmailNewEntity.create(kwargs['entity'])
+    sig_entity_new.connect(notify_handler, dispatch_uid='cfg_new_entity', weak=False)
+
+    if settings.DEBUG:  # На всякий случай, чем чёрт не шутит.
+        return False
+
+    notify_handler = lambda sender, **kwargs: PythonzTwitterMessage.create(kwargs['entity'])
+    sig_entity_published.connect(notify_handler, dispatch_uid='cfg_entity_published', weak=False)
+
+connect_signals()
+
+
 class PythonzTwitterMessage(PlainTextMessage):
     """Базовый класс для сообщений, рассылаемых pythonz в Twitter."""
 
     priority = 1  # Рассылается ежеминутно.
     send_retry_limit = 5
+    supported_messengers = ['twitter']
+    title = 'Новое на сайте'
+
+    @classmethod
+    def create(cls, entity):
+        """Создаёт оповещение о публикации сущности.
+
+        :param RealmBaseModel entity:
+        :return:
+        """
+
+        if not entity.notify_on_publish:
+            return False
+
+        MAX_LEN = 139  # Максимальная длина тивта. Для верности меньше.
+        prefix = 'Новое: %s «' % entity.get_verbose_name()
+        url = entity.get_absolute_url(with_prefix=True, hash_chunk='fromtwee')
+        postfix = '» %s' % url
+        if settings.AGRESSIVE_MODE:
+            postfix = '%s #python #dev' % postfix
+        title = Truncator(entity.title).chars(MAX_LEN - len(prefix) - len(postfix))
+        message = '%s%s%s' % (prefix, title, postfix)
+
+        cls(message).schedule(cls.recipients('twitter', ''))
 
 
 class PythonzEmailMessage(EmailHtmlMessage):
@@ -55,17 +111,55 @@ class PythonzEmailMessage(EmailHtmlMessage):
     alias = 'simple'
     priority = 1  # Рассылается ежеминутно.
     send_retry_limit = 4
+    title = 'Базовые оповещения'
 
     def __init__(self, subject, html_or_dict, template_path=None):
         if not isinstance(html_or_dict, dict):
             html_or_dict = {'text': html_or_dict.replace('\n', '<br>')}
         super().__init__(subject, html_or_dict, template_path=template_path)
 
+    @classmethod
+    def get_full_subject(cls, subject):
+        """Возвращает полный заголовок для электронного письма.
+
+        :param subject:
+        :return:
+        """
+        return 'pythonz.net: %s' % subject
+
+    @classmethod
+    def get_admins_emails(cls):
+        """Возвращает адреса электронной почты администраторов проекта.
+
+        :return:
+        """
+        to = []
+        for item in settings.ADMINS:
+            to.append(item[1])  # Адрес электронной почты админа.
+        return to
+
 
 class PythonzEmailNewEntity(PythonzEmailMessage):
     """Оповещение администраторам о добавлении новой сущности."""
 
     alias = 'new_entity'
+    title = 'Новое на сайте'
+
+    @classmethod
+    def create(cls, entity):
+        """Создаёт оповещение о создании новой сущности.
+
+        Рассылается администраторам проекта.
+
+        :param RealmBaseModel entity:
+        :return:
+        """
+        subject = cls.get_full_subject('Добавлена новая сущность - %s' % entity.title)
+        context = {
+            'entity_title': entity.title,
+            'entity_url': entity.get_absolute_url()
+        }
+        cls(subject, context).schedule(cls.recipients('smtp', cls.get_admins_emails()))
 
 
 class PythonzEmailDigest(PythonzEmailMessage):
@@ -74,10 +168,29 @@ class PythonzEmailDigest(PythonzEmailMessage):
     alias = 'digest'
     priority = 7  # Рассылается раз в семь дней.
     send_retry_limit = 1  # Нет смысла пытаться повторно неделю спустя.
+    title = 'Еженедельный дайджест'
 
     @classmethod
-    def compile(cls, message, messenger, dispatch=None):
-        context = message.context
+    def create(cls):
+        """Создаёт депеши для рассылки еженедельного дайджеста.
+
+        Реальная компиляция дайджеста происходит в compile().
+
+        :return:
+        """
+        format_date = lambda d: d.date().strftime('%d.%m.%Y')
+        date_till = timezone.now()
+        date_from = date_till-timedelta(days=7)
+
+        subject = cls.get_full_subject('Подборка материалов %s-%s' % (format_date(date_from), format_date(date_till)))
+        context = {
+            'date_from': date_from.timestamp(),
+            'date_till': date_till.timestamp()
+        }
+        cls(subject, context).schedule(cls.get_subscribers())
+
+    @classmethod
+    def get_template_context(cls, context):
         realms_data = OrderedDict()
         get_date = lambda s: datetime.fromtimestamp(s, tz=timezone.get_current_timezone())
         for realm in get_realms().values():
@@ -91,11 +204,11 @@ class PythonzEmailDigest(PythonzEmailMessage):
                     realms_data[realm.model.get_verbose_name_plural()] = entries
 
         context.update({'realms': realms_data})
-        return super().compile(message, messenger, dispatch=dispatch)
+        return context
 
 
 # Регистрируем наши типы сообщений.
-register_message_types(PythonzEmailMessage, PythonzEmailNewEntity, PythonzEmailDigest)
+register_message_types(PythonzTwitterMessage, PythonzEmailMessage, PythonzEmailNewEntity, PythonzEmailDigest)
 
 
 # Заменяем тип сообщений, отсылаемых sitegate на свой.

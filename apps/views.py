@@ -1,22 +1,26 @@
 from sitegate.decorators import signin_view, signup_view, redirect_signedin
 from sitegate.signup_flows.classic import SimpleClassicWithEmailSignup
 from sitecats.toolbox import get_category_model, get_category_lists, get_category_aliases_under
+from sitemessage.toolbox import get_user_preferences_for_ui, set_user_preferences_from_request
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
-from django.views.defaults import page_not_found as dj_page_not_found, \
-    permission_denied as dj_permission_denied, \
+from django.views.defaults import (
+    page_not_found as dj_page_not_found,
+    permission_denied as dj_permission_denied,
     server_error as dj_server_error
+)
 
 from .generics.views import DetailsView, RealmView, EditView
 from .models import Place, User, Community, Event
+from .exceptions import RedirectRequired
 
 
 class UserDetailsView(DetailsView):
     """Представление с детальной информацией о пользователе."""
 
-    def _update_context(self, context):
+    def _update_context(self, context, request):
         user = context['item']
         context['bookmarks'] = user.get_bookmarks()  # TODO проверить наполнение, возможно убрать области без закладок
 
@@ -32,11 +36,25 @@ class UserEditView(EditView):
         if item != request.user:
             raise PermissionDenied()
 
+    def _update_context(self, context, request):
+
+        if request.POST:
+            prefs_were_set = set_user_preferences_from_request(request)
+            if prefs_were_set:
+                raise RedirectRequired()
+
+        subscr_prefs = get_user_preferences_for_ui(request.user, new_messengers_titles={
+            'twitter': '<i class="fi-social-twitter" title="Twitter"></i>',
+            'smtp': '<i class="fi-mail" title="Эл. почта"></i>'
+        }, message_filter=lambda m: m.alias == 'digest')
+
+        context['subscr_prefs'] = subscr_prefs
+
 
 class PlaceDetailsView(DetailsView):
     """Представление с детальной информацией о месте."""
 
-    def _update_context(self, context):
+    def _update_context(self, context, request):
         place = context['item']
         context['users'] = User.get_actual().filter(place=place)
         context['communities'] = Community.get_actual().filter(place=place)
@@ -62,7 +80,7 @@ class ReferenceListingView(RealmView):
 class ReferenceDetailsView(DetailsView):
     """Представление статьи справочника."""
 
-    def _update_context(self, context):
+    def _update_context(self, context, request):
         reference = context['item']
         context['children'] = reference.get_actual(reference).order_by('title')
         if reference.parent is not None:

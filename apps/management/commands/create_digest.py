@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from ...utils import create_digest as do_create
+from ...sitemessages import PythonzEmailDigest
 
 
 class Command(BaseCommand):
@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
         self.stdout.write('Creating pythonz digest...\n')
         try:
-            do_create()
+            PythonzEmailDigest.create()
         except Exception as e:
             self.stderr.write(self.style.ERROR('Digest creation failed: %s\n' % e))
         else:

@@ -1,5 +1,6 @@
 from siteprefs.toolbox import autodiscover_siteprefs
 from sitegate.toolbox import get_sitegate_urls
+from sitemessage.toolbox import get_sitemessage_urls
 from django.conf.urls import patterns, include, url
 from django.shortcuts import render
 from django.conf import settings
@@ -24,6 +25,7 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += get_sitegate_urls()  # Цепляем URLы от sitegate,
+urlpatterns += get_sitemessage_urls()  # Цепляем URLы от sitemessage,
 
 bootstrap_realms(urlpatterns)  # Инициализируем области
 

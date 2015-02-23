@@ -212,14 +212,6 @@ class User(RealmBaseModel, AbstractUser):
         return bookmarks
 
     @classmethod
-    def get_digest_subsribers(cls):
-        """Возвращает выборку пользователей, подписанных на еженедельный дайджест.
-
-        :return:
-        """
-        return cls.objects.filter(is_active=True, digest_enabled=True).all()
-
-    @classmethod
     def get_actual(cls):
         return cls.objects.filter(is_active=True).order_by('-date_joined').all()
 
