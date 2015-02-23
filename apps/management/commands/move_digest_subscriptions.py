@@ -17,13 +17,15 @@ class Command(BaseCommand):
             for subscriber in subscribers:
                 targets.append(Subscription(
                     message_cls='digest',
-                    message_cls='smtp',
+                    messenger_cls='smtp',
                     recipient_id=subscriber
                 ))
+                self.stdout.write('User ID %s subscribed ...\n' % subscriber)
+
             Subscription.objects.bulk_create(targets)
 
         except Exception as e:
             self.stderr.write(self.style.ERROR('Migration failed: %s\n' % e))
 
         else:
-            self.stdout.write('All is done.\n')
+            self.stdout.write('All is done. Total subscribers: %s\n' % len(targets))
