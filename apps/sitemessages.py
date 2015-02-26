@@ -98,7 +98,7 @@ class PythonzTwitterMessage(PlainTextMessage):
         title = Truncator(entity.title).chars(MAX_LEN - len(prefix) - len(postfix))
         message = '%s%s%s' % (prefix, title, postfix)
 
-        cls(message).schedule(cls.recipients('twitter', ''), priority=cls.priority)
+        cls(message).schedule(cls.recipients('twitter', ''))
 
 
 class PythonzEmailMessage(EmailHtmlMessage):
@@ -159,7 +159,7 @@ class PythonzEmailNewEntity(PythonzEmailMessage):
             'entity_title': entity.title,
             'entity_url': entity.get_absolute_url()
         }
-        cls(subject, context).schedule(cls.recipients('smtp', cls.get_admins_emails()), priority=cls.priority)
+        cls(subject, context).schedule(cls.recipients('smtp', cls.get_admins_emails()))
 
 
 class PythonzEmailDigest(PythonzEmailMessage):
@@ -187,7 +187,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
             'date_from': date_from.timestamp(),
             'date_till': date_till.timestamp()
         }
-        cls(subject, context).schedule(cls.get_subscribers(), priority=cls.priority)
+        cls(subject, context).schedule(cls.get_subscribers())
 
     @classmethod
     def get_template_context(cls, context):
