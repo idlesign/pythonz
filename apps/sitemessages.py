@@ -154,7 +154,7 @@ class PythonzEmailNewEntity(PythonzEmailMessage):
         :param RealmBaseModel entity:
         :return:
         """
-        subject = cls.get_full_subject('Добавлена новая сущность - %s' % entity.title)
+        subject = cls.get_full_subject('Новое - %s' % entity.title)
         context = {
             'entity_title': entity.title,
             'entity_url': entity.get_absolute_url()
