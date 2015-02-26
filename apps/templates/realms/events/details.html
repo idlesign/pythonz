@@ -40,7 +40,7 @@
 {% endblock %}
 
 
-{% block details_contents_after %}
+{% block details_contents_add %}
     <div class="text-muted marg__b_mid small">
         {% if event.url %}<div><a href="{{ event.url }}">{{ event.url }}</a></div>{% endif %}
         {% if event.contacts %}<div class="py_user">{% model_field_verbose_name from event.contacts %}: {{ event.contacts }}</div>{% endif %}
