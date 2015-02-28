@@ -32,7 +32,12 @@ class PartnerBase():
 
         link_url = link.url
 
-        url = '%s%s' % (link_url, self.link_mutator.replace('{partner_id}', self.partner_id))
+        link_mutator = self.link_mutator.replace('{partner_id}', self.partner_id)
+        if '?' in link_url and link_mutator.startwith('?'):
+            link_mutator = link_mutator.replace('?', '&')
+
+        url = '%s%s' % (link_url, link_mutator)
+
         description = link.description
 
         if description:
@@ -167,7 +172,7 @@ def get_partner_links(realm, item):
 
     if links_data is None:
         links_data = []
-        links = item.partner_links.all()
+        links = item.partner_links.order_by('id').all()
         for link in links:
             partner = _PARTNERS_REGISTRY.get(link.partner_alias)
 
