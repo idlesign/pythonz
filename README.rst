@@ -62,6 +62,7 @@ https://github.com/idlesign/pythonz
 * `bleach <https://github.com/jsocol/bleach>`_
 * `twitter <https://github.com/sixohsix/twitter>`_
 * `pytz <http://pythonhosted.org/pytz>`_
+* `Beautiful Soup <http://www.crummy.com/software/BeautifulSoup/>`_
 
 
 *Приложения для Django*

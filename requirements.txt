@@ -2,6 +2,7 @@ Django==1.7.4
 Fabric==1.9.1
 Pillow==2.7.0
 bleach==1.4.1
+beautifulsoup4==4.3.2
 certifi==14.05.14
 django-admirarchy==0.2.0
 django-datetime-widget==0.9.3
