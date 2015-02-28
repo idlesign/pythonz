@@ -33,7 +33,7 @@ class PartnerBase():
         link_url = link.url
 
         link_mutator = self.link_mutator.replace('{partner_id}', self.partner_id)
-        if '?' in link_url and link_mutator.startwith('?'):
+        if '?' in link_url and link_mutator.startswith('?'):
             link_mutator = link_mutator.replace('?', '&')
 
         url = '%s%s' % (link_url, link_mutator)
