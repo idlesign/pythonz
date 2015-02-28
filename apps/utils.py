@@ -5,6 +5,7 @@ from urllib.parse import urlsplit, urlunsplit
 
 import requests
 from PIL import Image  # Для работы с jpg требуется собрать с libjpeg-dev
+from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
@@ -171,3 +172,28 @@ def get_location_data(location_name):
     }
 
     return location_data
+
+
+def make_soup(url):
+    """Возвращает объект BeautifulSoup, либо None для указанного URL.
+
+    :param str url:
+    :return: object
+    :rtype: BeautifulSoup|None
+    """
+    result = None
+
+    headers = {'User-agent': 'Mozilla/5.0 (Ubuntu; X11; Linux i686; rv:8.0) Gecko/20100'}
+    r_kwargs = {
+        'allow_redirects': True,
+        'headers': headers,
+        'timeout': 1.5
+    }
+
+    try:
+        response = requests.get(url, **r_kwargs)
+        result = BeautifulSoup(response.text)
+    except requests.exceptions.RequestException:
+        pass
+
+    return result

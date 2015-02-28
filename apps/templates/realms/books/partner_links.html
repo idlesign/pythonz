@@ -1,0 +1,19 @@
+{% if links %}
+    <table class="table table-hover table-condensed table-striped">
+        {% for link in links %}
+            <tr>
+                <td>
+                    {% if link.icon_url %}
+                        <img src="{{ link.icon_url }}" width="16" height="16">&nbsp;
+                    {% endif %}
+                    <a href="{{ link.url }}">{{ link.title }}</a>
+                </td>
+                <td>{{ link.price }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% else %}
+    К сожалению отыскать для вас эту книгу на полках интернет-магазинов нам не удалось.<br>
+    Если вам известно, где её нужно искать, поделитесь этим с нами.
+{% endif %}

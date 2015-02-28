@@ -13,6 +13,7 @@ from .models import ModelWithCompiledText, RealmBaseModel
 from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event, Reference
 from ..exceptions import RedirectRequired
 from ..shortcuts import message_warning, message_success, message_info
+from ..partners import get_partner_links
 
 
 class RealmView(View):
@@ -93,7 +94,7 @@ class RealmView(View):
         :param obj_id:
         :return:
         """
-        return get_object_or_404(self.realm.model.objects.select_related('submitter'), pk=obj_id)
+        return get_object_or_404(self.realm.model.objects.select_related('submitter', 'last_editor'), pk=obj_id)
 
 
 class ListingView(RealmView):
@@ -248,7 +249,18 @@ class DetailsView(RealmView):
         :return:
         """
 
-    @xross_view(set_rate, toggle_bookmark)
+    def list_partner_links(self, request, xross=None):
+        """Используется xross. Реализует получение блока с партнёрскими ссылками.
+
+        :param request:
+        :param action:
+        :param xross:
+        :return:
+        """
+        item = xross.attrs['item']
+        return render(request, self.get_template_path('partner_links'), get_partner_links(self.realm, item))
+
+    @xross_view(set_rate, toggle_bookmark, list_partner_links)
     def get(self, request, obj_id):
 
         item = self.get_object_or_404(obj_id)

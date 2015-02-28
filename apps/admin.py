@@ -3,11 +3,13 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
+from django.contrib.contenttypes.admin import GenericTabularInline
 from simple_history.admin import SimpleHistoryAdmin
 
 from admirarchy.toolbox import HierarchicalModelAdmin
 
-from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version
+from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version, PartnerLink
+from .partners import get_partners_choices
 
 
 ##################################################################################
@@ -55,7 +57,29 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(User, UserAdmin)
 
 ##################################################################################
+# Партнёрские ссылки.
+#
 
+class PartnerLinkForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        field = self.fields['partner_alias']
+        field.widget = forms.fields.Select(choices=get_partners_choices())
+
+    class Meta:
+        model = PartnerLink
+
+
+class PartnerLinkInline(GenericTabularInline):
+
+    model = PartnerLink
+    form = PartnerLinkForm
+    extra = 0
+
+
+##################################################################################
 
 class PlaceAdmin(admin.ModelAdmin):
 
@@ -84,6 +108,8 @@ admin.site.register(Article, ArticleAdmin)
 
 
 class BookAdmin(EntityBaseAdmin):
+
+    inlines = [PartnerLinkInline]
 
     list_display = ('time_created', 'title', 'submitter', 'isbn')
     search_fields = ['title', 'isbn']
