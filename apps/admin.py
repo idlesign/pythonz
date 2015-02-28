@@ -10,6 +10,7 @@ from admirarchy.toolbox import HierarchicalModelAdmin
 
 from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version, PartnerLink
 from .partners import get_partners_choices
+from .forms.forms import BookForm
 
 
 ##################################################################################
@@ -56,9 +57,11 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(User, UserAdmin)
 
+
 ##################################################################################
 # Партнёрские ссылки.
 #
+
 
 class PartnerLinkForm(forms.ModelForm):
 
@@ -110,6 +113,7 @@ admin.site.register(Article, ArticleAdmin)
 class BookAdmin(EntityBaseAdmin):
 
     inlines = [PartnerLinkInline]
+    form = BookForm
 
     list_display = ('time_created', 'title', 'submitter', 'isbn')
     search_fields = ['title', 'isbn']

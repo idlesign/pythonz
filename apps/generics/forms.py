@@ -21,15 +21,16 @@ class CommonEntityForm(forms.ModelForm):
 class RealmEditBaseForm(CommonEntityForm):
     """Базовый класс для форм создания/редактирования сущностей, принадлежащим областям."""
 
-    def __init__(self, *args, user, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
 
         if self._meta.model is not Article:  # Запрещаем управлять статусом везде, кроме Статей.
-            if not user.is_superuser and not user.is_staff:
-                try:
-                    del self.fields['status']
-                except KeyError:  # Нет такого поля на форме.
-                    pass
+            if user is not None:
+                if not user.is_superuser and not user.is_staff:
+                    try:
+                        del self.fields['status']
+                    except KeyError:  # Нет такого поля на форме.
+                        pass
 
         instance = kwargs.get('instance', None)
         for field_name in self.fields:
