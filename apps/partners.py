@@ -42,12 +42,10 @@ class PartnerBase():
 
         url = '%s%s' % (link_url, link_mutator)
 
+        title = '%s на %s' % (realm.model.get_verbose_name(), self.title)
         description = link.description
-
         if description:
-            title = '%s: %s' % (self.title, description)
-        else:
-            title = '%s на %s' % (realm.model.get_verbose_name(), self.title)
+            title = '%s — %s' % (title, description)
 
         page_soup = self.get_page_soup(link_url)
 
@@ -219,7 +217,7 @@ def get_partner_links(realm, item):
 
     if links_data is None:
         links_data = []
-        links = item.partner_links.order_by('id').all()
+        links = item.partner_links.order_by('partner_alias', 'description').all()
         for link in links:
             partner = _PARTNERS_REGISTRY.get(link.partner_alias)
 
