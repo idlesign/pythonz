@@ -97,7 +97,7 @@ class BooksRu(PartnerBase):
         price = ''
 
         if page_soup:
-            matches = page_soup.select('.yprice.price')
+            matches = page_soup.select('.item-price .yprice.price')
             if matches:
                 price = matches[0].text
 
