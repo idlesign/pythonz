@@ -1,4 +1,5 @@
 {% if links %}
+
     <table class="table table-hover table-condensed table-striped">
         {% for link in links %}
             <tr>
@@ -12,6 +13,12 @@
             </tr>
         {% endfor %}
     </table>
+    {% with links|first as first_link %}
+        <small class="cl__gray pull-right"><small>
+            * Данные о ценах собраны {{ first_link.time }}.
+        </small></small>
+    {% endwith %}
+    <div class="clearfix"></div>
 
 {% else %}
     К сожалению отыскать для вас эту книгу на полках интернет-магазинов нам не удалось.<br>

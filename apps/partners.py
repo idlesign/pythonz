@@ -1,9 +1,11 @@
+import re
 from collections import OrderedDict
 from urllib.parse import urljoin
 
 from django.conf import settings
 from django.db.models import signals
 from django.core.cache import cache
+from django.utils.timezone import now
 
 from .utils import make_soup
 
@@ -18,6 +20,8 @@ class PartnerBase():
     ident = None
     title = None
     link_mutator = None
+
+    RE_ICON_REL = re.compile('icon', re.I)
 
     def __init__(self, partner_id):
         self.partner_id = partner_id
@@ -47,11 +51,14 @@ class PartnerBase():
 
         page_soup = self.get_page_soup(link_url)
 
+        price = self.get_price(page_soup).strip(' .').replace('руб', 'руб.')
+
         data = {
             'icon_url': self.get_icon_url(page_soup, link_url),
             'title': title,
             'url': url,
-            'price': self.get_price(page_soup)
+            'price': price,
+            'time': now()
         }
         return data
 
@@ -68,7 +75,7 @@ class PartnerBase():
         icon_url = ''
 
         if page_soup:
-            matches = page_soup.find_all(attrs={'rel': 'shortcut icon'})
+            matches = page_soup.find_all(attrs={'rel': cls.RE_ICON_REL})
             if matches:
                 href = matches[0].attrs['href']
                 if href:
@@ -78,7 +85,7 @@ class PartnerBase():
 
 
 class BooksRu(PartnerBase):
-    """Класс реализует работу по партнёрской программе сайта Books.ru."""
+    """Класс реализует работу по партнёрской программе сайта books.ru."""
 
     ident = 'booksru'
     title = 'books.ru'
@@ -91,6 +98,46 @@ class BooksRu(PartnerBase):
 
         if page_soup:
             matches = page_soup.select('.yprice.price')
+            if matches:
+                price = matches[0].text
+
+        return price
+
+
+class LitRes(PartnerBase):
+    """Класс реализует работу по партнёрской программе сайта litres.ru."""
+
+    ident = 'litres'
+    title = 'litres.ru'
+    link_mutator = '?lfrom={partner_id}'
+
+    @classmethod
+    def get_price(cls, page_soup):
+
+        price = ''
+
+        if page_soup:
+            matches = page_soup.select('.block48')
+            if matches:
+                price = matches[0].text
+
+        return price
+
+
+class Ozon(PartnerBase):
+    """Класс реализует работу по партнёрской программе сайта ozon.ru."""
+
+    ident = 'ozon'
+    title = 'ozon.ru'
+    link_mutator = '?partner={partner_id}'
+
+    @classmethod
+    def get_price(cls, page_soup):
+
+        price = ''
+
+        if page_soup:
+            matches = page_soup.select('.bOzonPrice .hidden')
             if matches:
                 price = matches[0].text
 
@@ -118,7 +165,7 @@ def init_partners_module():
 
     _PARTNERS_REGISTRY = OrderedDict()
 
-    PARTNER_CLASSES = [BooksRu]
+    PARTNER_CLASSES = [BooksRu, LitRes, Ozon]
 
     partners_settings = settings.PARTNER_IDS
 
