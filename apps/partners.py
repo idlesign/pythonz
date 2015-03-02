@@ -142,6 +142,28 @@ class Ozon(PartnerBase):
         return price
 
 
+class ReadRu(PartnerBase):
+    """Класс реализует работу по партнёрской программе сайта ozon.ru."""
+
+    ident = 'readru'
+    title = 'read.ru'
+    link_mutator = '?pp={partner_id}'
+
+    @classmethod
+    def get_price(cls, page_soup):
+
+        price = ''
+
+        if page_soup:
+            matches = page_soup.select('.book_price3__fullprice')
+            if matches:
+                price = matches[0].text
+                if price:
+                    price = price.encode('latin1').decode('cp1251').strip()
+
+        return price
+
+
 def get_cache_key(instance):
     """Возвращает ключ записи кэша для указанного экземпляра сущности.
 
@@ -163,7 +185,7 @@ def init_partners_module():
 
     _PARTNERS_REGISTRY = OrderedDict()
 
-    PARTNER_CLASSES = [BooksRu, LitRes, Ozon]
+    PARTNER_CLASSES = [BooksRu, LitRes, Ozon, ReadRu]
 
     partners_settings = settings.PARTNER_IDS
 
