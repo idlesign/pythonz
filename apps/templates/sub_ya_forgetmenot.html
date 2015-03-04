@@ -1,0 +1,10 @@
+{% if event.time_start %}
+<script src="//yastatic.net/forgetmenot/forgetmenot.min.js"></script>
+<div class="ya-forgetmenot-autoinit" style="padding-bottom: 10px;"
+     data-forgetmenot-name="{{ event.title }}"
+     data-forgetmenot-description="{{ event.place.title }} {{ event.fee|yesno:"Платно,Бесплатно" }}"
+     data-forgetmenot-reminder-date="{{ event.time_start|date:'c' }}"
+     data-forgetmenot-size="l" data-forgetmenot-icon="bell"
+     data-forgetmenot-theme="white">
+</div>
+{% endif %}

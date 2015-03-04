@@ -33,7 +33,12 @@
                 {% if event.time_finish %}
                     &#8212; {{ event.time_finish|date:"d E H:i" }}
                 {% endif %}
-                <span class="cl__gray">&nbsp; {% if not event.is_in_past %}[{{ event.time_start|timeuntil }} до начала]{% endif %}</span>
+                <span class="cl__gray">
+                    &nbsp; {% if not event.is_in_past %}[{{ event.time_start|timeuntil }} до начала]{% endif %}
+                </span>
+                <div class="marg__t_min">
+                    {% include "sub_ya_forgetmenot.html" %}
+                </div>
             {% endif %}
         </div>
     </div>
