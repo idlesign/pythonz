@@ -1,17 +1,20 @@
 {% extends "sitemessage/messages/base.html" %}
 
 {% block contents %}
-    {% for realm_name, entries in realms.items %}
-        <div style="margin-bottom: 15px;">
-            <h3>{{ realm_name }}</h3>
-            <ul>
-                {% for entry in entries %}
-                    <li style="margin-bottom: 10px;">
-                        <a href="{{ entry.absolute_url }}">{{ entry.title }}</a>
-                        <div style="font-size:12px;color:#666;margin-top:5px;"><i>{{ entry.description }}</i></div>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+    {% for title, realms in realms_data.items %}
+        <h2>{{ title }}</h2>
+        {% for realm_name, entries in realms.items %}
+            <div style="margin: 0 0 15px 25px;">
+                <h3>{{ realm_name }}</h3>
+                <ul>
+                    {% for entry in entries %}
+                        <li style="margin-bottom: 10px;">
+                            <a href="{{ entry.absolute_url }}">{{ entry.title }}</a>
+                            <div style="font-size:12px;color:#666;margin-top:5px;"><i>{{ entry.description }}</i></div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
     {% endfor %}
 {% endblock %}

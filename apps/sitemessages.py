@@ -4,6 +4,7 @@
 """
 from datetime import datetime, timedelta
 from collections import OrderedDict
+from functools import partial
 
 from sitemessage.utils import register_messenger_objects, register_message_types, override_message_type_for_app
 from sitemessage.messages.email import EmailHtmlMessage
@@ -190,20 +191,60 @@ class PythonzEmailDigest(PythonzEmailMessage):
         cls(subject, context).schedule(cls.get_subscribers())
 
     @classmethod
-    def get_template_context(cls, context):
+    def get_realms_data(cls, date_from, date_till, modified_mode=False):
+        """Возвращает данные о материалах за указанный период.
+
+        :param date date_from: Дата начала периода
+        :param date date_till: Дата завершения периода
+        :param bool modified_mode: Флаг. Следует ли возвращать данные об изменившихся материалах.
+        :return:
+        """
+        if modified_mode:
+            filter_kwargs = {
+                'time_published__lte': date_from,
+                'time_modified__gte': date_from,
+                'time_modified__lte': date_till
+            }
+
+        else:
+            filter_kwargs = {
+                'time_published__gte': date_from,
+                'time_published__lte': date_till
+            }
+
+
         realms_data = OrderedDict()
-        get_date = lambda s: datetime.fromtimestamp(s, tz=timezone.get_current_timezone())
         for realm in get_realms().values():
             if realm.ready_for_digest:
-                date_from = get_date(context.get('date_from'))
-                date_till = get_date(context.get('date_till'))
-                entries = realm.model.get_actual().filter(time_published__gte=date_from, time_published__lte=date_till)
+                entries = realm.model.get_actual().filter(**filter_kwargs)
                 if entries:
                     for entry in entries:
                         entry.absolute_url = entry.get_absolute_url(with_prefix=True, hash_chunk='frommail')
                     realms_data[realm.model.get_verbose_name_plural()] = entries
 
-        context.update({'realms': realms_data})
+        return realms_data
+
+    @classmethod
+    def get_template_context(cls, context):
+        """Заполняет шаблон сообщения данными.
+
+        :param context:
+        :return:
+        """
+        get_date = partial(datetime.fromtimestamp, tz=timezone.get_current_timezone())
+        date_from = get_date(context.get('date_from'))
+        date_till = get_date(context.get('date_till'))
+
+        realms_data = OrderedDict()
+        objects_new = cls.get_realms_data(date_from, date_till)
+        if objects_new:
+            realms_data['Новые'] = objects_new
+
+        objects_modified = cls.get_realms_data(date_from, date_till, modified_mode=True)
+        if objects_modified:
+            realms_data['Изменившиеся'] = objects_modified
+
+        context.update({'realms_data': realms_data})
         return context
 
 
