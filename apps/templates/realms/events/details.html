@@ -36,9 +36,11 @@
                 <span class="cl__gray">
                     &nbsp; {% if not event.is_in_past %}[{{ event.time_start|timeuntil }} до начала]{% endif %}
                 </span>
+                {% if not event.is_in_past %}
                 <div class="marg__t_min">
                     {% include "sub_ya_forgetmenot.html" %}
                 </div>
+                {% endif %}
             {% endif %}
         </div>
     </div>
