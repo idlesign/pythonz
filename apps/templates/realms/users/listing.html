@@ -17,14 +17,10 @@
         <div class="col-md-12">
             {% model_field_verbose_name from users.supporters_num as title_support %}
             {% for user in users %}
-                <div class="listing_item small">
-                    <a href="{{ user.get_absolute_url }}">{% gravatar_get_img user %}</a>
-                    <div class="description">
-                        <a href="{{ user.get_absolute_url }}">{{ user.get_display_name }}</a> <sup title="{{ title_support }}">{{ user.supporters_num }}</sup>
-                        <div class="small">
-                            {{ user.get_username_partial }}
-                        </div>
-                    </div>
+                <div class="pull-left userlist_item">
+                    <a href="{{ user.get_absolute_url }}" title="{{ user.get_display_name }}">
+                        <img src="{% gravatar_get_url user %}">
+                    </a>
                 </div>
             {% endfor %}
         </div>

@@ -192,6 +192,8 @@ class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
 class User(RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
 
+    items_per_page = 100
+
     objects = UserManager()
 
     place = models.ForeignKey(Place, verbose_name='Место', related_name='users', null=True, blank=True,
