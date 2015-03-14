@@ -95,6 +95,8 @@ class CategoryListingView(RealmView):
 
     def get(self, request, obj_id=None):
         from apps.realms import get_realms
+        realms = get_realms().values()
+
         if obj_id is None:  # Запрошен список всех известных категорий.
             item = get_category_lists(
                 init_kwargs={
@@ -102,14 +104,14 @@ class CategoryListingView(RealmView):
                     'show_links': lambda cat: reverse(self.realm.get_details_urlname(), args=[cat.id])
                 },
                 additional_parents_aliases=get_category_aliases_under())
-            return self.render(request, {'item': item})
+            return self.render(request, {'item': item, 'realms': realms})
 
         # Выводим список материалов (разбитых по областям сайта) для конкретной категории.
         category_model = get_category_model()
         category = get_object_or_404(category_model.objects.select_related('parent'), pk=obj_id)
 
         realm_list = []
-        for realm in get_realms().values():
+        for realm in realms:
             if hasattr(realm.model, 'categories'):  # ModelWithCategory
                 objs = realm.model.get_objects_in_category(category)[:5]
                 if objs:
@@ -129,8 +131,7 @@ server_error = lambda request: dj_server_error(request, template_name='static/50
 
 
 def index(request):
-    from .realms import get_realms
-    return render(request, 'index.html', {'realms': get_realms().values()})
+    return redirect('categories:listing')
 
 
 @redirect_signedin

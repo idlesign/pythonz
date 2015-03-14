@@ -317,6 +317,8 @@ class CategoryRealm(RealmBase):
     ready_for_digest = False
     sitemap_enabled = False
     syndication_enabled = False
+    show_on_main = False
+    view_listing_title = 'Путеводитель'
     view_listing_base_class = CategoryListingView
     view_details_base_class = CategoryListingView
 
@@ -345,4 +347,15 @@ class CommunityRealm(RealmBase):
     sitemap_changefreq = 'daily'
 
 
-register_realms(CategoryRealm, BookRealm, VideoRealm, ArticleRealm, ReferenceRealm, EventRealm, CommunityRealm, UserRealm, PlaceRealm, DiscussionRealm)
+register_realms(
+    CategoryRealm,
+    BookRealm,
+    VideoRealm,
+    ArticleRealm,
+    ReferenceRealm,
+    EventRealm,
+    UserRealm,
+    PlaceRealm,
+    DiscussionRealm,
+    CommunityRealm
+)

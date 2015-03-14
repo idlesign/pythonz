@@ -276,7 +276,6 @@ nav .submenu {
 }
 
 .tags_box {
-  margin-top: @gap__max;
   font-family: Verdana, Arial, helvetica, sans-serif;
   .big {
      .title {
@@ -349,31 +348,22 @@ nav .submenu {
 }
 
 .features {
-  margin-top: @gap__max;
   .features_row {
-    padding-top: @gap__min;
     div {
-      min-height: 250px;
-      max-height: 250px;
+      min-width: 100px;
+      padding: @gap__min;
     }
   }
-  p {
-    color: @cl__gray;
-    font-size: 12px;
-  }
   i {
-    color: lighten(@cl__black, 98%);
-    font-size: 80px;
+    color: lighten(@cl__black, 50%);
+    font-size: 28px;
   }
-  i:hover {
+  a {
+    color: lighten(@cl__black, 85%);
+  }
+  i:hover, a:hover {
     color: @cl__blue;
-  }
-  .box {
-    padding-top: @gap__min;
-    border: 1px solid @cl__white;
-  }
-  .box:hover {
-    border: 1px solid lighten(@cl__black, 80%);
+    text-decoration: none;
   }
 }
 

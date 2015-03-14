@@ -21,6 +21,9 @@ class RealmBase(object):
     # Имена доступных представлений.
     allowed_views = ('listing', 'details', 'tags', 'add', 'edit')
 
+    # Слудет ли отображать на главной странице.
+    show_on_main = True
+
     # Кеш элементов древа сайта для данной области.
     sitetree_items = None
 
@@ -59,6 +62,7 @@ class RealmBase(object):
     view_listing = None
     view_listing_base_class = ListingView
     view_listing_url = r'^$'
+    view_listing_title = None
     view_listing_description = ''
     view_listing_keywords = ''
 
@@ -228,7 +232,8 @@ class RealmBase(object):
         """
         if cls.sitetree_items is None:
             cls.sitetree_items = item(
-                str(cls.model._meta.verbose_name_plural), cls.get_listing_urlname(),
+                cls.view_listing_title or str(cls.model._meta.verbose_name_plural),
+                cls.get_listing_urlname(),
                 description=cls.view_listing_description,
                 children=[getattr(cls, 'get_sitetree_%s_item' % view_name)() for view_name in cls.allowed_views if view_name != 'edit']
             )
