@@ -21,11 +21,14 @@ class ModelWithAuthorAndTranslator(models.Model):
 
     _hint_userlink = '<br><b>[u:<ид>:<имя>]</b> формирует ссылку на профиль пользователя pythonz. Например: [u:1:идле].'
 
-    author = models.CharField('Автор', max_length=255,
-                              help_text='Предпочтительно имя и фамилия. Можно указать несколько, разделяя запятыми.%s' % _hint_userlink)
+    author = models.CharField(
+        'Автор', max_length=255,
+    help_text='Предпочтительно имя и фамилия. Можно указать несколько, разделяя запятыми.%s' % _hint_userlink)
 
-    translator = models.CharField('Перевод', max_length=255, blank=True, null=True,
-                                  help_text='Укажите переводчиков, если материал переведён на русский с другого языка. Если переводчик неизвестен, можно указать главного редактора.%s' % _hint_userlink)
+    translator = models.CharField(
+        'Перевод', max_length=255, blank=True, null=True,
+        help_text=('Укажите переводчиков, если материал переведён на русский с другого языка. '
+                   'Если переводчик неизвестен, можно указать главного редактора.%s' % _hint_userlink))
 
     class Meta:
         abstract = True
@@ -58,7 +61,8 @@ class ModelWithCompiledText(models.Model):
         :return:
         """
         from ..utils import url_mangle
-        href_replacer = lambda match: '<a href="%s" target="_blank">%s</a>' % (match.group(1), url_mangle(match.group(1)))
+        href_replacer = lambda match: ('<a href="%s" target="_blank">%s</a>' %
+                                       (match.group(1), url_mangle(match.group(1))))
 
         # Заменяем некоторые символы для правила RE_URL_WITH_TITLE, чтобы их не устранил bleach.
         text = text.replace('<ht', '[ht')
@@ -74,7 +78,12 @@ class ModelWithCompiledText(models.Model):
         text = re.sub(cls.RE_CODE, '<pre><code class="\g<1>">\n\g<2>\n</code></pre>\n', text)
         text = re.sub(cls.RE_URL_WITH_TITLE, '<a href="\g<2>" target="_blank">\g<1></a>', text)
         text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\g<1>.js"></script>', text)
-        text = re.sub(cls.RE_PODSTER, '<iframe width="100%" height="85" src="\g<1>/embed/13?link=1" frameborder="0" allowtransparency="true"></iframe>', text)
+        text = re.sub(
+            cls.RE_PODSTER,
+            '<iframe width="100%" height="85" src="\g<1>/embed/13?link=1" frameborder="0" allowtransparency="true">'
+            '</iframe>',
+            text
+        )
         text = re.sub(cls.RE_URL, href_replacer, text)
 
         text = text.replace('\n', '<br>')
@@ -192,8 +201,9 @@ class RealmBaseModel(ModelWithFlag):
     status = models.PositiveIntegerField('Статус', choices=STATUSES, default=STATUS_DRAFT)
     supporters_num = models.PositiveIntegerField('Поддержка', default=0)
 
-    last_editor = models.ForeignKey(USER_MODEL, verbose_name='Редактор', related_name='%(class)s_editors', null=True, blank=True,
-                                    help_text='Пользователь, последним отредактировавший объект.')
+    last_editor = models.ForeignKey(
+        USER_MODEL, verbose_name='Редактор', related_name='%(class)s_editors', null=True, blank=True,
+        help_text='Пользователь, последним отредактировавший объект.')
 
     class Meta:
         abstract = True
@@ -228,7 +238,8 @@ class RealmBaseModel(ModelWithFlag):
         just_published = False
 
         if self._status_backup != self.status:
-            self._consider_modified = False  # Если сохраняем с переходом статуса, наивно полагаем объект немодифицированным.
+            # Если сохраняем с переходом статуса, наивно полагаем объект немодифицированным.
+            self._consider_modified = False
             if self.status == self.STATUS_PUBLISHED:
                 setattr(self, 'time_published', timezone.now())
                 just_published = True
@@ -313,6 +324,20 @@ class RealmBaseModel(ModelWithFlag):
         # TODO Не инвалидирует кеш в категориях раздела. При случае решить, а нужно ли вообще.
         cache.delete(cls.cache_get_key_most_voted_objects(class_name=kwargs['sender']))
 
+    def is_draft(self):
+        """Возвращает булево указывающее на то, является ли сущность черновиком.
+
+        :return:
+        """
+        return self.status == self.STATUS_DRAFT
+
+    def is_deleted(self):
+        """Возвращает булево указывающее на то, помечена ли сущность удаленной.
+
+        :return:
+        """
+        return self.status == self.STATUS_DRAFT
+
     def is_published(self):
         """Возвращает булево указывающее на то, опубликована ли сущность.
 
@@ -335,7 +360,8 @@ class RealmBaseModel(ModelWithFlag):
         :param category:
         :return:
         """
-        return cls.get_from_category_qs(category).filter(status=RealmBaseModel.STATUS_PUBLISHED).select_related('submitter')
+        return cls.get_from_category_qs(category).filter(status=RealmBaseModel.STATUS_PUBLISHED).select_related(
+            'submitter')
 
     @classmethod
     def get_most_voted_objects_in_category(cls, category):

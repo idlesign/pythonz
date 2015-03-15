@@ -99,7 +99,8 @@ def get_realms_urls():
         url_patterns += realm.get_urls()
     sitemaps = get_sitemaps()
     if sitemaps:
-        url_patterns += patterns('', url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}))
+        url_patterns += patterns(
+            '', url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}))
     return url_patterns
 
 
@@ -108,25 +109,32 @@ def build_sitetree():
 
     :return:
     """
-    from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree  # Потакаем поведению Django 1.7 при загрузке приложений.
+    # Потакаем поведению Django 1.7 при загрузке приложений.
+    from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree
     register_dynamic_trees(
         compose_dynamic_tree((
             tree('main', 'Основное дерево', (
                 item('Про Python', '/', alias='topmenu', url_as_pattern=False,
-                     description='Материалы по языку программирования Python. Книги, видео, сообщества и многое другое.',
+                     description='Материалы по языку программирования Python. Книги, видео, сообщества '
+                                 'и многое другое.',
                      children=(realm.get_sitetree_items() for realm in get_realms().values())),
                 item('Вход', 'login', access_guest=True, in_menu=False, in_breadcrumbs=False),
-                item('Личное меню', '#', alias='personal', url_as_pattern=False, access_loggedin=True, in_menu=False, in_sitetree=False, children=(
-                    item('Профиль', 'users:details request.user.id', access_loggedin=True, in_breadcrumbs=False, in_sitetree=False),
-                    item('Настройки', 'users:edit request.user.id', access_loggedin=True, in_breadcrumbs=False, in_sitetree=False),
-                    item('Выход', 'logout', access_loggedin=True, in_breadcrumbs=False, in_sitetree=False),
+                item('Личное меню', '#', alias='personal', url_as_pattern=False, access_loggedin=True, in_menu=False,
+                     in_sitetree=False, children=(
+                        item('Профиль', 'users:details request.user.id', access_loggedin=True, in_breadcrumbs=False,
+                             in_sitetree=False),
+                        item('Настройки', 'users:edit request.user.id', access_loggedin=True, in_breadcrumbs=False,
+                             in_sitetree=False),
+                        item('Выход', 'logout', access_loggedin=True, in_breadcrumbs=False, in_sitetree=False),
                 )),
 
             )),
             tree('about', 'О проекте', (
-                item('Что такое Python', '/promo/', description='Краткие сведения о языке программирования Python.', url_as_pattern=False),
+                item('Что такое Python', '/promo/', description='Краткие сведения о языке программирования Python.',
+                     url_as_pattern=False),
                 item('О проекте', '/about/', description='Информация о проекте pythonz.net.', url_as_pattern=False),
-                item('Карта сайта', '/sitemap/', description='Список разделов проекта pythonz.net.', url_as_pattern=False),
+                item('Карта сайта', '/sitemap/', description='Список разделов проекта pythonz.net.',
+                     url_as_pattern=False),
                 item('Поиск по сайту', '/search/', url_as_pattern=False),
             ))
         )),
@@ -142,7 +150,9 @@ class BookRealm(RealmBase):
     Область с книгами.
     """
 
-    txt_promo = 'Времена и люди сменяют друг друга, а книги остаются. Взгляните на них &#8211; фолианты, книжицы и книжонки. Ходят слухи, что здесь можно отыскать даже гримуары.'
+    txt_promo = ('Времена и люди сменяют друг друга, а книги остаются. '
+                 'Взгляните на них &#8211; фолианты, книжицы и книжонки. '
+                 'Ходят слухи, что здесь можно отыскать даже гримуары.')
     txt_form_add = 'Добавить книгу'
     txt_form_edit = 'Изменить данные книги'
 
@@ -161,7 +171,8 @@ class VideoRealm(RealmBase):
     Область с видео.
     """
 
-    txt_promo = 'Видео уникально в плане возможностей по усвоению материала: оно заставляет смотреть, слушать, и даже читать. Попробуйте, вам должно понравится.'
+    txt_promo = ('Видео уникально в плане возможностей по усвоению материала: '
+                 'оно заставляет смотреть, слушать, и даже читать. Попробуйте, вам должно понравится.')
     txt_form_add = 'Добавить видео'
     txt_form_edit = 'Изменить данные видео'
 
@@ -180,7 +191,8 @@ class EventRealm(RealmBase):
     Область с событиями.
     """
 
-    txt_promo = 'События разнообразят жизнь: встречи, лекции, беседы, обмен опытом позволяют расширить кругозор, установить связи, приятно провести время. Приобщайтесь.'
+    txt_promo = ('События разнообразят жизнь: встречи, лекции, беседы, обмен опытом '
+                 'позволяют расширить кругозор, установить связи, приятно провести время. Приобщайтесь.')
     txt_form_add = 'Добавить событие'
     txt_form_edit = 'Изменить событие'
 
@@ -225,7 +237,8 @@ class ArticleRealm(RealmBase):
     Область со статьями.
     """
 
-    txt_promo = 'Статьи похожи на рассказы. Хорошие статьи, как и хорошие рассказы, хочется читать часто, много и даже с наслаждением.'
+    txt_promo = ('Статьи похожи на рассказы. '
+                 'Хорошие статьи, как и хорошие рассказы, хочется читать часто, много и даже с наслаждением.')
     txt_form_add = 'Написать статью'
     txt_form_edit = 'Редактировать статью'
 
@@ -243,7 +256,8 @@ class PlaceRealm(RealmBase):
     """
     Область с географическими объектами (местами).
     """
-    txt_promo = 'В какую точку земного шара ни ткни, почти наверняка там найдутся интересные люди, события, места. Вот вам карта.'
+    txt_promo = ('В какую точку земного шара ни ткни, почти наверняка там найдутся интересные люди, '
+                 'события, места. Вот вам карта.')
 
     view_listing_description = 'Места, так или иначе связанные с языком программирования Python.'
     view_listing_keywords = '%s место, местность, город, село, places, места где программируют на питоне' % BASE_KEYWORDS
@@ -262,7 +276,8 @@ class DiscussionRealm(RealmBase):
     Область обсуждений.
     """
 
-    txt_promo = 'Обсуждения позволяют обмениваться опытом и получать ответы на интересующие вопросы и, конечно, делиться своим мнением.'
+    txt_promo = ('Обсуждения позволяют обмениваться опытом и получать ответы на интересующие вопросы и, конечно, '
+                 'делиться своим мнением.')
     txt_form_add = 'Создать обсуждение'
     txt_form_edit = 'Редактировать обсуждение'
 
@@ -279,7 +294,8 @@ class UserRealm(RealmBase):
     Область с персоналиями.
     """
 
-    txt_promo = 'Вокруг люди &#8211; это они пишут статьи и книги, организовывают встречи и делятся мнениями, это они могут помочь, подсказать, научить. Здесь упомянуты некоторые.'
+    txt_promo = ('Вокруг люди &#8211; это они пишут статьи и книги, организовывают встречи и делятся мнениями, '
+                 'это они могут помочь, подсказать, научить. Здесь упомянуты некоторые.')
     txt_form_edit = 'Изменить настройки'
 
     view_listing_description = 'Люди, связанные с языком программирования Python.'
@@ -304,9 +320,11 @@ class CategoryRealm(RealmBase):
     Область с категориями.
     """
 
-    txt_promo = 'Если всё разложить по полочкам, вероятность найти нужное возрастает. На наших полочках сплошь нужные вещи.'
+    txt_promo = ('Если всё разложить по полочкам, вероятность найти нужное возрастает. '
+                 'На наших полочках сплошь нужные вещи.')
 
-    view_listing_description = 'Категории материалов, связанных с языком программирования Python, представленных на pythonz.net.'
+    view_listing_description = ('Категории материалов, связанных с языком программирования Python, '
+                                'представленных на pythonz.net.')
     view_listing_keywords = '%s категория, метка, categories, материалы по питону' % BASE_KEYWORDS
 
     model = Category
@@ -324,7 +342,9 @@ class CategoryRealm(RealmBase):
 
     @classmethod
     def get_sitetree_details_item(cls):
-        return item('Категория «{{ category.parent.title }} — {{ category.title }}»', 'categories:details category.id', in_menu=False, in_sitetree=False)
+        return item(
+            'Категория «{{ category.parent.title }} — {{ category.title }}»', 'categories:details category.id',
+            in_menu=False, in_sitetree=False)
 
 
 class CommunityRealm(RealmBase):
@@ -332,7 +352,8 @@ class CommunityRealm(RealmBase):
     Область с сообществами.
     """
 
-    txt_promo = 'Чтобы общаться, узнавать новое и развиваться, люди часто объединяются в сообщества по интересам. Вступайте в имеющиеся, создавайте свои.'
+    txt_promo = ('Чтобы общаться, узнавать новое и развиваться, люди часто объединяются в сообщества по интересам. '
+                 'Вступайте в имеющиеся, создавайте свои.')
     txt_form_add = 'Зарегистрировать сообщество'
     txt_form_edit = 'Редактировать сообщество'
 

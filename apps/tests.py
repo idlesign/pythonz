@@ -17,7 +17,8 @@ class UtilsTest(unittest.TestCase):
 
     def test_url_mangle(self):
         self.assertEqual(url_mangle('http://some.com/not/very/long/url'), 'http://some.com/not/very/long/url')
-        self.assertEqual(url_mangle('http://some.com/path/to/some/resource/which/ends?with=this#stuff'), 'http://some.com/<...>ends')
+        self.assertEqual(url_mangle('http://some.com/path/to/some/resource/which/ends?with=this#stuff'),
+                         'http://some.com/<...>ends')
         self.assertEqual(url_mangle('http://some.com/'), 'http://some.com/')
         self.assertEqual(url_mangle('http://some.com'), 'http://some.com')
 
@@ -81,18 +82,23 @@ http://some.url/
 Далее.
 
 '''
-        expected = '<b>полужирный текст some.where</b><br><br>' \
-                 '<i>курсив some.where</i><br><br>' \
-                 '<a href="http://some.url/" target="_blank">http://some.url/</a><br><br>' \
-                 '<blockquote>здесь цитата</blockquote><br><br>' \
-                 'Пробуем <a href="http://some.com/here/there/" target="_blank">ссылку с именем </a>.<br><br>' \
-                 '<code>текст акцентирован some.where</code><br><br>' \
-                 '<pre><code class="python"><br>  from come import that<br><br><br>  print(1)<br>  # комментарий<br><br>  print(2)<br></code></pre><br>' \
-                 'Далее снова текст.<br><br>' \
-                 '<script src="https://gist.github.com/someuser/gisthashhere.js"></script><br>' \
-                 'Текст.<br><br>' \
-                 '<iframe width="100%" height="85" src="http://mtpod.podster.fm/0/embed/13?link=1" frameborder="0" allowtransparency="true"></iframe><br>' \
-                 'Далее.'
+        expected = (
+            '<b>полужирный текст some.where</b><br><br>'
+            '<i>курсив some.where</i><br><br>'
+            '<a href="http://some.url/" target="_blank">http://some.url/</a><br><br>'
+            '<blockquote>здесь цитата</blockquote><br><br>'
+            'Пробуем <a href="http://some.com/here/there/" target="_blank">ссылку с именем </a>.<br><br>'
+            '<code>текст акцентирован some.where</code><br><br>'
+            '<pre><code class="python"><br>  from come import that<br><br><br>  print(1)<br>'
+            '  # комментарий<br><br>  print(2)<br></code></pre><br>'
+            'Далее снова текст.<br><br>'
+            '<script src="https://gist.github.com/someuser/gisthashhere.js"></script><br>'
+            'Текст.<br><br>'
+            '<iframe width="100%" height="85" '
+            'src="http://mtpod.podster.fm/0/embed/13?link=1" frameborder="0" allowtransparency="true"></iframe>'
+            '<br>'
+            'Далее.'
+        )
 
         self.assertEqual(expected.strip('\n'), ModelWithCompiledText.compile_text(src.strip('\n')))
 

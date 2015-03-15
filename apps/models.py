@@ -18,7 +18,8 @@ from .exceptions import PythonzException
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 
-HINT_IMPERSONAL_REQUIRED = '<strong>Без обозначения личного отношения. Личное отношение можно выразить во Мнениях.</strong>'
+HINT_IMPERSONAL_REQUIRED = ('<strong>Без обозначения личного отношения. '
+                            'Личное отношение можно выразить во Мнениях.</strong>')
 
 
 class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCategory, ModelWithCompiledText):
@@ -27,7 +28,8 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
     """
 
     object_id = models.PositiveIntegerField(verbose_name='ID объекта', db_index=True, null=True, blank=True)
-    content_type = models.ForeignKey(ContentType, verbose_name='Тип содержимого', related_name='%(class)s_discussions', null=True, blank=True)
+    content_type = models.ForeignKey(
+        ContentType, verbose_name='Тип содержимого', related_name='%(class)s_discussions', null=True, blank=True)
 
     linked_object = generic.GenericForeignKey()
 
@@ -65,13 +67,13 @@ class PartnerLink(models.Model):
     """
 
     object_id = models.PositiveIntegerField(verbose_name='ID объекта', db_index=True)
-    content_type = models.ForeignKey(ContentType, verbose_name='Тип содержимого',
-                                     related_name='%(class)s_partner_links')
+    content_type = models.ForeignKey(
+        ContentType, verbose_name='Тип содержимого', related_name='%(class)s_partner_links')
 
     partner_alias = models.CharField('Идентфикатор класса партнёра', max_length=50, db_index=True)
 
-    url = models.URLField('Базовая ссылка', help_text='Ссылка на партнёрскую страницу без указания партнёрских данных '
-                                                      '(идентификатора).')
+    url = models.URLField(
+        'Базовая ссылка', help_text='Ссылка на партнёрскую страницу без указания партнёрских данных (идентификатора).')
 
     description = models.CharField('Описание', max_length=255, null=True, blank=True)
 
@@ -150,14 +152,19 @@ class Place(RealmBaseModel, ModelWithDiscussions):
         return self.geo_title
 
 
-class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory, ModelWithCompiledText):
+class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+                ModelWithCompiledText):
     """Модель сообществ. Формально объединяет некоторую группу людей."""
 
-    place = models.ForeignKey(Place, verbose_name='Место', related_name='communities', null=True, blank=True,
-                              help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
+    place = models.ForeignKey(
+        Place, verbose_name='Место', related_name='communities', null=True, blank=True,
+        help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>'
+                  'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
 
-    contacts = models.CharField('Контактные лица', null=True, blank=True, max_length=255,
-                                help_text='Контактные лица через запятую, представляющие сообщество, координаторы, основатели.%s' % ModelWithAuthorAndTranslator._hint_userlink)
+    contacts = models.CharField(
+        'Контактные лица', null=True, blank=True, max_length=255,
+        help_text=('Контактные лица через запятую, представляющие сообщество, координаторы, основатели.%s' %
+                   ModelWithAuthorAndTranslator._hint_userlink))
 
     url = models.URLField('Страница в сети', null=True, blank=True)
 
@@ -171,7 +178,8 @@ class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         title = 'Название сообщества'
         description = {
             'verbose_name': 'Кратко',
-            'help_text': 'Сжатая предварительная информация о сообществе (например, направление деятельности). %s' % HINT_IMPERSONAL_REQUIRED,
+            'help_text': ('Сжатая предварительная информация о сообществе (например, направление деятельности). %s' %
+                          HINT_IMPERSONAL_REQUIRED,)
         }
         text_src = {
             'verbose_name': 'Описание, принципы работы, правила, контактная информация',
@@ -196,26 +204,37 @@ class User(RealmBaseModel, AbstractUser):
 
     objects = UserManager()
 
-    place = models.ForeignKey(Place, verbose_name='Место', related_name='users', null=True, blank=True,
-                              help_text='Место вашего пребывания (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
+    place = models.ForeignKey(
+        Place, verbose_name='Место', related_name='users', null=True, blank=True,
+        help_text='Место вашего пребывания (страна, город, село).<br>'
+                  'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
 
-    digest_enabled = models.BooleanField('Получать дайджест', default=True, db_index=True,
-                                         help_text='Включает/отключает еженедельную рассылку с подборкой новых материалов сайта.')
+    # Настрока устарела.
+    digest_enabled = models.BooleanField(
+        'Получать дайджест', default=True, db_index=True,
+        help_text='Включает/отключает еженедельную рассылку с подборкой новых материалов сайта.')
 
-    comments_enabled = models.BooleanField('Разрешить комментарии',
-                                           help_text='Включает/отключает систему комментирования Disqus на страницах ваших публикаций.', default=False)
+    comments_enabled = models.BooleanField(
+        'Разрешить комментарии',
+        help_text='Включает/отключает систему комментирования Disqus на страницах ваших публикаций.', default=False)
 
-    disqus_shortname = models.CharField('Идентификатор Disqus', max_length=100, null=True, blank=True,
-                                        help_text='Короткое имя (shortname), под которым вы зарегистрировали форум на Disqus.')
+    disqus_shortname = models.CharField(
+        'Идентификатор Disqus', max_length=100, null=True, blank=True,
+        help_text='Короткое имя (shortname), под которым вы зарегистрировали форум на Disqus.')
 
-    disqus_category_id = models.CharField('Идентификатор категории Disqus', max_length=30, null=True, blank=True,
-                                          help_text='Если ваш форум на Disqus использует категории, можете указать нужный номер здесь. Это не обязательно.')
+    disqus_category_id = models.CharField(
+        'Идентификатор категории Disqus', max_length=30, null=True, blank=True,
+        help_text='Если ваш форум на Disqus использует категории, можете указать нужный номер здесь. '
+                  'Это не обязательно.')
 
-    timezone = models.CharField('Часовой пояс', max_length=150, null=True, blank=True,
-                                help_text='Название часового пояса. Например: Asia/Novosibirsk.<br>* Устанавливается автоматически в зависимости от места пребывания (см. выше).')
+    timezone = models.CharField(
+        'Часовой пояс', max_length=150, null=True, blank=True,
+        help_text='Название часового пояса. Например: Asia/Novosibirsk.<br>'
+                  '* Устанавливается автоматически в зависимости от места пребывания (см. выше).')
 
-    email_public = models.EmailField('Эл. почта', null=True, blank=True,
-                                     help_text='Адрес электронной почты для показа посетителям сайта.')
+    email_public = models.EmailField(
+        'Эл. почта', null=True, blank=True,
+        help_text='Адрес электронной почты для показа посетителям сайта.')
 
     url = models.URLField('Страница в сети', null=True, blank=True)
 
@@ -294,12 +313,14 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussio
         }
         linked = {
             'verbose_name': 'Связанные книги',
-            'help_text': 'Выберите книги, которые имеют отношение к данной. Например, для книги-перевода можно указать оригинал.',
+            'help_text': ('Выберите книги, которые имеют отношение к данной. '
+                          'Например, для книги-перевода можно указать оригинал.',)
         }
         year = 'Год издания'
 
 
-class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory, ModelWithCompiledText):
+class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+              ModelWithCompiledText):
     """Модель сущности `Статья`."""
 
     history = HistoricalRecords()
@@ -315,7 +336,8 @@ class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         }
         linked = {
             'verbose_name': 'Связанные статьи',
-            'help_text': 'Выберите статьи, которые имеют отношение к данной. Так, например, можно объединить статьи цикла.',
+            'help_text': ('Выберите статьи, которые имеют отношение к данной. '
+                          'Так, например, можно объединить статьи цикла.',)
         }
 
 
@@ -331,7 +353,8 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         }
         text_src = {
             'verbose_name': 'Описание',
-            'help_text': 'Обзорное, более полное описание нововведений и изменений, произошедших в версии. %s' % HINT_IMPERSONAL_REQUIRED,
+            'help_text': ('Обзорное, более полное описание нововведений и изменений, произошедших в версии. %s' %
+                          HINT_IMPERSONAL_REQUIRED,)
         }
 
     class Meta:
@@ -361,28 +384,37 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         (TYPE_METHOD, 'Описание метода класса или типа'),
     )
 
-    type = models.PositiveIntegerField('Тип статьи', choices=get_choices(TYPES), default=TYPE_CHAPTER,
-                                       help_text='Служит для структурирования информации. Справочные статьи разных типов могут выглядеть по-разному.')
+    type = models.PositiveIntegerField(
+        'Тип статьи', choices=get_choices(TYPES), default=TYPE_CHAPTER,
+        help_text='Служит для структурирования информации. Справочные статьи разных типов могут выглядеть по-разному.')
 
-    parent = models.ForeignKey('self', related_name='children', verbose_name='Родитель', db_index=True, null=True, blank=True,
-                               help_text='Укажите родительский раздел. Например, для модуля можно указать раздел справки, в которому он относится; для метода &#8212; класс.')
+    parent = models.ForeignKey(
+        'self', related_name='children', verbose_name='Родитель', db_index=True, null=True, blank=True,
+        help_text='Укажите родительский раздел. '
+                  'Например, для модуля можно указать раздел справки, в которому он относится; '
+                  'для метода &#8212; класс.')
 
-    version_added = models.ForeignKey(Version, related_name='%(class)s_added', verbose_name='Добавлено в', null=True, blank=True,
-                                      help_text='Версия Python, для которой впервые стала актульна данная статья<br>'
-                                                '(версия, где впервые появился модуль, пакет, класс, функция).')
+    version_added = models.ForeignKey(
+        Version, related_name='%(class)s_added', verbose_name='Добавлено в', null=True, blank=True,
+        help_text='Версия Python, для которой впервые стала актульна данная статья<br>'
+                  '(версия, где впервые появился модуль, пакет, класс, функция).')
 
-    version_deprecated = models.ForeignKey(Version, related_name='%(class)s_deprecated', verbose_name='Устарело в', null=True, blank=True,
-                                           help_text='Версия Python, для которой впервые данная статья перестала быть актуальной<br>'
-                                                     '(версия, где модуль, пакет, класс, функция были объявлены устаревшими).')
+    version_deprecated = models.ForeignKey(
+        Version, related_name='%(class)s_deprecated', verbose_name='Устарело в', null=True, blank=True,
+        help_text='Версия Python, для которой впервые данная статья перестала быть актуальной<br>'
+        '(версия, где модуль, пакет, класс, функция были объявлены устаревшими).')
 
-    func_proto = models.CharField('Прототип', max_length=250, null=True, blank=True,
-                                  help_text='Для функций/методов. Описание интерфейса, например: <i>my_func(arg, kwarg=None)</i>')
+    func_proto = models.CharField(
+        'Прототип', max_length=250, null=True, blank=True,
+        help_text='Для функций/методов. Описание интерфейса, например: <i>my_func(arg, kwarg=None)</i>')
 
-    func_params = models.TextField('Параметры', null=True, blank=True,
-                                   help_text='Для функций/методов. Описание параметров функции.')
+    func_params = models.TextField(
+        'Параметры', null=True, blank=True,
+        help_text='Для функций/методов. Описание параметров функции.')
 
-    func_result = models.CharField('Результат', max_length=250, null=True, blank=True,
-                                   help_text='Для функций/методов. Описание результата, например: <i>int</i>.')
+    func_result = models.CharField(
+        'Результат', max_length=250, null=True, blank=True,
+        help_text='Для функций/методов. Описание результата, например: <i>int</i>.')
 
     history = HistoricalRecords()
 
@@ -394,7 +426,8 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     class Fields:
         title = {
             'verbose_name': 'Название',
-            'help_text': 'Здесь следует указать название раздела справки или пакета, модуля, класса, метода, функции и т.п.',
+            'help_text': ('Здесь следует указать название раздела справки '
+                          'или пакета, модуля, класса, метода, функции и т.п.',)
         }
         description = {
             'verbose_name': 'Кратко',
@@ -435,7 +468,8 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         return qs.order_by('-time_published').all()
 
 
-class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory, ModelWithAuthorAndTranslator):
+class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+            ModelWithAuthorAndTranslator):
     """Модель сущности `Видео`."""
 
     EMBED_WIDTH = 560
@@ -459,7 +493,8 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         }
         linked = {
             'verbose_name': 'Связанные видео',
-            'help_text': 'Выберите видео, которые имеют отношение к данному. Например, можно связать несколько эпизодов видео.',
+            'help_text': ('Выберите видео, которые имеют отношение к данному. '
+                          'Например, можно связать несколько эпизодов видео.',)
         }
         year = 'Год съёмок'
 
@@ -479,7 +514,10 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         else:
             raise PythonzException('Unable to get parse video ID from `%s`' % url)
 
-        embed_code = '<iframe src="//player.vimeo.com/video/%s?byline=0&amp;portrait=0&amp;color=ffffff" width="%s" height="%s" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' % (video_id, cls.EMBED_WIDTH, cls.EMBED_HEIGHT)
+        embed_code = (
+            '<iframe src="//player.vimeo.com/video/%s?byline=0&amp;portrait=0&amp;color=ffffff" '
+            'width="%s" height="%s" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>'
+            '</iframe>' % (video_id, cls.EMBED_WIDTH, cls.EMBED_HEIGHT))
 
         response = requests.get('http://vimeo.com/api/v2/video/%s.json' % video_id)
         cover_url = response.json()[0]['thumbnail_small']
@@ -495,7 +533,10 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         else:
             raise PythonzException('Unable to get parse video ID from `%s`' % url)
 
-        embed_code = '<iframe src="//www.youtube.com/embed/%s?rel=0" width="%s" height="%s" frameborder="0" allowfullscreen></iframe>' % (video_id, cls.EMBED_WIDTH, cls.EMBED_HEIGHT)
+        embed_code = (
+            '<iframe src="//www.youtube.com/embed/%s?rel=0" '
+            'width="%s" height="%s" frameborder="0" allowfullscreen>'
+            '</iframe>' % (video_id, cls.EMBED_WIDTH, cls.EMBED_HEIGHT))
         cover_url = 'http://img.youtube.com/vi/%s/default.jpg' % video_id
         return embed_code, cover_url
 
@@ -526,7 +567,8 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         self.update_cover_from_url(cover_url)
 
 
-class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory, ModelWithCompiledText):
+class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+            ModelWithCompiledText):
     """Модель сущности `Событие`."""
 
 
@@ -554,11 +596,15 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
 
     url = models.URLField('Страница в сети', null=True, blank=True)
 
-    contacts = models.CharField('Контактные лица', null=True, blank=True, max_length=255,
-                                help_text='Контактные лица через запятую, координирующие/устраивающие событие.%s' % ModelWithAuthorAndTranslator._hint_userlink)
+    contacts = models.CharField(
+        'Контактные лица', null=True, blank=True, max_length=255,
+        help_text=('Контактные лица через запятую, координирующие/устраивающие событие.%s' %
+                   ModelWithAuthorAndTranslator._hint_userlink))
 
-    place = models.ForeignKey(Place, verbose_name='Место', related_name='events', null=True, blank=True,
-                              help_text='Укажите место проведения мероприятия.<br><b>Конкретный адрес следует указывать в описании.</b><br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
+    place = models.ForeignKey(
+        Place, verbose_name='Место', related_name='events', null=True, blank=True,
+        help_text=('Укажите место проведения мероприятия.<br><b>Конкретный адрес следует указывать в описании.</b><br>'
+                   'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».'))
 
     specialization = models.PositiveIntegerField('Специализация', choices=get_choices(SPECS), default=SPEC_DEDICATED)
     type = models.PositiveIntegerField('Тип', choices=get_choices(TYPES), default=TYPE_MEETING)

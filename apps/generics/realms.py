@@ -170,7 +170,8 @@ class RealmBase(object):
         children = []
         if 'edit' in cls.allowed_views:
             children.append(cls.get_sitetree_edit_item())
-        return item('{{ %s.title }}' % realm_name, '%s %s.id' % (cls.get_details_urlname(), realm_name), children=children, in_menu=False, in_sitetree=False)
+        return item('{{ %s.title }}' % realm_name, '%s %s.id' % (cls.get_details_urlname(), realm_name),
+                    children=children, in_menu=False, in_sitetree=False)
 
     @classmethod
     def get_edit_urlname(cls):
@@ -188,7 +189,8 @@ class RealmBase(object):
         :return:
         """
         realm_name, _tmp = cls.get_names()
-        return item(cls.txt_form_edit, '%s %s.id' % (cls.get_edit_urlname(), realm_name), in_menu=False, in_sitetree=False, access_loggedin=True)
+        return item(cls.txt_form_edit, '%s %s.id' % (cls.get_edit_urlname(), realm_name),
+                    in_menu=False, in_sitetree=False, access_loggedin=True)
 
     @classmethod
     def get_add_urlname(cls):
@@ -222,7 +224,8 @@ class RealmBase(object):
 
         :return:
         """
-        return item('Категория «{{ category.title }}»', '%s category.id' % cls.get_tags_urlname(), in_menu=False, in_sitetree=False)
+        return item('Категория «{{ category.title }}»', '%s category.id' % cls.get_tags_urlname(),
+                    in_menu=False, in_sitetree=False)
 
     @classmethod
     def get_sitetree_items(cls):
@@ -235,7 +238,10 @@ class RealmBase(object):
                 cls.view_listing_title or str(cls.model._meta.verbose_name_plural),
                 cls.get_listing_urlname(),
                 description=cls.view_listing_description,
-                children=[getattr(cls, 'get_sitetree_%s_item' % view_name)() for view_name in cls.allowed_views if view_name != 'edit']
+                children=[
+                    getattr(cls, 'get_sitetree_%s_item' % view_name)() for view_name in
+                    cls.allowed_views if view_name != 'edit'
+                ]
             )
         return cls.sitetree_items
 
@@ -288,7 +294,9 @@ class RealmBase(object):
         """
         views = ['']
         for view_name in cls.allowed_views:
-            views.append(url(getattr(cls, 'view_%s_url' % view_name), cls.get_view(view_name).as_view(), name=view_name))
+            views.append(
+                url(getattr(cls, 'view_%s_url' % view_name), cls.get_view(view_name).as_view(), name=view_name)
+            )
 
         if cls.syndication_enabled:
             views.append(url(r'^feed/$', cls.get_syndication_feed(), name='syndication'))

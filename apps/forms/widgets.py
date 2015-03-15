@@ -2,6 +2,7 @@ from django import forms
 from django.forms.widgets import TextInput
 from django.forms.utils import flatatt
 from django.utils.html import format_html, force_text
+from django.template import loader
 
 from ..models import Place
 
@@ -66,109 +67,5 @@ class RstEditWidget(forms.Widget):
 
         final_attrs = self.build_attrs(attrs, name=name)
 
-        return format_html('''
-            <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#rst_src"><span class="glyphicon glyphicon-edit"></span> Редактирование</a></li>
-                <li><a data-toggle="tab" href="#rst_preview" id="preview_rst" class="xross" data-xevent="click" data-xmethod="POST" data-xtarget="rst_preview" data-xform="edit_form"><span class="glyphicon glyphicon-eye-open"></span> Предпросмотр</a></li>
-                <li><a data-toggle="tab" href="#rst_help"><span class="glyphicon glyphicon-question-sign"></span> Справка</a></li>
-            </ul>
-            <div class="tab-content">
-                <div id="rst_src" class="marg__t_min tab-pane fade in active">
-                    <textarea{0}>\r\n{1}</textarea>
-                </div>
-                <div id="rst_preview" class="marg__t_min tab-pane fade"></div>
-                <div id="rst_help" class="marg__t_min tab-pane fade">
-
-                    <div class="marg__b_mid">
-                        <strong>Строки</strong>
-                        <div>
-                            Перевод строки трактуется как начало нового параграфа.
-                        </div>
-                    </div>
-
-                    <div class="marg__b_mid">
-                        <strong>Ссылки</strong>
-                        <div>
-                            Ссылки на внешние ресурсы, начинающиеся с <i>http</i> форматируются автоматически.<br>
-                            Можно скрыть ссылку под именем, используя следующий код:<br><br>
-                            <pre><code class="nohighlight">Вставка ссылки `под именем&lt;http://pythonz.net/&gt;`_.</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="marg__b_mid">
-                        <strong>Начертание</strong>
-                        <div>
-                            Для выделения слова или фразы <b>полужирным</b> используйте обрамление в двойные звёзды:<br><br>
-                            <pre><code class="nohighlight">Выделение **полужирным**.</code></pre>
-
-                            Для выделения слова или фразы <i>курсивом</i> используйте обрамление в звёзды:<br><br>
-                            <pre><code class="nohighlight">Выделение *курсивом*.</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="marg__b_mid">
-                        <strong>Акцентирование</strong>
-                        <div>
-                            Слово или фразу можно <code>акцентировать</code> путём обрамления в двойные апострофы:<br><br>
-                            <pre><code class="nohighlight">Выделение ``акцентом``.</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="marg__b_mid">
-                        <strong>Цитаты</strong>
-                        <div>
-                            Для оформления цитаты, обрамите её в тройные апострофы:<br><br>
-<pre><code class="nohighlight">```
-Это цитата.
-```</code></pre>
-                        </div>
-                    </div>
-
-                    <div class="marg__b_mid">
-                        <strong>Исходный код</strong>
-                        <div>
-                            Подсветка синтаксиса реализуется путём выделения кода в отдельный параграф, начинающийся с инструкции <b>.. code:: имя_языка</b>,
-                            где <i>имя_языка</i> &mdash; название языка программирования, например <i>python</i>:<br><br>
-
-<pre><code class="nohighlight">Некий текст.
-
-.. code:: python
-
-    def my_function():
-        "just a test"
-        print 8/2
-
-
-И снова текст.</code></pre>
-                            * Обратите внимание на необходимость наличия двойного переноса строки после блока кода.
-                        </div>
-                    </div>
-
-
-                    <div class="marg__b_mid">
-                        <strong>Gist от GitHub</strong>
-                        <div>
-                            Гисты могут быть вставлены в текст при помощи директивы <b>.. gist:: гитхаб_логин/ид_гиста</b>,
-                            где <i>гитхаб_логин</i> &mdash; логин на GitHub, а <i>ид_гиста</i> &mdash; идентификатор гиста.<br>
-                            Например, добавим гист с адреса <a href="https://gist.github.com/idlesign/c1255817bb0234d9971a">https://gist.github.com/idlesign/c1255817bb0234d9971a</a>:<br><br>
-                            <pre><code class="nohighlight">.. gist:: idlesign/c1255817bb0234d9971a</code></pre>
-                            * Обратите внимание на необходимость наличия переноса строки после блока кода.<br>
-                            ** Гисты можно создавать по адресу <a href="https://gist.github.com/" target="_blank">https://gist.github.com/</a>
-                        </div>
-                    </div>
-
-
-                    <div class="marg__b_mid">
-                        <strong>Подкаст с podster.fm</strong>
-                        <div>
-                            Встроить проигрыватель можно при помощи директивы <b>.. podster:: url_страницы_подкаста</b>.<br>
-                            Добавим подкаст по страницы <a href="http://mtpod.podster.fm/5">http://mtpod.podster.fm/5</a>:<br><br>
-                            <pre><code class="nohighlight">.. podster:: http://mtpod.podster.fm/5</code></pre>
-                            * Обратите внимание на необходимость наличия переноса строки после блока кода.<br>
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
-            ''', flatatt(final_attrs), force_text(value))
+        html = loader.render_to_string('sub_rst_hints.html')
+        return format_html(html, flatatt(final_attrs), force_text(value))

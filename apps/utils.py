@@ -124,12 +124,15 @@ def get_timezone_name(lat, lng):
     :param lng: долгота
     :return:
     """
-    url = 'https://maps.googleapis.com/maps/api/timezone/json?location=%(lat)s,%(lng)s&timestamp=%(ts)s&key=%(api_key)s' % {
-        'lat': lat,
-        'lng': lng,
-        'ts': timezone.now().timestamp(),
-        'api_key': settings.GOOGLE_API_KEY,
-    }
+    url = (
+        'https://maps.googleapis.com/maps/api/timezone/json?'
+        'location=%(lat)s,%(lng)s&timestamp=%(ts)s&key=%(api_key)s' % {
+            'lat': lat,
+            'lng': lng,
+            'ts': timezone.now().timestamp(),
+            'api_key': settings.GOOGLE_API_KEY,
+        }
+    )
     try:
         result = requests.get(url)
         doc = result.json()

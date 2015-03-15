@@ -50,8 +50,9 @@ class RealmView(View):
                 # Запрещаем редактирование опубликованных материалов.
                 public_edit_models = Community, Event, Reference
                 if item.is_published() and self.realm.model not in public_edit_models:
-                    message_warning(request, 'Этот материал уже прошёл модерацию и был опубликован. '
-                                             'На данный момент в проекте запрещено редактирование опубликованных материалов.')
+                    message_warning(
+                        request, 'Этот материал уже прошёл модерацию и был опубликован. '
+                                 'На данный момент в проекте запрещено редактирование опубликованных материалов.')
                     raise PermissionDenied()
 
     @classmethod
@@ -266,9 +267,12 @@ class DetailsView(RealmView):
         item = self.get_object_or_404(obj_id)
 
         if not request.user.is_superuser:
-            if item.status == RealmBaseModel.STATUS_DELETED:  # Запрещаем доступ к удалённым.
+            if item.is_deleted():
+                # Запрещаем доступ к удалённым.
                 raise Http404()
-            elif item.status == RealmBaseModel.STATUS_DRAFT and hasattr(item, 'submitter') and item.submitter != request.user:  # Закрываем доступ к чужим черновикам.
+
+            elif item.is_draft() and hasattr(item, 'submitter') and item.submitter != request.user:
+                # Закрываем доступ к чужим черновикам.
                 raise PermissionDenied()
 
         item.has_discussions = False
