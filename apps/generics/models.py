@@ -9,6 +9,8 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.utils.functional import cached_property
+from django.utils.text import Truncator
 
 from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
 
@@ -161,6 +163,14 @@ class CommonEntityModel(models.Model):
         :return:
         """
         raise NotImplementedError()
+
+    @cached_property
+    def get_short_description(self):
+        """Возвращает усечённое описание сущности.
+
+        :return:
+        """
+        return Truncator(self.description).words(25)
 
     def __str__(self):
         return self.title

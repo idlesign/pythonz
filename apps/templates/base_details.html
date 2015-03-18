@@ -2,11 +2,11 @@
 {% load thumbs sitetree siteblocks %}
 
 
-{% block page_description %}{{ item.description|truncatewords:25 }}{% endblock %}
+{% block page_description %}{{ item.get_short_description }}{% endblock %}
 
 
 {% block meta_og %}
-    <meta property="og:description" content="{% sitetree_page_description from "main" %}" />
+    <meta property="og:description" content="{{ item.get_short_description }}" />
     {% if item.cover %}
     <meta property="og:image" content="{% thumbs_get_thumb_url item.cover 180 236 item.realm %}" />
     {% endif %}
