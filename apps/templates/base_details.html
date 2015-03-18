@@ -15,11 +15,11 @@
 
 {% block page_contents %}
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-9" itemscope itemtype="http://schema.org/{% block schema_type %}Thing{% endblock %}">
             {% include "sub_title_block.html" %}
 
             {% block details_contents %}{% endblock %}
-            <div class="marg__b_mid"><i>{{ item.description|linebreaksbr }}</i></div>
+            <div class="marg__b_mid"><i itemprop="description">{{ item.description|linebreaksbr }}</i></div>
             {% block details_contents_add %}{% endblock %}
             {% block details_author %}
             <div class="marg__t_mid text-muted pull-right">
