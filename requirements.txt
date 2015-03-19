@@ -1,4 +1,4 @@
-Django==1.7.6
+Django==1.7.7
 Fabric==1.9.1
 Pillow==2.7.0
 bleach==1.4.1
