@@ -15,7 +15,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.utils.text import Truncator
 
-from .realms import get_realms
+from .realms import get_realms, get_realm
 from .signals import sig_entity_published, sig_entity_new
 
 
@@ -181,7 +181,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
         """
         format_date = lambda d: d.date().strftime('%d.%m.%Y')
         date_till = timezone.now()
-        date_from = date_till-timedelta(days=7)
+        date_from = date_till - timedelta(days=7)
 
         subject = cls.get_full_subject('Подборка материалов %s-%s' % (format_date(date_from), format_date(date_till)))
         context = {
@@ -212,15 +212,50 @@ class PythonzEmailDigest(PythonzEmailMessage):
                 'time_published__lte': date_till
             }
 
-
         realms_data = OrderedDict()
         for realm in get_realms().values():
-            if realm.ready_for_digest:
-                entries = realm.model.get_actual().filter(**filter_kwargs)
-                if entries:
-                    for entry in entries:
-                        entry.absolute_url = entry.get_absolute_url(with_prefix=True, hash_chunk='frommail')
-                    realms_data[realm.model.get_verbose_name_plural()] = entries
+            cls.extend_realms_data(realms_data, realm, filter_kwargs, 'time_published')
+
+        return realms_data
+
+    @classmethod
+    def extend_realms_data(cls, realms_data, realm, filter_kwargs, order_by):
+        """Дополняет словарь с данными областей объектами из указанной области.
+        Требуемые объекты определяются указанным фильтром.
+
+        :param OrderedDict realms_data: Словарь с данными.
+        :param BaseRealm realm: Область.
+        :param dict filter_kwargs: Фильтр для получения объектов области.
+        :param str order_by: Имя поля, по которому следует отсортировать объекты.
+        :return:
+        """
+        if realm.ready_for_digest:
+            entries = realm.model.get_actual().filter(**filter_kwargs).order_by(order_by)
+            if entries:
+                for entry in entries:
+                    entry.absolute_url = entry.get_absolute_url(with_prefix=True, hash_chunk='frommail')
+                realms_data[realm.model.get_verbose_name_plural()] = entries
+
+    @classmethod
+    def get_upcoming_items(cls):
+        """Возвращает данные о материалах которые вскоре станут актульными.
+        Например, о грядущих событиях.
+
+        :return:
+        """
+
+        date_from = timezone.now()
+        date_till = date_from + timedelta(days=8)  # На всякий случай выведем данные за 8 дней.
+
+        filter_kwargs = {
+            'time_start__gte': date_from,
+            'time_start__lte': date_till
+        }
+
+        realms_data = OrderedDict()
+
+        realm = get_realm('event')
+        cls.extend_realms_data(realms_data, realm, filter_kwargs, 'time_start')
 
         return realms_data
 
@@ -243,6 +278,10 @@ class PythonzEmailDigest(PythonzEmailMessage):
         objects_modified = cls.get_realms_data(date_from, date_till, modified_mode=True)
         if objects_modified:
             realms_data['Изменившиеся'] = objects_modified
+
+        objects_upcoming = cls.get_upcoming_items()
+        if objects_modified:
+            realms_data['Скоро'] = objects_upcoming
 
         context.update({'realms_data': realms_data})
         return context
