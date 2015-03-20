@@ -245,7 +245,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
         """
 
         date_from = timezone.now()
-        date_till = date_from + timedelta(days=8)  # На всякий случай выведем данные за 8 дней.
+        date_till = date_from + timedelta(days=10)  # 10 дней, чтобы покрыть остаток текущей и следующую неделю.
 
         filter_kwargs = {
             'time_start__gte': date_from,
