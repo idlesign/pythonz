@@ -412,10 +412,10 @@ class EditView(RealmView):
                     form.save()
                     message_success(request, 'Данные сохранены.')
 
+                return redirector()
+
             except PythonzException as e:
                 message_error(request, e.message)
-
-            return redirector()
 
         context = {'form': form, self.realm.name: item, 'item': item}
 

@@ -104,6 +104,7 @@ class ArticleForm(RealmEditBaseForm):
                 pass
             else:
                 if location == Article.LOCATION_INTERNAL:
+                    self.data['url'] = None
                     self.make_fields_optional(['url'])
 
                 elif location == Article.LOCATION_EXTERNAL:
@@ -111,9 +112,16 @@ class ArticleForm(RealmEditBaseForm):
 
         return super().full_clean()
 
+    def clean_url(self):
+        url = self.cleaned_data['url']
+        if not url:
+            url = None
+        return url
+
     def save(self, commit=True):
         url = self.cleaned_data['url']
-        self.instance.update_data_from_url(url)
+        if url:
+            self.instance.update_data_from_url(url)
         return super().save(commit)
 
 
