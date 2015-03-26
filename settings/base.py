@@ -38,6 +38,7 @@ PARTNER_IDS = {}
 
 
 GOOGLE_API_KEY = 'not_a_secret'
+YANDEX_RCA_KEY = 'not_a_secret'
 
 # Переводит проект в агрессивный режим: задействует различную машинерию для привлечения внимания к проекту.
 AGRESSIVE_MODE = False
@@ -46,7 +47,6 @@ AGRESSIVE_MODE = False
 
 SITEMESSAGE_INIT_BUILTIN_MESSAGE_TYPES = False
 SITEMESSAGE_DEFAULT_SHORTCUT_EMAIL_MESSAGES_TYPE = 'simple'
-EMAIL_BACKEND = 'sitemessage.backends.EmailBackend'
 
 MANAGERS = ADMINS
 

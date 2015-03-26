@@ -73,6 +73,7 @@ class PartnerLinkForm(forms.ModelForm):
 
     class Meta:
         model = PartnerLink
+        fields = '__all__'
 
 
 class PartnerLinkInline(GenericTabularInline):
@@ -105,7 +106,8 @@ class EntityBaseAdmin(SimpleHistoryAdmin):
 
 class ArticleAdmin(EntityBaseAdmin):
 
-    pass
+    list_display = ('time_created', 'title', 'submitter', 'source', 'published_by_author')
+    list_filter = ['time_created', 'status', 'source', 'published_by_author']
 
 admin.site.register(Article, ArticleAdmin)
 

@@ -1,6 +1,41 @@
 {% extends "base_edit.html" %}
 
 
+{% block head %}
+    {{ block.super }}
+    <script type="text/javascript">
+
+        function toggle_form_fields() {
+            var is_external = $('#id_location').val() === '2',
+                fields_for_external = ['url'],
+                common_fields = ['location', 'status', 'published_by_author'];
+
+            $('.form-group', '#edit_form').each(function(idx, el){
+
+                var $el = $(el),
+                    name = $el.data('fieldname'),
+                    in_array = $.inArray(name, fields_for_external) > -1,
+                    show = (is_external && in_array) || (!is_external && !in_array);
+
+                if ($.inArray(name, common_fields) > -1) {
+                    return;
+                }
+
+                $el.hide();
+                if (show) {
+                    $el.show();
+                }
+
+            });
+        }
+
+        $(function(){
+            $('#id_location').on('change', toggle_form_fields);
+            toggle_form_fields();
+        });
+    </script>
+{% endblock %}
+
 {% block hint %}
     <ol>
         <li>Придерживатесь темы Python;</li>

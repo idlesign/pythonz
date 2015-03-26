@@ -2,6 +2,8 @@ from django.conf import settings
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from datetimewidget.widgets import DateTimeWidget
+from apps.exceptions import RemoteSourceError
+from apps.shortcuts import message_error
 
 from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference
 from ..generics.forms import RealmEditBaseForm
@@ -72,10 +74,13 @@ class ArticleForm(RealmEditBaseForm):
     class Meta:
         model = Article
         fields = (
+            'location',
+            'url',
             'title',
             'description',
             'status',
-            'text_src'
+            'published_by_author',
+            'text_src',
         )
         labels = {
             'description': 'Введение',
@@ -84,6 +89,32 @@ class ArticleForm(RealmEditBaseForm):
         widgets = {
             'text_src': RstEditWidget(attrs={'rows': 25}),
         }
+
+    def make_fields_optional(self, fields):
+
+        for field in fields:
+            self.fields[field].required = False
+
+    def full_clean(self):
+
+        if self.data:
+            try:
+                location = self.fields['location'].clean(self.data.get('location'))
+            except forms.ValidationError:
+                pass
+            else:
+                if location == Article.LOCATION_INTERNAL:
+                    self.make_fields_optional(['url'])
+
+                elif location == Article.LOCATION_EXTERNAL:
+                    self.make_fields_optional(['url', 'title', 'description', 'text_src'])
+
+        return super().full_clean()
+
+    def save(self, commit=True):
+        url = self.cleaned_data['url']
+        self.instance.update_data_from_url(url)
+        return super().save(commit)
 
 
 class BookForm(RealmEditBaseForm):

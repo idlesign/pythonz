@@ -11,8 +11,8 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from .models import ModelWithCompiledText, RealmBaseModel
 from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event, Reference
-from ..exceptions import RedirectRequired
-from ..shortcuts import message_warning, message_success, message_info
+from ..exceptions import RedirectRequired, PythonzException
+from ..shortcuts import message_warning, message_success, message_info, message_error
 from ..partners import get_partner_links
 
 
@@ -399,16 +399,21 @@ class EditView(RealmView):
             redirector = lambda: redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 
         if form.is_valid():
-            if item is None:
-                form.instance.submitter = request.user
-                item = form.save()
-                message_success(request, 'Объект добавлен.')
-                if show_modetation_hint:
-                    message_info(request, 'Данный объект появится на сайте после модерации.')
-            else:
-                form.instance.last_editor = request.user
-                form.save()
-                message_success(request, 'Данные сохранены.')
+
+            try:
+                if item is None:
+                    form.instance.submitter = request.user
+                    item = form.save()
+                    message_success(request, 'Объект добавлен.')
+                    if show_modetation_hint:
+                        message_info(request, 'Данный объект появится на сайте после модерации.')
+                else:
+                    form.instance.last_editor = request.user
+                    form.save()
+                    message_success(request, 'Данные сохранены.')
+
+            except PythonzException as e:
+                message_error(request, e.message)
 
             return redirector()
 

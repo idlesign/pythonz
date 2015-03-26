@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.utils import timezone
+from django.utils.text import Truncator
 
 
 class BasicTypograph(object):
@@ -175,6 +176,44 @@ def get_location_data(location_name):
     }
 
     return location_data
+
+
+def scrape_page(url):
+    """Возвращает словарь с данными о странице (полученными при помощи
+    Rich Content API от Яндекса), либо None в случае ошибок.
+
+    Словарь вида:
+        {'title': '...', 'content_more': '...', 'content_less': '...', ...}
+
+    :param url:
+    :return:
+    """
+
+    url = 'http://rca.yandex.com/?key=%(api_key)s&url=%(url)s&content=full' % {
+        'api_key': settings.YANDEX_RCA_KEY, 'url': url
+    }
+
+    result = None
+    try:
+        response = requests.get(url, allow_redirects=True, timeout=1.5)
+
+    except requests.exceptions.RequestException:
+        pass
+
+    else:
+        try:
+            result = response.json()
+        except ValueError:
+            pass
+
+        if 'content' not in result:
+            return None
+
+        content = result['content']
+        result['content_less'] = Truncator(content).words(30)
+        result['content_more'] = Truncator(content).chars(900).replace('\n', '\n\n')
+
+    return result
 
 
 def make_soup(url):

@@ -25,12 +25,14 @@
         <div class="col-md-12">
             <div>
                 <div class="pull-right marg__l_mid marg__b_mid float_panel">
+                    {% if article.published_by_author %}
                     <div class="well marg__b_mid text-center">
                         {% with article.submitter.get_absolute_url as submitter_url %}
                         <a href="{{ submitter_url }}">{% gravatar_get_img article.submitter 64 %}</a><br>
                         <small><a href="{{ submitter_url }}">{{ article.submitter.get_display_name }}</a></small>
                         {% endwith %}
                     </div>
+                    {% endif %}
                     {% include "sub_box_controls.html" %}
                     {% include "sub_box_tags.html" %}
                 </div>
@@ -44,15 +46,33 @@
                 <div class="lead">{{ article.description|linebreaksbr }}</div>
                 <div class="py_user">{{ article.text|safe }}</div>
 
+                {% if not article.is_handmade %}
+                    <div class="marg__t_mid">
+                        <span class="cl__gray glyphicon glyphicon-copyright-mark"></span>
+                        <i>С полным текстом статьи можно ознакомиться здесь: <a href="{{ article.url }}">{{ article.title }}</a></i>
+                    </div>
+                {% endif %}
+
+                {% if not article.published_by_author %}
+                <div class="marg__t_mid text-muted pull-right">
+                    {% include "sub_author_editor.html" %}
+                </div>
+                <div class="clearfix"></div>
+                {% endif %}
+
                 {% include "sub_box_share.html" %}
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            {% with article.submitter as author %}
-                {% include "sub_disqus.html" with shortname=author.disqus_shortname comments_enabled=author.comments_enabled category_id=author.disqus_category_id entity_name='article' entity_id=article.id %}
-            {% endwith %}
+            {% if article.published_by_author %}
+                {% with article.submitter as author %}
+                    {% include "sub_disqus.html" with shortname=author.disqus_shortname comments_enabled=author.comments_enabled category_id=author.disqus_category_id entity_name='article' entity_id=article.id %}
+                {% endwith %}
+            {% else %}
+                {% include "sub_disqus.html" with shortname="pythonz-discussions" comments_enabled=1 entity_name='article' entity_id=article.id %}
+            {% endif %}
         </div>
     </div>
 {%  endblock %}

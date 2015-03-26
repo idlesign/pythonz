@@ -13,7 +13,8 @@ from django.contrib.contenttypes import generic
 from django.utils import timezone
 
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
-from .exceptions import PythonzException
+from .exceptions import RemoteSourceError
+from .utils import scrape_page
 
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
@@ -323,6 +324,38 @@ class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
               ModelWithCompiledText):
     """Модель сущности `Статья`."""
 
+    LOCATION_INTERNAL = 1
+    LOCATION_EXTERNAL = 2
+
+    LOCATIONS = choices_list(
+        (LOCATION_INTERNAL, 'На этом сайте'),
+        (LOCATION_EXTERNAL, 'На другом сайте'),
+    )
+
+    SOURCE_HANDMADE = 1
+    SOURCE_SCRAPING = 2
+    SOURCE_RSS = 3
+
+    SOURCES = choices_list(
+        (SOURCE_HANDMADE, 'Написана на этом сайте'),
+        (SOURCE_SCRAPING, 'Соскоблена с другого сайта'),
+        (SOURCE_RSS, 'Взята из RSS'),
+    )
+
+    source = models.PositiveIntegerField(
+        'Тип источника', choices=get_choices(SOURCES), default=SOURCE_HANDMADE,
+        help_text='Указывает на механизм, при помощи которого статья появилась на сайте.')
+
+    location = models.PositiveIntegerField(
+        'Расположение статьи', choices=get_choices(LOCATIONS), default=LOCATION_INTERNAL,
+        help_text='Статью можно написать прямо на этом сайте, либо сформировать статью-ссылку на внешний ресурс.')
+
+    url = models.URLField(
+        'URL статьи', null=True, blank=False, unique=True,
+        help_text='Внешний URL, по которому расположена статья, которой выжелаете поделиться.')
+
+    published_by_author = models.BooleanField('Я являюсь автором данной статьи', default=True)
+
     history = HistoricalRecords()
 
     class Meta:
@@ -339,6 +372,28 @@ class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
             'help_text': ('Выберите статьи, которые имеют отношение к данной. '
                           'Так, например, можно объединить статьи цикла.',)
         }
+
+    def is_handmade(self):
+        """Возвращат флаг, указывающий на то, что статья создана на этом сайте.
+
+        :return:
+        """
+        return self.source == self.SOURCE_HANDMADE
+
+    def update_data_from_url(self, url):
+        """Обновляет данные статьи, собирая информация, доступную по указанному URL.
+
+        :param url:
+        :return:
+        """
+        result = scrape_page(url)
+        if result is None:
+            raise RemoteSourceError('Не удалось получить данные статьи. Проверьте доступность указанного URL.')
+
+        self.title = result['title']
+        self.description = result['content_less']
+        self.text_src = result['content_more']
+        self.source = self.SOURCE_SCRAPING
 
 
 class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
@@ -512,7 +567,7 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         if 'vimeo.com' in url:  # http://vimeo.com/{id}
             video_id = url.rsplit('/', 1)[-1]
         else:
-            raise PythonzException('Unable to get parse video ID from `%s`' % url)
+            raise RemoteSourceError('Не удалось обнаружить ID видео в URL `%s`' % url)
 
         embed_code = (
             '<iframe src="//player.vimeo.com/video/%s?byline=0&amp;portrait=0&amp;color=ffffff" '
@@ -531,7 +586,7 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         elif 'watch?v=' in url:  # http://www.youtube.com/watch?v={id}
             video_id = url.rsplit('v=', 1)[-1]
         else:
-            raise PythonzException('Unable to get parse video ID from `%s`' % url)
+            raise RemoteSourceError('Не удалось обнаружить ID видео в URL `%s`' % url)
 
         embed_code = (
             '<iframe src="//www.youtube.com/embed/%s?rel=0" '
@@ -554,12 +609,12 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         url = url.rstrip('/')
         hid = self.get_hosting_for_url(url)
         if hid is None:
-            raise PythonzException('Unable to get hosting for URL `%s`' % url)
+            raise RemoteSourceError('Не удалось обнаружить обработчик для указанного URL `%s`' % url)
 
         method_name = 'get_data_from_%s' % hid
         method = getattr(self, method_name, None)
         if method is None:
-            raise PythonzException('Unable to locate `%s` method' % method_name)
+            raise RemoteSourceError('Не удалось обнаружить метод обработчика URL `%s`' % method_name)
 
         embed_code, cover_url = method(url)
 
