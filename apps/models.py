@@ -352,7 +352,7 @@ class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
 
     url = models.URLField(
         'URL статьи', null=True, blank=False, unique=True,
-        help_text='Внешний URL, по которому расположена статья, которой выжелаете поделиться.')
+        help_text='Внешний URL, по которому доступна статья, которой вы желаете поделиться.')
 
     published_by_author = models.BooleanField('Я являюсь автором данной статьи', default=True)
 
