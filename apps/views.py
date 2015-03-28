@@ -2,6 +2,7 @@ from sitegate.decorators import signin_view, signup_view, redirect_signedin
 from sitegate.signup_flows.classic import SimpleClassicWithEmailSignup
 from sitecats.toolbox import get_category_model, get_category_lists, get_category_aliases_under
 from sitemessage.toolbox import get_user_preferences_for_ui, set_user_preferences_from_request
+from xross.toolbox import xross_view
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
@@ -54,8 +55,29 @@ class UserEditView(EditView):
 class PlaceDetailsView(DetailsView):
     """Представление с детальной информацией о месте."""
 
+    def set_im_here(self, request, xross=None):
+        """Используется xross. Прописывает место и часовой пояс в профиль пользователя.
+
+        :param request:
+        :param xross:
+        :return:
+        """
+        user = request.user
+        if user.is_authenticated():
+            user.place = xross.attrs['item']
+            user.set_timezone_from_place()
+            user.save()
+
+    @xross_view(set_im_here)  # Метод перекрыт для добавления AJAX-обработчика.
+    def get(self, request, obj_id):
+        return super().get(request, obj_id)
+
     def _update_context(self, context, request):
         place = context['item']
+
+        if request.user.is_authenticated():
+            context['allow_im_here'] = (request.user.place != place)
+
         context['users'] = User.get_actual().filter(place=place)
         context['communities'] = Community.get_actual().filter(place=place)
         context['events'] = Event.get_actual().filter(place=place)

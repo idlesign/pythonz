@@ -25,6 +25,18 @@
 {% endblock %}
 
 
+{% block details_contents %}
+
+    {% if allow_im_here %}
+        <div id="im_here_box" class="marg__b_mid">
+            <button id="set_im_here" data-xtarget="im_here_box" data-xsuccess="remove" class="xross btn btn-warning" title="Нажмите, если находитесь в этом месте.">Я здесь!</button>
+        </div>
+    {% endif %}
+
+    {{ block.super }}
+{% endblock %}
+
+
 {% block details_contents_after %}
     <div class="marg__b_mid marg__t_max">
         {% include "realms/places/sub_realm_links.html" with items=users title="Люди" %}
