@@ -5,7 +5,7 @@
         {% with item.version_deprecated as del %}
 
             {% if del %}<del title="Устарело">{% endif %}
-            <a href="{% url "references:details" item.id %}">{{ item.title }}</a>
+            <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
             {% if del %}</del>{% endif %}
 
             </td>

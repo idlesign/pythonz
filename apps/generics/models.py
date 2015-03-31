@@ -3,6 +3,7 @@ import re
 from uuid import uuid4
 
 from bleach import clean
+from slugify import Slugify, CYRILLIC
 from siteflags.models import ModelWithFlag
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
@@ -16,6 +17,7 @@ from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
 
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
+SLUGIFIER = Slugify(pretranslate=CYRILLIC, to_lower=True, safe_chars='-.', max_length=200)
 
 
 class ModelWithAuthorAndTranslator(models.Model):
@@ -113,6 +115,7 @@ class CommonEntityModel(models.Model):
     COVER_UPLOAD_TO = 'common'  # Имя категории (оно же имя директории) для хранения загруженных обложек.
 
     title = models.CharField('Название', max_length=255, unique=True)
+    slug = models.CharField('Краткое имя для URL', max_length=200, null=True, blank=True, unique=True)
     description = models.TextField('Описание', blank=False, null=False)
     submitter = models.ForeignKey(USER_MODEL, related_name='%(class)s_submitters', verbose_name='Добавил')
     cover = models.ImageField('Обложка', max_length=255, upload_to=get_upload_to, null=True, blank=True)
@@ -123,6 +126,15 @@ class CommonEntityModel(models.Model):
 
     class Meta:
         abstract = True
+
+    autogenerate_slug = False  # Следует ли автоматически генерировать краткое имя в транслите для URL.
+
+    def generate_slug(self):
+        """Генерирует краткое имя для URL и заполняет им атрибут slug.
+
+        :return:
+        """
+        return SLUGIFIER(self.title)
 
     def save(self, *args, **kwargs):
         """Перекрыт, чтобы привести заголовок в порядок.
@@ -135,6 +147,9 @@ class CommonEntityModel(models.Model):
 
         self.title = BasicTypograph.apply_to(self.title)
         self.description = BasicTypograph.apply_to(self.description)
+
+        if self.autogenerate_slug:
+            self.slug = self.generate_slug()
 
         super().save(*args, **kwargs)
 
@@ -475,12 +490,23 @@ class RealmBaseModel(ModelWithFlag):
             при сборе статистики посещений.
         :return:
         """
-        tmp, realm_name_plural = self.realm.get_names()
-        url = reverse('%s:details' % realm_name_plural, args=[str(self.id)])
+        details_urlname = self.realm.get_details_urlname()
+
+        id_attr = getattr(self, 'slug', None)
+
+        if id_attr:
+            details_urlname += '_slug'
+        else:
+            id_attr = self.id
+
+        url = reverse(details_urlname, args=[str(id_attr)])
+
         if with_prefix:
             url = '%s%s' % (settings.SITE_URL, url)
+
         if hash_chunk is not None:
             url = '%s#%s' % (url, hash_chunk)
+
         return url
 
     def get_category_absolute_url(self, category):

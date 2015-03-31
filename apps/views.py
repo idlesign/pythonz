@@ -21,12 +21,11 @@ from .exceptions import RedirectRequired
 class UserDetailsView(DetailsView):
     """Представление с детальной информацией о пользователе."""
 
+    get_object_related_fields = ['place']
+
     def _update_context(self, context, request):
         user = context['item']
         context['bookmarks'] = user.get_bookmarks()  # TODO проверить наполнение, возможно убрать области без закладок
-
-    def get_object_or_404(self, obj_id):
-        return get_object_or_404(self.realm.model.objects.select_related('place'), pk=obj_id)
 
 
 class UserEditView(EditView):
@@ -102,14 +101,13 @@ class ReferenceListingView(RealmView):
 class ReferenceDetailsView(DetailsView):
     """Представление статьи справочника."""
 
+    get_object_related_fields = ['parent', 'submitter']
+
     def _update_context(self, context, request):
         reference = context['item']
         context['children'] = reference.get_actual(reference).order_by('title')
         if reference.parent is not None:
             context['siblings'] = reference.get_actual(reference.parent, exclude_id=reference.id).order_by('title')
-
-    def get_object_or_404(self, obj_id):
-        return get_object_or_404(self.realm.model.objects.select_related('parent', 'submitter'), pk=obj_id)
 
 
 class CategoryListingView(RealmView):

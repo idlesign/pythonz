@@ -88,6 +88,9 @@ class RealmView(View):
         """
         return self.get(request, *args, **kwargs)
 
+    # Поля связей по внешним ключам, котрые следует использовать.
+    get_object_related_fields = ['submitter', 'last_editor']
+
     def get_object_or_404(self, obj_id):
         """Реализует механизм обнаружения объекта нужного типа для области,
         к которой привязано это представление.
@@ -95,7 +98,13 @@ class RealmView(View):
         :param obj_id:
         :return:
         """
-        return get_object_or_404(self.realm.model.objects.select_related('submitter', 'last_editor'), pk=obj_id)
+
+        q = self.realm.model.objects.select_related(*self.get_object_related_fields)
+
+        try:
+            return get_object_or_404(q, pk=obj_id)
+        except ValueError:
+            return get_object_or_404(q, slug=obj_id)
 
 
 class ListingView(RealmView):

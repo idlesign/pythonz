@@ -1,3 +1,5 @@
+import logging
+
 from sitetree.utils import item
 from django.conf.urls import patterns, url
 from django.core.urlresolvers import reverse
@@ -5,6 +7,9 @@ from django.contrib.sitemaps import GenericSitemap
 from django.contrib.syndication.views import Feed
 
 from .views import ListingView, DetailsView, AddView, EditView, TagsView
+
+
+LOGGER = logging.getLogger('pythonz.realms')
 
 
 class RealmBase(object):
@@ -70,6 +75,7 @@ class RealmBase(object):
     view_details = None
     view_details_base_class = DetailsView
     view_details_url = r'^(?P<obj_id>\d+)/$'
+    view_details_slug_url = r'^(?P<obj_id>[A-z\.-]+)/$'
 
     # Представление для добавления нового элемента.
     view_add = None
@@ -168,10 +174,22 @@ class RealmBase(object):
         """
         realm_name, realm_name_plural = cls.get_names()
         children = []
+
         if 'edit' in cls.allowed_views:
             children.append(cls.get_sitetree_edit_item())
-        return item('{{ %s.title }}' % realm_name, '%s %s.id' % (cls.get_details_urlname(), realm_name),
-                    children=children, in_menu=False, in_sitetree=False)
+
+        details_urlname = cls.get_details_urlname()
+
+        def get_item(urlname, id_attr='id'):
+            return item(
+                '{{ %s.title }}' % realm_name,
+                '%s %s.%s' % (urlname, realm_name, id_attr),  # Например books:details book.id
+                children=children,
+                in_menu=False,
+                in_sitetree=False
+            )
+
+        return [get_item(details_urlname), get_item(details_urlname + '_slug', id_attr='slug')]
 
     @classmethod
     def get_edit_urlname(cls):
@@ -234,14 +252,19 @@ class RealmBase(object):
         :return:
         """
         if cls.sitetree_items is None:
+            children = []
+            for view_name in cls.allowed_views:
+                if view_name != 'edit':
+                    items = getattr(cls, 'get_sitetree_%s_item' % view_name)()
+                    if not isinstance(items, list):
+                        items = [items]
+                    children.extend(items)
+
             cls.sitetree_items = item(
                 cls.view_listing_title or str(cls.model._meta.verbose_name_plural),
                 cls.get_listing_urlname(),
                 description=cls.view_listing_description,
-                children=[
-                    getattr(cls, 'get_sitetree_%s_item' % view_name)() for view_name in
-                    cls.allowed_views if view_name != 'edit'
-                ]
+                children=children
             )
         return cls.sitetree_items
 
@@ -293,10 +316,22 @@ class RealmBase(object):
         :return:
         """
         views = ['']
-        for view_name in cls.allowed_views:
+
+        def add_view(view_name, url_name=None):
+
+            if url_name is None:
+                url_name = view_name
+
             views.append(
-                url(getattr(cls, 'view_%s_url' % view_name), cls.get_view(view_name).as_view(), name=view_name)
+                url(getattr(cls, 'view_%s_url' % url_name), cls.get_view(view_name).as_view(), name=url_name)
             )
+
+        for view_name in cls.allowed_views:
+            add_view(view_name)
+
+            if view_name == 'details':
+                add_view(view_name, 'details_slug')
+
 
         if cls.syndication_enabled:
             views.append(url(r'^feed/$', cls.get_syndication_feed(), name='syndication'))

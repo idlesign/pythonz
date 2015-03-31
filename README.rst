@@ -63,6 +63,7 @@ https://github.com/idlesign/pythonz
 * `twitter <https://github.com/sixohsix/twitter>`_
 * `pytz <http://pythonhosted.org/pytz>`_
 * `Beautiful Soup <http://www.crummy.com/software/BeautifulSoup/>`_
+* `awesome-slugify <https://github.com/dimka665/awesome-slugify>`_
 
 
 *Приложения для Django*
