@@ -494,6 +494,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         }
 
     notify_on_publish = False
+    autogenerate_slug = True
 
     def is_type_callable(self):
         return self.type in (self.TYPE_METHOD, self.TYPE_FUNCTION)
