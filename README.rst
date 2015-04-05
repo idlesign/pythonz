@@ -52,7 +52,7 @@ https://github.com/idlesign/pythonz
 *База*
 
 * `Python 3.2+ <https://www.python.org/>`_
-* `Django 1.7+ <https://www.djangoproject.com/>`_
+* `Django 1.7.x <https://www.djangoproject.com/>`_
 
 
 *Модули*
