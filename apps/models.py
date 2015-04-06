@@ -244,9 +244,14 @@ class User(RealmBaseModel, AbstractUser):
         verbose_name_plural = 'Люди'
 
     def set_timezone_from_place(self):
+        """Устанавливает временную зону, исходя из места расположения.
+
+        :return:
+        """
         if self.place is None:
             self.timezone = None
             return True
+
         from .utils import get_timezone_name
         lat, lng = self.place.geo_pos.split(',')
         self.timezone = get_timezone_name(lat, lng)
@@ -268,6 +273,9 @@ class User(RealmBaseModel, AbstractUser):
             items = realm_model.objects.filter(id__in=ids)
             bookmarks[realm_model] = items
         return bookmarks
+
+    def is_deleted(self):
+        return not self.is_active
 
     @classmethod
     def get_actual(cls):
