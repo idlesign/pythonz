@@ -55,22 +55,23 @@ https://github.com/idlesign/pythonz
 * `Django 1.7.x <https://www.djangoproject.com/>`_
 
 
-*Модули*
+*Пакеты*
 
-* `Pillow <https://github.com/python-pillow/Pillow>`_
-* `requests <https://github.com/kennethreitz/requests>`_
-* `bleach <https://github.com/jsocol/bleach>`_
-* `twitter <https://github.com/sixohsix/twitter>`_
-* `pytz <http://pythonhosted.org/pytz>`_
-* `Beautiful Soup <http://www.crummy.com/software/BeautifulSoup/>`_
 * `awesome-slugify <https://github.com/dimka665/awesome-slugify>`_
+* `Beautiful Soup <http://www.crummy.com/software/BeautifulSoup/>`_
+* `bleach <https://github.com/jsocol/bleach>`_
+* `Pillow <https://github.com/python-pillow/Pillow>`_
+* `pytz <http://pythonhosted.org/pytz>`_
+* `requests <https://github.com/kennethreitz/requests>`_
+* `twitter <https://github.com/sixohsix/twitter>`_
 
 
 *Приложения для Django*
 
-* `django-debug-toolbar <https://github.com/django-debug-toolbar/django-debug-toolbar>`_
-* `django-datetime-widget <https://github.com/asaglimbeni/django-datetime-widget>`_
 * `django-admirarchy <https://github.com/idlesign/django-admirarchy>`_
+* `django-datetime-widget <https://github.com/asaglimbeni/django-datetime-widget>`_
+* `django-debug-toolbar <https://github.com/django-debug-toolbar/django-debug-toolbar>`_
+* `django-etc <https://github.com/idlesign/django-etc>`_
 * `django-simple-history <https://github.com/treyhunner/django-simple-history>`_
 * `django-siteblocks <https://github.com/idlesign/django-siteblocks>`_
 * `django-sitecats <https://github.com/idlesign/django-sitecats>`_
@@ -80,7 +81,6 @@ https://github.com/idlesign/pythonz
 * `django-sitemetrics <https://github.com/idlesign/django-sitemetrics>`_
 * `django-siteprefs <https://github.com/idlesign/django-siteprefs>`_
 * `django-xross <https://github.com/idlesign/django-xross>`_
-* `django-etc <https://github.com/idlesign/django-etc>`_
 
 
 *Оформление*
