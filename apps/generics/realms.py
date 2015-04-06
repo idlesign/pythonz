@@ -10,6 +10,7 @@ from .views import ListingView, DetailsView, AddView, EditView, TagsView
 
 
 LOGGER = logging.getLogger('pythonz.realms')
+SYNDICATION_URL_MARKER = 'feed'
 
 
 class RealmBase(object):
@@ -75,7 +76,7 @@ class RealmBase(object):
     view_details = None
     view_details_base_class = DetailsView
     view_details_url = r'^(?P<obj_id>\d+)/$'
-    view_details_slug_url = r'^(?P<obj_id>(?!feed)[A-z\.-]+)/$'
+    view_details_slug_url = r'^(?P<obj_id>(?!%s)[A-z\.-]+)/$' % SYNDICATION_URL_MARKER
 
     # Представление для добавления нового элемента.
     view_add = None
@@ -332,9 +333,8 @@ class RealmBase(object):
             if view_name == 'details':
                 add_view(view_name, 'details_slug')
 
-
         if cls.syndication_enabled:
-            views.append(url(r'^feed/$', cls.get_syndication_feed(), name='syndication'))
+            views.append(url(r'^%s/$' % SYNDICATION_URL_MARKER, cls.get_syndication_feed(), name='syndication'))
 
         _, realm_name_plural = cls.get_names()
         return patterns('', url(r'^%s/' % realm_name_plural, (patterns(*views), realm_name_plural, realm_name_plural)))
