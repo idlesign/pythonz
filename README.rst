@@ -74,11 +74,13 @@ https://github.com/idlesign/pythonz
 * `django-simple-history <https://github.com/treyhunner/django-simple-history>`_
 * `django-siteblocks <https://github.com/idlesign/django-siteblocks>`_
 * `django-sitecats <https://github.com/idlesign/django-sitecats>`_
+* `django-siteflags <https://github.com/idlesign/django-siteflags>`_
 * `django-sitegate <https://github.com/idlesign/django-sitegate>`_
 * `django-sitemessage <https://github.com/idlesign/django-sitemessage>`_
 * `django-sitemetrics <https://github.com/idlesign/django-sitemetrics>`_
 * `django-siteprefs <https://github.com/idlesign/django-siteprefs>`_
 * `django-xross <https://github.com/idlesign/django-xross>`_
+* `django-etc <https://github.com/idlesign/django-etc>`_
 
 
 *Оформление*
