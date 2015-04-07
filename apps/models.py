@@ -180,7 +180,7 @@ class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         description = {
             'verbose_name': 'Кратко',
             'help_text': ('Сжатая предварительная информация о сообществе (например, направление деятельности). %s' %
-                          HINT_IMPERSONAL_REQUIRED,)
+                          HINT_IMPERSONAL_REQUIRED)
         }
         text_src = {
             'verbose_name': 'Описание, принципы работы, правила, контактная информация',
