@@ -17,11 +17,13 @@
         <div class="col-md-12">
             {% model_field_verbose_name from users.supporters_num as title_support %}
             {% for user in users %}
+                {% if user.is_active %}
                 <div class="pull-left userlist_item">
                     <a href="{{ user.get_absolute_url }}" title="{{ user.get_display_name }}">
                         <img src="{% gravatar_get_url user %}">
                     </a>
                 </div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
