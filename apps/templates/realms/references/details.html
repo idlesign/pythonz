@@ -102,7 +102,7 @@
     {% if reference.parent %}
     <div class="marg__t_min">
         <h6>Родительский раздел</h6>
-        <a href="{% url "references:details" reference.parent.id %}">{{ reference.parent.title }}</a>
+        <a href="{% url "references:details_slug" reference.parent.slug %}">{{ reference.parent.title }}</a>
     </div>
     {% endif %}
 
