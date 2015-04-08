@@ -17,7 +17,7 @@ from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
 
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
-SLUGIFIER = Slugify(pretranslate=CYRILLIC, to_lower=True, safe_chars='-.', max_length=200)
+SLUGIFIER = Slugify(pretranslate=CYRILLIC, to_lower=True, safe_chars='-._', max_length=200)
 
 
 class ModelWithAuthorAndTranslator(models.Model):
