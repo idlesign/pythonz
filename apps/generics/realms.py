@@ -86,7 +86,7 @@ class RealmBase(object):
     # Представление для редактирования.
     view_edit = None
     view_edit_base_class = EditView
-    view_edit_url = r'^(?P<obj_id>\d+)/edit/$'
+    view_edit_url = r'^edit/(?P<obj_id>\d+)/$'
 
     # Представление с разбивкой элементов по категориям.
     view_tags = None
