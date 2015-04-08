@@ -4,7 +4,7 @@
     {% endif %}
     {% include "sub_box_bookmark.html" %}
     {% if item_edit_allowed %}
-        <form role="form" action="edit/" class="marg__l_mid">
+        <form role="form" action="{% url realm.get_edit_urlname item.id %}" class="marg__l_mid">
             <button type="submit" class="btn btn-default cl__blue" title="Редактировать"><span class="glyphicon glyphicon-pencil"></span></button>
         </form>
     {% endif %}
