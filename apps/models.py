@@ -444,9 +444,9 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         (TYPE_PACKAGE, 'Описание пакета'),
         (TYPE_MODULE, 'Описание модуля'),
         (TYPE_FUNCTION, 'Описание функции'),
-        (TYPE_CLASS, 'Описание класса или типа'),
-        (TYPE_METHOD, 'Описание метода класса или типа'),
-        (TYPE_ATTR, 'Описание атрибута класс или типа'),
+        (TYPE_CLASS, 'Описание класса/типа'),
+        (TYPE_METHOD, 'Описание метода класса/типа'),
+        (TYPE_ATTR, 'Описание атрибута класса/типа'),
     )
 
     type = models.PositiveIntegerField(
