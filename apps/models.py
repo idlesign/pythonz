@@ -437,7 +437,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     TYPE_FUNCTION = 4
     TYPE_CLASS = 5
     TYPE_METHOD = 6
-    TYPE_ATTR = 7
+    TYPE_PROPERTY = 7
 
     TYPES = choices_list(
         (TYPE_CHAPTER, 'Раздел справки'),
@@ -446,7 +446,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         (TYPE_FUNCTION, 'Описание функции'),
         (TYPE_CLASS, 'Описание класса/типа'),
         (TYPE_METHOD, 'Описание метода класса/типа'),
-        (TYPE_ATTR, 'Описание атрибута класса/типа'),
+        (TYPE_PROPERTY, 'Описание свойства класса/типа'),
     )
 
     type = models.PositiveIntegerField(
