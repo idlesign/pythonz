@@ -637,7 +637,6 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
             ModelWithCompiledText):
     """Модель сущности `Событие`."""
 
-
     SPEC_DEDICATED = 1
     SPEC_HAS_SECTION = 2
     SPEC_HAS_SOME = 3
@@ -711,7 +710,12 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         field = self.time_finish or self.time_start
         if field is None:
             return None
-        return field.date() < timezone.now().date()
+        return field < timezone.now()
+
+    def is_now(self):
+        if not all([self.time_start, self.time_finish]):
+            return False
+        return self.time_start <= timezone.now() <= self.time_finish
 
     @classmethod
     def get_paginator_objects(cls):
