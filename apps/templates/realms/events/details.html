@@ -38,7 +38,7 @@
                 {% endif %}
                 {% if not event.is_in_past %}
                 <span class="cl__gray">
-                    &nbsp; {% if not event.is_now %}[проходит прямо сейчас]{% else %}[{{ event.time_start|timeuntil }} до начала]{% endif %}
+                    &nbsp; {% if event.is_now %}[проходит прямо сейчас]{% else %}[{{ event.time_start|timeuntil }} до начала]{% endif %}
                 </span>
                 <div class="marg__t_min">
                     {% include "sub_ya_forgetmenot.html" %}
