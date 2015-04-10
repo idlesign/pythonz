@@ -86,7 +86,7 @@ class PlaceListingView(RealmView):
     """Представление с картой и списком всех известных мест."""
 
     def get(self, request):
-        places = Place.get_actual().order_by('-supporters_num')
+        places = Place.get_actual().order_by('-supporters_num', 'title')
         return self.render(request, {self.realm.name_plural: places})
 
 
