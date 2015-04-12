@@ -262,15 +262,17 @@ class RealmBaseModel(ModelWithFlag):
         initial_pk = self.pk
         just_published = False
 
+        now = timezone.now()
+
         if self._status_backup != self.status:
             # Если сохраняем с переходом статуса, наивно полагаем объект немодифицированным.
             self._consider_modified = False
             if self.status == self.STATUS_PUBLISHED:
-                setattr(self, 'time_published', timezone.now())
+                setattr(self, 'time_published', now)
                 just_published = True
 
         if self._consider_modified:
-            setattr(self, 'time_modified', timezone.now())
+            setattr(self, 'time_modified', now)
         else:
             self._consider_modified = True
         super().save(*args, **kwargs)
@@ -480,6 +482,15 @@ class RealmBaseModel(ModelWithFlag):
         :return:
         """
         return cls._meta.verbose_name_plural
+
+    def was_edited(self):
+        """Возвращает флаг, указывающий на то, был ли объект отредактирован
+        (различаются ли даты создания и редактирования).
+
+        :return:
+        """
+        format_date = lambda date: date.strftime('%Y%m%d%H%i')
+        return self.time_modified and format_date(self.time_modified) != format_date(self.time_created)
 
     def get_absolute_url(self, with_prefix=False, hash_chunk=None):
         """Возвращает URL страницы с детальной информацией об объекте.

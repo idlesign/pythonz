@@ -1,15 +1,17 @@
 <small>
     <small>
+
     {% if item.submitter %}
-    <abbr title="Пользователь, добавивший материал">доб.</abbr> <a href="{{ item.submitter.get_absolute_url }}">{{ item.submitter.get_display_name }}</a>
+        <span class="marg__r_mid">
+        <a href="{{ item.submitter.get_absolute_url }}" class="mod__has_tooltip" title="Добавил: {{ item.submitter.get_display_name }}">
+            <span class="glyphicon glyphicon-user"></span></a> &nbsp;{{ item.time_created|date:"d b. y H:i" }}
+        </span>
     {% endif %}
-    {% if item.time_modified %}
-        /
-        <abbr title="Автор и дата последнего редактирования">ред.</abbr>
-        {% if item.submitter != item.last_editor %}
-        <a href="{{ item.last_editor.get_absolute_url }}">{{ item.last_editor.get_display_name }}</a>
-        {% endif %}
-        {{ item.time_modified }}
+
+    {% if item.was_edited %}
+        <a href="{{ item.last_editor.get_absolute_url }}" class="mod__has_tooltip" title="Редактировал: {{ item.last_editor.get_display_name }}">
+            <span class="glyphicon glyphicon-pencil"></span></a> &nbsp;{{ item.time_modified|date:"d b. y H:i" }}
     {% endif %}
+
     </small>
 </small>
