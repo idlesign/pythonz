@@ -190,7 +190,11 @@ class RealmBase(object):
                 in_sitetree=False
             )
 
-        return [get_item(details_urlname), get_item(details_urlname + '_slug', id_attr='slug')]
+        items = [get_item(details_urlname)]
+        if getattr(cls.model, 'autogenerate_slug', False):
+            items.append(get_item(details_urlname + '_slug', id_attr='slug'))
+
+        return items
 
     @classmethod
     def get_edit_urlname(cls):
