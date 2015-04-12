@@ -131,7 +131,7 @@ class ListingView(RealmView):
         :param page_items:
         :return:
         """
-        max_pages_before_after = 5
+        max_pages_before_after = 10
         page = page_items.number
 
         min_page_before = page-max_pages_before_after
