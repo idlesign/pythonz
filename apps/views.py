@@ -31,6 +31,8 @@ class UserDetailsView(DetailsView):
 class UserEditView(EditView):
     """Представление редактирования пользователя."""
 
+    get_object_related_fields = ['last_editor']
+
     def check_edit_permissions(self, request, item):
         # Пользователи не могут редактировать других пользователей.
         if item != request.user:
@@ -53,6 +55,8 @@ class UserEditView(EditView):
 
 class PlaceDetailsView(DetailsView):
     """Представление с детальной информацией о месте."""
+
+    get_object_related_fields = ['last_editor']
 
     def set_im_here(self, request, xross=None):
         """Используется xross. Прописывает место и часовой пояс в профиль пользователя.

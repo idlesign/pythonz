@@ -10,7 +10,7 @@ twitter==1.16.0
 django-admirarchy==0.2.0
 django-datetime-widget==0.9.3
 django-debug-toolbar==1.3.0
-django-simple-history==1.5.4
+django-simple-history==1.6.0
 django-siteflags==0.3.0
 django-sitegate==0.10.0
 django-sitemessage==0.6.0
