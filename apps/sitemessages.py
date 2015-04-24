@@ -280,7 +280,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
             realms_data['Изменившиеся'] = objects_modified
 
         objects_upcoming = cls.get_upcoming_items()
-        if objects_modified:
+        if objects_upcoming:
             realms_data['Скоро'] = objects_upcoming
 
         context.update({'realms_data': realms_data})
