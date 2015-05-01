@@ -267,7 +267,10 @@ class User(RealmBaseModel, AbstractUser):
 
         FLAG_MODEL = get_flag_model()
         realm_models = [r.model for r in get_realms().values()]
-        bookmarks = FLAG_MODEL.get_flags_for_types(realm_models, user=self, status=RealmBaseModel.FLAG_STATUS_BOOKMARK)
+        bookmarks = FLAG_MODEL.get_flags_for_types(
+            realm_models, user=self, status=RealmBaseModel.FLAG_STATUS_BOOKMARK,
+            allow_empty=False
+        )
         for realm_model, flags in bookmarks.items():
             ids = [flag.object_id for flag in flags]
             items = realm_model.objects.filter(id__in=ids)

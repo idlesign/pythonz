@@ -25,7 +25,7 @@ class UserDetailsView(DetailsView):
 
     def _update_context(self, context, request):
         user = context['item']
-        context['bookmarks'] = user.get_bookmarks()  # TODO проверить наполнение, возможно убрать области без закладок
+        context['bookmarks'] = user.get_bookmarks()
 
 
 class UserEditView(EditView):
