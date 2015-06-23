@@ -14,7 +14,7 @@ from django.views.defaults import (
 )
 
 from .generics.views import DetailsView, RealmView, EditView
-from .models import Place, User, Community, Event
+from .models import Place, User, Community, Event, Reference
 from .exceptions import RedirectRequired
 
 
@@ -155,7 +155,26 @@ server_error = lambda request: dj_server_error(request, template_name='static/50
 
 
 def index(request):
+    """Индексная страница."""
     return redirect('categories:listing')
+
+
+def search(request):
+    """Страница с результатами поиска по справочнику.
+    Если найден один результат, перенаправляет на страницу результата.
+
+    """
+    search_term = request.POST.get('search_term', '').strip()
+
+    results = []
+    if not search_term:
+        return redirect('index')
+
+    results = Reference.objects.filter(title__icontains=search_term)
+    if len(results) == 1:
+        return redirect(results[0].get_absolute_url())
+
+    return render(request, 'static/search.html', {'search_term': search_term, 'results': results})
 
 
 @redirect_signedin
@@ -163,4 +182,5 @@ def index(request):
 @signup_view(widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label}, template='form_bootstrap3',
              flow=SimpleClassicWithEmailSignup, verify_email=True)
 def login(request):
+    """Страница авторизации и регистрации."""
     return render(request, 'static/login.html')

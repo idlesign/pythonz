@@ -15,10 +15,11 @@ autodiscover_siteprefs()
 
 urlpatterns = patterns('',
     url(r'^$', 'apps.views.index', name='index'),
+    url(r'^search/site/$', render, {'template_name': 'static/search_site.html'}),
+    url(r'^search/$', 'apps.views.search', name='search'),
     url(r'^login/$', 'apps.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
     url(r'^promo/$', render, {'template_name': 'static/promo.html'}),
-    url(r'^search/$', render, {'template_name': 'static/search.html'}),
     url(r'^about/$', render, {'template_name': 'static/about.html'}),
     url(r'^sitemap/$', render, {'template_name': 'static/sitemap.html'}),
     url(r'^%s/' % settings.ADMIN_URL, include(admin.site.urls)),

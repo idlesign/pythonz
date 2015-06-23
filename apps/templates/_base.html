@@ -52,6 +52,13 @@
                 </div>
             {% endwith %}
 
+            <form class="navbar-form navbar-left" role="search" method="post" action="/search/">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" class="form-control" name="search_term" placeholder="Поиск по справочнику" value="{{ search_term }}">
+                </div>
+            </form>
+
             <ul class="nav navbar-nav navbar-right">
             {% if request.user.is_authenticated %}
                 <li class="dropdown">

@@ -135,7 +135,9 @@ def build_sitetree():
                 item('О проекте', '/about/', description='Информация о проекте pythonz.net.', url_as_pattern=False),
                 item('Карта сайта', '/sitemap/', description='Список разделов проекта pythonz.net.',
                      url_as_pattern=False),
-                item('Поиск по сайту', '/search/', url_as_pattern=False),
+                item('Поиск по сайту', '/search/site/', url_as_pattern=False),
+                item('Результаты поиска «{{ search_term }}»', '/search/', url_as_pattern=False, in_menu=False,
+                     in_sitetree=False),
             ))
         )),
         reset_cache=True
