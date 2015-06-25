@@ -1,3 +1,5 @@
+from traceback import print_exc
+
 from django.core.management.base import BaseCommand
 from sitemessage.models import Subscription
 
@@ -26,6 +28,7 @@ class Command(BaseCommand):
 
         except Exception as e:
             self.stderr.write(self.style.ERROR('Migration failed: %s\n' % e))
+            print_exc()
 
         else:
             self.stdout.write('All is done. Total subscribers: %s\n' % len(targets))
