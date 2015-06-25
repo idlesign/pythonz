@@ -24,11 +24,7 @@
                     </div>
 
                     {% if vacancy.salary_from %}
-                        <span class="label label-info marg__r_mid">
-                            {{ vacancy.salary_from }}
-                            {% if vacancy.salary_till %} — {{ vacancy.salary_till }}{% endif %}
-                            {{ vacancy.salary_currency }}
-                        </span>
+                        <span class="label label-info marg__r_mid">{{ vacancy.get_salary_str }}</span>
                     {% endif %}
 
                     <small class="cl__gray">

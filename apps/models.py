@@ -190,8 +190,6 @@ class Vacancy(RealmBaseModel):
     salary_till = models.PositiveIntegerField('З/п до', null=True, blank=True)
     salary_currency = models.CharField('Валюта', max_length=255, null=True, blank=True)
 
-    description = ''
-
     class Meta:
         verbose_name = 'Вакансия'
         verbose_name_plural = 'Работа'
@@ -199,6 +197,31 @@ class Vacancy(RealmBaseModel):
 
     paginator_related = ['place']
     items_per_page = 15
+
+    @property
+    def description(self):
+        chunks = [self.employer_name, self.src_place_name]
+        salary_chunk = self.get_salary_str()
+        if salary_chunk:
+            chunks.append(salary_chunk)
+        return ', '.join(chunks)
+
+    def get_salary_str(self):
+        """Возвращает данные о зарплате в виде строки.
+
+        :return:
+        """
+        chunks = []
+        if self.salary_from:
+            chunks.append(self.salary_from)
+
+        if self.salary_till:
+            chunks.extend(('—', self.salary_till))
+
+        if self.salary_currency:
+            chunks.append(self.salary_currency)
+
+        return ' '.join(map(str, chunks)).strip()
 
     def get_absolute_url(self, with_prefix=False, hash_chunk=None):
         return self.url_site
