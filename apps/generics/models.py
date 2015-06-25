@@ -208,11 +208,13 @@ class RealmBaseModel(ModelWithFlag):
     STATUS_DRAFT = 1
     STATUS_PUBLISHED = 2
     STATUS_DELETED = 3
+    STATUS_ARCHIVED = 4
 
     STATUSES = (
         (STATUS_DRAFT, 'Черновик'),
         (STATUS_PUBLISHED, 'Опубликован'),
         (STATUS_DELETED, 'Удален'),
+        (STATUS_ARCHIVED, 'В архиве'),
     )
 
     FLAG_STATUS_BOOKMARK = 1  # Фильтр флагов-закладок.
@@ -237,6 +239,7 @@ class RealmBaseModel(ModelWithFlag):
     items_per_page = 10  # Количество объектов для вывода на страницах списков.
     edit_form = None  # Во время исполнения здесь будет форма редактирования.
     notify_on_publish = True  # Следует ли оповещать внешние системы о публикации сущности.
+    paginator_related = ['submitter']
 
     def mark_unmodified(self):
         """Используется для того, чтобы при следующем вызове save()
@@ -303,8 +306,12 @@ class RealmBaseModel(ModelWithFlag):
 
         :return:
         """
-        # TODO не использовать related там, где не нужно
-        return cls.objects.published().select_related('submitter').order_by('-time_created').all()
+        qs = cls.objects.published()
+        if cls.paginator_related:
+            qs = qs.select_related(*cls.paginator_related)
+        qs = qs.order_by('-time_created')
+
+        return qs
 
     @classmethod
     def cache_get_key_most_voted_objects(cls, category=None, class_name=None):

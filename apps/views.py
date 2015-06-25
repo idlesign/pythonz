@@ -13,8 +13,8 @@ from django.views.defaults import (
     server_error as dj_server_error
 )
 
-from .generics.views import DetailsView, RealmView, EditView
-from .models import Place, User, Community, Event, Reference
+from .generics.views import DetailsView, RealmView, EditView, ListingView
+from .models import Place, User, Community, Event, Reference, Vacancy
 from .exceptions import RedirectRequired
 
 
@@ -84,6 +84,7 @@ class PlaceDetailsView(DetailsView):
         context['users'] = User.get_actual().filter(place=place)
         context['communities'] = Community.get_actual().filter(place=place)
         context['events'] = Event.get_actual().filter(place=place)
+        context['vacancies'] = Vacancy.get_actual().filter(place=place)
 
 
 class PlaceListingView(RealmView):
@@ -100,6 +101,15 @@ class ReferenceListingView(RealmView):
     def get(self, request):
         # Справочник один, поэтому перенаправляем сразу на него.
         return redirect(self.realm.get_details_urlname(), 1, permanent=True)
+
+
+class VacancyListingView(ListingView):
+    """Представление со списком вакансий."""
+
+    get_object_related_fields = ['place']
+
+    def get_most_voted_objects(self):
+        return []
 
 
 class ReferenceDetailsView(DetailsView):
@@ -166,7 +176,6 @@ def search(request):
     """
     search_term = request.POST.get('search_term', '').strip()
 
-    results = []
     if not search_term:
         return redirect('index')
 

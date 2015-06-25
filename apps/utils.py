@@ -10,7 +10,116 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from django.utils.text import Truncator
+
+
+def get_from_url(url):
+    """Возвращает объект ответа requests с указанного URL.
+
+    :param str url:
+    :return:
+    """
+    headers = {'User-agent': 'Mozilla/5.0 (Ubuntu; X11; Linux i686; rv:8.0) Gecko/20100'}
+    r_kwargs = {
+        'allow_redirects': True,
+        'headers': headers,
+        'timeout': 1.5
+    }
+    return requests.get(url, **r_kwargs)
+
+
+def get_json(url):
+    """Возвращает словарь, созданный из JSON документа, полученного
+    с указанного URL.
+
+    :param str url:
+    :return:
+    """
+
+    result = {}
+    try:
+        response = get_from_url(url)
+    except requests.exceptions.RequestException:
+        pass
+    else:
+        try:
+            result = response.json()
+        except ValueError:
+            pass
+
+    return result
+
+
+class HhVacancyManager:
+    """Объединяет инструменты для работы с вакансиями с hh.ru."""
+
+    @classmethod
+    def get_status(cls, url):
+        """Возвращает состояние вакансии по указанному URL.
+
+        :param url:
+        :return:
+        """
+        response = get_json(url)
+        if not response:
+            return
+
+        return response['archived']
+
+    @classmethod
+    def fetch_list(cls):
+        """Возвращает словарь с данными вакансий, полученный из внешнего
+        источника.
+
+        :return:
+        """
+        base_url = 'https://api.hh.ru/vacancies/'
+        query = (
+            'search_field=%(field)s&per_page=%(per_page)s'
+            '&order_by=publication_time&period=1&text=%(term)s' % {
+                'term': 'python',
+                'per_page': 500,
+                'field': 'name',  # description
+        })
+
+        response = get_json('%s?%s' % (base_url, query))
+
+        if 'items' not in response:
+            return None
+
+        results = []
+        for item in response['items']:
+            salary_from = salary_till = salary_currency = ''
+
+            if item['salary']:
+                salary = item['salary']
+                salary_from = salary['from']
+                salary_till = salary['to']
+                salary_currency = salary['currency']
+
+            employer = item['employer']
+            url_logo = employer['logo_urls']
+            if url_logo:
+                url_logo = url_logo['90']
+
+            results.append({
+                '__archived': item['archived'],
+                'src_id': item['id'],
+                'src_place_name': item['area']['name'],
+                'src_place_id': item['area']['id'],
+                'title': item['name'],
+                'url_site': item['alternate_url'],
+                'url_api': item['url'],
+                'url_logo': url_logo,
+                'employer_name': employer['name'],
+                'salary_from': salary_from or None,
+                'salary_till': salary_till or None,
+                'salary_currency': salary_currency,
+                'time_published': parse_datetime(item['published_at']),
+            })
+
+        return results
 
 
 class BasicTypograph(object):
@@ -193,25 +302,14 @@ def scrape_page(url):
         'api_key': settings.YANDEX_RCA_KEY, 'url': url
     }
 
-    result = None
-    try:
-        response = requests.get(url, allow_redirects=True, timeout=1.5)
+    result = get_json(url)
 
-    except requests.exceptions.RequestException:
-        pass
+    if 'content' not in result:
+        return None
 
-    else:
-        try:
-            result = response.json()
-        except ValueError:
-            pass
-
-        if 'content' not in result:
-            return None
-
-        content = result['content']
-        result['content_less'] = Truncator(content).words(30)
-        result['content_more'] = Truncator(content).chars(900).replace('\n', '\n\n')
+    content = result['content']
+    result['content_less'] = Truncator(content).words(30)
+    result['content_more'] = Truncator(content).chars(900).replace('\n', '\n\n')
 
     return result
 
@@ -224,16 +322,8 @@ def make_soup(url):
     :rtype: BeautifulSoup|None
     """
     result = None
-
-    headers = {'User-agent': 'Mozilla/5.0 (Ubuntu; X11; Linux i686; rv:8.0) Gecko/20100'}
-    r_kwargs = {
-        'allow_redirects': True,
-        'headers': headers,
-        'timeout': 1.5
-    }
-
     try:
-        response = requests.get(url, **r_kwargs)
+        response = get_from_url(url)
         result = BeautifulSoup(response.text)
     except requests.exceptions.RequestException:
         pass

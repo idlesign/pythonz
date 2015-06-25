@@ -14,7 +14,7 @@ from django.utils import timezone
 
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
 from .exceptions import RemoteSourceError
-from .utils import scrape_page
+from .utils import scrape_page, HhVacancyManager
 
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
@@ -123,6 +123,14 @@ class Place(RealmBaseModel, ModelWithDiscussions):
         verbose_name = 'Место'
         verbose_name_plural = 'Места'
 
+    def get_pos(self):
+        """Возвращает координаты объекта в виде кортежа: (широта, долгота).
+
+        :return:
+        """
+        lat, lng = self.geo_pos.split('|')
+        return lat, lng
+
     @classmethod
     def create_place_from_name(cls, name):
         """Создаёт место по его имени.
@@ -151,6 +159,106 @@ class Place(RealmBaseModel, ModelWithDiscussions):
 
     def __unicode__(self):
         return self.geo_title
+
+
+class Vacancy(RealmBaseModel):
+
+    SRC_ALIAS_HH = 'hh'
+
+    SRC_ALIASES = (
+        (SRC_ALIAS_HH, 'hh.ru'),
+    )
+
+    MANAGERS = OrderedDict([
+        (SRC_ALIAS_HH, HhVacancyManager)
+    ])
+
+    src_alias = models.CharField('Идентификатор источника', max_length=20, choices=SRC_ALIASES)
+    src_id = models.CharField('ID в источнике', max_length=50)
+    src_place_name = models.CharField('Название места в источнике', max_length=255)
+    src_place_id = models.CharField('ID места в источнике', max_length=20, db_index=True)
+
+    title = models.CharField('Название', max_length=255)
+    url_site = models.URLField('Страница сайта')
+    url_api = models.URLField('URL API', null=True, blank=True)
+    url_logo = models.URLField('URL логотипа', null=True, blank=True)
+
+    employer_name = models.CharField('Работодатель', max_length=255)
+
+    place = models.ForeignKey(Place, verbose_name='Место', related_name='vacancies', null=True, blank=True)
+    salary_from = models.PositiveIntegerField('Заработная плата', null=True, blank=True)
+    salary_till = models.PositiveIntegerField('З/п до', null=True, blank=True)
+    salary_currency = models.CharField('Валюта', max_length=255, null=True, blank=True)
+
+    description = ''
+
+    class Meta:
+        verbose_name = 'Вакансия'
+        verbose_name_plural = 'Работа'
+        unique_together = ('src_alias', 'src_id')
+
+    paginator_related = ['place']
+    items_per_page = 15
+
+    def get_absolute_url(self, with_prefix=False, hash_chunk=None):
+        return self.url_site
+
+    def link_to_place(self):
+        """Связывает запись с местом Place, заполняя атрибут place_id.
+
+        :return:
+        """
+
+        # Попробуем найти ранее связанные записи.
+        match = self.__class__.objects.filter(
+            src_alias=self.src_alias,
+            src_place_id=self.src_place_id,
+        ).first()
+
+        if match:
+            self.place_id = match.place_id
+        else:
+            # Вычисляем место.
+            match = Place.create_place_from_name(self.src_place_name)
+            self.place_id = match.id
+
+    @classmethod
+    def update_statuses(cls):
+        """Обновляет состояния записей по данным внешнего ресурса.
+
+        :return:
+        """
+        for vacancy in cls.objects.filter(status=cls.STATUS_PUBLISHED):
+            manager = cls.MANAGERS.get(vacancy.src_alias)
+            if manager:
+                archived = manager.get_status(vacancy.url_api)
+                if archived:
+                    vacancy.save()
+
+    @classmethod
+    def fetch_new(cls):
+        """Добывает данные из источника и складирует их.
+
+        :return:
+        """
+        for manager_alias, manager in cls.MANAGERS.items():
+            vacancies = manager.fetch_list()
+            if not vacancies:
+                return
+
+            for vacancy_data in vacancies:
+                if vacancy_data.pop('__archived', True):
+                    # Архивные пропускаем.
+                    continue
+
+                new_vacancy = cls(**vacancy_data)
+                new_vacancy.src_alias = manager_alias
+                new_vacancy.status = new_vacancy._status_backup = cls.STATUS_PUBLISHED
+                new_vacancy.link_to_place()
+                try:
+                    new_vacancy.save()
+                except IntegrityError:
+                    pass
 
 
 class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,

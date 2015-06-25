@@ -9,10 +9,10 @@ from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleF
     ReferenceForm
 from .generics.realms import RealmBase
 from .generics.models import RealmBaseModel
-from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference
+from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy
 from .signals import sig_support_changed
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
-    ReferenceListingView, ReferenceDetailsView
+    ReferenceListingView, ReferenceDetailsView, VacancyListingView
 from .zen import *  # Регистрируем блок сайта с дзеном
 
 
@@ -204,11 +204,25 @@ class EventRealm(RealmBase):
     sitemap_changefreq = 'daily'
 
 
-# class OpeningRealm(RealmBase):
-#
-#     model = Opening
-#     form = VideoForm
-#     icon = 'briefcase'
+class VacancyRealm(RealmBase):
+    """
+    Область с вакансиями.
+    """
+
+    allowed_views = ('listing',)
+    name_plural = 'vacancies'
+
+    txt_promo = 'Сидеть без дела скучно, любимый язык располагает к деятельности. Здесь можно поискать, чем заняться.'
+
+    view_listing_description = 'Вакансии, связанные с языком программирования Python.'
+    view_listing_keywords = '%s вакансии, job, работа, предложения' % BASE_KEYWORDS
+
+    view_listing_base_class = VacancyListingView
+
+    model = Vacancy
+    icon = 'briefcase'
+    sitemap_changefreq = 'daily'
+    sitemap_date_field = 'time_published'
 
 
 class ReferenceRealm(RealmBase):
@@ -377,6 +391,7 @@ register_realms(
     ArticleRealm,
     ReferenceRealm,
     EventRealm,
+    VacancyRealm,
     UserRealm,
     PlaceRealm,
     DiscussionRealm,

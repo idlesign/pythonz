@@ -281,7 +281,10 @@ class RealmBase(object):
         """
         if cls.name is None:
             cls.name = cls.__name__.lower().replace('realm', '')
+
+        if cls.name_plural is None:
             cls.name_plural = '%ss' % cls.name
+
         return cls.name, cls.name_plural
 
     @classmethod
