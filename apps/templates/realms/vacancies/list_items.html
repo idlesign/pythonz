@@ -1,36 +1,39 @@
 <div class="marg__t_mid">
     {% if items %}
-        <ul class="vacancies">
+        <ul class="vacancies media-list">
             {% for vacancy in items %}
-                <li class="vacancy marg__t_max">
-                    {% if vacancy.url_logo %}
-                        <div class="pull-right">
-                            <img src="{{ vacancy.url_logo }}" class="img-thumbnail">
-                        </div>
-                    {% endif %}
-                    <h4><a href="{{ vacancy.url_site }}">{{ vacancy.title }}</a></h4>
-                    <div class="cl__gray marg__b_min">
-                        <small>
-                            <span class="marg__r_mid"><strong>{{ vacancy.employer_name }}</strong></span>
+                <li class="vacancy media">
 
-                            {% if vacancy.place %}
-                                {% if vacancy.place.is_published %}
-                                    <a href="{{ vacancy.place.get_absolute_url }}">{{ vacancy.place.title }}</a>
-                                {% else %}
-                                    {{ vacancy.place.title }}
+                    <div class="media-body">
+                        <h4><a href="{{ vacancy.url_site }}">{{ vacancy.title }}</a></h4>
+                        <div class="cl__gray marg__b_min">
+                            <small>
+                                <span class="marg__r_mid"><strong>{{ vacancy.employer_name }}</strong></span>
+
+                                {% if vacancy.place %}
+                                    {% if vacancy.place.is_published %}
+                                        <a href="{{ vacancy.place.get_absolute_url }}">{{ vacancy.place.title }}</a>
+                                    {% else %}
+                                        {{ vacancy.place.title }}
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
+                            </small>
+                        </div>
+
+                        {% if vacancy.salary_from %}
+                            <span class="label label-info marg__r_mid">{{ vacancy.get_salary_str }}</span>
+                        {% endif %}
+
+                        <small class="cl__gray">
+                            <small>{{ vacancy.time_created|date:"d E H:i" }}</small>
                         </small>
                     </div>
 
-                    {% if vacancy.salary_from %}
-                        <span class="label label-info marg__r_mid">{{ vacancy.get_salary_str }}</span>
+                    {% if vacancy.url_logo %}
+                        <div class="media-right">
+                            <img src="{{ vacancy.url_logo }}" class="img-thumbnail media-object">
+                        </div>
                     {% endif %}
-
-                    <small class="cl__gray">
-                        <small>{{ vacancy.time_created|date:"d E H:i" }}</small>
-                    </small>
-
                     <hr>
                 </li>
             {% endfor %}
