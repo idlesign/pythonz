@@ -224,6 +224,8 @@ class VacancyRealm(RealmBase):
     sitemap_changefreq = 'daily'
     sitemap_date_field = 'time_published'
 
+    yawidget_code = 178839
+
 
 class ReferenceRealm(RealmBase):
     """
