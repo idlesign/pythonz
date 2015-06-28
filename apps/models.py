@@ -219,13 +219,21 @@ class Vacancy(RealmBaseModel):
         return stats
 
     @classmethod
-    def get_salary_stats(cls):
+    def get_salary_stats(cls, place=None):
         """Возвращает статистику по зарплатам.
 
+        :param Place|None place: Место, для которого следует получить статистику.
         :return:
         """
+        filter_kwargs = {
+            'salary_currency__isnull': False,
+            'salary_till__isnull': False
+        }
+        if place is not None:
+            filter_kwargs['place'] = place
+
         stats = list(cls.objects.published().filter(
-            salary_currency__isnull=False, salary_till__isnull=False
+            **filter_kwargs
         ).values(
             'salary_currency'
         ).annotate(

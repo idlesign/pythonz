@@ -12,29 +12,7 @@
 
     <div class="marg__b_mid">
 
-        {% if stats_salary %}
-            <h4>Зарплата</h4>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Мин.</th>
-                        <th>Ср.</th>
-                        <th>Макс.</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for stat_row in stats_salary %}
-                    <tr>
-                        <th scope="row">{{ stat_row.salary_currency }}</th>
-                        <td>{{ stat_row.min }}</td>
-                        <td>{{ stat_row.avg }}</td>
-                        <td>{{ stat_row.max }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
+        {% include "realms/vacancies/stats_salary.html" %}
 
         {% if stats_places %}
             <h4>Места</h4>

@@ -37,6 +37,18 @@
 {% endblock %}
 
 
+{% block right_bar %}
+    {% if stats_salary %}
+    <div class="panel panel-default">
+        <div class="panel-body">
+            {% include "realms/vacancies/stats_salary.html" %}
+        </div>
+    </div>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}
+
+
 {% block details_contents_after %}
     <div class="marg__b_mid marg__t_max">
         {% include "realms/places/sub_realm_links.html" with items=users title="Люди" %}
