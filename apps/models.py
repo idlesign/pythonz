@@ -284,11 +284,12 @@ class Vacancy(RealmBaseModel):
 
         :return:
         """
-        for vacancy in cls.objects.filter(status=cls.STATUS_PUBLISHED):
+        for vacancy in cls.objects.published():
             manager = cls.MANAGERS.get(vacancy.src_alias)
             if manager:
                 archived = manager.get_status(vacancy.url_api)
                 if archived:
+                    vacancy.status = cls.STATUS_ARCHIVED
                     vacancy.save()
 
     @classmethod
