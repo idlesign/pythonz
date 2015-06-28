@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from django.db.models import Avg, Min, Max, Count
 
 import requests
 from etc.models import InheritedModel
@@ -204,6 +205,39 @@ class Vacancy(RealmBaseModel):
         if salary_chunk:
             chunks.append(salary_chunk)
         return ', '.join(chunks)
+
+    @classmethod
+    def get_places_stats(cls):
+        """Возвращает статистику по количеству вакансий на местах.
+
+        :return:
+        """
+        stats = list(Place.objects.filter(
+            id__in=cls.objects.published().filter(place__isnull=False).distinct().values_list('place_id', flat=True)
+        ).annotate(vacancies_count=Count('vacancies')).order_by('-vacancies_count', 'title'))
+
+        return stats
+
+    @classmethod
+    def get_salary_stats(cls):
+        """Возвращает статистику по зарплатам.
+
+        :return:
+        """
+        stats = list(cls.objects.published().filter(
+            salary_currency__isnull=False, salary_till__isnull=False
+        ).values(
+            'salary_currency'
+        ).annotate(
+            min=Min('salary_from'), max=Max('salary_till'), count=Count('id')
+        ))
+
+        for stat_row in stats:
+            stat_row['avg'] = stat_row['min'] + ((stat_row['max'] - stat_row['min']) / 2)
+            for factor in ('min', 'avg', 'max'):
+                stat_row[factor] = format_currency(stat_row[factor])
+
+        return stats
 
     def get_salary_str(self):
         """Возвращает данные о зарплате в виде строки.

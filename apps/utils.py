@@ -23,7 +23,7 @@ def format_currency(val):
     :param val:
     :return:
     """
-    return ' '.join(wrap(str(val)[::-1], 3))[::-1]
+    return ' '.join(wrap(str(int(val))[::-1], 3))[::-1]
 
 
 def get_from_url(url):

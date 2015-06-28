@@ -88,6 +88,14 @@ class RealmView(View):
         """
         return self.get(request, *args, **kwargs)
 
+    def update_context(self, context, request):
+        """Используется для дополнения контекста шаблона данными.
+
+        :param dict context:
+        :param Request request:
+        :return:
+        """
+
     # Поля связей по внешним ключам, котрые следует использовать.
     get_object_related_fields = ['submitter', 'last_editor']
 
@@ -164,12 +172,15 @@ class ListingView(RealmView):
         if category_id is not None:
             category = get_category_model().objects.get(pk=category_id)
 
-        return self.render(request, {
+        context = {
             self.realm.name_plural: page_items,
             'items': page_items,
             'category': category,
             'items_most_voted': self.get_most_voted_objects()
-        })
+        }
+        self.update_context(context, request)
+
+        return self.render(request, context)
 
     @cached_property
     def template_list_items(self):
@@ -251,14 +262,6 @@ class DetailsView(RealmView):
         """
         return request.user != item  # Пользователи не могут рекомендовать себя %)
 
-    def _update_context(self, context, request):
-        """Используется для дополнения контекста шаблона данными.
-
-        :param dict context:
-        :param Request request:
-        :return:
-        """
-
     def list_partner_links(self, request, xross=None):
         """Используется xross. Реализует получение блока с партнёрскими ссылками.
 
@@ -316,7 +319,7 @@ class DetailsView(RealmView):
             'item_edit_allowed': item_edit_allowed,
             'item_rating_allowed': item_rating_allowed
         }
-        self._update_context(context, request)
+        self.update_context(context, request)
         return self.render(request, context)
 
 
@@ -349,7 +352,7 @@ class EditView(RealmView):
         if item is None or isinstance(item, ModelWithCompiledText):
             return HttpResponse(ModelWithCompiledText.compile_text(text_src))
 
-    def _update_context(self, context, request):
+    def update_context(self, context, request):
         """Используется для дополнения контекста шаблона данными.
 
         :param dict context:
@@ -429,7 +432,7 @@ class EditView(RealmView):
         context = {'form': form, self.realm.name: item, 'item': item}
 
         try:
-            self._update_context(context, request)
+            self.update_context(context, request)
         except RedirectRequired:
             return redirector()
 

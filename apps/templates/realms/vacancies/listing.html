@@ -1,3 +1,63 @@
 {% extends "base_listing.html" %}
 
-{% block bar_right %}{% endblock %}
+{% block bar_right %}
+
+    <div>
+        <h4>Статистика
+        <sup class="small mod__has_tooltip" title="Собрана по данным вакансий, актуальных на текущий момент">
+            <span class="glyphicon glyphicon-question-sign"></span>
+        </sup>
+        </h4><hr>
+    </div>
+
+    <div class="marg__b_mid">
+
+        {% if stats_salary %}
+            <h4>Заплаты</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Мин.</th>
+                        <th>Ср.</th>
+                        <th>Макс.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stat_row in stats_salary %}
+                    <tr>
+                        <th scope="row">{{ stat_row.salary_currency }}</th>
+                        <td>{{ stat_row.min }}</td>
+                        <td>{{ stat_row.avg }}</td>
+                        <td>{{ stat_row.max }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+        {% if stats_places %}
+            <h4>Места</h4>
+            <table class="table">
+                <tbody>
+                    {% for stat_row in stats_places %}
+                    <tr>
+                        <td>
+                            {% if stat_row.is_published %}
+                            <a href="{{ stat_row.get_absolute_url }}">{{ stat_row.title }}</a>
+                            {% else %}
+                            {{ stat_row.title }}
+                            {% endif %}
+                        </td>
+                        <td>{{ stat_row.vacancies_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+        <div class="clearfix"></div>
+    </div>
+
+
+{% endblock %}

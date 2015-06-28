@@ -23,7 +23,7 @@ class UserDetailsView(DetailsView):
 
     get_object_related_fields = ['place']
 
-    def _update_context(self, context, request):
+    def update_context(self, context, request):
         user = context['item']
         context['bookmarks'] = user.get_bookmarks()
 
@@ -38,7 +38,7 @@ class UserEditView(EditView):
         if item != request.user:
             raise PermissionDenied()
 
-    def _update_context(self, context, request):
+    def update_context(self, context, request):
 
         if request.POST:
             prefs_were_set = set_user_preferences_from_request(request)
@@ -75,7 +75,7 @@ class PlaceDetailsView(DetailsView):
     def get(self, request, obj_id):
         return super().get(request, obj_id)
 
-    def _update_context(self, context, request):
+    def update_context(self, context, request):
         place = context['item']
 
         if request.user.is_authenticated():
@@ -108,6 +108,10 @@ class VacancyListingView(ListingView):
 
     get_object_related_fields = ['place']
 
+    def update_context(self, context, request):
+        context['stats_salary'] = Vacancy.get_salary_stats()
+        context['stats_places'] = Vacancy.get_places_stats()
+
     def get_most_voted_objects(self):
         return []
 
@@ -117,7 +121,7 @@ class ReferenceDetailsView(DetailsView):
 
     get_object_related_fields = ['parent', 'submitter']
 
-    def _update_context(self, context, request):
+    def update_context(self, context, request):
         reference = context['item']
         context['children'] = reference.get_actual(reference).order_by('title')
         if reference.parent is not None:
