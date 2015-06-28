@@ -2,6 +2,8 @@ import os
 import re
 from collections import OrderedDict
 from urllib.parse import urlsplit, urlunsplit
+from textwrap import wrap
+
 
 import requests
 from PIL import Image  # Для работы с jpg требуется собрать с libjpeg-dev
@@ -12,6 +14,16 @@ from django.core.files.base import ContentFile
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.utils.text import Truncator
+
+
+def format_currency(val):
+    """Форматирует значение валюты, разбивая его кратно
+    тысяче для облегчения восприятия.
+
+    :param val:
+    :return:
+    """
+    return ' '.join(wrap(str(val)[::-1], 3))[::-1]
 
 
 def get_from_url(url):

@@ -14,8 +14,7 @@ from django.utils import timezone
 
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
 from .exceptions import RemoteSourceError
-from .utils import scrape_page, HhVacancyManager
-
+from .utils import scrape_page, HhVacancyManager, format_currency
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 
@@ -213,10 +212,10 @@ class Vacancy(RealmBaseModel):
         """
         chunks = []
         if self.salary_from:
-            chunks.append(self.salary_from)
+            chunks.append(format_currency(self.salary_from))
 
         if self.salary_till:
-            chunks.extend(('—', self.salary_till))
+            chunks.extend(('—', format_currency(self.salary_till)))
 
         if self.salary_currency:
             chunks.append(self.salary_currency)
