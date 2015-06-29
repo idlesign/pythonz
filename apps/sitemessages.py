@@ -90,12 +90,14 @@ class PythonzTwitterMessage(PlainTextMessage):
         if not entity.notify_on_publish:
             return False
 
-        MAX_LEN = 139  # Максимальная длина тивта. Для верности меньше.
+        MAX_LEN = 139  # Максимальная длина твита. Для верности меньше.
         prefix = 'Новое: %s «' % entity.get_verbose_name()
         url = entity.get_absolute_url(with_prefix=True, hash_chunk='fromtwee')
+
         postfix = '» %s' % url
         if settings.AGRESSIVE_MODE:
             postfix = '%s #python #dev' % postfix
+
         title = Truncator(entity.title).chars(MAX_LEN - len(prefix) - len(postfix))
         message = '%s%s%s' % (prefix, title, postfix)
 
@@ -155,6 +157,9 @@ class PythonzEmailNewEntity(PythonzEmailMessage):
         :param RealmBaseModel entity:
         :return:
         """
+        if not entity.notify_on_publish:
+            return False
+
         subject = cls.get_full_subject('Новое - %s' % entity.title)
         context = {
             'entity_title': entity.title,
