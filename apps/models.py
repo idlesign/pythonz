@@ -213,7 +213,8 @@ class Vacancy(RealmBaseModel):
         :return:
         """
         stats = list(Place.objects.filter(
-            id__in=cls.objects.published().filter(place__isnull=False).distinct().values_list('place_id', flat=True)
+            id__in=cls.objects.published().filter(place__isnull=False).distinct().values_list('place_id', flat=True),
+            vacancies__status=cls.STATUS_PUBLISHED
         ).annotate(vacancies_count=Count('vacancies')).order_by('-vacancies_count', 'title'))
 
         return stats
