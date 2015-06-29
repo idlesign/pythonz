@@ -39,7 +39,7 @@
                 </script>
                 <ul class="marg__t_max">
                     {% for place in places %}
-                        <li>
+                        <li class="block marg__r_mid">
                             <a href="{{ place.get_absolute_url }}">{{ place.title }}</a> <sup title="поддержка">{{ place.supporters_num }}</sup>
                         </li>
                     {% endfor %}
