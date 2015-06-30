@@ -197,6 +197,7 @@ class Vacancy(RealmBaseModel):
 
     paginator_related = ['place']
     items_per_page = 15
+    notify_on_publish = False
 
     @property
     def description(self):
