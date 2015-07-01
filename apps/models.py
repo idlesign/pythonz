@@ -243,7 +243,11 @@ class Vacancy(RealmBaseModel):
         ))
 
         for stat_row in stats:
+            for factor in ('min', 'max'):
+                stat_row[factor] = stat_row[factor] or 0
+
             stat_row['avg'] = stat_row['min'] + ((stat_row['max'] - stat_row['min']) / 2)
+
             for factor in ('min', 'avg', 'max'):
                 stat_row[factor] = format_currency(stat_row[factor])
 
