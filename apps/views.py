@@ -13,6 +13,7 @@ from django.views.defaults import (
     server_error as dj_server_error
 )
 
+from .signals import sig_search_failed
 from .generics.views import DetailsView, RealmView, EditView, ListingView
 from .models import Place, User, Community, Event, Reference, Vacancy
 from .exceptions import RedirectRequired
@@ -185,7 +186,14 @@ def search(request):
         return redirect('index')
 
     results = Reference.objects.filter(title__icontains=search_term)
-    if len(results) == 1:
+    total_results = len(results)
+
+    if not total_results:
+        # Поиск не дал результатов. Запомним, что искали и сообщим администраторам,
+        # чтобы приняли меры по возможности.
+        sig_search_failed.send(None, search_term=search_term)
+
+    elif total_results == 1:
         return redirect(results[0].get_absolute_url())
 
     return render(request, 'static/search.html', {'search_term': search_term, 'results': results})

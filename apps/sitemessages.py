@@ -16,7 +16,7 @@ from django.utils import timezone
 from django.utils.text import Truncator
 
 from .realms import get_realms, get_realm
-from .signals import sig_entity_published, sig_entity_new
+from .signals import sig_entity_published, sig_entity_new, sig_search_failed
 
 
 def register_messengers():
@@ -59,8 +59,14 @@ def connect_signals():
         messages.success(kwargs['request'], 'Подписка успешно отменена. Спасибо, что читали!', 'success')
     sig_unsubscribe_success.connect(unsubscribe_success, weak=False)
 
+    # Новый материал.
     notify_handler = lambda sender, **kwargs: PythonzEmailNewEntity.create(kwargs['entity'])
     sig_entity_new.connect(notify_handler, dispatch_uid='cfg_new_entity', weak=False)
+
+    # Поиск без результатов.
+    notify_handler = (
+        lambda sender, **kwargs: PythonzEmailOneliner.create('Поиск без результатов', kwargs['search_term']))
+    sig_search_failed.connect(notify_handler, dispatch_uid='cfg_search_failed', weak=False)
 
     if settings.DEBUG:  # На всякий случай, чем чёрт не шутит.
         return False
@@ -140,6 +146,22 @@ class PythonzEmailMessage(EmailHtmlMessage):
         for item in settings.ADMINS:
             to.append(item[1])  # Адрес электронной почты админа.
         return to
+
+
+class PythonzEmailOneliner(PythonzEmailMessage):
+    """Простое "однострочное" сообщение."""
+
+    @classmethod
+    def create(cls, subject, text):
+        """Создаёт оповещение общего вида.
+
+        Рассылается администраторам проекта.
+
+        :param subject: Заголовок.
+        :param text: Текст сообщения.
+        :return:
+        """
+        cls(cls.get_full_subject(subject), text).schedule(cls.recipients('smtp', cls.get_admins_emails()))
 
 
 class PythonzEmailNewEntity(PythonzEmailMessage):
@@ -293,7 +315,13 @@ class PythonzEmailDigest(PythonzEmailMessage):
 
 
 # Регистрируем наши типы сообщений.
-register_message_types(PythonzTwitterMessage, PythonzEmailMessage, PythonzEmailNewEntity, PythonzEmailDigest)
+register_message_types(
+    PythonzTwitterMessage,
+    PythonzEmailMessage,
+    PythonzEmailOneliner,
+    PythonzEmailNewEntity,
+    PythonzEmailDigest
+)
 
 
 # Заменяем тип сообщений, отсылаемых sitegate на свой.
