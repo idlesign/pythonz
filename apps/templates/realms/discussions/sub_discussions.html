@@ -3,6 +3,7 @@
         <div class="pull-right">
             <form method="post" action="{% url "discussions:add" %}">
                 {% csrf_token %}
+                <input type="hidden" name="pythonz_form" value="1" />
                 <input type="hidden" name="related_item_realm" value="{{ show_form_for.realm.name }}">
                 <input type="hidden" name="related_item_id" value="{{ show_form_for.id }}">
                 <button class="btn btn-sm">

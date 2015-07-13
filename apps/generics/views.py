@@ -368,7 +368,7 @@ class EditView(RealmView):
             item = self.get_object_or_404(obj_id)
 
         data = None
-        if 'realm_form' in request.POST or 'related_item_realm' in request.POST:
+        if 'pythonz_form' in request.POST:
             data = request.POST
 
         form = self.realm.form(data, request.FILES or None, instance=item, user=request.user)
