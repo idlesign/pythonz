@@ -674,7 +674,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         title = {
             'verbose_name': 'Название',
             'help_text': ('Здесь следует указать название раздела справки '
-                          'или пакета, модуля, класса, метода, функции и т.п.',)
+                          'или пакета, модуля, класса, метода, функции и т.п.')
         }
         description = {
             'verbose_name': 'Кратко',
