@@ -1,0 +1,6 @@
+<form method="post" action="{% url "references:add" %}" class="marg__b_min">
+    {% csrf_token %}
+    <input type="hidden" name="pythonz_form" value="1" />
+    <input type="hidden" name="parent" value="{{ parent }}">
+    <button class="btn btn-block">{{ title }}</button>
+</form>

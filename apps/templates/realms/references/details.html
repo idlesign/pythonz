@@ -99,6 +99,17 @@
 
 {% block right_bar %}
 
+    {% if request.user.is_authenticated %}
+    <div class="well well-sm">
+        <div class="marg__b_min">Дополнить справочник:</div>
+        <div>
+            {% include "realms/references/quick_add_form.html" with parent=reference.parent_id title='Добавить по соседству' %}
+            {% include "realms/references/quick_add_form.html" with parent=reference.id title='Добавить вложенно' %}
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    {% endif %}
+
     {% if reference.parent %}
     <div class="marg__t_min">
         <h6>Родительский раздел</h6>
@@ -106,11 +117,14 @@
     </div>
     {% endif %}
 
-    <div class="text-center marg__t_max">
+{% endblock %}
+
+
+{% block details_author %}
+    <div class="pull-left">
         {% include "sub_box_share.html" %}
     </div>
-
-
+    {{ block.super }}
 {% endblock %}
 
 
