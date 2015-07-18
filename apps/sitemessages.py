@@ -16,7 +16,7 @@ from django.utils import timezone
 from django.utils.text import Truncator
 
 from .realms import get_realms, get_realm
-from .signals import sig_entity_published, sig_entity_new, sig_search_failed
+from .signals import sig_entity_published, sig_entity_new, sig_search_failed, sig_integration_failed
 
 
 def register_messengers():
@@ -67,6 +67,11 @@ def connect_signals():
     notify_handler = (
         lambda sender, **kwargs: PythonzEmailOneliner.create('Поиск без результатов', kwargs['search_term']))
     sig_search_failed.connect(notify_handler, dispatch_uid='cfg_search_failed', weak=False)
+
+    # Ошибка интеграции со сторонними сервисами.
+    notify_handler = (
+        lambda sender, **kwargs: PythonzEmailOneliner.create('Ошибка интеграции', kwargs['description']))
+    sig_integration_failed.connect(notify_handler, dispatch_uid='cfg_integration_failed', weak=False)
 
     if settings.DEBUG:  # На всякий случай, чем чёрт не шутит.
         return False

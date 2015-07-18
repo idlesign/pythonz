@@ -14,6 +14,7 @@ from django.core.files.base import ContentFile
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.utils.text import Truncator
+from apps.signals import sig_integration_failed
 
 
 def format_currency(val):
@@ -52,8 +53,11 @@ def get_json(url):
     result = {}
     try:
         response = get_from_url(url)
-    except requests.exceptions.RequestException:
-        pass
+        response.raise_for_status()
+
+    except requests.exceptions.RequestException as e:
+        sig_integration_failed.send(None, description='URL %s. Error: %s' % (url, e))
+
     else:
         try:
             result = response.json()
