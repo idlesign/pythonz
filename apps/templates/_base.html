@@ -18,7 +18,7 @@
     <link href="{{ STATIC_URL }}css/pythonz.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/foundation-icons.css" rel="stylesheet">
 
-    <link href="http://yandex.st/highlightjs/8.2/styles/github.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/github.min.css">
 
     <link href='http://fonts.googleapis.com/css?family=Belleza' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=PT+Serif&subset=cyrillic' rel='stylesheet' type='text/css'>
@@ -117,8 +117,11 @@
     <script src="{{ STATIC_URL }}js/pythonz.min.js"></script>
 
     <script src="http://yandex.st/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
-    <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+    <script type="text/javascript">
+        hljs.configure({useBR: true});
+        hljs.initHighlightingOnLoad();
+    </script>
 
     {% block js_bottom %}{% endblock %}
 
