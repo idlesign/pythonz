@@ -14,7 +14,12 @@ from django.core.files.base import ContentFile
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.utils.text import Truncator
-from apps.signals import sig_integration_failed
+
+from pythonz import VERSION
+from .signals import sig_integration_failed
+
+
+USER_AGENT = 'pythonz.net/%s (press@pythonz.net)' % '.'.join(map(str, VERSION))
 
 
 def format_currency(val):
@@ -33,11 +38,9 @@ def get_from_url(url):
     :param str url:
     :return:
     """
-    headers = {'User-agent': 'Mozilla/5.0 (Ubuntu; X11; Linux i686; rv:8.0) Gecko/20100'}
     r_kwargs = {
         'allow_redirects': True,
-        'headers': headers,
-        'timeout': 1.5
+        'headers': {'User-agent': USER_AGENT},
     }
     return requests.get(url, **r_kwargs)
 
