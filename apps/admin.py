@@ -8,7 +8,8 @@ from simple_history.admin import SimpleHistoryAdmin
 
 from admirarchy.toolbox import HierarchicalModelAdmin
 
-from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version, PartnerLink
+from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version, PartnerLink, \
+    Vacancy
 from .partners import get_partners_choices
 from .forms.forms import BookForm
 
@@ -93,6 +94,16 @@ class PlaceAdmin(admin.ModelAdmin):
     ordering = ['geo_title']
 
 admin.site.register(Place, PlaceAdmin)
+
+
+class VacancyAdmin(admin.ModelAdmin):
+
+    list_display = ('title', 'src_id', 'status', 'time_created')
+    search_fields = ['title', 'src_id']
+    list_filter = ['status', 'place']
+    ordering = ['-time_created']
+
+admin.site.register(Vacancy, VacancyAdmin)
 
 
 class EntityBaseAdmin(SimpleHistoryAdmin):
