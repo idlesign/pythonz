@@ -1,7 +1,10 @@
 {% extends "_base.html" %}
 
 
-{% block page_keywords %}{{ realm.view_listing_keywords }}{% endblock %}
+{% block page_keywords %}{{ realm.view_listing_keywords }}{% if category %}, {{ category.title }}{% endif %}{% endblock %}
+
+
+{% block page_description %}{% if category %}{{ category.note|truncatechars:100 }}{% endif %}{% endblock %}
 
 
 {% block page_contents_pre %}
@@ -9,6 +12,13 @@
     <div class="row">
         <div class="col-md-12">
             {% include "sub_title_block.html" %}
+
+        {% block promo %}
+            {% if category.note %}
+                <blockquote>{{ category.note|urlize }}</blockquote>
+            {% endif %}
+        {% endblock %}
+
         </div>
     </div>
 

@@ -2,7 +2,17 @@
 {% load sitecats %}
 
 
+{% block page_description %}{{ item.note|truncatechars:100 }}{% endblock %}
+
+
+{% block page_keywords %}{{ block.super }}, {{ item.title }}{% endblock %}
+
+
 {% block workarea %}
+    {% if item.note %}
+        <blockquote>{{ item.note|urlize }}</blockquote>
+    {% endif %}
+
     <div class="col-md-12">
         {% for realm in realm_list %}
             <div class="marg__l_mid marg__t_mid">
