@@ -21,7 +21,3 @@
     <h1 itemprop="name">{% sitetree_page_title from "main" %}</h1>
     <i>{% block subheader %}{{ subheader }}{% endblock %}</i>
 </div>
-
-{% if view.name == 'listing' %}
-    <blockquote>{{ realm.txt_promo|safe }}</blockquote>
-{% endif %}
