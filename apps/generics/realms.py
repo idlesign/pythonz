@@ -11,6 +11,7 @@ from .views import ListingView, DetailsView, AddView, EditView, TagsView
 
 LOGGER = logging.getLogger('pythonz.realms')
 SYNDICATION_URL_MARKER = 'feed'
+SYNDICATION_ITEMS_LIMIT = 15
 
 
 class RealmBase(object):
@@ -93,6 +94,10 @@ class RealmBase(object):
     view_tags_url = r'^tags/(?P<category_id>\d+)/$'
 
     @classmethod
+    def init(cls):
+        """Инициализатор обсласти. Наследники могут использовать для своих нужд."""
+
+    @classmethod
     def is_allowed_edit(cls):
         """Возвращает флаг, указывающий на возможность редактирования объектов
         в данной области.
@@ -102,28 +107,38 @@ class RealmBase(object):
         return 'edit' in cls.allowed_views
 
     @classmethod
+    def _get_syndication_feed(cls, title, description, func_link, func_items, cls_name):
+        from ..utils import get_thumb_url
+        type_dict = {
+            'title': title,
+            'description': 'PYTHONZ. %s' % description,
+            'item_enclosure_mime_type': 'image/png',
+            'item_enclosure_length': 50000,
+            'item_enclosure_url': lambda self, item: (
+                get_thumb_url(item.realm, item.cover, 100, 131, absolute_url=True) if hasattr(item, 'cover') else ''),
+            'link': func_link,
+            'items': func_items,
+            'item_title': lambda self, item: item.title,
+            'item_link': lambda self, item: item.get_absolute_url(hash_chunk='fromrss'),
+            'item_description': lambda self, item: item.description,
+        }
+        return type('%sSyndication' % cls_name, (Feed,), type_dict)()
+
+    @classmethod
     def get_syndication_feed(cls):
         """Возвращает объект потока синдикации (RSS).
 
         :return:
         """
         if cls.syndication_feed is None:
-            from ..utils import get_thumb_url
-            name = cls.model._meta.verbose_name_plural
-            type_dict = {
-                'title': name,
-                'description': 'PYTHONZ. Новое в разделе «%s»' % name,
-                'item_enclosure_mime_type': 'image/png',
-                'item_enclosure_length': 50000,
-                'item_enclosure_url': lambda self, item: (
-                    get_thumb_url(cls, item.cover, 100, 131, absolute_url=True) if hasattr(item, 'cover') else ''),
-                'link': lambda self: reverse(cls.get_listing_urlname()),
-                'items': lambda self: cls.model.get_actual(),
-                'item_title': lambda self, item: item.title,
-                'item_link': lambda self, item: item.get_absolute_url(hash_chunk='fromrss'),
-                'item_description': lambda self, item: item.description,
-            }
-            cls.syndication_feed = type('%sSyndication' % cls.name, (Feed,), type_dict)()
+            title = cls.model._meta.verbose_name_plural
+            cls.syndication_feed = cls._get_syndication_feed(
+                title=title,
+                description='Материалы в разделе «%s»' % title,
+                func_link=lambda self: reverse(cls.get_listing_urlname()),
+                func_items=lambda self: cls.model.get_actual()[:SYNDICATION_ITEMS_LIMIT],
+                cls_name=cls.name
+            )
         return cls.syndication_feed
 
     @classmethod

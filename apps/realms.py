@@ -1,13 +1,16 @@
 from collections import OrderedDict
+from operator import attrgetter
 
+from django.db.models import signals
 from django.conf.urls import patterns, url
+from django.core.urlresolvers import reverse, get_resolver
 
 from sitetree.utils import tree, item
-from sitecats.models import Category
+from sitecats.toolbox import get_tie_model, get_category_model
 
 from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm, \
     ReferenceForm
-from .generics.realms import RealmBase
+from .generics.realms import RealmBase, SYNDICATION_URL_MARKER, SYNDICATION_ITEMS_LIMIT
 from .generics.models import RealmBaseModel
 from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy
 from .signals import sig_support_changed
@@ -49,6 +52,7 @@ def register_realms(*classes):
     """
     for cls in classes:
         REALMS_REGISTRY[cls.get_names()[0]] = cls
+        cls.init()
 
 
 def get_realms():
@@ -324,24 +328,105 @@ class CategoryRealm(RealmBase):
                                 'представленных на pythonz.net.')
     view_listing_keywords = '%s категория, метка, categories, материалы по питону' % BASE_KEYWORDS
 
-    model = Category
+    model = get_category_model()
     icon = 'tag'
     name = 'category'
     name_plural = 'categories'
     allowed_views = ('listing', 'details')
     ready_for_digest = False
     sitemap_enabled = False
-    syndication_enabled = False
     show_on_main = False
     view_listing_title = 'Путеводитель'
     view_listing_base_class = CategoryListingView
     view_details_base_class = CategoryListingView
+
+    SYNDICATION_NAMESPACE = 'category_feeds'
 
     @classmethod
     def get_sitetree_details_item(cls):
         return item(
             'Категория «{{ category.parent.title }} — {{ category.title }}»', 'categories:details category.id',
             in_menu=False, in_sitetree=False)
+
+    @classmethod
+    def init(cls):
+        # Включаем прослушивание сигналов, необходимое для функционировая области.
+        tie_model = get_tie_model()
+        # url-синдикации будут обновлены в случае добавления/удаления связи сущности с категорией.
+        signals.post_save.connect(cls.update_syndication_urls, sender=tie_model)
+        signals.post_delete.connect(cls.update_syndication_urls, sender=tie_model)
+
+    @classmethod
+    def get_urls(cls):
+        urls = super().get_urls()
+        urls += CategoryRealm.get_syndication_urls()
+        return urls
+
+    @classmethod
+    def get_syndication_url(cls):
+        return 'feed/'
+
+    @classmethod
+    def update_syndication_urls(cls, **kwargs):
+        """Обновляет url-шаблоны синдикации, заменяя старые новыми."""
+        target_namespace = cls.SYNDICATION_NAMESPACE
+        linked_category_id_str = 'category_%s' % kwargs['instance'].category_id
+        pattern_idx = -1
+
+        resolver = get_resolver(None)
+        urlpatterns = getattr(resolver.urlconf_module, 'urlpatterns', resolver.urlconf_module)
+
+        for idx, pattern in enumerate(urlpatterns):
+            if getattr(pattern, 'namespace', '') == target_namespace:
+                pattern_idx = idx
+                if linked_category_id_str in pattern.reverse_dict.keys():
+                    # Категория была известна и ранее, перепривязка URL не требуется.
+                    return
+                break
+
+        if pattern_idx > -1:
+            del urlpatterns[pattern_idx]
+            urlpatterns += cls.get_syndication_urls()
+
+    @classmethod
+    def get_syndication_urls(cls):
+        """Возвращает url-шаблоны с привязанными сгенерированными представлениями
+         для потоков синдикации (RSS) с перечислением новых материалов в категориях.
+
+        :return:
+        """
+        feeds = []
+        tie_model = get_tie_model()
+        categories = tie_model.get_linked_objects(by_category=True)
+
+        def get_in_category(category_id):
+            """Возвращает объекты из разных областей в указанной категории."""
+            linked = tie_model.get_linked_objects(filter_kwargs={'category_id': category_id}, id_only=True)
+            result = []
+            for model, ids in linked.items():
+                result.extend(model.get_actual().filter(id__in=ids)[:SYNDICATION_ITEMS_LIMIT])
+            result = sorted(result, key=attrgetter('time_published'), reverse=True)
+            return result[:SYNDICATION_ITEMS_LIMIT]
+
+        for category in categories.keys():
+            title = category.title
+            category_id = category.id
+            feed = RealmBase._get_syndication_feed(
+                title=title,
+                description='Материалы в категории «%s». %s' % (title, category.note),
+                func_link=lambda self: reverse(CategoryRealm.get_details_urlname(), args=[self.category_id]),
+                func_items=lambda self: get_in_category(self.category_id),
+                cls_name='Category%s' % category_id
+            )
+            feed.category_id = category_id
+
+            feeds.append(
+                url(r'^%s/%s/$' % (category_id, SYNDICATION_URL_MARKER), feed, name='category_%s' % category_id))
+
+        _, realm_name_plural = CategoryRealm.get_names()
+
+        return patterns(
+            '', url(r'^%s/' % realm_name_plural, (patterns('', *feeds), realm_name_plural, cls.SYNDICATION_NAMESPACE)))
 
 
 class CommunityRealm(RealmBase):
