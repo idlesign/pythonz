@@ -130,13 +130,23 @@ class RealmBase(object):
 
         :return:
         """
+        def get_items(self):
+            items = []
+            try:
+                items = cls.model.get_actual()[:SYNDICATION_ITEMS_LIMIT]
+            except AttributeError:
+                # todo Затычка для модели Categories. Убрать фиктивный RSS при случае.
+                pass
+
+            return items
+
         if cls.syndication_feed is None:
             title = cls.model._meta.verbose_name_plural
             cls.syndication_feed = cls._get_syndication_feed(
                 title=title,
                 description='Материалы в разделе «%s»' % title,
                 func_link=lambda self: reverse(cls.get_listing_urlname()),
-                func_items=lambda self: cls.model.get_actual()[:SYNDICATION_ITEMS_LIMIT],
+                func_items=get_items,
                 cls_name=cls.name
             )
         return cls.syndication_feed
