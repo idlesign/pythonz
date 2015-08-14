@@ -11,16 +11,10 @@
             <div class="media-body">
                 <h4><a href="{{ community.get_absolute_url }}">{{ community.title }}</a></h4>
                 <div class="marg__b_min"><i>{{ community.description }}</i></div>
-                <small class="text-muted">
-                    <span class="label label-default">{{ title_supporters }}: {{ community.supporters_num }}</span> &nbsp;&nbsp;
-                    {% if community.url %}
-                        <span>{{ title_url }}: <a href="{{ community.url }}">{{ community.url }}</a></span>
-                    {% endif %}
-                </small>
             </div>
             <div class="media-right">
                 {% if thumb_url %}
-                    <img src="{{ thumb_url }}" class="img-rounded media-object">
+                    <img src="{{ thumb_url }}" class="img-rounded media-object faded">
                 {% endif %}
             </div>
         </li>
