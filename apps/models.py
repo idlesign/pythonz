@@ -356,6 +356,7 @@ class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
 
     class Fields:
         title = 'Название сообщества'
+        cover = 'Логотип'
         description = {
             'verbose_name': 'Кратко',
             'help_text': ('Сжатая предварительная информация о сообществе (например, направление деятельности). %s' %

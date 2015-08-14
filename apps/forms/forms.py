@@ -2,8 +2,6 @@ from django.conf import settings
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from datetimewidget.widgets import DateTimeWidget
-from apps.exceptions import RemoteSourceError
-from apps.shortcuts import message_error
 
 from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference
 from ..generics.forms import RealmEditBaseForm
@@ -254,6 +252,7 @@ class CommunityForm(RealmEditBaseForm):
         fields = (
             'title',
             'url',
+            'cover',
             'description',
             'text_src',
             'contacts',
