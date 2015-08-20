@@ -225,7 +225,7 @@ def get_thumb_url(realm, image, width, height, absolute_url=False):
                 pass
             img = Image.open(image)
             img.thumbnail((width, height), Image.ANTIALIAS)
-            img.save(thumb_file)
+            img.convert('RGB').save(thumb_file)
 
         url = os.path.join(settings.MEDIA_URL, thumb_file_base)
         if absolute_url:
