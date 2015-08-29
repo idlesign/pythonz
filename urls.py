@@ -15,7 +15,7 @@ autodiscover_siteprefs()
 
 urlpatterns = patterns('',
     url(r'^$', 'apps.views.index', name='index'),
-    url(r'^search/site/$', render, {'template_name': 'static/search_site.html'}),
+    url(r'^search/site/$', render, {'template_name': 'static/search_site.html'}, name='search_site'),
     url(r'^search/$', 'apps.views.search', name='search'),
     url(r'^login/$', 'apps.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),

@@ -1,9 +1,13 @@
+from urllib.parse import quote_plus
+
 from sitegate.decorators import signin_view, signup_view, redirect_signedin
 from sitegate.signup_flows.classic import SimpleClassicWithEmailSignup
+from apps.shortcuts import message_warning
 from sitecats.toolbox import get_category_model, get_category_lists, get_category_aliases_under
 from sitemessage.toolbox import get_user_preferences_for_ui, set_user_preferences_from_request
 from xross.toolbox import xross_view
 from django.shortcuts import render
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
@@ -192,6 +196,13 @@ def search(request):
         # Поиск не дал результатов. Запомним, что искали и сообщим администраторам,
         # чтобы приняли меры по возможности.
         sig_search_failed.send(None, search_term=search_term)
+
+        message_warning(request, 'Поиск по справочнику не дал результатов, и мы переключились на поиск по всему сайту.')
+
+        # Перенаправляем на поиск по всему сайту.
+        redirect_response = redirect('search_site')
+        redirect_response['Location'] += '?searchid=%s&text=%s' % (settings.YANDEX_SEARCH_ID, quote_plus(search_term))
+        return redirect_response
 
     elif total_results == 1:
         return redirect(results[0].get_absolute_url())

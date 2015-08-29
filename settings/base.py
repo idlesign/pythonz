@@ -39,6 +39,7 @@ PARTNER_IDS = {}
 
 GOOGLE_API_KEY = 'not_a_secret'
 YANDEX_RCA_KEY = 'not_a_secret'
+YANDEX_SEARCH_ID = 'not_a_secret'
 
 # Переводит проект в агрессивный режим: задействует различную машинерию для привлечения внимания к проекту.
 AGRESSIVE_MODE = False
