@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from datetime import datetime, timedelta
 from django.db.models import Avg, Min, Max, Count
 
 import requests
@@ -899,6 +900,11 @@ class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         if not all([self.time_start, self.time_finish]):
             return False
         return self.time_start <= timezone.now() <= self.time_finish
+
+    @property
+    def time_forgetmenot(self):
+        """Дата напоминания о предстоящем событии (на сутки ранее начала события)."""
+        return self.time_start - timedelta(days=1)
 
     @classmethod
     def get_paginator_objects(cls):
