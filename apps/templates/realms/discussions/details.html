@@ -39,7 +39,13 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            {% include "sub_disqus.html" with shortname="pythonz-discussions" comments_enabled=1 entity_name='discussion' entity_id=discussion.id %}
+            {% with opinion.submitter as author %}
+                {% if author.disqus_shortname %}
+                    {% include "sub_disqus.html" with shortname=author.disqus_shortname comments_enabled=author.comments_enabled category_id=author.disqus_category_id entity_name='opinion' entity_id=opinion.id %}
+                {% else %}
+                    {% include "sub_disqus.html" with shortname="pythonz-discussions" comments_enabled=1 entity_name='discussion' entity_id=discussion.id %}
+                {% endif %}
+            {% endwith %}
         </div>
     </div>
 {%  endblock %}
