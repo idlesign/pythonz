@@ -21,7 +21,7 @@ from .utils import scrape_page, HhVacancyManager, format_currency
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 
 HINT_IMPERSONAL_REQUIRED = ('<strong>Без обозначения личного отношения. '
-                            'Личное отношение можно выразить во Мнениях.</strong>')
+                            'Личное отношение можно выразить в Обсуждениях к материалу.</strong>')
 
 
 class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCategory, ModelWithCompiledText):
