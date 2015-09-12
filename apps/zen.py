@@ -24,7 +24,7 @@ ZEN = (
     ('Now is better than never.\nAlthough never is often better than <em>right</em> now.',
      'Лучше сейчас, чем никогда.\nВпрочем, часто <em>никогда</em> лучше, чем <em>прямо сейчас</em>.'),
     ('If the implementation is hard to explain, it\'s a bad idea.',
-     'Если реализацию трудно описать, значит идея была некудышной.'),
+     'Если реализацию трудно описать, значит идея была никудышной.'),
     ('If the implementation is easy to explain, it may be a good idea.',
      'Если реализацию легко описать — возможно, идея была хорошей.'),
     ('Namespaces are one honking great idea — let\'s do more of those!',
