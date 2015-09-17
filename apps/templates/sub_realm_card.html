@@ -17,7 +17,7 @@
                 <li class="media">
                     <div class="media-body">
                         <a href="{{ local.get_absolute_url }}">{{ local.title }}</a>
-                        <div class="cl__gray small">{{ local.get_description|truncatechars:110 }}</div>
+                        <div class="cl__gray small">{{ local.get_description|truncatechars_html:110|safe }}</div>
                     </div>
                     <div class="media-right">{% include "sub_item_cover.html" with item=local %}</div>
                 </li>
