@@ -16,7 +16,7 @@ from django.utils import timezone
 
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
 from .exceptions import RemoteSourceError
-from .utils import scrape_page, HhVacancyManager, format_currency
+from .utils import scrape_page, HhVacancyManager, format_currency, PyDigestResource
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 
@@ -60,6 +60,57 @@ class ModelWithDiscussions(models.Model):
 
     class Meta:
         abstract = True
+
+
+class ExternalResource(RealmBaseModel):
+    """Внешние ресурсы. Представляют из себя ссылки на страницы вне сайта."""
+
+    SRC_ALIAS_PYDIGEST = 'pydigest'
+
+    SRC_ALIASES = (
+        (SRC_ALIAS_PYDIGEST, 'pythondigest.ru'),
+    )
+
+    RESOURCES = OrderedDict([
+        (SRC_ALIAS_PYDIGEST, PyDigestResource),
+    ])
+
+    src_alias = models.CharField('Идентификатор источника', max_length=20, choices=SRC_ALIASES)
+    realm_name = models.CharField('Идентификатор области на pythonz', max_length=20)
+
+    url = models.URLField('Страница ресурса', unique=True)
+    title = models.CharField('Название', max_length=255)
+    description = models.TextField('Описание', blank=True, default='')
+
+    class Meta:
+        verbose_name = 'Внешний ресурс'
+        verbose_name_plural = 'Внешние ресурсы'
+
+    @classmethod
+    def fetch_new(cls):
+        """Добывает данные из источников и складирует их.
+
+        :return:
+        """
+        for resource_alias, resource_cls in cls.RESOURCES.items():
+            entries = resource_cls.fetch_entries()
+            if not entries:
+                return
+
+            added = []
+            for entry_data in entries:
+                new_resource = cls(**entry_data)
+                new_resource.src_alias = resource_alias
+                new_resource.status = cls.STATUS_PUBLISHED
+
+                try:
+                    new_resource.save()
+                    added.append(new_resource.id)
+                except IntegrityError:
+                    pass
+
+            if added:
+                cls.objects.filter(src_alias=resource_alias).exclude(id__in=added).delete()
 
 
 class PartnerLink(models.Model):
@@ -526,12 +577,10 @@ class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
 
     SOURCE_HANDMADE = 1
     SOURCE_SCRAPING = 2
-    SOURCE_RSS = 3
 
     SOURCES = choices_list(
         (SOURCE_HANDMADE, 'Написана на этом сайте'),
         (SOURCE_SCRAPING, 'Соскоблена с другого сайта'),
-        (SOURCE_RSS, 'Взята из RSS'),
     )
 
     source = models.PositiveIntegerField(
