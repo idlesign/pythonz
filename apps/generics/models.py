@@ -153,6 +153,14 @@ class CommonEntityModel(models.Model):
 
         super().save(*args, **kwargs)
 
+    def get_description(self):
+        """Возвращает вычисляемое описание объекта.
+        Обычно должен использоваться вместо обращения к атрибуту description,
+        которого может не сущестовать у модели.
+
+        """
+        return self.description
+
     def update_cover_from_url(self, url):
         """Забирает обложку с указанного URL.
 

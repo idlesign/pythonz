@@ -16,7 +16,7 @@ from django.utils import timezone
 
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
 from .exceptions import RemoteSourceError
-from .utils import scrape_page, HhVacancyManager, format_currency, PyDigestResource
+from .utils import scrape_page, HhVacancyManager, format_currency, PyDigestResource, truncate_chars
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 
@@ -51,6 +51,9 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
         if not self.pk:
             self.status = self.STATUS_PUBLISHED
         super().save(*args, **kwargs)
+
+    def get_description(self):
+        return truncate_chars(self.text, 360, html=True)
 
 
 class ModelWithDiscussions(models.Model):
@@ -184,6 +187,9 @@ class Place(RealmBaseModel, ModelWithDiscussions):
         lat, lng = self.geo_pos.split('|')
         return lat, lng
 
+    def get_description(self):
+        return self.description
+
     @classmethod
     def create_place_from_name(cls, name):
         """Создаёт место по его имени.
@@ -254,6 +260,15 @@ class Vacancy(RealmBaseModel):
 
     @property
     def description(self):
+        # todo Убрать после перевода всего на get_description.
+        return self.get_description()
+
+    def get_description(self):
+        """Возвращает вычисляемое описание объекта.
+        Обычно должен использоваться вместо обращения к атрибуту description,
+        которого может не сущестовать у модели.
+
+        """
         chunks = [self.employer_name, self.src_place_name]
         salary_chunk = self.get_salary_str()
         if salary_chunk:
@@ -533,6 +548,14 @@ class User(RealmBaseModel, AbstractUser):
 
     def get_username_partial(self):
         return self.username.split('@')[0]
+
+    def get_description(self):
+        """Возвращает вычисляемое описание объекта.
+        Обычно должен использоваться вместо обращения к атрибуту description,
+        которого может не сущестовать у модели.
+
+        """
+        return self.get_display_name()
 
 
 class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,

@@ -29,7 +29,7 @@
                     <a href="{% url "discussions:details" discussion.id %}" class="item" title="Страница обсуждения">{{ discussion.title }}</a>
                     {% if show_texts %}
                         <div>
-                            {{ discussion.text|truncatechars_html:360|safe }}
+                            {{ discussion.get_description|safe }}
                         </div>
                     {% endif %}
                 </li>
