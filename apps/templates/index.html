@@ -1,18 +1,9 @@
 {% extends "_base.html" %}
-{% load sitetree model_meta %}
-
 
 {% block page_title %}Про Python{% endblock %}
 
 {% block page_contents %}
-    <div class="features section">
-        <div class="row features_row">
-            {% for realm in realms %}
-                <div class="col-md-4 text-center box">
-                    <a href="{% url realm.get_listing_urlname %}"><i class="glyphicon glyphicon-{{ realm.icon }}"></i></a>
-                    <h4>{% model_meta_verbose_name_plural realm.model %}</h4>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
+    {% for realm_data in realms_data %}
+        {% include "sub_realm_card.html" %}
+    {% endfor %}
 {%  endblock %}

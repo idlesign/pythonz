@@ -1,0 +1,38 @@
+{% load sitetree model_meta %}
+
+<div class="col-md-6">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                <i class="glyphicon glyphicon-{{ realm_data.cls.icon }}"></i>
+                <a href="{% url realm_data.cls.get_listing_urlname %}">
+                    {% model_meta_verbose_name_plural realm_data.cls.model %}
+                </a>
+            </h4>
+        </div>
+        <div class="panel-body ">
+            <ul class="marg__b_min">
+            {% for local in realm_data.locals %}
+                <li class="media">
+                    <div class="media-body">
+                        <a href="{{ local.get_absolute_url }}">{{ local.title }}</a>
+                        <div class="cl__gray small">{{ local.description }}</div>
+                    </div>
+                    <div class="media-right">{% include "sub_item_cover.html" with item=local %}</div>
+                </li>
+            {% endfor %}
+            </ul>
+
+            {% if realm_data.externals %}
+                <hr>
+                <ul>
+                    {% for external in realm_data.externals %}
+                    <li><a href="{{ external.url }}">{{ external.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+
+</div>

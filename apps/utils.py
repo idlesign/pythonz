@@ -182,6 +182,10 @@ class PyDigestResource:
         for realm, aliases in mapping.items():
             realm_name, _ = realm.get_names()
 
+            entries_max = 5
+            if len(aliases) > 1:
+                entries_max = 3
+
             for alias in aliases:
                 url = '%s%s/' % (base_url, alias)
 
@@ -192,8 +196,7 @@ class PyDigestResource:
                     sig_integration_failed.send(None, description='URL %s. Error: %s' % (url, e))
 
                 else:
-
-                    for entry in parsed.entries:
+                    for entry in reversed(parsed.entries[:entries_max]):
                         link = entry.link
                         if link in known_links:
                             continue

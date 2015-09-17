@@ -1,0 +1,8 @@
+{% load sitetree model_meta thumbs %}
+
+{% thumbs_get_thumb_url item.cover 100 131 item.realm as "thumb_url" %}
+{% if thumb_url %}
+    <img src="{{ thumb_url }}" class="img-thumbnail media-object faded">
+{% else %}
+    <span class="faded img-thumbnail icon_entity glyphicon glyphicon-{{ item.realm.icon }}"></span>
+{% endif %}

@@ -277,6 +277,7 @@ class PlaceRealm(RealmBase):
     sitemap_changefreq = 'monthly'
     view_listing_base_class = PlaceListingView
     view_details_base_class = PlaceDetailsView
+    show_on_main = False
 
 
 class DiscussionRealm(RealmBase):
@@ -313,6 +314,7 @@ class UserRealm(RealmBase):
     sitemap_date_field = 'date_joined'
     view_details_base_class = UserDetailsView
     view_edit_base_class = UserEditView
+    show_on_main = False
 
     @classmethod
     def get_sitetree_details_item(cls):

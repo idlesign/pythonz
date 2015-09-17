@@ -1,3 +1,5 @@
+from itertools import groupby
+from operator import attrgetter
 from urllib.parse import quote_plus
 
 from sitegate.decorators import signin_view, signup_view, redirect_signedin
@@ -19,7 +21,7 @@ from django.views.defaults import (
 
 from .signals import sig_search_failed
 from .generics.views import DetailsView, RealmView, EditView, ListingView
-from .models import Place, User, Community, Event, Reference, Vacancy
+from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource
 from .exceptions import RedirectRequired
 
 
@@ -176,7 +178,30 @@ server_error = lambda request: dj_server_error(request, template_name='static/50
 
 def index(request):
     """Индексная страница."""
-    return redirect('categories:listing')
+    from .realms import get_realms
+
+    realms_data = []
+    realms_registry = get_realms()
+
+    externals = ExternalResource.objects.filter(realm_name__in=realms_registry.keys())
+    externals = {k: list(v) for k, v in groupby(externals, attrgetter('realm_name'))}
+
+    for name, realm in realms_registry.items():
+        if not realm.show_on_main:
+            continue
+
+        realm_externals = externals.get(name, [])
+        locals_count = 1
+        if not realm_externals:
+            locals_count = 3
+
+        realms_data.append({
+            'cls': realm,
+            'locals': realm.model.get_actual()[:locals_count],
+            'externals': realm_externals,
+        })
+
+    return render(request, 'index.html', {'realms_data': realms_data})
 
 
 def search(request):

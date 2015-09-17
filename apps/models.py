@@ -85,6 +85,7 @@ class ExternalResource(RealmBaseModel):
     class Meta:
         verbose_name = 'Внешний ресурс'
         verbose_name_plural = 'Внешние ресурсы'
+        ordering = ('-time_created',)
 
     @classmethod
     def fetch_new(cls):
