@@ -4,6 +4,7 @@ Fabric==1.10.1
 Pillow==2.9.0
 bleach==1.4.1
 beautifulsoup4==4.4.0
+feedparser==5.2.1
 pytz==2015.4
 requests==2.7.0
 twitter==1.16.0

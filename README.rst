@@ -63,6 +63,7 @@ https://github.com/idlesign/pythonz
 * `awesome-slugify <https://github.com/dimka665/awesome-slugify>`_
 * `Beautiful Soup <http://www.crummy.com/software/BeautifulSoup/>`_
 * `bleach <https://github.com/jsocol/bleach>`_
+* `feedparser <http://pythonhosted.org/feedparser>`_
 * `Pillow <https://github.com/python-pillow/Pillow>`_
 * `pytz <http://pythonhosted.org/pytz>`_
 * `requests <https://github.com/kennethreitz/requests>`_
