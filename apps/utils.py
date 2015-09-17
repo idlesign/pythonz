@@ -22,6 +22,16 @@ from .signals import sig_integration_failed
 USER_AGENT = 'pythonz.net/%s (press@pythonz.net)' % '.'.join(map(str, VERSION))
 
 
+def truncate_chars(text, to, html=False):
+    """Укорачивает поданный на вход текст до опционально указанного количества символов."""
+    return Truncator(text).chars(to, html=html)
+
+
+def truncate_words(text, to, html=False):
+    """Укорачивает поданный на вход текст до опционально указанного количества слов."""
+    return Truncator(text).words(to, html=html)
+
+
 def format_currency(val):
     """Форматирует значение валюты, разбивая его кратно
     тысяче для облегчения восприятия.
@@ -398,8 +408,8 @@ def scrape_page(url):
         return None
 
     content = result['content']
-    result['content_less'] = Truncator(content).words(30)
-    result['content_more'] = Truncator(content).chars(900).replace('\n', '\n\n')
+    result['content_less'] = truncate_words(content, 30)
+    result['content_more'] = truncate_chars(content, 900).replace('\n', '\n\n')
 
     return result
 
