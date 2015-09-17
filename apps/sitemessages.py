@@ -303,6 +303,11 @@ class PythonzEmailDigest(PythonzEmailMessage):
         date_till = get_date(context.get('date_till'))
 
         realms_data = OrderedDict()
+
+        objects_upcoming = cls.get_upcoming_items()
+        if objects_upcoming:
+            realms_data['Скоро'] = objects_upcoming
+
         objects_new = cls.get_realms_data(date_from, date_till)
         if objects_new:
             realms_data['Новые'] = objects_new
@@ -310,10 +315,6 @@ class PythonzEmailDigest(PythonzEmailMessage):
         objects_modified = cls.get_realms_data(date_from, date_till, modified_mode=True)
         if objects_modified:
             realms_data['Изменившиеся'] = objects_modified
-
-        objects_upcoming = cls.get_upcoming_items()
-        if objects_upcoming:
-            realms_data['Скоро'] = objects_upcoming
 
         context.update({'realms_data': realms_data})
         return context
