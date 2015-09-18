@@ -193,7 +193,7 @@ def index(request):
         realm_externals = externals.get(name, [])
         locals_count = 1
         if not realm_externals:
-            locals_count = 3
+            locals_count = 2
 
         realms_data.append({
             'cls': realm,
