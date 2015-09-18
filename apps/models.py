@@ -1,6 +1,7 @@
 from collections import OrderedDict
-from datetime import datetime, timedelta
-from django.db.models import Avg, Min, Max, Count
+from datetime import timedelta
+from itertools import chain
+from django.db.models import Min, Max, Count
 
 import requests
 from etc.models import InheritedModel
@@ -102,6 +103,7 @@ class ExternalResource(RealmBaseModel):
                 return
 
             added = []
+            existing = []
             for entry_data in entries:
                 new_resource = cls(**entry_data)
                 new_resource.src_alias = resource_alias
@@ -109,12 +111,13 @@ class ExternalResource(RealmBaseModel):
 
                 try:
                     new_resource.save()
-                    added.append(new_resource.id)
+                    added.append(new_resource.url)
                 except IntegrityError:
-                    pass
+                    existing.append(new_resource.url)
 
             if added:
-                cls.objects.filter(src_alias=resource_alias).exclude(id__in=added).delete()
+                # Оставляем только те записи, которые до сих пор выдаёт внешний ресурс.
+                cls.objects.filter(src_alias=resource_alias).exclude(url__in=chain(added, existing)).delete()
 
 
 class PartnerLink(models.Model):
