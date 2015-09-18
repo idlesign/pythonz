@@ -3,7 +3,9 @@
 {% block page_title %}Про Python{% endblock %}
 
 {% block page_contents %}
+    <div id="index_box">
     {% for realm_data in realms_data %}
         {% include "sub_realm_card.html" %}
     {% endfor %}
+    </div>
 {%  endblock %}
