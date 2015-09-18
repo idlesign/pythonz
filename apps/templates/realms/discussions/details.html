@@ -1,6 +1,13 @@
 {% extends "_base.html" %}
 {% load gravatar model_meta sitetree %}
 
+
+{% block head %}
+    {{ block.super }}
+    {% include "sub_vk_head.html" %}
+{% endblock %}
+
+
 {% block page_contents %}
     <div class="row">
         <div class="col-md-12">
@@ -38,7 +45,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             {% with discussion.submitter as author %}
                 {% if author.disqus_shortname %}
                     {% include "sub_disqus.html" with shortname=author.disqus_shortname comments_enabled=author.comments_enabled category_id=author.disqus_category_id entity_name='opinion' entity_id=discussion.id %}
@@ -46,6 +53,9 @@
                     {% include "sub_disqus.html" with shortname="pythonz-discussions" comments_enabled=1 entity_name='discussion' entity_id=discussion.id %}
                 {% endif %}
             {% endwith %}
+        </div>
+        <div class="col-md-6">
+            {% include "sub_vk_comments.html" %}
         </div>
     </div>
 {%  endblock %}

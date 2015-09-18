@@ -2,6 +2,12 @@
 {% load thumbs sitetree siteblocks %}
 
 
+{% block head %}
+    {{ block.super }}
+    {% include "sub_vk_head.html" %}
+{% endblock %}
+
+
 {% block page_description %}{{ item.get_short_description }}{% endblock %}
 
 
@@ -35,6 +41,9 @@
             <div class="marg__t_max">
                 {% include "realms/discussions/sub_discussions.html" with items=item.discussions.all show_form_for=item show_texts=1 %}
             </div>
+
+            {% include "sub_vk_comments.html" %}
+
             {% endif %}
         </div>
         <div class="col-md-3">
