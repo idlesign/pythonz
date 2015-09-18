@@ -24,7 +24,7 @@
 
         {% if realm_data.externals %}
             <hr>
-            <ul>
+            <ul class="small">
                 {% for external in realm_data.externals %}
                 <li><a href="{{ external.url }}">{{ external.title }}</a></li>
                 {% endfor %}
