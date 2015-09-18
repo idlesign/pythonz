@@ -13,6 +13,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.cache import cache_page
 from django.views.defaults import (
     page_not_found as dj_page_not_found,
     permission_denied as dj_permission_denied,
@@ -176,6 +177,7 @@ page_not_found = lambda request: dj_page_not_found(request, template_name='stati
 server_error = lambda request: dj_server_error(request, template_name='static/500.html')
 
 
+@cache_page(1800)  # 30 минут
 def index(request):
     """Индексная страница."""
     from .realms import get_realms
