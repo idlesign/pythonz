@@ -72,20 +72,16 @@
 {% block details_contents_after %}
     {% if children %}
     <div class="marg__t_max">
-        {% if reference.is_type_class %}
-            <h6>Атрибуты</h6>
-        {% else %}
-            <h6>Темы раздела</h6>
-        {% endif %}
-
-        {% include "realms/references/sub_list.html" with items=children show_descriptions=1 %}
+        <div class="well">
+            {% include "realms/references/sub_list.html" with items=children show_descriptions=1 %}
+        </div>
     </div>
     {% endif %}
 
     {% if siblings %}
     <div class="marg__t_max">
         {% if reference.is_type_method %}
-            <h6>Другие атрибуты</h6>
+            <h6>Смотрите также</h6>
         {% else %}
             <h6>Соседние темы</h6>
         {% endif %}
