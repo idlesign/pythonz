@@ -17,10 +17,10 @@
 
     <div class="marg__b_mid marg__l_mid pull-right">
         {% if reference.version_added %}
-        <div class="label label-info" title="{% model_field_verbose_name from reference.version_added %}">{{ reference.version_added }}</div>
+        <div class="label label-info">{% model_field_verbose_name from reference.version_added %} {{ reference.version_added }}</div>
         {% endif %}
         {% if reference.version_deprecated %}
-        <div class="label label-danger" title="{% model_field_verbose_name from reference.version_deprecated %}">{{ reference.version_deprecated }}</div>
+        <div class="label label-danger">{% model_field_verbose_name from reference.version_deprecated %} {{ reference.version_deprecated }}</div>
         {% endif %}
     </div>
 
@@ -71,21 +71,25 @@
 
 {% block details_contents_after %}
     {% if children %}
-    <div class="marg__t_max">
-        <div class="well">
-            {% include "realms/references/sub_list.html" with items=children show_descriptions=1 %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h5 class="panel-title">Внутри</h5>
         </div>
+        {% include "realms/references/sub_list.html" with items=children show_descriptions=1 %}
     </div>
     {% endif %}
 
     {% if siblings %}
-    <div class="marg__t_max">
-        {% if reference.is_type_method %}
-            <h6>Смотрите также</h6>
-        {% else %}
-            <h6>Соседние темы</h6>
-        {% endif %}
-
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h5 class="panel-title">
+            {% if reference.is_type_method %}
+                Смотрите также
+            {% else %}
+                Соседние темы
+            {% endif %}
+            </h5>
+        </div>
         {% include "realms/references/sub_list.html" with items=siblings show_descriptions=1 %}
     </div>
     {% endif %}
