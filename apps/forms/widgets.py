@@ -20,13 +20,13 @@ class ReadOnlyWidget(forms.Widget):
 
 
 class PlaceWidget(TextInput):
-    """Представляет поле для редактирования местом."""
+    """Представляет поле для редактирования места."""
 
     _place_cached = False
     _place_cache = None
 
     def render(self, name, value, attrs=None):
-        if value:
+        if value and self.model:
             value = self.model.place.geo_title  # Выводим полное название места.
         return super().render(name, value, attrs=attrs)
 
