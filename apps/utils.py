@@ -69,7 +69,9 @@ def get_json(url):
         response.raise_for_status()
 
     except requests.exceptions.RequestException as e:
-        sig_integration_failed.send(None, description='URL %s. Error: %s' % (url, e))
+
+        if getattr(e.response, 'status_code', 0) != 503:  # Temporary Unavailable. В следующий раз получится.
+            sig_integration_failed.send(None, description='URL %s. Error: %s' % (url, e))
 
     else:
         try:
