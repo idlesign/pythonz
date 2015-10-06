@@ -119,8 +119,8 @@ def build_sitetree():
         compose_dynamic_tree((
             tree('main', 'Основное дерево', (
                 item('Про Python', '/', alias='topmenu', url_as_pattern=False,
-                     description='Материалы по языку программирования Python. Книги, видео, сообщества '
-                                 'и многое другое.',
+                     description='Сайт про Питон. Здесь можно найти различные материалы по языку программирования '
+                                 'Python: книги, видео, справочник, сообщества, события, обсуждения и многое другое.',
                      children=(realm.get_sitetree_items() for realm in get_realms().values())),
                 item('Вход', 'login', access_guest=True, in_menu=False, in_breadcrumbs=False),
                 item('Личное меню', '#', alias='personal', url_as_pattern=False, access_loggedin=True, in_menu=False,
@@ -136,8 +136,8 @@ def build_sitetree():
             tree('about', 'О проекте', (
                 item('Что такое Python', '/promo/', description='Краткие сведения о языке программирования Python.',
                      url_as_pattern=False),
-                item('О проекте', '/about/', description='Информация о проекте pythonz.net.', url_as_pattern=False),
-                item('Карта сайта', '/sitemap/', description='Список разделов проекта pythonz.net.',
+                item('О проекте', '/about/', description='Информация о проекте.', url_as_pattern=False),
+                item('Карта сайта', '/sitemap/', description='Список разделов на сайте.',
                      url_as_pattern=False),
                 item('Поиск по сайту', '/search/site/', url_as_pattern=False),
                 item('Результаты поиска «{{ search_term }}»', '/search/', url_as_pattern=False, in_menu=False,
@@ -146,9 +146,6 @@ def build_sitetree():
         )),
         reset_cache=True
     )
-
-
-BASE_KEYWORDS = 'pythonz, pythonz.net, python, питон, programming, прораммирование, разработка,'
 
 
 class BookRealm(RealmBase):
@@ -160,7 +157,7 @@ class BookRealm(RealmBase):
     txt_form_edit = 'Изменить данные книги'
 
     view_listing_description = 'Книги по программированию на языке Python. И просто книги по программированию.'
-    view_listing_keywords = '%s книга, books, книги по программированию на питоне' % BASE_KEYWORDS
+    view_listing_keywords = 'книги по питону, литература по python'
 
     model = Book
     form = BookForm
@@ -178,7 +175,7 @@ class VideoRealm(RealmBase):
     txt_form_edit = 'Изменить данные видео'
 
     view_listing_description = 'Видео. Лекции, курсы, доклады, связанные с языком программирования Python.'
-    view_listing_keywords = '%s видео, videos, видео по программированию на питоне' % BASE_KEYWORDS
+    view_listing_keywords = 'видео по питону, доклады по python'
 
     model = Video
     form = VideoForm
@@ -191,6 +188,9 @@ class EventRealm(RealmBase):
     """
     Область с событиями.
     """
+
+    view_listing_description = 'События. Встречи, конференции, спринты, круглые столы.'
+    view_listing_keywords = 'конференции по питону, встречи сообществ python'
 
     txt_form_add = 'Добавить событие'
     txt_form_edit = 'Изменить событие'
@@ -210,7 +210,7 @@ class VacancyRealm(RealmBase):
     name_plural = 'vacancies'
 
     view_listing_description = 'Вакансии, связанные с языком программирования Python.'
-    view_listing_keywords = '%s вакансии, job, работа, предложения' % BASE_KEYWORDS
+    view_listing_keywords = 'вакансии python, работа итон'
 
     view_listing_base_class = VacancyListingView
 
@@ -234,7 +234,7 @@ class ReferenceRealm(RealmBase):
     txt_form_edit = 'Редактировать статью'
 
     view_listing_description = 'Справочные материалы по языку программирования Python.'
-    view_listing_keywords = '%s справка, reference, справочник по питону' % BASE_KEYWORDS
+    view_listing_keywords = 'справочник питон, руководство python'
 
     view_listing_base_class = ReferenceListingView
     view_details_base_class = ReferenceDetailsView
@@ -253,7 +253,7 @@ class ArticleRealm(RealmBase):
     txt_form_edit = 'Редактировать статью'
 
     view_listing_description = 'Статьи, связанные с языком программирования Python.'
-    view_listing_keywords = '%s статья, заметки, articles, статьи по программированию на питоне' % BASE_KEYWORDS
+    view_listing_keywords = 'статьи о питоне, материалы по python'
 
     model = Article
     form = ArticleForm
@@ -268,7 +268,7 @@ class PlaceRealm(RealmBase):
     """
 
     view_listing_description = 'Места, так или иначе связанные с языком программирования Python.'
-    view_listing_keywords = '%s место, местность, город, село, places, места где программируют на питоне' % BASE_KEYWORDS
+    view_listing_keywords = 'python в городе, где программируют на питоне'
 
     model = Place
     form = VideoForm
@@ -289,7 +289,7 @@ class DiscussionRealm(RealmBase):
     txt_form_edit = 'Редактировать обсуждение'
 
     view_listing_description = 'Обсуждения тем, связанных с программированием на pythonz.net.'
-    view_listing_keywords = '%s обсуждение, discussions, обсуждения питона' % BASE_KEYWORDS
+    view_listing_keywords = 'вопросы по питону, обсуждения python'
 
     model = Discussion
     form = DiscussionForm
@@ -304,7 +304,7 @@ class UserRealm(RealmBase):
     txt_form_edit = 'Изменить настройки'
 
     view_listing_description = 'Люди, связанные с языком программирования Python.'
-    view_listing_keywords = '%s персона, человек, пользователь, users, программист на питоне' % BASE_KEYWORDS
+    view_listing_keywords = 'питонисты, разработчики python'
 
     model = User
     form = UserForm
@@ -328,7 +328,7 @@ class CategoryRealm(RealmBase):
 
     view_listing_description = ('Категории материалов, связанных с языком программирования Python, '
                                 'представленных на pythonz.net.')
-    view_listing_keywords = '%s категория, метка, categories, материалы по питону' % BASE_KEYWORDS
+    view_listing_keywords = 'материалы по питону, python по категориям'
 
     model = get_category_model()
     icon = 'tag'
@@ -440,7 +440,7 @@ class CommunityRealm(RealmBase):
     txt_form_edit = 'Редактировать сообщество'
 
     view_listing_description = 'Сообщества людей интересующихся и занимающихся программированием на языке Python.'
-    view_listing_keywords = '%s сообщество, люди, community, сообщества питон' % BASE_KEYWORDS
+    view_listing_keywords = 'сообщества питонистов, программисты python'
 
     name = 'community'
     name_plural = 'communities'
