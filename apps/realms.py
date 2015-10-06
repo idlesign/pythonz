@@ -210,7 +210,7 @@ class VacancyRealm(RealmBase):
     name_plural = 'vacancies'
 
     view_listing_description = 'Вакансии, связанные с языком программирования Python.'
-    view_listing_keywords = 'вакансии python, работа итон'
+    view_listing_keywords = 'вакансии python, работа питон'
 
     view_listing_base_class = VacancyListingView
 

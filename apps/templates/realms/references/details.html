@@ -2,6 +2,12 @@
 {% load model_field %}
 
 
+{% block page_description %}Описание {{ reference.title }} в Python{% endblock %}
+
+
+{% block page_keywords %}{{ block.super }}, справка по {{ reference.title }}, описание {{ reference.title }}{% endblock %}
+
+
 {% block js_bottom %}
     <script type="text/javascript">
         $(function(){

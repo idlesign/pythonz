@@ -11,6 +11,9 @@
 {% block page_description %}{{ item.get_short_description }}{% endblock %}
 
 
+{% block page_keywords %}{{ realm.view_listing_keywords }}{% endblock %}
+
+
 {% block meta_og %}
     <meta property="og:description" content="{{ item.get_short_description }}" />
     {% if item.cover %}

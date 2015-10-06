@@ -2,6 +2,9 @@
 {% load model_field %}
 
 
+{% block page_keywords %}{{ block.super }}, видео {{ video.title }}, смотреть {{ video.title }}{% endblock %}
+
+
 {% block meta_og %}
     <meta property="og:type" content="video.other" />
     <meta property="og:title" content="{{ video.title }}" />

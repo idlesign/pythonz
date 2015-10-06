@@ -2,6 +2,9 @@
 {% load model_field %}
 
 
+{% block page_keywords %}{{ block.super }}, сообщество {{ community.title }}{% endblock %}
+
+
 {% block meta_og %}
     <meta property="og:type" content="object" />
     <meta property="og:title" content="{{ community.title }}" />

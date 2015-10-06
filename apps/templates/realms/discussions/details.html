@@ -2,6 +2,12 @@
 {% load gravatar model_meta sitetree %}
 
 
+{% block page_description %}Обсуждение «{{ discussion.title }}»{% endblock %}
+
+
+{% block page_keywords %}{{ block.super }}, обсуждение {{ discussion.title }}{% endblock %}
+
+
 {% block head %}
     {{ block.super }}
     {% include "sub_vk_head.html" %}

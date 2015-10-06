@@ -2,7 +2,7 @@
 {% load sitecats %}
 
 
-{% block page_description %}{{ item.note|truncatechars:100 }}{% endblock %}
+{% block page_description %}Материалы, связанные с Python, в категории «{{ item.title }}». {{ item.note|truncatechars:100 }}{% endblock %}
 
 
 {% block page_keywords %}{{ block.super }}, {{ item.title }}{% endblock %}

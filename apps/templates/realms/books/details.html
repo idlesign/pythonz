@@ -2,6 +2,9 @@
 {% load goodreads model_field %}
 
 
+{% block page_keywords %}{{ block.super }}, книга {{ book.title }}, купить {{ book.title }}{% endblock %}
+
+
 {% block meta_og %}
     <meta property="og:type" content="book" />
     <meta property="og:title" content="{{ book.title }}" />

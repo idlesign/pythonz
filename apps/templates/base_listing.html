@@ -4,7 +4,7 @@
 {% block page_keywords %}{{ realm.view_listing_keywords }}{% if category %}, {{ category.title }}{% endif %}{% endblock %}
 
 
-{% block page_description %}{% if category %}{{ category.note|truncatechars:100 }}{% endif %}{% endblock %}
+{% block page_description %}{{ realm.view_listing_description }}{% if category %}, {{ category.note|truncatechars:100 }}{% endif %}{% endblock %}
 
 
 {% block page_contents_pre %}

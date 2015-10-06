@@ -2,6 +2,12 @@
 {% load gravatar sitetree model_field %}
 
 
+{% block page_description %}Профиль питониста «{{ user.title }}»{% endblock %}
+
+
+{% block page_keywords %}{{ block.super }}, питонист {{ user.title }}{% endblock %}
+
+
 {% block meta_og %}
     <meta property="og:type" content="profile" />
     <meta property="og:title" content="{{ user.get_display_name }}" />

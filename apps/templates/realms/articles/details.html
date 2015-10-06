@@ -2,6 +2,9 @@
 {% load gravatar model_meta sitetree %}
 
 
+{% block page_keywords %}{{ block.super }}, статья {{ article.title }}, что такое {{ article.title }}{% endblock %}
+
+
 {% block head %}
     {{ block.super }}
     {% include "sub_vk_head.html" %}

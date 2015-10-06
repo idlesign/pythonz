@@ -2,6 +2,12 @@
 {% load model_field %}
 
 
+{% block page_description %}Событие «{{ event.title }}»{% endblock %}
+
+
+{% block page_keywords %}{{ block.super }}, событие {{ event.title }}{% endblock %}
+
+
 {% block meta_og %}
     <meta property="og:type" content="event" />
     <meta property="og:title" content="{{ event.title }}" />
