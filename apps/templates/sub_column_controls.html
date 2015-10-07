@@ -1,22 +1,5 @@
 {% load thumbs siteblocks %}
 
-{% if not hide_cover %}
-<div class="text-center">
-    <div class="block marg__b_mid">
-        {% block cover %}
-            <div class="cover_img">
-                {% thumbs_get_thumb_url item.cover 180 236 item.realm as "thumb_url" %}
-                {% if thumb_url %}
-                <img src="{{ thumb_url }}" class="img-thumbnail" alt="{{ item.title }}">
-                {% else %}
-                    <span class="img-thumbnail icon_entity glyphicon glyphicon-{{ realm.icon }}"></span>
-                {% endif %}
-            </div>
-        {% endblock %}
-    </div>
-</div>
-{% endif %}
-
 {% block details_tags %}{% include "sub_box_tags.html" %}{% endblock %}
 
 {% block details_controls %}{% include "sub_box_controls.html" %}{% endblock %}
