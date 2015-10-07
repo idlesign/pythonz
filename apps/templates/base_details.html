@@ -24,7 +24,7 @@
 
 {% block page_contents %}
     <div class="row">
-        <div class="col-md-9" itemscope itemtype="http://schema.org/{% block schema_type %}Thing{% endblock %}">
+        <div class="{% block details_main_col %}col-md-9{% endblock %}" itemscope itemtype="http://schema.org/{% block schema_type %}Thing{% endblock %}">
             {% include "sub_title_block.html" %}
 
             {% block details_contents %}{% endblock %}
@@ -49,52 +49,12 @@
 
             {% endif %}
         </div>
-        <div class="col-md-3">
-            <div class="text-center">
-                <div class="block marg__b_mid">
-                    {% block cover %}
-                        <div class="cover_img">
-                            {% thumbs_get_thumb_url item.cover 180 236 item.realm as "thumb_url" %}
-                            {% if thumb_url %}
-                            <img src="{{ thumb_url }}" class="img-thumbnail" alt="{{ item.title }}">
-                            {% else %}
-                                <span class="img-thumbnail icon_entity glyphicon glyphicon-{{ realm.icon }}"></span>
-                            {% endif %}
-                        </div>
-                    {% endblock %}
-                </div>
+
+        {% block column_right%}
+            <div class="col-md-3">
+                {% include "sub_column_controls.html" %}
             </div>
-            {% block details_tags %}{% include "sub_box_tags.html" %}{% endblock %}
-            {% block details_controls %}{% include "sub_box_controls.html" %}{% endblock %}
-            {% block details_linked %}
-                {% with linked=item.get_linked %}
-                    {% if linked.count %}
-                    <div class="linked panel panel-default">
-                        <div class="panel-heading">Смотрите также:</div>
-                        <div class="panel-body">
-                            <ul>
-                                {% for linked_item in item.get_linked %}
-                                    <li><a href="{{ linked_item.get_absolute_url }}">{{ linked_item.title }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% endif %}
-                {% endwith %}
-            {% endblock %}
-            {% block right_bar %}
-                {% siteblock "hints" as hint %}
-                {% if hint %}
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Если вам интересно</h3>
-                    </div>
-                    <div class="panel-body">
-                        {{ hint }}
-                    </div>
-                </div>
-                {% endif %}
-            {% endblock %}
-        </div>
+        {% endblock %}
+
     </div>
 {%  endblock %}

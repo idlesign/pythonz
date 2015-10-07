@@ -19,9 +19,17 @@
 {% endblock %}
 
 
+{% block column_right %}{% endblock %}
+{% block details_main_col %}col-md-12{% endblock %}
+
+
 {% block details_contents %}
 
-    <div class="marg__b_mid marg__l_mid pull-right">
+    <div class="pull-right col-md-3">
+        {% include "sub_column_controls.html" with hide_cover=1 %}
+    </div>
+
+    <div class="marg__b_mid marg__l_mid">
         {% if reference.version_added %}
         <div class="label label-info">{% model_field_verbose_name from reference.version_added %} {{ reference.version_added }}</div>
         {% endif %}
