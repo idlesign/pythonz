@@ -14,24 +14,22 @@
     </div>
 
     <div class="row">
-        <div class="col-md-8">
-            {% block form %}
-                {% include "forms/sub_form.html" with form=form %}
-            {% endblock %}
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h3 class="panel-title">К сведению</h3>
-                </div>
-                <div class="panel-body">
-                    {% block hint %}{% endblock %}
-                </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">К сведению</h3>
             </div>
-            {% block right_bar %}{% endblock %}
-            {% block categories_editor %}
-                {% include "sub_box_tags.html" %}
-            {% endblock %}
+            <div class="panel-body">
+                {% block hint %}{% endblock %}
+            </div>
         </div>
+        {% block right_bar %}{% endblock %}
+
+        {% block form %}
+            {% include "forms/sub_form.html" with form=form %}
+        {% endblock %}
+
+        {% block categories_editor %}
+            {% include "sub_box_tags.html" %}
+        {% endblock %}
     </div>
 {%  endblock %}
