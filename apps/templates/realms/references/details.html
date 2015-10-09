@@ -27,6 +27,25 @@
 
     <div class="pull-right col-md-3">
         {% include "sub_column_controls.html" %}
+
+        {% if request.user.is_authenticated %}
+        <div class="well well-sm">
+            <div class="marg__b_min">Дополнить справочник:</div>
+            <div>
+                {% include "realms/references/quick_add_form.html" with parent=reference.parent_id title='Добавить по соседству' %}
+                {% include "realms/references/quick_add_form.html" with parent=reference.id title='Добавить вложенно' %}
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        {% endif %}
+
+        {% if reference.parent %}
+        <div class="marg__t_min">
+            <h6>Родительский раздел</h6>
+            <a href="{% url "references:details_slug" reference.parent.slug %}">{{ reference.parent.title }}</a>
+        </div>
+        {% endif %}
+
     </div>
 
     <div class="marg__b_mid marg__l_mid">
@@ -109,29 +128,6 @@
     {% endif %}
 
 {%  endblock %}
-
-
-{% block right_bar %}
-
-    {% if request.user.is_authenticated %}
-    <div class="well well-sm">
-        <div class="marg__b_min">Дополнить справочник:</div>
-        <div>
-            {% include "realms/references/quick_add_form.html" with parent=reference.parent_id title='Добавить по соседству' %}
-            {% include "realms/references/quick_add_form.html" with parent=reference.id title='Добавить вложенно' %}
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    {% endif %}
-
-    {% if reference.parent %}
-    <div class="marg__t_min">
-        <h6>Родительский раздел</h6>
-        <a href="{% url "references:details_slug" reference.parent.slug %}">{{ reference.parent.title }}</a>
-    </div>
-    {% endif %}
-
-{% endblock %}
 
 
 {% block details_author %}
