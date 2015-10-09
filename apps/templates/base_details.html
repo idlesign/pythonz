@@ -40,13 +40,8 @@
             {% block details_share %}{% include "sub_box_share.html" %}{% endblock %}
             {% block details_discussions_pre %}{% endblock %}
             {% if item.has_discussions %}
-            <hr>
-            <div class="marg__t_max">
-                {% include "realms/discussions/sub_discussions.html" with items=item.discussions.all show_form_for=item show_texts=1 %}
-            </div>
-
-            {% include "sub_vk_comments.html" %}
-
+                <hr>
+                {% include "sub_comments.html" with disable_disqus=1 %}
             {% endif %}
         </div>
 

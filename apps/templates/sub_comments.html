@@ -1,0 +1,47 @@
+<ul class="nav nav-tabs" role="tablist">
+
+    {% if not disable_vk %}
+    <li role="presentation" class="active">
+        <a href="#comments_vk" aria-controls="comments_vk" role="tab" data-toggle="tab">Комментарии ВК</a>
+    </li>
+    {% endif %}
+
+    {% if not disable_disqus %}
+    <li role="presentation">
+        <a href="#comments_disqus" aria-controls="comments_disqus" role="tab" data-toggle="tab">Комменатрии Disqus</a>
+    </li>
+    {% endif %}
+
+    {% if not disable_internal %}
+    <li role="presentation">
+        <a href="#comments_internal" aria-controls="comments_internal" role="tab" data-toggle="tab">Обсуждения</a>
+    </li>
+    {% endif %}
+
+</ul>
+
+<div class="tab-content">
+
+    {% if not disable_vk %}
+    <div role="tabpanel" class="tab-pane active" id="comments_vk">
+        {% include "sub_vk_comments.html" %}
+    </div>
+    {% endif %}
+
+    {% if not disable_disqus %}
+    <div role="tabpanel" class="tab-pane" id="comments_disqus">
+        {% if personalized and author.disqus_shortname %}
+            {% include "sub_disqus.html" with shortname=author.disqus_shortname comments_enabled=author.comments_enabled category_id=author.disqus_category_id %}
+        {% else %}
+            {% include "sub_disqus.html" with shortname="pythonz-discussions" comments_enabled=1 %}
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if not disable_internal %}
+    <div role="tabpanel" class="tab-pane" id="comments_internal">
+        {% include "realms/discussions/sub_discussions.html" with items=item.discussions.all show_form_for=item show_texts=1 %}
+    </div>
+    {% endif %}
+
+</div>
