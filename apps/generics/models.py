@@ -44,7 +44,7 @@ class ModelWithCompiledText(models.Model):
     text = models.TextField('Текст')
     text_src = models.TextField('Исходный текст')
 
-    RE_CODE = re.compile('\.{2}\s*code::\s*([^\n]+)\n\n(.+?)\n{3}(?=\S)', re.S)
+    RE_CODE = re.compile('\.{2}\s*code::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
     RE_GIST = re.compile('\.{2}\s*gist::\s*([^\n]+)\n', re.S)
     RE_PODSTER = re.compile('\.{2}\s*podster::\s*([^\n]+)[/]*\n', re.S)
     RE_ACCENT = re.compile('`{2}([^`\n]+)`{2}')
@@ -65,8 +65,13 @@ class ModelWithCompiledText(models.Model):
         :return:
         """
         from ..utils import url_mangle
-        href_replacer = lambda match: ('<a href="%s" target="_blank">%s</a>' %
+        href_replacer = lambda match: ('<a href="%s">%s</a>' %
                                        (match.group(1), url_mangle(match.group(1))))
+
+        def code_replacer(match):
+            lang = match.group(1)
+            code = match.group(2)
+            return '<pre><code class="%s">\n%s\n</code></pre>\n' % ((lang or 'python').strip(), code)
 
         # Заменяем некоторые символы для правила RE_URL_WITH_TITLE, чтобы их не устранил bleach.
         text = text.replace('<ht', '[ht')
@@ -79,8 +84,8 @@ class ModelWithCompiledText(models.Model):
         text = re.sub(cls.RE_ITALIC, '<i>\g<1></i>', text)
         text = re.sub(cls.RE_QUOTE, '<blockquote>\g<1></blockquote>', text)
         text = re.sub(cls.RE_ACCENT, '<code>\g<1></code>', text)
-        text = re.sub(cls.RE_CODE, '<pre><code class="\g<1>">\n\g<2>\n</code></pre>\n', text)
-        text = re.sub(cls.RE_URL_WITH_TITLE, '<a href="\g<2>" target="_blank">\g<1></a>', text)
+        text = re.sub(cls.RE_CODE, code_replacer, text)
+        text = re.sub(cls.RE_URL_WITH_TITLE, '<a href="\g<2>">\g<1></a>', text)
         text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\g<1>.js"></script>', text)
         text = re.sub(
             cls.RE_PODSTER,

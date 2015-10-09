@@ -85,9 +85,9 @@ http://some.url/
         expected = (
             '<b>полужирный текст some.where</b><br><br>'
             '<i>курсив some.where</i><br><br>'
-            '<a href="http://some.url/" target="_blank">http://some.url/</a><br><br>'
+            '<a href="http://some.url/">http://some.url/</a><br><br>'
             '<blockquote>здесь цитата</blockquote><br><br>'
-            'Пробуем <a href="http://some.com/here/there/" target="_blank">ссылку с именем </a>.<br><br>'
+            'Пробуем <a href="http://some.com/here/there/">ссылку с именем </a>.<br><br>'
             '<code>текст акцентирован some.where</code><br><br>'
             '<pre><code class="python"><br>  from come import that<br><br><br>  print(1)<br>'
             '  # комментарий<br><br>  print(2)<br></code></pre><br>'
