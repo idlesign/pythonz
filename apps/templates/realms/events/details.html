@@ -42,11 +42,6 @@
                 <span class="cl__gray">
                     &nbsp; {% if event.is_now %}[проходит прямо сейчас]{% else %}[{{ event.time_start|timeuntil }} до начала]{% endif %}
                 </span>
-                    {% if not event.is_now %}
-                    <div class="marg__t_min">
-                        {% include "sub_ya_forgetmenot.html" %}
-                    </div>
-                    {% endif %}
                 {% endif %}
             {% endif %}
             {% if event.place %}
@@ -54,6 +49,12 @@
             {% endif %}
         </div>
     </div>
+
+    {% if not event.is_now and not event.is_in_past %}
+        <div class="marg__t_min marg__b_mid">
+            {% include "sub_ya_forgetmenot.html" %}
+        </div>
+    {% endif %}
 
     <div class="marg__b_min">{{ event.get_display_type }} <span class="cl__gray">&#8212; {{ event.get_display_specialization }}</span></div>
     <div class="text-muted marg__b_mid small">
