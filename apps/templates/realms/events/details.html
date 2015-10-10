@@ -21,7 +21,6 @@
 {% block details_contents %}
     <div class="marg__b_mid">
         <h4>
-            {{ event.get_display_type }} <span class="cl__gray">&#8212; {{ event.get_display_specialization }}</span>
             <div class="pull-right">
                 {% if event.fee %}
                     <span class="label label-danger" title="За участие взымается плата">Платно</span>
@@ -31,12 +30,9 @@
             </div>
         </h4>
         {% if event.is_in_past %}
-            <h4><span class="label label-danger">Событие уже в прошлом</span></h4>
+            <h4 class="marg__b_max"><span class="label label-danger">Событие уже в прошлом</span></h4>
         {% endif %}
-        <div class="small">
-            {% if event.place %}
-                <div><a href="{{ event.place.get_absolute_url }}">{{ event.place.title }}</a></div>
-            {% endif %}
+        <div>
             {% if event.time_start %}
                 {{ event.time_start|date:"d E H:i" }}
                 {% if event.time_finish %}
@@ -53,18 +49,26 @@
                     {% endif %}
                 {% endif %}
             {% endif %}
+            {% if event.place %}
+                <span class="small marg__l_mid"><a href="{{ event.place.get_absolute_url }}">{{ event.place.title }}</a></span>
+            {% endif %}
         </div>
     </div>
-{% endblock %}
 
-
-{% block details_contents_add %}
+    <div class="marg__b_min">{{ event.get_display_type }} <span class="cl__gray">&#8212; {{ event.get_display_specialization }}</span></div>
     <div class="text-muted marg__b_mid small">
-        {% if event.url %}<div><a href="{{ event.url }}">{{ event.url }}</a></div>{% endif %}
+        {% if event.url %}<div>{% model_field_verbose_name from event.url %}: <a href="{{ event.url }}">{{ event.url }}</a></div>{% endif %}
         {% if event.contacts %}<div class="py_user">{% model_field_verbose_name from event.contacts %}: {{ event.contacts }}</div>{% endif %}
     </div>
 
-    <div class="py_user marg__b_mid">
-        {{ event.text|safe }}
-    </div>
+{% endblock %}
+
+{% block details_description %}
+
+    <blockquote>
+        <p><i itemprop="description">{{ item.description|urlize|linebreaksbr }}</i></p>
+        <p class="py_user">{{ event.text|safe }}</p>
+    </blockquote>
+
+
 {% endblock %}
