@@ -14,7 +14,7 @@ pythonz = {
 
     mark_user: function() {
         $('.py_user').each(function(i, el) {
-            var html = el.innerHTML.replace(/\[u:(\d+):\s*([^\]\s]+)\s*\]/g, '<a href="http://pythonz.net/users/$1" title="Профиль на pythonz">$2</a>');
+            var html = el.innerHTML.replace(/\[u:(\d+):\s*([^\]]+)\s*\]/g, '<a href="http://pythonz.net/users/$1" title="Профиль на pythonz">$2</a>');
             $(el).html(html);
         });
     },
