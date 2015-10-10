@@ -1,4 +1,4 @@
-{% load sitemetrics sitetree pythonz_version %}
+{% load sitemetrics sitetree pythonz_version cache %}
 <!DOCTYPE html>
 <html lang="ru" prefix="og: http://ogp.me/ns#">
 <head>
@@ -39,13 +39,16 @@
 
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container-fluid">
+
             <a class="navbar-brand" href="/" title="На главную страницу pythonz.net">
                 <img src="{{ STATIC_URL }}img/favicon.gif" class="pull-left">
                 <span class="text-uppercase">Python</span><span style="color:#ddd;">Z</span>
             </a>
 
             {% with template_path="sitetree/menu_top.html" %}
+                {% cache 21600 menu_top %}
                 {% sitetree_menu from "main" include "topmenu" template template_path %}
+                {% endcache %}
 
                 <div class="submenu navbar-nav navbar-left marg__l_mid bg-success">
                 {% if view.name == 'listing' %}
@@ -91,6 +94,7 @@
         {% block page_contents_post %}{% endblock %}
     </div>
 
+    {% cache 21600 nav_bottom %}
     <nav class="footer navbar navbar-default marg__t_max" role="navigation">
         <div class="container">
             <div class="row">
@@ -112,6 +116,7 @@
             </div>
         </div>
     </nav>
+    {% endcache %}
 
     <script src="{{ STATIC_URL }}js/xross/xross.min.js"></script>
     <script src="{{ STATIC_URL }}js/sitecats/sitecats.min.js"></script>
