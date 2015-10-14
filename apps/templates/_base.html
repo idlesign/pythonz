@@ -46,9 +46,7 @@
             </a>
 
             {% with template_path="sitetree/menu_top.html" %}
-                {% cache 21600 menu_top %}
                 {% sitetree_menu from "main" include "topmenu" template template_path %}
-                {% endcache %}
 
                 <div class="submenu navbar-nav navbar-left marg__l_mid bg-success">
                 {% if view.name == 'listing' %}
