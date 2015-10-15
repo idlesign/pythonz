@@ -26,6 +26,14 @@
 {% block details_contents %}
 
     <div class="pull-right col-md-3">
+
+        {% if reference.parent %}
+        <div class="well well-sm">
+            <h6>Родительский раздел</h6>
+            <a href="{% url "references:details_slug" reference.parent.slug %}">{{ reference.parent.title }}</a>
+        </div>
+        {% endif %}
+
         {% include "sub_column_controls.html" %}
 
         {% if request.user.is_authenticated %}
@@ -36,13 +44,6 @@
                 {% include "realms/references/quick_add_form.html" with parent=reference.id title='Добавить вложенно' %}
             </div>
             <div class="clearfix"></div>
-        </div>
-        {% endif %}
-
-        {% if reference.parent %}
-        <div class="marg__t_min">
-            <h6>Родительский раздел</h6>
-            <a href="{% url "references:details_slug" reference.parent.slug %}">{{ reference.parent.title }}</a>
         </div>
         {% endif %}
 
