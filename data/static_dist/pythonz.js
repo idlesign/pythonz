@@ -30,7 +30,7 @@ pythonz = {
             '$1<small><code>$2</code></small>$3'
         ],
         RULE_EXCEPTIONS: [
-            /([^\w])(AttributeError|ImportError|IndexError|KeyError|NotImplementedError|RuntimeError|StopIteration|SyntaxError|SystemError|TypeError|UnboundLocalError|ValueError)([^\w])/g,
+            /([^\w])(AttributeError|ImportError|IndexError|KeyError|NotImplementedError|RuntimeError|StopIteration|SyntaxError|SystemError|TypeError|UnboundLocalError|ValueError|OSError)([^\w])/g,
             '$1<small><div class="label label-warning">$2</div></small>$3'
         ],
         RULE_EMDASH: [/\s+-\s+/g, ' &#8212; '],
