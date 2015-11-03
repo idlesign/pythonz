@@ -10,8 +10,9 @@
 {%  endblock %}
 
 
-{% block right_bar %}
+{% block form %}
     {{ block.super }}
+
     <h3>Подписка</h3>
     <form class="form-horizontal" role="form" method="post">
         {% csrf_token %}
