@@ -56,7 +56,7 @@ class UserEditView(EditView):
         subscr_prefs = get_user_preferences_for_ui(request.user, new_messengers_titles={
             'twitter': '<i class="fi-social-twitter" title="Twitter"></i>',
             'smtp': '<i class="fi-mail" title="Эл. почта"></i>'
-        }, message_filter=lambda m: m.alias == 'digest')
+        })
 
         context['subscr_prefs'] = subscr_prefs
 

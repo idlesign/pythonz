@@ -29,7 +29,8 @@ DATABASES = {
 # Сюда помещаются реквизиты для пользования соответствующими службами доставки сообщений (cм. sitemessages.py).
 SITEMESSAGES_SETTINGS = {
     'twitter': [],
-    'smtp': []
+    'smtp': [],
+    'telegram': [],
 }
 
 

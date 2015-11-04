@@ -28,6 +28,7 @@ def register_messengers():
     SETTINGS = settings.SITEMESSAGES_SETTINGS
     SETTINGS_TWITTER = SETTINGS['twitter']
     SETTINGS_SMTP = SETTINGS['smtp']
+    SETTINGS_TELEGRAM = SETTINGS['telegram']
 
     messengers = []
     if SETTINGS_TWITTER:
@@ -37,6 +38,10 @@ def register_messengers():
     if SETTINGS_SMTP:
         from sitemessage.messengers.smtp import SMTPMessenger
         messengers.append(SMTPMessenger(*SETTINGS_SMTP))
+
+    if SETTINGS_TELEGRAM:
+        from sitemessage.messengers.telegram import TelegramMessenger
+        messengers.append(TelegramMessenger(*SETTINGS_TELEGRAM))
 
     if messengers:
         register_messenger_objects(*messengers)
@@ -73,11 +78,12 @@ def connect_signals():
         lambda sender, **kwargs: PythonzEmailOneliner.create('Ошибка интеграции', kwargs['description']))
     sig_integration_failed.connect(notify_handler, dispatch_uid='cfg_integration_failed', weak=False)
 
-    if settings.DEBUG:  # На всякий случай, чем чёрт не шутит.
-        return False
+    # Материал опубликован.
+    def notify_published(sender, **kwargs):
+        PythonzTwitterMessage.create(kwargs['entity'])
+        PythonzTelegramEntyPublishedMessage.create(kwargs['entity'])
+    sig_entity_published.connect(notify_published, dispatch_uid='cfg_entity_published', weak=False)
 
-    notify_handler = lambda sender, **kwargs: PythonzTwitterMessage.create(kwargs['entity'])
-    sig_entity_published.connect(notify_handler, dispatch_uid='cfg_entity_published', weak=False)
 
 connect_signals()
 
@@ -89,6 +95,7 @@ class PythonzTwitterMessage(PlainTextMessage):
     send_retry_limit = 5
     supported_messengers = ['twitter']
     title = 'Новое на сайте'
+    allow_user_subscription = False
 
     @classmethod
     def create(cls, entity):
@@ -115,6 +122,28 @@ class PythonzTwitterMessage(PlainTextMessage):
         cls(message).schedule(cls.recipients('twitter', ''))
 
 
+class PythonzTelegramEntyPublishedMessage(PlainTextMessage):
+    """Класс для сообщений о новых материалах на сайте, рассылаемых pythonz в Telegram."""
+
+    alias = 'tele_update'
+    priority = 1  # Рассылается ежеминутно.
+    send_retry_limit = 50
+    supported_messengers = ['telegram']
+    title = 'Новое на сайте'
+    allow_user_subscription = False
+
+    @classmethod
+    def create(cls, entity):
+        """Создаёт оповещение о публикации сущности.
+
+        :param RealmBaseModel entity:
+        :return:
+        """
+        message = 'Новое: %s «%s» %s' % (
+            entity.get_verbose_name(), entity.title, entity.get_absolute_url(with_prefix=True, hash_chunk='fromtele'))
+        cls(message).schedule(cls.recipients('telegram', '@pythonz'))
+
+
 class PythonzEmailMessage(EmailHtmlMessage):
     """Базовый класс для сообщений, рассылаемых pythonz по электронной почте.
 
@@ -126,6 +155,7 @@ class PythonzEmailMessage(EmailHtmlMessage):
     priority = 1  # Рассылается ежеминутно.
     send_retry_limit = 4
     title = 'Базовые оповещения'
+    allow_user_subscription = False
 
     def __init__(self, subject, html_or_dict, template_path=None):
         if not isinstance(html_or_dict, dict):
@@ -202,6 +232,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
     priority = 7  # Рассылается раз в семь дней.
     send_retry_limit = 1  # Нет смысла пытаться повторно неделю спустя.
     title = 'Еженедельный дайджест'
+    allow_user_subscription = True
 
     @classmethod
     def create(cls):
@@ -323,6 +354,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
 # Регистрируем наши типы сообщений.
 register_message_types(
     PythonzTwitterMessage,
+    PythonzTelegramEntyPublishedMessage,
     PythonzEmailMessage,
     PythonzEmailOneliner,
     PythonzEmailNewEntity,
