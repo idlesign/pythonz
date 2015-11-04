@@ -68,8 +68,7 @@
                         {% endblock %}
                     </div>
                 </div>
-
-                {% include "sub_column_controls.html" %}
+                {% block column_controls %}{% include "sub_column_controls.html" %}{% endblock %}
             </div>
         {% endblock %}
 

@@ -43,12 +43,10 @@
 {% endblock %}
 
 
-{% block right_bar %}
+{% block column_controls %}
     {% if stats_salary %}
-    <div class="panel panel-default">
-        <div class="panel-body">
-            {% include "realms/vacancies/stats_salary.html" %}
-        </div>
+    <div class="panel panel-default small">
+        {% include "realms/vacancies/stats_salary.html" %}
     </div>
     {% endif %}
     {{ block.super }}
