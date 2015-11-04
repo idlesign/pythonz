@@ -763,7 +763,6 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
             'help_text': 'Подробное описание. Здесь же следует располагать примеры кода.',
         }
 
-    notify_on_publish = False
     autogenerate_slug = True
 
     def is_type_callable(self):

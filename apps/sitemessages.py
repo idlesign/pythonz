@@ -80,8 +80,11 @@ def connect_signals():
 
     # Материал опубликован.
     def notify_published(sender, **kwargs):
-        PythonzTwitterMessage.create(kwargs['entity'])
-        PythonzTelegramEntyPublishedMessage.create(kwargs['entity'])
+        entity = kwargs['entity']
+        if not entity.notify_on_publish:
+            return False
+        PythonzTwitterMessage.create(entity)
+        PythonzTelegramEntyPublishedMessage.create(entity)
     sig_entity_published.connect(notify_published, dispatch_uid='cfg_entity_published', weak=False)
 
 
@@ -104,10 +107,6 @@ class PythonzTwitterMessage(PlainTextMessage):
         :param RealmBaseModel entity:
         :return:
         """
-
-        if not entity.notify_on_publish:
-            return False
-
         MAX_LEN = 139  # Максимальная длина твита. Для верности меньше.
         prefix = 'Новое: %s «' % entity.get_verbose_name()
         url = entity.get_absolute_url(with_prefix=True, hash_chunk='fromtwee')
