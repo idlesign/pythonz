@@ -461,11 +461,6 @@ class User(RealmBaseModel, AbstractUser):
         help_text='Место вашего пребывания (страна, город, село).<br>'
                   'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
 
-    # Настрока устарела.
-    digest_enabled = models.BooleanField(
-        'Получать дайджест', default=True, db_index=True,
-        help_text='Включает/отключает еженедельную рассылку с подборкой новых материалов сайта.')
-
     comments_enabled = models.BooleanField(
         'Разрешить комментарии',
         help_text='Включает/отключает систему комментирования Disqus на страницах ваших публикаций.', default=False)
