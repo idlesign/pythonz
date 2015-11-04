@@ -31,9 +31,13 @@
                             <small class="pull-right"><span class="label label-success">моё</span></small>
                         {% endif %}
                         <br>
-                        <a href="{% url "discussions:details" discussion.id %}" class="item" title="Страница обсуждения">{{ discussion.title }}</a>
+
+                        <a href="{% url "discussions:details" discussion.id %}" class="item marg__t_min" title="Страница обсуждения">
+                            {% if show_texts %}<span class="glyphicon glyphicon-comment marg__r_min"></span>{% endif %}{{ discussion.title }}
+                        </a>
+
                         {% if show_texts %}
-                            <div>
+                            <div class="well well-sm marg__t_min">
                                 {{ discussion.get_description|safe }}
                             </div>
                         {% endif %}
