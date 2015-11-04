@@ -1,6 +1,8 @@
+{% load gravatar %}
+
 {% if show_form_for %}
     {% if request.user.is_authenticated %}
-        <div class="pull-right">
+        <div class="pull-right marg__t_mid">
             <form method="post" action="{% url "discussions:add" %}">
                 {% csrf_token %}
                 <input type="hidden" name="pythonz_form" value="1" />
@@ -11,25 +13,32 @@
                 </button>
             </form>
         </div>
+        <div class="clearfix"></div>
     {% endif %}
 {% endif %}
 
 <div class="marg__t_mid">
     {% if items %}
-        <ul class="discussions">
+        <ul class="discussions media-list">
             {% for discussion in items %}
-                <li class="discussion">
-                    <small class="cl__gray">{{ discussion.time_created|date:"d E H:i" }}</small>
-                    {% if request.user.id == discussion.submitter_id %}
-                        <small class="pull-right"><span class="label label-success">моё</span></small>
-                    {% endif %}
-                    <br>
-                    <a href="{% url "discussions:details" discussion.id %}" class="item" title="Страница обсуждения">{{ discussion.title }}</a>
-                    {% if show_texts %}
-                        <div>
-                            {{ discussion.get_description|safe }}
-                        </div>
-                    {% endif %}
+                <li class="discussion media">
+                    <div class="media-left">
+                        <img src="{% gravatar_get_url discussion.submitter 32 %}" class="img-thumbnail media-object">
+                    </div>
+                    <div class="media-body">
+                        <small class="cl__gray">{{ discussion.time_created|date:"d E H:i" }}</small>
+                        {% if request.user.id == discussion.submitter_id %}
+                            <small class="pull-right"><span class="label label-success">моё</span></small>
+                        {% endif %}
+                        <br>
+                        <a href="{% url "discussions:details" discussion.id %}" class="item" title="Страница обсуждения">{{ discussion.title }}</a>
+                        {% if show_texts %}
+                            <div>
+                                {{ discussion.get_description|safe }}
+                            </div>
+                        {% endif %}
+                    </div>
+
                 </li>
             {% endfor %}
         </ul>
