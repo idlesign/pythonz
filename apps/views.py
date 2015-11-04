@@ -31,6 +31,13 @@ class UserDetailsView(DetailsView):
 
     get_object_related_fields = ['place']
 
+    def check_view_permissions(self, request, item):
+        super().check_view_permissions(request, item)
+
+        if not item.profile_public and item != request.user:
+            # Закрываем доступ к непубличным профилям.
+            raise PermissionDenied()
+
     def update_context(self, context, request):
         user = context['item']
         context['bookmarks'] = user.get_bookmarks()

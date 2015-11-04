@@ -22,6 +22,23 @@ class RealmView(View):
     realm = None  # Во время исполнения будет содержать ссылку на объект области Realm
     name = None  # Во время исполнения будет содержать алиас этого представления (н.п. edit).
 
+    def check_view_permissions(self, request, item):
+        """Производит провердку возможности доступа к просмотру страницы.
+        Возбуждает исключения, в случае ошибкидоступа.
+
+        :param Request request:
+        :param Model item:
+        :return:
+        """
+        if not request.user.is_superuser:
+            if item.is_deleted():
+                # Запрещаем доступ к удалённым.
+                raise Http404()
+
+            elif item.is_draft() and hasattr(item, 'submitter') and item.submitter != request.user:
+                # Закрываем доступ к чужим черновикам.
+                raise PermissionDenied()
+
     def check_edit_permissions(self, request, item):
         """Производит проверку прав пользователя для доступа к редактированию объекта.
 
@@ -278,14 +295,7 @@ class DetailsView(RealmView):
 
         item = self.get_object_or_404(obj_id)
 
-        if not request.user.is_superuser:
-            if item.is_deleted():
-                # Запрещаем доступ к удалённым.
-                raise Http404()
-
-            elif item.is_draft() and hasattr(item, 'submitter') and item.submitter != request.user:
-                # Закрываем доступ к чужим черновикам.
-                raise PermissionDenied()
+        self.check_view_permissions(request, item)
 
         item.has_discussions = False
 

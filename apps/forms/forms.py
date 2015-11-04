@@ -227,6 +227,7 @@ class UserForm(RealmEditBaseForm):
             'first_name',
             'last_name',
             'url',
+            'profile_public',
             'email_public',
             'place',
             'timezone',

@@ -461,6 +461,11 @@ class User(RealmBaseModel, AbstractUser):
         help_text='Место вашего пребывания (страна, город, село).<br>'
                   'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
 
+    profile_public = models.BooleanField(
+        'Публичный профиль', default=True, db_index=True,
+        help_text='Если выключить, то увидеть ваш профиль сможете только вы.<br>'
+                  'В списках пользователей профиль значиться тоже не будет.')
+
     comments_enabled = models.BooleanField(
         'Разрешить комментарии',
         help_text='Включает/отключает систему комментирования Disqus на страницах ваших публикаций.', default=False)
@@ -528,14 +533,14 @@ class User(RealmBaseModel, AbstractUser):
 
     @classmethod
     def get_actual(cls):
-        return cls.objects.filter(is_active=True).order_by('-date_joined').all()
+        return cls.objects.filter(is_active=True, profile_public=True).order_by('-date_joined').all()
 
     @classmethod
     def get_paginator_objects(cls):
-        return cls.objects.order_by('-date_joined').all()
+        return cls.get_actual()
 
     @classmethod
-    def get_most_voted_objects(cls):
+    def get_most_voted_objects(cls, category=None, base_query=None):
         query = cls.objects.filter(supporters_num__gt=0)
         query = query.select_related('submitter').order_by('-supporters_num')
         return query.all()[:5]
