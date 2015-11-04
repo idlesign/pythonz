@@ -126,7 +126,7 @@ class PythonzTelegramEntyPublishedMessage(PlainTextMessage):
 
     alias = 'tele_update'
     priority = 1  # Рассылается ежеминутно.
-    send_retry_limit = 50
+    send_retry_limit = 5
     supported_messengers = ['telegram']
     title = 'Новое на сайте'
     allow_user_subscription = False
