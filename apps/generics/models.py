@@ -512,14 +512,15 @@ class RealmBaseModel(ModelWithFlag):
         format_date = lambda date: date.strftime('%Y%m%d%H%i')
         return self.time_modified and format_date(self.time_modified) != format_date(self.time_created)
 
-    def get_absolute_url(self, with_prefix=False, hash_chunk=None):
+    def get_absolute_url(self, with_prefix=False, utm_str=None):
         """Возвращает URL страницы с детальной информацией об объекте.
 
         :param bool with_prefix: Флаг. Следует ли добавлять название хоста к URL.
-        :param None|str hash_chunk: Хэш идентификатор для URL.
-            Используются, например в качестве меток источников переходов по URL
-            при сборе статистики посещений.
-        :return:
+
+        :param None|str utm_str: Строка для создания UTM-метки (Urchin Tracking Module).
+            Используются для обозначения источников переходов по URL при сборе статистики посещений.
+
+        :rtype: str
         """
         details_urlname = self.realm.get_details_urlname()
 
@@ -535,8 +536,8 @@ class RealmBaseModel(ModelWithFlag):
         if with_prefix:
             url = '%s%s' % (settings.SITE_URL, url)
 
-        if hash_chunk is not None:
-            url = '%s#%s' % (url, hash_chunk)
+        if utm_str is not None:
+            url = '%s?utm_source=%s' % (url, utm_str)  # Пока достаточно и источника.
 
         return url
 

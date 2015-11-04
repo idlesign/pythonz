@@ -109,7 +109,7 @@ class PythonzTwitterMessage(PlainTextMessage):
         """
         MAX_LEN = 139  # Максимальная длина твита. Для верности меньше.
         prefix = 'Новое: %s «' % entity.get_verbose_name()
-        url = entity.get_absolute_url(with_prefix=True, hash_chunk='fromtwee')
+        url = entity.get_absolute_url(with_prefix=True, utm_str='twee')
 
         postfix = '» %s' % url
         if settings.AGRESSIVE_MODE:
@@ -139,7 +139,7 @@ class PythonzTelegramEntyPublishedMessage(PlainTextMessage):
         :return:
         """
         message = 'Новое: %s «%s» %s' % (
-            entity.get_verbose_name(), entity.title, entity.get_absolute_url(with_prefix=True, hash_chunk='fromtele'))
+            entity.get_verbose_name(), entity.title, entity.get_absolute_url(with_prefix=True, utm_str='tele'))
         cls(message).schedule(cls.recipients('telegram', '@pythonz'))
 
 
@@ -295,7 +295,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
             entries = realm.model.get_actual().filter(**filter_kwargs).order_by(order_by)
             if entries:
                 for entry in entries:
-                    entry.absolute_url = entry.get_absolute_url(with_prefix=True, hash_chunk='frommail')
+                    entry.absolute_url = entry.get_absolute_url(with_prefix=True, utm_str='mail')
                 realms_data[realm.model.get_verbose_name_plural()] = entries
 
     @classmethod

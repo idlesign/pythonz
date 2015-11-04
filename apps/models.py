@@ -341,7 +341,7 @@ class Vacancy(RealmBaseModel):
 
         return ' '.join(map(str, chunks)).strip()
 
-    def get_absolute_url(self, with_prefix=False, hash_chunk=None):
+    def get_absolute_url(self, with_prefix=False, utm_str=None):
         return self.url_site
 
     def link_to_place(self):

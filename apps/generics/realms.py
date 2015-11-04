@@ -119,7 +119,7 @@ class RealmBase(object):
             'link': func_link,
             'items': func_items,
             'item_title': lambda self, item: item.title,
-            'item_link': lambda self, item: item.get_absolute_url(hash_chunk='fromrss'),
+            'item_link': lambda self, item: item.get_absolute_url(utm_str='rss'),
             'item_description': lambda self, item: item.description,
         }
         return type('%sSyndication' % cls_name, (Feed,), type_dict)()
