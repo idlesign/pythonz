@@ -1,5 +1,5 @@
 awesome-slugify==1.6.5
-Django==1.8.5
+Django==1.8.7
 Fabric==1.10.2
 Pillow==2.8.2
 bleach==1.4.2
@@ -20,5 +20,5 @@ django-sitegate==0.10.2
 django-sitemessage==0.7.0
 django-sitemetrics==0.5.1
 django-siteprefs==0.5.0
-django-sitetree==1.4.0
+django-sitetree==1.5.0
 django-xross==0.4.0
