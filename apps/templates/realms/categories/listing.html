@@ -10,7 +10,7 @@
                 {% if realm.show_on_main %}
                 <div class="feature text-center pull-left">
                     <a href="{% url realm.get_listing_urlname %}">
-                        <i class="glyphicon glyphicon-{{ realm.icon }}"></i> <h5>{% model_meta_verbose_name_plural realm.model %}</h5>
+                        <span class="glyphicon glyphicon-{{ realm.icon }}"></span> <h5>{% model_meta_verbose_name_plural realm.model %}</h5>
                     </a>
                 </div>
                 {% endif %}
