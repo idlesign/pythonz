@@ -23,7 +23,7 @@
             {% for discussion in items %}
                 <li class="discussion media">
                     <div class="media-left">
-                        <img src="{% gravatar_get_url discussion.submitter 32 %}" class="img-thumbnail media-object">
+                        <img src="{% gravatar_get_url discussion.submitter 32 %}" class="img-thumbnail media-object" alt="{{ discussion.submitter.title }}">
                     </div>
                     <div class="media-body">
                         <small class="cl__gray">{{ discussion.time_created|date:"d E H:i" }}</small>

@@ -19,8 +19,8 @@
             {% for user in users %}
                 {% if user.is_active %}
                 <div class="pull-left userlist_item">
-                    <a href="{{ user.get_absolute_url }}" title="{{ user.get_display_name }}">
-                        <img src="{% gravatar_get_url user %}">
+                    <a href="{{ user.get_absolute_url }}" title="{{ user.title }}">
+                        <img src="{% gravatar_get_url user %}" alt="{{ user.title }}">
                     </a>
                 </div>
                 {% endif %}
