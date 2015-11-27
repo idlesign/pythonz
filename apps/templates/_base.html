@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/github.min.css">
 
     <link href='http://fonts.googleapis.com/css?family=Belleza' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=PT+Serif&subset=cyrillic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=PT+Serif&amp;subset=cyrillic' rel='stylesheet' type='text/css'>
 
     <link href="{{ STATIC_URL }}img/favicon.gif" rel="icon" type="image/gif" />
 
@@ -37,7 +37,7 @@
 <body>
     {% block body_start %}{% endblock %}
 
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
 
             <a class="navbar-brand" href="/" title="На главную страницу pythonz.net">
@@ -57,9 +57,9 @@
                 </div>
             {% endwith %}
 
-            <form class="navbar-form navbar-left" role="search" method="post" action="/search/">
+            <form class="navbar-form navbar-left" method="post" action="/search/">
                 {% csrf_token %}
-                <div class="form-group">
+                <div class="form-group" role="search">
                     <input type="text" class="form-control" name="search_term" placeholder="Поиск по справочнику" value="{{ search_term }}">
                 </div>
             </form>
@@ -93,7 +93,7 @@
     </div>
 
     {% cache 21600 nav_bottom %}
-    <nav class="footer navbar navbar-default marg__t_max" role="navigation">
+    <nav class="footer navbar navbar-default marg__t_max">
         <div class="container">
             <div class="row">
                 <div class="col-md-2">
