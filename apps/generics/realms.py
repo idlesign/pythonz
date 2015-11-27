@@ -59,7 +59,7 @@ class RealmBase(object):
     sitemap_date_field = 'time_modified'
 
     # Предполагаемая периодичность обновления данных (для карты сайта).
-    sitemap_changefreq = 'weekly'
+    sitemap_changefreq = 'daily'
 
     txt_form_add = 'Добавить элемент'
     txt_form_edit = 'Редактировать элемент'

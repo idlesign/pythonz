@@ -198,7 +198,6 @@ class EventRealm(RealmBase):
     model = Event
     form = EventForm
     icon = 'calendar'
-    sitemap_changefreq = 'daily'
 
 
 class VacancyRealm(RealmBase):
@@ -216,8 +215,7 @@ class VacancyRealm(RealmBase):
 
     model = Vacancy
     icon = 'briefcase'
-    sitemap_changefreq = 'daily'
-    sitemap_date_field = 'time_published'
+    sitemap_enabled = False
 
     yawidget_code = 178839
 
@@ -270,13 +268,15 @@ class PlaceRealm(RealmBase):
     view_listing_description = 'Места, так или иначе связанные с языком программирования Python.'
     view_listing_keywords = 'python в городе, где программируют на питоне'
 
+    view_listing_base_class = PlaceListingView
+    view_details_base_class = PlaceDetailsView
+
     model = Place
     form = VideoForm
     icon = 'picture'
+
+    sitemap_changefreq = 'weekly'
     allowed_views = ('listing', 'details')
-    sitemap_changefreq = 'monthly'
-    view_listing_base_class = PlaceListingView
-    view_details_base_class = PlaceDetailsView
     show_on_main = False
 
 
@@ -306,15 +306,19 @@ class UserRealm(RealmBase):
     view_listing_description = 'Люди, связанные с языком программирования Python.'
     view_listing_keywords = 'питонисты, разработчики python'
 
+    view_details_base_class = UserDetailsView
+    view_edit_base_class = UserEditView
+
     model = User
     form = UserForm
     icon = 'user'
-    allowed_views = ('listing', 'details', 'edit')
-    syndication_enabled = False
+
     sitemap_date_field = 'date_joined'
-    view_details_base_class = UserDetailsView
-    view_edit_base_class = UserEditView
+    sitemap_changefreq = 'weekly'
+    allowed_views = ('listing', 'details', 'edit')
     show_on_main = False
+
+    syndication_enabled = False
 
     @classmethod
     def get_sitetree_details_item(cls):
@@ -447,7 +451,6 @@ class CommunityRealm(RealmBase):
     model = Community
     form = CommunityForm
     icon = 'home'
-    sitemap_changefreq = 'daily'
 
 
 register_realms(
