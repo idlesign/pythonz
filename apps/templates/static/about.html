@@ -11,20 +11,22 @@
         <div>
             <h3>Помочь участием</h3>
 
-            <div>
-                <strong>Посетителям</strong>
-                <p>
+            <div class="marg__t_max">
+                <h4>Посетителям</h4>
+                <p class="marg__b_max">
                     Регистрируйтесь, оценивайте материалы, добавляйте новые, актуализируйте информацию в имеющихся, принимайте участие в обсуждениях.
                 </p>
 
-                <strong>Разработчикам</strong>
-                <p>
+                <h4>Разработчикам</h4>
+                <p class="marg__b_max">
                     Проект разрабатывается открыто: вы можете посетить <a href="https://github.com/idlesign/pythonz/">страницу проекта на GitHub</a>,
                     ознакомится с кодом и поучаствовать в развитии &#8212; поделиться идеей, задать вопрос, расширить функциональность, исправить ошибку.<br>
+                    Вопросы, связанные с разработкой обсуждаются на <a href="https://gitter.im/idlesign/pythonz">канале в Gitter</a>.<br>
+                    <button id="chat_toggler" class="js-gitter-toggle-chat-button btn btn-default marg__t_mid">Показать обсуждение</button>
                 </p>
 
-                <strong>Безопасность</strong>
-                <p>
+                <h4>Безопасность</h4>
+                <p class="marg__b_max">
                     В случае обнаружения проблемы безопасности в проекте, пожалуйста, сообщите о ней
                     на адрес <a href="mailto:security@pythonz.net">security@pythonz.net</a> до обнародования.
                     <br>
@@ -41,3 +43,13 @@
 
 
 {% block zen %}{% endblock %}
+
+
+{% block js_bottom %}
+<script>
+((window.gitter = {}).chat = {}).options = {
+    room: 'idlesign/pythonz',
+    activationElement: '.my-special-button'
+};
+</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer></script>
+{% endblock %}
