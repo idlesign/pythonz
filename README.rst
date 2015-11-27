@@ -76,6 +76,7 @@ https://github.com/idlesign/pythonz
 * `django-datetime-widget <https://github.com/asaglimbeni/django-datetime-widget>`_
 * `django-debug-toolbar <https://github.com/django-debug-toolbar/django-debug-toolbar>`_
 * `django-etc <https://github.com/idlesign/django-etc>`_
+* `django-robots <https://github.com/jezdez/django-robots>`_
 * `django-simple-history <https://github.com/treyhunner/django-simple-history>`_
 * `django-siteblocks <https://github.com/idlesign/django-siteblocks>`_
 * `django-sitecats <https://github.com/idlesign/django-sitecats>`_

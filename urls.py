@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(r'^promo/$', render, {'template_name': 'static/promo.html'}),
     url(r'^about/$', render, {'template_name': 'static/about.html'}),
     url(r'^sitemap/$', render, {'template_name': 'static/sitemap.html'}),
+    url(r'^robots\.txt$', include('robots.urls')),
     url(r'^%s/' % settings.ADMIN_URL, include(admin.site.urls)),
 )
 
