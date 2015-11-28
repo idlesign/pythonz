@@ -28,9 +28,9 @@
         </div>
     </div>
     <div class="row" itemscope itemtype="http://schema.org/Article">
-        <meta property="headline" content="{{ article.title }}" />
-        <meta property="datePublished" content="{{ article.time_published|date:"c" }}" />
-        <meta property="image" content="{{ STATIC_URL }}img/realm_logos/pythonz_articles.png" />
+        <meta itemprop="headline" content="{{ article.title }}" />
+        <meta itemprop="datePublished" content="{{ article.time_published|date:"c" }}" />
+        <meta itemprop="image" content="{{ STATIC_URL }}img/realm_logos/pythonz_articles.png" />
 
         <div class="col-md-12">
             <div>

@@ -27,8 +27,8 @@
 
 
 {% block details_contents %}
-    <meta property="headline" content="{{ article.title }}" />
-    <meta property="datePublished" content="{{ article.time_published|date:"c" }}" />
+    <meta itemprop="headline" content="{{ article.title }}" />
+    <meta itemprop="datePublished" content="{{ article.time_published|date:"c" }}" />
 
     <div class="pull-right col-md-3">
 
