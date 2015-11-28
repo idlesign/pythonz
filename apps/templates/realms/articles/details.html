@@ -22,12 +22,13 @@
 
 
 {% block page_contents %}
+<div itemscope itemtype="http://schema.org/Article">
     <div class="row">
         <div class="col-md-12">
             {% include "sub_title_block.html" %}
         </div>
     </div>
-    <div class="row" itemscope itemtype="http://schema.org/Article">
+    <div class="row">
         <meta itemprop="headline" content="{{ article.title }}" />
         <meta itemprop="datePublished" content="{{ article.time_published|date:"c" }}" />
         <meta itemprop="image" content="{{ STATIC_URL }}img/realm_logos/pythonz_articles.png" />
@@ -79,4 +80,5 @@
             {% include "sub_comments.html" with disable_internal=1 author=article.submitter entity_name='article' entity_id=article.id personalized=article.published_by_author %}
         </div>
     </div>
+</div>
 {%  endblock %}

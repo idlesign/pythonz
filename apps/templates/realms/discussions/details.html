@@ -15,6 +15,7 @@
 
 
 {% block page_contents %}
+<div itemscope itemtype="http://schema.org/Comment">
     <div class="row">
         <div class="col-md-12">
             {% include "sub_title_block.html" %}
@@ -22,7 +23,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div itemscope itemtype="http://schema.org/Comment">
+            <div>
                 <meta itemprop="about" content="{{ discussion.title }}" />
 
                 <div class="pull-right marg__l_mid marg__b_mid float_panel">
@@ -57,4 +58,5 @@
             {% include "sub_comments.html" with disable_internal=1 author=discussion.submitter entity_name='discussion' entity_id=discussion.id personalized=1 %}
         </div>
     </div>
+</div>
 {%  endblock %}
