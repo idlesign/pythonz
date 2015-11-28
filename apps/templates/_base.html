@@ -38,7 +38,7 @@
 <body>
     {% block body_start %}{% endblock %}
 
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-fixed-top" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <div class="container-fluid">
 
             <a class="navbar-brand" href="/" title="На главную страницу pythonz.net">
@@ -94,7 +94,7 @@
     </div>
 
     {% cache 21600 nav_bottom %}
-    <nav class="footer navbar navbar-default marg__t_max">
+    <nav class="footer navbar navbar-default marg__t_max" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <div class="container">
             <div class="row">
                 <div class="col-md-2">

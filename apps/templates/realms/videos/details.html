@@ -1,5 +1,5 @@
 {% extends "base_details.html" %}
-{% load model_field %}
+{% load model_field thumbs %}
 
 
 {% block page_keywords %}{{ block.super }}, видео {{ video.title }}, смотреть {{ video.title }}{% endblock %}
@@ -18,6 +18,9 @@
 
 
 {% block details_contents %}
+    <meta property="uploadDate" content="{{ video.time_published|date:"c" }}" />
+    <meta property="thumbnailUrl" content="{% thumbs_get_thumb_url video.cover 180 236 item.realm %}" />
+
     <div>
         {{ video.code|safe }}
     </div>

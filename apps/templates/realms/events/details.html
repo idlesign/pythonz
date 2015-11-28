@@ -34,7 +34,7 @@
         {% endif %}
         <div>
             {% if event.time_start %}
-                {{ event.time_start|date:"d E H:i" }}
+                <span itemprop="startDate" datetime="{{ event.time_start|date:"c" }}">{{ event.time_start|date:"d E H:i" }}</span>
                 {% if event.time_finish %}
                     &#8212; {{ event.time_finish|date:"d E H:i" }}
                 {% endif %}
@@ -45,7 +45,9 @@
                 {% endif %}
             {% endif %}
             {% if event.place %}
-                <span class="small marg__l_mid"><a href="{{ event.place.get_absolute_url }}">{{ event.place.title }}</a></span>
+                <span class="small marg__l_mid">
+                    <a href="{{ event.place.get_absolute_url }}" itemprop="location">{{ event.place.title }}</a>
+                </span>
             {% endif %}
         </div>
     </div>

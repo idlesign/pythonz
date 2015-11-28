@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="marg__b_mid small">Количество результатов: {{ results|length }}</div>
-    <div class="marg__l_mid">
+    <div class="marg__l_mid" itemscope itemtype="http://schema.org/SearchResultsPage">
         {% if results %}
             <ol>
             {% for result in results %}

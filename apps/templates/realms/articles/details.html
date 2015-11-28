@@ -17,19 +17,21 @@
     {% if article.published_by_author %}
     <meta property="og:author" content="{{ article.submitter }}" />
     {% endif %}
-    <meta property="article:published_time" content="{{ article.time_published }}" />
-    <meta property="article:modified_time" content="{{ article.time_modified }}" />
     {{ block.super }}
 {% endblock %}
 
 
 {% block page_contents %}
-    <div class="row" itemscope itemtype="http://schema.org/Article">
+    <div class="row">
         <div class="col-md-12">
             {% include "sub_title_block.html" %}
         </div>
     </div>
-    <div class="row">
+    <div class="row" itemscope itemtype="http://schema.org/Article">
+        <meta property="headline" content="{{ article.title }}" />
+        <meta property="datePublished" content="{{ article.time_published|date:"c" }}" />
+        <meta property="image" content="{{ STATIC_URL }}img/realm_logos/pythonz_articles.png" />
+
         <div class="col-md-12">
             <div>
                 <div class="pull-right marg__l_mid marg__b_mid float_panel">
@@ -51,7 +53,7 @@
                     </small>
                 </div>
 
-                <div class="lead">{{ article.description|linebreaksbr }}</div>
+                <div class="lead" itemprop="description">{{ article.description|linebreaksbr }}</div>
                 <div class="py_user">{{ article.text|safe }}</div>
 
                 {% if not article.is_handmade %}

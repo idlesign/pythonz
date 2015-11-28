@@ -22,7 +22,9 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div>
+            <div itemscope itemtype="http://schema.org/Comment">
+                <meta property="title" content="{{ discussion.title }}" />
+
                 <div class="pull-right marg__l_mid marg__b_mid float_panel">
                     <div class="well marg__b_mid text-center">
                         {% with discussion.submitter.get_absolute_url as submitter_url %}
@@ -45,7 +47,7 @@
                         </div>
                     </small>
                 </div>
-                <div class="py_user">{{ discussion.text|safe }}</div>
+                <div class="py_user" itemprop="text">{{ discussion.text|safe }}</div>
             </div>
             {% include "sub_box_share.html" %}
         </div>

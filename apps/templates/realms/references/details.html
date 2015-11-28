@@ -23,7 +23,12 @@
 {% block details_main_col %}col-md-12{% endblock %}
 
 
+{% block schema_type %}APIReference{% endblock %}
+
+
 {% block details_contents %}
+    <meta property="headline" content="{{ article.title }}" />
+    <meta property="datePublished" content="{{ article.time_published|date:"c" }}" />
 
     <div class="pull-right col-md-3">
 
