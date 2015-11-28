@@ -27,8 +27,9 @@
 
 
 {% block details_contents %}
-    <meta itemprop="headline" content="{{ article.title }}" />
-    <meta itemprop="datePublished" content="{{ article.time_published|date:"c" }}" />
+    <meta itemprop="headline" content="{{ reference.title }}" />
+    <meta itemprop="datePublished" content="{{ reference.time_published|date:"c" }}" />
+    <meta itemprop="image" content="{{ STATIC_URL }}img/realm_logos/pythonz_references.png" />
 
     <div class="pull-right col-md-3">
 
