@@ -7,7 +7,7 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def thumbs_get_thumb_url(context, image, width, height, realm, as_=None, as_name=None):
+def thumbs_get_thumb_url(context, image, width, height, realm):
     """Создаёт на лету уменьшенную копию указанного изображения.
 
     :param context:
@@ -15,12 +15,6 @@ def thumbs_get_thumb_url(context, image, width, height, realm, as_=None, as_name
     :param width:
     :param height:
     :param realm:
-    :param as_:
-    :param as_name:
     :return:
     """
-    url = get_thumb_url(realm, image, width, height)
-    if as_name is not None:
-        context[as_name] = url
-        return ''
-    return url
+    return get_thumb_url(realm, image, width, height)

@@ -5,7 +5,7 @@
     {% model_field_verbose_name from items.url as title_url %}
     <ul class="media-list">
     {% for community in items %}
-        {% thumbs_get_thumb_url community.cover 100 131 realm as "thumb_url" %}
+        {% thumbs_get_thumb_url community.cover 100 131 realm as thumb_url %}
 
         <li class="marg__b_mid media">
             <div class="media-body">

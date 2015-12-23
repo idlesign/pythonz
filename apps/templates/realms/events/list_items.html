@@ -5,7 +5,7 @@
         <div class="rating"><span class="label label-default">{{ event.supporters_num }}</span></div>
         <div class="cover_img float-right">
         <a href="{{ event.get_absolute_url }}">
-            {% thumbs_get_thumb_url event.cover 100 131 event.realm as "thumb_url" %}
+            {% thumbs_get_thumb_url event.cover 100 131 event.realm as thumb_url %}
             <b>{{ abra }}</b>
             {% if thumb_url %}
             <img src="{{ thumb_url }}" class="img-thumbnail faded" alt="{{ event.title }}">
