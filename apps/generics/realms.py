@@ -347,7 +347,7 @@ class RealmBase(object):
 
         :return:
         """
-        views = ['']
+        views = []
 
         def add_view(view_name, url_name=None):
 
@@ -368,4 +368,4 @@ class RealmBase(object):
             views.append(url(r'^%s/$' % SYNDICATION_URL_MARKER, cls.get_syndication_feed(), name='syndication'))
 
         _, realm_name_plural = cls.get_names()
-        return patterns('', url(r'^%s/' % realm_name_plural, (patterns(*views), realm_name_plural, realm_name_plural)))
+        return [url(r'^%s/' % realm_name_plural, (views, realm_name_plural, realm_name_plural))]

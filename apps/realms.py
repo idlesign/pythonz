@@ -4,6 +4,7 @@ from operator import attrgetter
 from django.db.models import signals
 from django.conf.urls import patterns, url
 from django.core.urlresolvers import reverse, get_resolver
+from django.contrib.sitemaps.views import sitemap
 
 from sitetree.utils import tree, item
 from sitecats.toolbox import get_tie_model, get_category_model
@@ -103,8 +104,8 @@ def get_realms_urls():
         url_patterns += realm.get_urls()
     sitemaps = get_sitemaps()
     if sitemaps:
-        url_patterns += patterns(
-            '', url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}))
+        url_patterns += [
+            url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps})]
     return url_patterns
 
 
@@ -431,8 +432,7 @@ class CategoryRealm(RealmBase):
 
         _, realm_name_plural = CategoryRealm.get_names()
 
-        return patterns(
-            '', url(r'^%s/' % realm_name_plural, (patterns('', *feeds), realm_name_plural, cls.SYNDICATION_NAMESPACE)))
+        return [url(r'^%s/' % realm_name_plural, (feeds, realm_name_plural, cls.SYNDICATION_NAMESPACE))]
 
 
 class CommunityRealm(RealmBase):

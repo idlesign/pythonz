@@ -12,7 +12,7 @@ from django.db import models, IntegrityError
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.utils import timezone
 
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
@@ -34,7 +34,7 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
     content_type = models.ForeignKey(
         ContentType, verbose_name='Тип содержимого', related_name='%(class)s_discussions', null=True, blank=True)
 
-    linked_object = generic.GenericForeignKey()
+    linked_object = GenericForeignKey()
 
     history = HistoricalRecords()
 
@@ -60,7 +60,7 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
 class ModelWithDiscussions(models.Model):
     """Класс-примесь к моделям сущностей, для который разрешено оставление мнений."""
 
-    discussions = generic.GenericRelation(Discussion)
+    discussions = GenericRelation(Discussion)
 
     class Meta:
         abstract = True
@@ -137,7 +137,7 @@ class PartnerLink(models.Model):
 
     description = models.CharField('Описание', max_length=255, null=True, blank=True)
 
-    linked_object = generic.GenericForeignKey()
+    linked_object = GenericForeignKey()
 
     class Meta:
         verbose_name = 'Партнёрская ссылка'
@@ -150,7 +150,7 @@ class PartnerLink(models.Model):
 class ModelWithPartnerLinks(models.Model):
     """Класс-примесь к моделям сущностей, для который разрешено добавление партнёрских ссылок."""
 
-    partner_links = generic.GenericRelation(PartnerLink)
+    partner_links = GenericRelation(PartnerLink)
 
     class Meta:
         abstract = True
