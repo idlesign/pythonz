@@ -179,8 +179,8 @@ class CategoryListingView(RealmView):
 
 
 # Наши страницы ошибок.
-permission_denied = lambda request: dj_permission_denied(request, template_name='static/403.html')
-page_not_found = lambda request: dj_page_not_found(request, template_name='static/404.html')
+permission_denied = lambda request, ex: dj_permission_denied(request, ex, template_name='static/403.html')
+page_not_found = lambda request, ex: dj_page_not_found(request, ex, template_name='static/404.html')
 server_error = lambda request: dj_server_error(request, template_name='static/500.html')
 
 
