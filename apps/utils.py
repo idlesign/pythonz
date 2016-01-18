@@ -390,8 +390,7 @@ def get_location_data(location_name):
 
 
 def scrape_page(url):
-    """Возвращает словарь с данными о странице (полученными при помощи
-    Rich Content API от Яндекса), либо None в случае ошибок.
+    """Возвращает словарь с данными о странице, либо None в случае ошибок.
 
     Словарь вида:
         {'title': '...', 'content_more': '...', 'content_less': '...', ...}
@@ -400,11 +399,9 @@ def scrape_page(url):
     :return:
     """
 
-    url = 'http://rca.yandex.com/?key=%(api_key)s&url=%(url)s&content=full' % {
-        'api_key': settings.YANDEX_RCA_KEY, 'url': url
-    }
-
-    result = get_json(url)
+    # Функция использовала ныне недоступный Rich Content API от Яндекса для получения данных о странице.
+    # Если функциональность будет востребована, нужно будет перевести на использование догого механизма.
+    result = {}
 
     if 'content' not in result:
         return None

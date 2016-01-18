@@ -599,7 +599,7 @@ class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
 
     LOCATIONS = choices_list(
         (LOCATION_INTERNAL, 'На этом сайте'),
-        (LOCATION_EXTERNAL, 'На другом сайте'),
+        # (LOCATION_EXTERNAL, 'На другом сайте'),
     )
 
     SOURCE_HANDMADE = 1
