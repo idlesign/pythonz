@@ -537,7 +537,7 @@ class RealmBaseModel(ModelWithFlag):
             url = '%s%s' % (settings.SITE_URL, url)
 
         if utm_str is not None:
-            url = '%s?utm_source=%s' % (url, utm_str)  # Пока достаточно и источника.
+            url = '%s?utm_source=%s&utm_campaign=%s&utm_medium=%s' % (url, utm_str, 'promo', 'link')
 
         return url
 
