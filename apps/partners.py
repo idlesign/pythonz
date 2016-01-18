@@ -49,7 +49,9 @@ class PartnerBase():
 
         page_soup = self.get_page_soup(link_url)
 
-        price = self.get_price(page_soup).strip(' .').replace('руб', 'руб.')
+        price = self.get_price(page_soup).lower().strip(' .').replace('руб', 'руб.')
+        if price.isdigit():
+            price += ' руб.'
 
         data = {
             'icon_url': self.get_icon_url(page_soup, link_url),
@@ -135,9 +137,15 @@ class Ozon(PartnerBase):
         price = ''
 
         if page_soup:
-            matches = page_soup.select('.bOzonPrice .hidden')
-            if matches:
-                price = matches[0].text
+            match = page_soup.find(itemprop='price')
+            if not match:
+                matches = page_soup.select('.bOzonPrice .hidden')
+
+                if matches:
+                    match = matches[0]
+
+            if match:
+                price = match.text
 
         return price
 
