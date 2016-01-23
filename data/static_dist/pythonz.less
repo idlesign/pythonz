@@ -158,10 +158,6 @@
   height: 28px !important;
 }
 
-html, body {
-  padding-top: @gap__mid;
-}
-
 header {
   h1 {
     font-family: @fnt__brand;
@@ -214,12 +210,13 @@ input[type=checkbox] {
 
 nav .submenu {
   border-left: 4px @cl__green solid;
+  li {
+    padding-left: @gap__min;
+  }
 }
 
 .body {
   background-color: @cl__white;
-  padding-top: @gap__max;
-  padding-bottom: @gap__max;
 }
 
 .section {
