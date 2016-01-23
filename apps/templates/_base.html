@@ -42,12 +42,12 @@
         <div class="container-fluid">
 
             <div class="navbar-header">
-            <a class="navbar-brand" href="/" title="На главную страницу pythonz.net">
-                <img src="{{ STATIC_URL }}img/favicon.gif" class="pull-left" alt="pythonz">
-                <span class="text-uppercase">pythonz</span>
-            </a>
+                <a class="navbar-brand" href="/" title="На главную страницу pythonz.net">
+                    <img src="{{ STATIC_URL }}img/favicon.gif" class="pull-left" alt="pythonz">
+                    <span class="text-uppercase">pythonz</span>
+                </a>
             </div>
-            <div>
+
             {% with template_path="sitetree/menu_top.html" %}
                 {% sitetree_menu from "main" include "topmenu" template template_path %}
 
@@ -59,7 +59,6 @@
                 {% endif %}
                 </div>
             {% endwith %}
-            </div>
 
             <form class="navbar-form navbar-left" method="post" action="/search/">
                 {% csrf_token %}
