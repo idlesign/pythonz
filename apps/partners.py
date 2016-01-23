@@ -175,6 +175,26 @@ class ReadRu(PartnerBase):
         return price
 
 
+class LabirintRu(PartnerBase):
+    """Класс реализует работу по партнёрской программе сайта labirint.ru."""
+
+    ident = 'labirint'
+    title = 'labirint.ru'
+    link_mutator = '?p={partner_id}'
+
+    @classmethod
+    def get_price(cls, page_soup):
+
+        price = ''
+
+        if page_soup:
+            matches = page_soup.select('.buying-price-val-number')
+            if matches:
+                price = matches[0].text
+
+        return price
+
+
 def get_cache_key(instance):
     """Возвращает ключ записи кэша для указанного экземпляра сущности.
 
@@ -196,7 +216,7 @@ def init_partners_module():
 
     _PARTNERS_REGISTRY = OrderedDict()
 
-    PARTNER_CLASSES = [BooksRu, LitRes, Ozon, ReadRu]
+    PARTNER_CLASSES = [BooksRu, LitRes, Ozon, ReadRu, LabirintRu]
 
     partners_settings = settings.PARTNER_IDS
 
