@@ -84,6 +84,13 @@ class PartnerLinkInline(GenericTabularInline):
     extra = 0
 
 
+class PartnerLinkAdmin(admin.ModelAdmin):
+
+    list_display = ('linked_object', 'partner_alias', 'url')
+    list_filter = ['partner_alias']
+
+admin.site.register(PartnerLink, PartnerLinkAdmin)
+
 ##################################################################################
 
 class PlaceAdmin(admin.ModelAdmin):
