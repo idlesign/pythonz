@@ -113,6 +113,24 @@ class VacancyAdmin(admin.ModelAdmin):
 admin.site.register(Vacancy, VacancyAdmin)
 
 
+def get_linked_inline(model):
+    """Возвращает класс встроенного (inline) редактора для связанных объектов
+    для указанной модели.
+
+    """
+    model_cls_name = model.__name__.lower()
+    cls = type(
+        '%sInline' % model_cls_name,
+        (admin.TabularInline,),
+        {
+            'model': getattr(model, 'linked').through,
+            'fk_name': 'from_%s' % model_cls_name,
+            'extra': 2,
+            'raw_id_fields': ('to_%s' % model_cls_name,)
+        })
+    return cls
+
+
 class EntityBaseAdmin(SimpleHistoryAdmin):
 
     list_display = ('time_created', 'title', 'submitter',)
@@ -127,6 +145,8 @@ class ArticleAdmin(EntityBaseAdmin):
     list_display = ('time_created', 'title', 'submitter', 'source', 'published_by_author')
     list_filter = ['time_created', 'status', 'source', 'published_by_author']
 
+    inlines = [get_linked_inline(Article)]
+
 admin.site.register(Article, ArticleAdmin)
 
 
@@ -137,6 +157,8 @@ class BookAdmin(EntityBaseAdmin):
 
     list_display = ('time_created', 'title', 'submitter', 'isbn')
     search_fields = ['title', 'isbn']
+
+    inlines = [get_linked_inline(Book)]
 
 admin.site.register(Book, BookAdmin)
 
@@ -166,7 +188,7 @@ admin.site.register(Event, EventAdmin)
 
 class VideoAdmin(EntityBaseAdmin):
 
-    pass
+    inlines = [get_linked_inline(Video)]
 
 admin.site.register(Video, VideoAdmin)
 
