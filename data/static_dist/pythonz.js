@@ -19,6 +19,23 @@ pythonz = {
         });
     },
 
+    activate_comments_tab: function(timeout) {
+        setTimeout(function(){
+            var maxCount = 0,
+                ids = ['comments_vk', 'comments_fb', 'comments_disqus', 'comments_internal'];
+
+            $.each(ids, function(idx, tabId){
+                var count = parseInt($('#' + tabId + '_cnt').text());
+                if (count > maxCount) {
+                    $('a[href="#' + tabId + '"]', '#comments_tabs').tab('show');
+                    maxCount = count;
+                }
+            });
+
+
+        }, timeout);
+    },
+
     Reference: {
 
         RULE_PYVERSION_ADDED: [/\+py([\w\.]+)/g, '<small><div class="label label-info" title="Актуально с версии">$1</div></small>'],

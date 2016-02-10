@@ -1,26 +1,34 @@
-<ul class="nav nav-tabs" role="tablist">
+<script type="application/javascript">
+    {% comment %}Активирует вкладку с наибольшим кол-вом комментариев.{% endcomment %}
+
+    $(function(){
+        pythonz.activate_comments_tab(3000);
+    });
+</script>
+
+<ul class="nav nav-tabs" role="tablist" id="comments_tabs">
 
     {% if not disable_vk %}
     <li role="presentation" class="active">
-        <a href="#comments_vk" aria-controls="comments_vk" role="tab" data-toggle="tab">Комментарии ВК</a>
+        <a href="#comments_vk" aria-controls="comments_vk" role="tab" data-toggle="tab">Комментарии ВК <span id="comments_vk_cnt" class="vk-comment-count badge marg__l_min"></span></a>
     </li>
     {% endif %}
 
     {% if not disable_fb %}
     <li role="presentation">
-        <a href="#comments_fb" aria-controls="comments_fb" role="tab" data-toggle="tab">Комментарии FB <span class="fb-comments-count badge marg__l_min"></span></a>
+        <a href="#comments_fb" aria-controls="comments_fb" role="tab" data-toggle="tab">Комментарии FB <span id="comments_fb_cnt" class="fb-comments-count badge marg__l_min"></span></a>
     </li>
     {% endif %}
 
     {% if not disable_disqus %}
     <li role="presentation">
-        <a href="#comments_disqus" aria-controls="comments_disqus" role="tab" data-toggle="tab">Комменатрии Disqus <span class="disqus-comment-count badge marg__l_min" data-disqus-identifier="{{ entity_name }}_{{ entity_id }}"></span></a>
+        <a href="#comments_disqus" aria-controls="comments_disqus" role="tab" data-toggle="tab">Комменатрии Disqus <span id="comments_disqus_cnt" class="disqus-comment-count badge marg__l_min" data-disqus-identifier="{{ entity_name }}_{{ entity_id }}"></span></a>
     </li>
     {% endif %}
 
     {% if not disable_internal %}
     <li role="presentation">
-        <a href="#comments_internal" aria-controls="comments_internal" role="tab" data-toggle="tab">Обсуждения</a>
+        <a href="#comments_internal" aria-controls="comments_internal" role="tab" data-toggle="tab">Обсуждения <span id="comments_internal_cnt" class="badge marg__l_min"></span></a>
     </li>
     {% endif %}
 
