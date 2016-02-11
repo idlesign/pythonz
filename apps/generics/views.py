@@ -400,6 +400,7 @@ class EditView(RealmView):
                 lists_init_kwargs={'show_title': True, 'cat_html_class': 'label label-default'},
                 editor_init_kwargs={
                     'allow_add': True, 'allow_new': request.user.is_superuser, 'allow_remove': True,
+                    'category_separator': ', '
                 }
             )
 
