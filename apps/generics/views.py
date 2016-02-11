@@ -388,7 +388,7 @@ class EditView(RealmView):
             self.check_edit_permissions(request, item)
             form.submit_title = self.realm.txt_form_edit
 
-        xross_listener(item=item)
+        xross_listener(http_method='POST', item=item)
 
         from sitecats.toolbox import get_category_aliases_under
         if isinstance(item, ModelWithCategory):
