@@ -12,7 +12,7 @@ class Command(BaseCommand):
         self.stdout.write('Registering a webhook at %s ...' % get_webhook_url())
 
         self_signed = settings.PATH_CERTIFICATE and settings.CERTIFICATE_SELF_SIGNED
-        self.stdout.write('Using a self-signed certificate: %s' % 'TRUE' if self_signed else 'FALSE')
+        self.stdout.write('Using a self-signed certificate: %s' % ('TRUE' if self_signed else 'FALSE'))
 
         set_webhook()
 
