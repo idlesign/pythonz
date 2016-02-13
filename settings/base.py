@@ -16,6 +16,9 @@ SITE_URL = 'http://pythonz.net'
 PROJECT_SOURCE_URL = 'https://github.com/idlesign/pythonz'
 DEBUG = True
 
+PATH_CERTIFICATE = None
+CERTIFICATE_SELF_SIGNED = False
+
 SECRET_KEY = 'not_a_secret'
 ADMINS = ()
 
@@ -40,6 +43,9 @@ PARTNER_IDS = {}
 
 GOOGLE_API_KEY = 'not_a_secret'
 YANDEX_SEARCH_ID = 'not_a_secret'
+
+TELEGRAM_BOT_TOKEN = 'not_a_secret'
+TELEGRAM_BOT_URL = 'not_a_secret'
 
 # Переводит проект в агрессивный режим: задействует различную машинерию для привлечения внимания к проекту.
 AGRESSIVE_MODE = False
@@ -79,6 +85,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
+STATIC_URL_FULL = SITE_URL + STATIC_URL
 
 
 MIDDLEWARE_CLASSES = (
