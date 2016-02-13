@@ -31,6 +31,9 @@ def handle_request(request):
 
     :param Request request:
     """
+    if not request.body:
+        return
+
     update = telebot.types.Update.de_json(request.body.decode('utf8'))
 
     message = update.message
