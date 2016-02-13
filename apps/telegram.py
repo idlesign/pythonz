@@ -8,7 +8,7 @@ from .models import Reference
 from .zen import ZEN
 
 
-bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
+bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN, threaded=False)
 
 
 def get_webhook_url():
