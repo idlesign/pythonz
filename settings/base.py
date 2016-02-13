@@ -4,10 +4,11 @@
 from os.path import dirname
 import sys
 import codecs
+import locale
 
 # Для успешного логировая пусть всё будет в utf8.
-sys.stdout = codecs.getwriter('utf8')(sys.stdout)
-sys.stderr = codecs.getwriter('utf8')(sys.stderr)
+sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout.buffer)
+sys.stderr = codecs.getwriter(locale.getpreferredencoding())(sys.stderr.buffer)
 
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 
