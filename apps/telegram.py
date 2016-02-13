@@ -115,7 +115,7 @@ def query_text(inline_query):
 
         else:
 
-            found_items = Reference.objects.filter(title__icontains=term)
+            found_items = Reference.objects.filter(title__icontains=term)[:50]
 
             for item in found_items:
                 title = item.title
