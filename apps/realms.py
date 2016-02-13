@@ -2,7 +2,7 @@ from collections import OrderedDict
 from operator import attrgetter
 
 from django.db.models import signals
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.core.urlresolvers import reverse, get_resolver
 from django.contrib.sitemaps.views import sitemap
 
@@ -17,7 +17,11 @@ from .models import User, Discussion, Book, Video, Place, Article, Community, Ev
 from .signals import sig_support_changed
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
     ReferenceListingView, ReferenceDetailsView, VacancyListingView
-from .zen import *  # Регистрируем блок сайта с дзеном
+from .zen import register_zen_siteblock
+
+
+# Регистрируем блок сайта с дзеном
+register_zen_siteblock()
 
 
 def bootstrap_realms(urlpatterns):

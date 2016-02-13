@@ -31,4 +31,7 @@ ZEN = (
      'Пространства имён были блестящей идеей — генерируем ещё!'),
 )
 
-register_dynamic_block('zen', lambda **kwargs: choice(ZEN))
+
+def register_zen_siteblock():
+    """Регистрирует динамический блок сайта, наполняемый цитатами из дзена."""
+    register_dynamic_block('zen', lambda **kwargs: choice(ZEN))
