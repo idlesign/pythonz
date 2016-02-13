@@ -4,11 +4,12 @@ from urllib.parse import quote_plus
 
 from sitegate.decorators import signin_view, signup_view, redirect_signedin
 from sitegate.signup_flows.classic import SimpleClassicWithEmailSignup
-from apps.shortcuts import message_warning
 from sitecats.toolbox import get_category_model, get_category_lists, get_category_aliases_under
 from sitemessage.toolbox import get_user_preferences_for_ui, set_user_preferences_from_request
 from xross.toolbox import xross_view
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
@@ -20,6 +21,8 @@ from django.views.defaults import (
     server_error as dj_server_error
 )
 
+from .shortcuts import message_warning
+from .telegram import handle_request
 from .signals import sig_search_failed
 from .generics.views import DetailsView, RealmView, EditView, ListingView
 from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource
@@ -211,6 +214,17 @@ def index(request):
         })
 
     return render(request, 'index.html', {'realms_data': realms_data})
+
+
+@csrf_exempt
+def telebot(request):
+    """Обрабатывает запросы от Telegram.
+
+    :param request:
+    :rtype: HttpResponse
+    """
+    handle_request(request)
+    return HttpResponse()
 
 
 def search(request):
