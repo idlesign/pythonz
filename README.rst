@@ -65,6 +65,7 @@ https://github.com/idlesign/pythonz
 * `bleach <https://github.com/jsocol/bleach>`_
 * `feedparser <http://pythonhosted.org/feedparser>`_
 * `Pillow <https://github.com/python-pillow/Pillow>`_
+* `pyTelegramBotAPI <https://github.com/eternnoir/pyTelegramBotAPI>`_
 * `pytz <http://pythonhosted.org/pytz>`_
 * `requests <https://github.com/kennethreitz/requests>`_
 * `twitter <https://github.com/sixohsix/twitter>`_
