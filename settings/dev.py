@@ -5,3 +5,8 @@ from .base import *
 
 
 ADMINS = (('me', 'me@some.where'),)
+
+
+LOGGERS.update({
+
+})

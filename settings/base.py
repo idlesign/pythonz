@@ -19,6 +19,8 @@ DEBUG = True
 PATH_CERTIFICATE = None
 CERTIFICATE_SELF_SIGNED = False
 
+PATH_DEBUG_LOG = '/tmp/pythonz_debug.log'
+
 SECRET_KEY = 'not_a_secret'
 ADMINS = ()
 
@@ -137,6 +139,60 @@ INSTALLED_APPS = (
     'simple_history',
     'robots',
 )
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '%(asctime)s %(levelname)s %(name)s: %(message)s'
+        },
+        'verbose': {
+            'format': '%(asctime)s %(levelname)s %(name)s (%(module)s) (%(process)d / %(thread)d): %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': PATH_DEBUG_LOG,
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'pythonz': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'handlers': ['console'],
+            'propagate': True,
+        },
+    }
+}
+LOGGERS = LOGGING['loggers']
 
 
 if DEBUG:

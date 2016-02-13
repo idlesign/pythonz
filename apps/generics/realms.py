@@ -1,15 +1,14 @@
-import logging
-
 from sitetree.utils import item
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.core.urlresolvers import reverse
 from django.contrib.sitemaps import GenericSitemap
 from django.contrib.syndication.views import Feed
 
 from .views import ListingView, DetailsView, AddView, EditView, TagsView
+from ..logger import get_logger
 
 
-LOGGER = logging.getLogger('pythonz.realms')
+LOGGER = get_logger('realms')
 SYNDICATION_URL_MARKER = 'feed'
 SYNDICATION_ITEMS_LIMIT = 15
 

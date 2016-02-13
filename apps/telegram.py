@@ -6,6 +6,10 @@ from django.conf import settings
 
 from .models import Reference
 from .zen import ZEN
+from .logger import get_logger
+
+
+LOGGER = get_logger('telebot')
 
 
 bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN, threaded=False)
@@ -32,6 +36,7 @@ def handle_request(request):
     :param Request request:
     """
     if not request.body:
+        LOGGER.debug('No data supplied.')
         return
 
     update = telebot.types.Update.de_json(request.body.decode('utf8'))
@@ -40,9 +45,11 @@ def handle_request(request):
     inline_query = update.inline_query
 
     if message:
+        LOGGER.debug('Got simple message.')
         bot.process_new_messages([update.message])
 
     elif inline_query:
+        LOGGER.debug('Got inline message.')
         bot.process_new_inline_query([inline_query])
 
 
@@ -52,16 +59,18 @@ def on_start(message):
 
     :param telebot.types.Message message:
     """
+    LOGGER.debug('Got /start command.')
     bot.reply_to(
         message, 'Рад знакомству, %s.\nЧтобы получить справку, наберите команду /help.' % message.from_user.first_name)
 
 
 @bot.message_handler(commands=['help'])
-def on_start(message):
+def on_help(message):
     """Ответ на команду /help.
 
     :param telebot.types.Message message:
     """
+    LOGGER.debug('Got /help command.')
     bot.reply_to(
         message,
         'Я рассылаю новости сайта pythonz.net на канале https://telegram.me/pythonz.\n'
@@ -129,6 +138,7 @@ def query_text(inline_query):
                 description='Про Python',
             ))
 
+    LOGGER.debug('Answering inline.')
     bot.answer_inline_query(inline_query.id, results)
 
 
@@ -138,4 +148,5 @@ def echo_message(message):
 
     :param telebot.types.Message message:
     """
+    LOGGER.debug('Got unhandled message.')
     bot.reply_to(message, '%s? Не знаю, что вам на это ответить.' % message.text)
