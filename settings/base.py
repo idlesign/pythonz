@@ -2,13 +2,6 @@
 # Для конфигурирования в ходе разработки используйте dev.py, а не этот файл.
 #
 from os.path import dirname
-import sys
-import codecs
-import locale
-
-# Для успешного логировая пусть всё будет в utf8.
-sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout.buffer)
-sys.stderr = codecs.getwriter(locale.getpreferredencoding())(sys.stderr.buffer)
 
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 
