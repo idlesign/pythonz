@@ -102,8 +102,11 @@ def on_help(message):
 
 
 @lru_cache(maxsize=2)
-def get_zen_inlines():
-    """Возвращает список цитат из дзена питона."""
+def get_inline_zen():
+    """Возвращает список цитат из дзена питона.
+
+    :rtype: list
+    """
     results = []
 
     for idx, (zen_en, zen_ru) in enumerate(ZEN, 1):
@@ -120,6 +123,47 @@ def get_zen_inlines():
     return results
 
 
+@lru_cache(maxsize=64)
+def get_inline_reference(term):
+    """Возвращает статьи справочника.
+
+    :param str term: Текст запроса
+    :rtype: list
+    """
+    results = []
+    found_items = Reference.objects.filter(title__icontains=term)[:50]
+
+    for item in found_items:
+        title = item.title
+        description = item.description
+        results.append(
+            telebot.types.InlineQueryResultArticle(
+                id=str(item.id),
+                title=title,
+                message_text='%s — %s %s' % (title, description, item.get_absolute_url(True, 'telesearch')),
+                description=description,
+                disable_web_page_preview=True
+            ))
+    return results
+
+
+@lru_cache(maxsize=2)
+def get_inline_no_query():
+    """Возвращает ответ на пустую строку запроса.
+
+    :rtype: list
+    """
+    results = [
+        telebot.types.InlineQueryResultArticle(
+            id='index',
+            title='pythonz.net',
+            message_text='http://pythonz.net',
+            description='Про Python',
+        )
+    ]
+    return results
+
+
 @bot.inline_handler(lambda query: True)
 def query_text(inline_query):
     """Ответ на запрос при вызове бота из чатов.
@@ -127,37 +171,15 @@ def query_text(inline_query):
     :param telebot.types.InlineQuery inline_query:
     """
     term = inline_query.query.strip()
-    results = []
 
     if term:
         if term == 'import this':
-
-           results = get_zen_inlines()
-
+            results = get_inline_zen()
         else:
-
-            found_items = Reference.objects.filter(title__icontains=term)[:50]
-
-            for item in found_items:
-                title = item.title
-                description = item.description
-                results.append(
-                    telebot.types.InlineQueryResultArticle(
-                        id=str(item.id),
-                        title=title,
-                        message_text='%s — %s %s' % (title, description, item.get_absolute_url(True, 'telesearch')),
-                        description=description,
-                        disable_web_page_preview=True
-                    ))
+            results = get_inline_reference(term)
 
     else:
-        results.append(
-            telebot.types.InlineQueryResultArticle(
-                id='index',
-                title='pythonz.net',
-                message_text='http://pythonz.net',
-                description='Про Python',
-            ))
+        results = get_inline_no_query()
 
     LOGGER.debug('Answering inline.')
     bot.answer_inline_query(inline_query.id, results)
