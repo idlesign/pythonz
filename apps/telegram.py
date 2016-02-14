@@ -124,14 +124,14 @@ def get_inline_zen():
 
 
 @lru_cache(maxsize=64)
-def get_inline_reference(term):
+def get_inline_reference(term, items_limit=50):
     """Возвращает статьи справочника.
 
     :param str term: Текст запроса
     :rtype: list
     """
     results = []
-    found_items = Reference.objects.filter(title__icontains=term)[:50]
+    found_items = Reference.objects.filter(title__icontains=term)[:items_limit]
 
     for item in found_items:
         title = item.title
@@ -176,7 +176,7 @@ def query_text(inline_query):
         if term == 'import this':
             results = get_inline_zen()
         else:
-            results = get_inline_reference(term)
+            results = get_inline_reference(term, items_limit=8)  # 8 - временный обход HTTP 414 Request-URI Too Large
 
     else:
         results = get_inline_no_query()
