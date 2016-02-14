@@ -1,6 +1,7 @@
 from functools import lru_cache
 
 import telebot
+from telebot.apihelper import _convert_inline_results, _make_request
 from bleach import clean
 from django.conf import settings
 
@@ -12,7 +13,27 @@ from .logger import get_logger
 LOGGER = get_logger('telebot')
 
 
-bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN, threaded=False)
+# Перекрыта до слияния https://github.com/eternnoir/pyTelegramBotAPI/pull/116
+def answer_inline_query_patched(token, inline_query_id, results, cache_time=None, is_personal=None, next_offset=None):
+    method_url = 'answerInlineQuery'
+    payload = {'inline_query_id': inline_query_id, 'results': _convert_inline_results(results)}
+    if cache_time:
+        payload['cache_time'] = cache_time
+    if is_personal:
+        payload['is_personal'] = is_personal
+    if next_offset:
+        payload['next_offset'] = next_offset
+    return _make_request(token, method_url, params=payload, method='post')
+
+
+# Перектыт о слияния https://github.com/eternnoir/pyTelegramBotAPI/pull/116
+class TeleBotPatched(telebot.TeleBot):
+
+    def answer_inline_query(self, inline_query_id, results, cache_time=None, is_personal=None, next_offset=None):
+        return answer_inline_query_patched(self.token, inline_query_id, results, cache_time, is_personal, next_offset)
+
+
+bot = TeleBotPatched(settings.TELEGRAM_BOT_TOKEN, threaded=False)
 
 
 def get_webhook_url():
@@ -126,7 +147,7 @@ def query_text(inline_query):
                         title=title,
                         message_text='%s — %s %s' % (title, description, item.get_absolute_url(True, 'telesearch')),
                         description=description,
-                        disable_web_page_preview=True,
+                        disable_web_page_preview=True
                     ))
 
     else:
