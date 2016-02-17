@@ -5,6 +5,7 @@ from telebot.apihelper import _convert_inline_results, _make_request
 from bleach import clean
 from django.conf import settings
 
+from .utils import truncate_chars
 from .models import Reference
 from .zen import ZEN
 from .logger import get_logger
@@ -13,7 +14,7 @@ from .logger import get_logger
 LOGGER = get_logger('telebot')
 
 
-# Перекрыта до слияния https://github.com/eternnoir/pyTelegramBotAPI/pull/116
+# Перекрыта до выпуска версии с https://github.com/eternnoir/pyTelegramBotAPI/pull/116
 def answer_inline_query_patched(token, inline_query_id, results, cache_time=None, is_personal=None, next_offset=None):
     method_url = 'answerInlineQuery'
     payload = {'inline_query_id': inline_query_id, 'results': _convert_inline_results(results)}
@@ -26,7 +27,7 @@ def answer_inline_query_patched(token, inline_query_id, results, cache_time=None
     return _make_request(token, method_url, params=payload, method='post')
 
 
-# Перектыт о слияния https://github.com/eternnoir/pyTelegramBotAPI/pull/116
+# Перекрыт до выпуска версии с https://github.com/eternnoir/pyTelegramBotAPI/pull/116
 class TeleBotPatched(telebot.TeleBot):
 
     def answer_inline_query(self, inline_query_id, results, cache_time=None, is_personal=None, next_offset=None):
@@ -96,9 +97,7 @@ def on_help(message):
         message,
         'Я рассылаю новости сайта pythonz.net на канале https://telegram.me/pythonz.\n'
         'Кроме этого, вы можете вызвать меня в любом чате, чтобы получить ссылку на статью справочника.\n'
-        'Примеры:\n'
-        '@pythonz_bot str.\n'
-        '@pythonz_bot import this')
+        'Пример: @pythonz_bot split')
 
 
 @lru_cache(maxsize=2)
@@ -124,10 +123,11 @@ def get_inline_zen():
 
 
 @lru_cache(maxsize=64)
-def get_inline_reference(term, items_limit=50):
+def get_inline_reference(term, items_limit=25):
     """Возвращает статьи справочника.
 
     :param str term: Текст запроса
+    :param int items_limit: Максимальное кол-во элементов для получения.
     :rtype: list
     """
     results = []
@@ -135,14 +135,15 @@ def get_inline_reference(term, items_limit=50):
 
     for item in found_items:
         title = item.title
-        description = item.description
+        # Усечение чтобы уложиться в 64 Кб на одно сообщение
+        # иначе, по словам техподдержки, получаем HTTP 414 Request-URI Too Large
+        description = truncate_chars(item.description, 30)
         results.append(
             telebot.types.InlineQueryResultArticle(
                 id=str(item.id),
                 title=title,
-                message_text='%s — %s %s' % (title, description, item.get_absolute_url(True, 'telesearch')),
-                description=description,
-                disable_web_page_preview=True
+                message_text='%s — %s' % (title, item.get_absolute_url(True, 'telesearch')),
+                description=description
             ))
     return results
 
@@ -173,13 +174,10 @@ def query_text(inline_query):
     term = inline_query.query.strip()
 
     if term:
-        if term == 'import this':
-            results = get_inline_zen()
-        else:
-            results = get_inline_reference(term, items_limit=8)  # 8 - временный обход HTTP 414 Request-URI Too Large
+        results = get_inline_reference(term)
 
     else:
-        results = get_inline_no_query()
+        results = get_inline_zen()
 
     LOGGER.debug('Answering inline.')
     bot.answer_inline_query(inline_query.id, results)
