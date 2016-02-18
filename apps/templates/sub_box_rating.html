@@ -1,4 +1,4 @@
-<div id="rate_box" class="text-center marg__b_min">
+<div id="rate_box" class="text-center marg__b_min block">
     {% if request.user.is_authenticated %}
         {% if item.my_support %}
             <button id="set_rate" data-xaction="0" data-xtarget="rate_box" data-xsuccess="replace" class="xross btn btn-success" title="Сбросить оценку">
