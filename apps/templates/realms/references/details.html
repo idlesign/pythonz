@@ -19,8 +19,48 @@
 {% endblock %}
 
 
-{% block column_right %}{% endblock %}
-{% block details_main_col %}col-md-12{% endblock %}
+{% block column_right_contents %}
+
+    {% if request.user.is_authenticated %}
+    <div class="well well-sm">
+        <div class="marg__b_min">Дополнить справочник:</div>
+        <div>
+            {% include "realms/references/quick_add_form.html" with parent=reference.parent_id title='Добавить по соседству' %}
+            {% include "realms/references/quick_add_form.html" with parent=reference.id title='Добавить вложенно' %}
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    {% endif %}
+
+    {% include "sub_column_controls.html" with hide_hint=1 %}
+
+    <div id="ref_links">
+
+        {% if children %}
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h5 class="panel-title">{{ reference.title }}</h5>
+            </div>
+            {% include "realms/references/sub_list.html" with items=children %}
+        </div>
+        {% endif %}
+
+        {% if reference.parent %}
+            {% if siblings %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5 class="panel-title">
+                        <a href="{% url "references:details_slug" reference.parent.slug %}">{{ reference.parent.title }}</a>
+                    </h5>
+                </div>
+                {% include "realms/references/sub_list.html" with items=siblings %}
+            </div>
+            {% endif %}
+        {% endif %}
+
+    </div>
+
+{% endblock %}
 
 
 {% block schema_type %}APIReference{% endblock %}
@@ -31,31 +71,7 @@
     <meta itemprop="datePublished" content="{{ reference.time_published|date:"c" }}" />
     <meta itemprop="image" content="{{ STATIC_URL }}img/realm_logos/pythonz_references.png" />
 
-    <div class="pull-right col-md-3">
-
-        {% if reference.parent %}
-        <div class="well well-sm">
-            <h6>Родительский раздел</h6>
-            <a href="{% url "references:details_slug" reference.parent.slug %}">{{ reference.parent.title }}</a>
-        </div>
-        {% endif %}
-
-        {% include "sub_column_controls.html" %}
-
-        {% if request.user.is_authenticated %}
-        <div class="well well-sm">
-            <div class="marg__b_min">Дополнить справочник:</div>
-            <div>
-                {% include "realms/references/quick_add_form.html" with parent=reference.parent_id title='Добавить по соседству' %}
-                {% include "realms/references/quick_add_form.html" with parent=reference.id title='Добавить вложенно' %}
-            </div>
-            <div class="clearfix"></div>
-        </div>
-        {% endif %}
-
-    </div>
-
-    <div class="marg__b_mid marg__l_mid">
+    <div class="marg__b_mid pull-right">
         {% if reference.version_added %}
         <div class="label label-info">{% model_field_verbose_name from reference.version_added %} {{ reference.version_added }}</div>
         {% endif %}
@@ -106,36 +122,8 @@
     <div id="area_description">
         {{ reference.text|safe }}
     </div>
+
 {% endblock %}
-
-
-{% block details_contents_after %}
-    {% if children %}
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h5 class="panel-title">Внутри</h5>
-        </div>
-        {% include "realms/references/sub_list.html" with items=children show_descriptions=1 %}
-    </div>
-    {% endif %}
-
-    {% if siblings %}
-    <div class="panel panel-success">
-        <div class="panel-heading">
-            <h5 class="panel-title">
-            {% if reference.is_type_method %}
-                Смотрите также
-            {% else %}
-                Соседние темы
-            {% endif %}
-            </h5>
-        </div>
-        {% include "realms/references/sub_list.html" with items=siblings show_descriptions=1 %}
-    </div>
-    {% endif %}
-
-{%  endblock %}
-
 
 {% block details_author %}
     <div class="pull-left">
