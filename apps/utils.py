@@ -1,7 +1,7 @@
 import os
 import re
 from collections import OrderedDict
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import urlsplit, urlunsplit, parse_qs, urlparse, urlencode, urlunparse
 from textwrap import wrap
 
 import feedparser
@@ -40,6 +40,69 @@ def format_currency(val):
     :return:
     """
     return ' '.join(wrap(str(int(val))[::-1], 3))[::-1]
+
+
+def update_url_qs(url, new_qs_params):
+    """Дополняет указанный URL указанными параметрами запроса,
+    при этом заменяя значения уже имеющихся одноимённых параметров, если
+    таковые были в URL изначально
+
+    :param str url:
+    :param dict new_qs_params:
+    :rtype: str
+    """
+    parsed = list(urlparse(url))
+    parsed_qs = parse_qs(parsed[4])
+    parsed_qs.update(new_qs_params)
+    parsed[4] = urlencode(parsed_qs, doseq=True)
+    return urlunparse(parsed)
+
+
+class UTM:
+    """Утилиты для работы с UTM (Urchin Tracking Module) метками."""
+
+    @classmethod
+    def add_to_url(cls, url, source, medium, campaign):
+        """Добавляет UTM метки в указаный URL.
+
+        :param url:
+
+        :param source: Название источника перехода.
+            Например, pythonz, google.
+
+        :param medium: Рекламный канал.
+            Например referral, cpc, banner, email
+
+        :param campaign: Ключевое слово (название компании).
+            Например слоган продукта, промокод.
+
+        :rtype: str
+        """
+        params = {
+            'utm_source': source,
+            'utm_medium': medium,
+            'utm_campaign': campaign,
+        }
+        return update_url_qs(url, params)
+
+    @classmethod
+    def add_to_external_url(cls, url):
+        """Добавляет UTM метки в указанный внешний URL.
+
+        :param str url:
+        :rtype: str
+        """
+        return cls.add_to_url(url, 'pythonz', 'referral', 'item')
+
+    @classmethod
+    def add_to_internal_url(cls, url, source):
+        """Добавляет UTM метки в указанный внутренний URL.
+
+        :param str url:
+        :param str source:
+        :rtype: str
+        """
+        return cls.add_to_url(url, source, 'link', 'promo')
 
 
 def get_from_url(url):
