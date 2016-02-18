@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.text import Truncator
 
+from ..utils import UTM
 from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
 
 
@@ -512,12 +513,12 @@ class RealmBaseModel(ModelWithFlag):
         format_date = lambda date: date.strftime('%Y%m%d%H%i')
         return self.time_modified and format_date(self.time_modified) != format_date(self.time_created)
 
-    def get_absolute_url(self, with_prefix=False, utm_str=None):
+    def get_absolute_url(self, with_prefix=False, utm_source=None):
         """Возвращает URL страницы с детальной информацией об объекте.
 
         :param bool with_prefix: Флаг. Следует ли добавлять название хоста к URL.
 
-        :param None|str utm_str: Строка для создания UTM-метки (Urchin Tracking Module).
+        :param None|str utm_source: Строка для создания UTM-метки (Urchin Tracking Module).
             Используются для обозначения источников переходов по URL при сборе статистики посещений.
 
         :rtype: str
@@ -536,8 +537,8 @@ class RealmBaseModel(ModelWithFlag):
         if with_prefix:
             url = '%s%s' % (settings.SITE_URL, url)
 
-        if utm_str is not None:
-            url = '%s?utm_source=%s&utm_campaign=%s&utm_medium=%s' % (url, utm_str, 'promo', 'link')
+        if utm_source is not None:
+            url = UTM.add_to_internal_url(url, utm_source)
 
         return url
 
