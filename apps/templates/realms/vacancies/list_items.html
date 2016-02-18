@@ -5,7 +5,7 @@
                 <li class="vacancy media">
 
                     <div class="media-body">
-                        <h4><a href="{{ vacancy.url_site }}">{{ vacancy.title }}</a></h4>
+                        <h4><a href="{{ vacancy.get_utm_url }}">{{ vacancy.title }}</a></h4>
                         <div class="cl__gray marg__b_min">
                             <small>
                                 <span class="marg__r_mid"><strong>{{ vacancy.employer_name }}</strong></span>

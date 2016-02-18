@@ -17,12 +17,28 @@ from django.utils import timezone
 
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
 from .exceptions import RemoteSourceError
-from .utils import scrape_page, HhVacancyManager, format_currency, PyDigestResource, truncate_chars
+from .utils import scrape_page, HhVacancyManager, format_currency, PyDigestResource, truncate_chars, UTM
+
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 
 HINT_IMPERSONAL_REQUIRED = ('<strong>Без обозначения личного отношения. '
                             'Личное отношение можно выразить в Обсуждениях к материалу.</strong>')
+
+
+class UtmReady:
+    """Примесь, добавляющая модели метод для получения URL с матками UTM.
+
+    """
+
+    url_attr = 'url'
+
+    def get_utm_url(self):
+        """Возвращает URL с UTM-метками.
+
+        :rtype: str
+        """
+        return UTM.add_to_external_url(getattr(self, self.url_attr))
 
 
 class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCategory, ModelWithCompiledText):
@@ -66,7 +82,7 @@ class ModelWithDiscussions(models.Model):
         abstract = True
 
 
-class ExternalResource(RealmBaseModel):
+class ExternalResource(UtmReady, RealmBaseModel):
     """Внешние ресурсы. Представляют из себя ссылки на страницы вне сайта."""
 
     SRC_ALIAS_PYDIGEST = 'pydigest'
@@ -223,7 +239,7 @@ class Place(RealmBaseModel, ModelWithDiscussions):
         return self.geo_title
 
 
-class Vacancy(RealmBaseModel):
+class Vacancy(UtmReady, RealmBaseModel):
 
     SRC_ALIAS_HH = 'hh'
 
@@ -260,6 +276,7 @@ class Vacancy(RealmBaseModel):
     paginator_related = ['place']
     items_per_page = 15
     notify_on_publish = False
+    url_attr = 'url_site'
 
     @property
     def description(self):
@@ -403,7 +420,7 @@ class Vacancy(RealmBaseModel):
                     pass
 
 
-class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+class Community(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
                 ModelWithCompiledText):
     """Модель сообществ. Формально объединяет некоторую группу людей."""
 
@@ -449,7 +466,7 @@ class Community(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         super().save(*args, **kwargs)
 
 
-class User(RealmBaseModel, AbstractUser):
+class User(UtmReady, RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
 
     items_per_page = 100
@@ -590,7 +607,7 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussio
         year = 'Год издания'
 
 
-class Article(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+class Article(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
               ModelWithCompiledText):
     """Модель сущности `Статья`."""
 
@@ -892,7 +909,7 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         self.update_cover_from_url(cover_url)
 
 
-class Event(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
             ModelWithCompiledText):
     """Модель сущности `Событие`."""
 

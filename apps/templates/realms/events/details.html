@@ -60,7 +60,7 @@
 
     <div class="marg__b_min">{{ event.get_display_type }} <span class="cl__gray">&#8212; {{ event.get_display_specialization }}</span></div>
     <div class="text-muted marg__b_mid small">
-        {% if event.url %}<div>{% model_field_verbose_name from event.url %}: <a href="{{ event.url }}">{{ event.url }}</a></div>{% endif %}
+        {% if event.url %}<div>{% model_field_verbose_name from event.url %}: <a href="{{ event.get_utm_url }}">{{ event.url }}</a></div>{% endif %}
         {% if event.contacts %}<div class="py_user">{% model_field_verbose_name from event.contacts %}: {{ event.contacts }}</div>{% endif %}
     </div>
 

@@ -14,7 +14,7 @@
 
 {% block details_contents_add %}
     <div class="text-muted marg__b_mid small">
-        {% if community.url %}<div><a href="{{ community.url }}">{{ community.url }}</a></div>{% endif %}
+        {% if community.url %}<div><a href="{{ community.get_utm_url }}">{{ community.url }}</a></div>{% endif %}
         {% if community.place %}<div>{% model_field_verbose_name from community.place %}: <a href="{{ community.place.get_absolute_url }}">{{ community.place.title }}</a></div>{% endif %}
         {% if community.contacts %}<div class="py_user">{% model_field_verbose_name from community.contacts %}: {{ community.contacts }}</div>{% endif %}
     </div>

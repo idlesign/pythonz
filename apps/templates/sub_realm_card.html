@@ -26,7 +26,7 @@
             <hr>
             <ul class="small">
                 {% for external in realm_data.externals %}
-                <li><a href="{{ external.url }}">{{ external.title }}</a></li>
+                <li><a href="{{ external.get_utm_url }}">{{ external.title }}</a></li>
                 {% endfor %}
             </ul>
         {% endif %}
