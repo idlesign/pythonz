@@ -22,7 +22,9 @@
 {% endblock %}
 
 {% block right_bar %}
-    {% siteblock "hints" as hint %}
+    {% if not hide_hint %}
+        {% siteblock "hints" as hint %}
+    {% endif %}
     {% if hint %}
     <div class="panel panel-default">
         <div class="panel-heading">
