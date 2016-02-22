@@ -48,6 +48,7 @@ class ModelWithCompiledText(models.Model):
     RE_CODE = re.compile('\.{2}\s*code::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
     RE_GIST = re.compile('\.{2}\s*gist::\s*([^\n]+)\n', re.S)
     RE_PODSTER = re.compile('\.{2}\s*podster::\s*([^\n]+)[/]*\n', re.S)
+    RE_IMAGE = re.compile('\.{2}\s*image::\s*([^\n]+)[/]*\n', re.S)
     RE_ACCENT = re.compile('`{2}([^`\n]+)`{2}')
     RE_QUOTE = re.compile('`{3}\n+([^`]+)\n+`{3}')
     RE_BOLD = re.compile('\*{2}([^*\n]+)\*{2}')  # todo 2 ** 10d
@@ -94,6 +95,8 @@ class ModelWithCompiledText(models.Model):
             '</iframe>',
             text
         )
+        text = re.sub(
+            cls.RE_IMAGE, '<img alt="\g<1>" src="\g<1>" data-canonical-src="\g<1>" style="max-width:100%;">', text)
         text = re.sub(cls.RE_URL, href_replacer, text)
 
         text = text.replace('\n', '<br>')
