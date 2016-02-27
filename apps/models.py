@@ -781,6 +781,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         }
 
     autogenerate_slug = True
+    allow_linked = False
 
     def is_type_callable(self):
         return self.type in (self.TYPE_METHOD, self.TYPE_FUNCTION)
