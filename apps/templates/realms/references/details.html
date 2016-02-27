@@ -1,5 +1,5 @@
 {% extends "base_details.html" %}
-{% load model_field %}
+{% load model_field sitetree %}
 
 
 {% block page_description %}Описание {{ reference.title }} в Python{% endblock %}
@@ -16,6 +16,11 @@
             pythonz.Reference.decorate_func_result('area_func_result');
         });
     </script>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+    {% sitetree_breadcrumbs from "references" template "sitetree/breadcrumbs_bootstrap3.html" %}
 {% endblock %}
 
 
@@ -134,9 +139,6 @@
 
 
 {% block details_share %}{% endblock %}
-
-
-{% block details_linked %}{% endblock %}
 
 
 {% block cover %}{% endblock %}
