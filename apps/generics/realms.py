@@ -182,13 +182,19 @@ class RealmBase(object):
         return item('Список', cls.get_listing_urlname(), description=cls.view_listing_description, in_menu=False)
 
     @classmethod
-    def get_details_urlname(cls):
+    def get_details_urlname(cls, slugged=False):
         """Возвращает название URL страницы с детальной информацией об объекте.
 
-        :return:
+        :param bool slugged Следует ли вернуть название для URL человекопонятного
+            (см. CommonEntityModel.autogenerate_slug).
+        :rtype: str
+
         """
         _tmp, realm_name_plural = cls.get_names()
-        return '%s:details' % realm_name_plural
+        name = '%s:details' % realm_name_plural
+        if slugged:
+            name += '_slug'
+        return name
 
     @classmethod
     def get_sitetree_details_item(cls):
@@ -215,7 +221,7 @@ class RealmBase(object):
 
         items = [get_item(details_urlname)]
         if getattr(cls.model, 'autogenerate_slug', False):
-            items.append(get_item(details_urlname + '_slug', id_attr='slug'))
+            items.append(get_item(cls.get_details_urlname(slugged=True), id_attr='slug'))
 
         return items
 
