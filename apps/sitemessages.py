@@ -108,15 +108,17 @@ class PythonzTwitterMessage(PlainTextMessage):
         :return:
         """
         MAX_LEN = 139  # Максимальная длина твита. Для верности меньше.
-        prefix = 'Новое: %s «' % entity.get_verbose_name()
-        url = entity.get_absolute_url(with_prefix=True, utm_source='twee')
+        URL_SHORTENED_LEN = 30  # Максимальная длина сокращённого URL
 
-        postfix = '» %s' % url
+        prefix = '%s «' % entity.get_verbose_name()
+        postfix = '»'
         if settings.AGRESSIVE_MODE:
-            postfix = '%s #python #dev' % postfix
+            postfix = '%s #python' % postfix
 
-        title = Truncator(entity.title).chars(MAX_LEN - len(prefix) - len(postfix))
-        message = '%s%s%s' % (prefix, title, postfix)
+        title = Truncator(entity.title).chars(MAX_LEN - URL_SHORTENED_LEN - len(prefix) - len(postfix))
+
+        url = entity.get_absolute_url(with_prefix=True, utm_source='twee')
+        message = '%s%s%s %s' % (prefix, title, postfix, url)
 
         cls(message).schedule(cls.recipients('twitter', ''))
 
