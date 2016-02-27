@@ -4,22 +4,20 @@
 
 {% block details_controls %}{% include "sub_box_controls.html" %}{% endblock %}
 
-{% block details_linked %}
-    {% with linked=item.get_linked %}
-        {% if linked.count %}
-        <div class="linked panel panel-default">
-            <div class="panel-heading">Смотрите также:</div>
-            <div class="panel-body">
-                <ul>
-                    {% for linked_item in item.get_linked %}
-                        <li><a href="{{ linked_item.get_absolute_url }}">{{ linked_item.title }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
+{% with linked=item.get_linked %}
+    {% if linked.count %}
+    <div class="linked panel panel-default">
+        <div class="panel-heading">Смотрите также:</div>
+        <div class="panel-body">
+            <ul>
+                {% for linked_item in item.get_linked %}
+                    <li><a href="{{ linked_item.get_absolute_url }}">{{ linked_item.title }}</a></li>
+                {% endfor %}
+            </ul>
         </div>
-        {% endif %}
-    {% endwith %}
-{% endblock %}
+    </div>
+    {% endif %}
+{% endwith %}
 
 {% block right_bar %}
     {% if not hide_hint %}
