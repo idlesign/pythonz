@@ -114,14 +114,6 @@ class PlaceListingView(RealmView):
         return self.render(request, {self.realm.name_plural: places})
 
 
-class ReferenceListingView(RealmView):
-    """Представление со списком справочников."""
-
-    def get(self, request):
-        # Справочник один, поэтому перенаправляем сразу на него.
-        return redirect(self.realm.get_details_urlname(), 1, permanent=True)
-
-
 class VacancyListingView(ListingView):
     """Представление со списком вакансий."""
 
@@ -133,6 +125,14 @@ class VacancyListingView(ListingView):
 
     def get_most_voted_objects(self):
         return []
+
+
+class ReferenceListingView(RealmView):
+    """Представление со списком справочников."""
+
+    def get(self, request):
+        # Справочник один, поэтому перенаправляем сразу на него.
+        return redirect(self.realm.get_details_urlname(slugged=True), 'python', permanent=True)
 
 
 class ReferenceDetailsView(DetailsView):
