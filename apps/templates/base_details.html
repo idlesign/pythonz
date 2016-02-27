@@ -33,7 +33,12 @@
 {% block page_contents %}
     <div class="row">
         <div class="{% block details_main_col %}col-md-9{% endblock %}" itemscope itemtype="http://schema.org/{% block schema_type %}WebPage{% endblock %}">
-            {% include "sub_title_block.html" %}
+
+            {% block breadcrumbs %}
+            {% sitetree_breadcrumbs from "main" template "sitetree/breadcrumbs_bootstrap3.html" %}
+            {% endblock %}
+
+            {% include "sub_title_block.html" with hide_breadcurmbs=1 %}
 
             {% block details_contents %}{% endblock %}
             {% block details_description %}<div class="marg__b_mid"><i itemprop="description">{{ item.description|urlize|linebreaksbr }}</i></div>{% endblock %}
