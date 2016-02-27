@@ -137,6 +137,7 @@ class CommonEntityModel(models.Model):
         abstract = True
 
     autogenerate_slug = False  # Следует ли автоматически генерировать краткое имя в транслите для URL.
+    allow_linked = True  # Разрешена ли привязка элементов друг к другу.
 
     def generate_slug(self):
         """Генерирует краткое имя для URL и заполняет им атрибут slug.
@@ -185,7 +186,10 @@ class CommonEntityModel(models.Model):
 
         :return:
         """
-        return self.linked.all()
+        if self.allow_linked:
+            return self.linked.all()
+
+        return []
 
     @classmethod
     def get_paginator_objects(cls):
