@@ -268,22 +268,26 @@ class ReferenceRealm(RealmBase):
         root_item = get_sitetree_root_item()
         temp_ref_items = {root_id: root_item}
 
-        ref_items = cls.model.get_actual().select_related('parent').order_by('parent_id', 'title')
+        ref_items = list(cls.model.get_actual().select_related('parent').only(
+            'id', 'parent_id', 'parent__title', 'slug', 'status'
+        ).order_by('parent_id', 'title', 'id'))
 
         def get_tree_item(ref_item):
-            return item(ref_item.title, ref_item.get_absolute_url(), url_as_pattern=False)
+            item_id = getattr(ref_item, 'id', root_id)
+            tree_item = temp_ref_items.get(item_id)
+
+            if not tree_item:
+                tree_item = item(ref_item.title, ref_item.get_absolute_url(), url_as_pattern=False)
+                temp_ref_items[item_id] = tree_item
+
+            return tree_item
 
         for ref_item in ref_items:
-            parent_id = ref_item.parent_id or root_id
-            parent = temp_ref_items.get(parent_id)
-            if not parent:
-                parent = get_tree_item(ref_item.parent)
-                temp_ref_items[parent_id] = parent
-
+            parent = get_tree_item(ref_item.parent)
             child = get_tree_item(ref_item)
+
             child.parent = parent
             parent.dynamic_children.append(child)
-            temp_ref_items[ref_item.id] = child
 
         from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree
         register_dynamic_trees(compose_dynamic_tree([tree('references', items=[root_item])]), reset_cache=True)
