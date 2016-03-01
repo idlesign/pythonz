@@ -37,6 +37,8 @@ https://github.com/idlesign/pythonz
 Если вы обнаружили проблему безопасности, пожалуйста, не используйте раздел Issues,
 а ознакомьтесь с параграфом ``Безопасность`` ниже.
 
+*Дополнительную полезную информацию* можно получить из wiki - https://github.com/idlesign/pythonz/wiki
+
 
 Безопасность
 ------------
@@ -47,50 +49,3 @@ https://github.com/idlesign/pythonz
 В письме желательно указать на место в коде, ответственное за уязвимость.
 
 Хорошо, если вы также приведёте пример эксплуатации найденной уязвимости.
-
-
-Зависимости
------------
-
-*База*
-
-* `Python 3.2+ <https://www.python.org/>`_
-* `Django 1.8.x <https://www.djangoproject.com/>`_
-
-
-*Пакеты*
-
-* `awesome-slugify <https://github.com/dimka665/awesome-slugify>`_
-* `Beautiful Soup <http://www.crummy.com/software/BeautifulSoup/>`_
-* `bleach <https://github.com/jsocol/bleach>`_
-* `feedparser <http://pythonhosted.org/feedparser>`_
-* `Pillow <https://github.com/python-pillow/Pillow>`_
-* `pyTelegramBotAPI <https://github.com/eternnoir/pyTelegramBotAPI>`_
-* `pytz <http://pythonhosted.org/pytz>`_
-* `requests <https://github.com/kennethreitz/requests>`_
-* `twitter <https://github.com/sixohsix/twitter>`_
-
-
-*Приложения для Django*
-
-* `django-admirarchy <https://github.com/idlesign/django-admirarchy>`_
-* `django-datetime-widget <https://github.com/asaglimbeni/django-datetime-widget>`_
-* `django-debug-toolbar <https://github.com/django-debug-toolbar/django-debug-toolbar>`_
-* `django-etc <https://github.com/idlesign/django-etc>`_
-* `django-robots <https://github.com/jezdez/django-robots>`_
-* `django-simple-history <https://github.com/treyhunner/django-simple-history>`_
-* `django-siteblocks <https://github.com/idlesign/django-siteblocks>`_
-* `django-sitecats <https://github.com/idlesign/django-sitecats>`_
-* `django-siteflags <https://github.com/idlesign/django-siteflags>`_
-* `django-sitegate <https://github.com/idlesign/django-sitegate>`_
-* `django-sitemessage <https://github.com/idlesign/django-sitemessage>`_
-* `django-sitemetrics <https://github.com/idlesign/django-sitemetrics>`_
-* `django-siteprefs <https://github.com/idlesign/django-siteprefs>`_
-* `django-xross <https://github.com/idlesign/django-xross>`_
-
-
-*Оформление*
-
-* `Twitter Bootstrap 3 <http://getbootstrap.com/>`_
-* `Foundation Icon Fonts 3 <http://zurb.com/playground/foundation-icon-fonts-3>`_
-* `Google Fonts <http://www.google.com/fonts/>`_
