@@ -1,3 +1,5 @@
+from sys import argv
+
 from siteprefs.toolbox import autodiscover_siteprefs
 from sitegate.toolbox import get_sitegate_urls
 from sitemessage.toolbox import get_sitemessage_urls
@@ -10,8 +12,6 @@ from django.contrib.auth.views import logout
 
 from apps.realms import bootstrap_realms  # Здесь относительный импорт работать не будет.
 from apps.views import page_not_found, permission_denied, server_error, index, search, login, telebot
-
-autodiscover_siteprefs()
 
 
 urlpatterns = [
@@ -31,9 +31,6 @@ urlpatterns = [
 urlpatterns += get_sitegate_urls()  # Цепляем URLы от sitegate,
 urlpatterns += get_sitemessage_urls()  # Цепляем URLы от sitemessage,
 
-bootstrap_realms(urlpatterns)  # Инициализируем области
-
-
 # Используем собственные страницы ошибок.
 handler403 = permission_denied
 handler404 = page_not_found
@@ -46,3 +43,19 @@ if settings.DEBUG:
     urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls)),]
     # Чтобы статика раздавалась при runserver.
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+MIGRATION = len(argv) > 1 and argv[1] == 'migrate'
+"""
+Указание на то, что приложение вызвано из manage-скрипта с командой `migrate`.
+
+"""
+
+if not MIGRATION:
+    # Начиная с Django 1.9 urls.py участвуют и в процессе
+    # установки миграций. Исполнение кода, расположенного ниже
+    # в ходе мигрирования не требуется.
+    autodiscover_siteprefs()
+
+    # Инициализируем области сайта.
+    bootstrap_realms(urlpatterns)
