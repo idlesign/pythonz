@@ -10,11 +10,5 @@
                 &nbsp; <span class="label label-success">{{ item.supporters_num }}</span> &nbsp;<span class="glyphicon glyphicon-thumbs-up"></span> &nbsp;
             </button>
         {% endif %}
-    {% else %}
-        <form action="{% url "login" %}">
-            <button class="btn btn-block btn-default">
-                &nbsp; <span class="label label-success" title="Рейтинг">{{ item.supporters_num }}</span> &nbsp; Рекомендую! &nbsp;
-            </button>
-        </form>
     {% endif %}
 </div>
