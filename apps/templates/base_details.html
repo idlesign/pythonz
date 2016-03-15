@@ -53,8 +53,10 @@
             {% block details_share %}{% include "sub_box_share.html" %}{% endblock %}
             {% block details_discussions_pre %}{% endblock %}
             {% if item.has_discussions %}
-                <hr>
-                {% include "sub_comments.html" with disable_disqus=1 %}
+                <div class="marg__t_max clearfix">
+                    <hr>
+                    {% include "sub_comments.html" with disable_disqus=1 %}
+                </div>
             {% endif %}
         </div>
 
