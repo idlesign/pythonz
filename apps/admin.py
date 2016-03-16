@@ -152,13 +152,12 @@ admin.site.register(Article, ArticleAdmin)
 
 class BookAdmin(EntityBaseAdmin):
 
-    inlines = [PartnerLinkInline]
     form = BookForm
 
     list_display = ('time_created', 'title', 'submitter', 'isbn')
     search_fields = ['title', 'isbn']
 
-    inlines = [get_linked_inline(Book)]
+    inlines = [get_linked_inline(Book), PartnerLinkInline]
 
 admin.site.register(Book, BookAdmin)
 
