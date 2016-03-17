@@ -304,7 +304,9 @@ class Vacancy(UtmReady, RealmBaseModel):
         stats = list(Place.objects.filter(
             id__in=cls.objects.published().filter(place__isnull=False).distinct().values_list('place_id', flat=True),
             vacancies__status=cls.STATUS_PUBLISHED
-        ).annotate(vacancies_count=Count('vacancies')).order_by('-vacancies_count', 'title'))
+        ).annotate(vacancies_count=Count('vacancies')).filter(
+            vacancies_count__gt=2
+        ).order_by('-vacancies_count', 'title'))
 
         return stats
 
