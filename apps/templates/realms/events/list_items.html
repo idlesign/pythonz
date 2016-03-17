@@ -16,15 +16,16 @@
         </div>
         <div class="description float-right">
             <a href="{{ event.get_absolute_url }}" title="{{ event.title }}">{{ event.title|truncatechars:58 }}</a>
+
             <div class="small">
                 {% if event.is_in_past %}
-                    <h5><span class="label label-danger">Событие уже в прошлом</span></h5>
+                    <div class="label label-default">В прошлом</div>
                 {% else %}
                     {% if event.time_start %}
-                        {{ event.time_start|date:"d M H:i" }} {% if event.time_finish %}&#8212; {{ event.time_finish|date:"d M H:i" }}{% endif %}
+                        <div>{{ event.time_start|date:"d M H:i" }} {% if event.time_finish %}&#8212; {{ event.time_finish|date:"d M H:i" }}{% endif %}</div>
                     {% endif %}
                 {% endif %}
-                {{ event.get_display_type }}<br>
+                <div class="marg__t_min">{{ event.get_display_type }}</div>
                 <span class="cl__green"><b>{{ event.get_display_specialization }}</b></span>
             </div>
         </div>
