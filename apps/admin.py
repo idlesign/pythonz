@@ -48,7 +48,6 @@ class UserAdmin(BaseUserAdmin):
 
     fieldsets = BaseUserAdmin.fieldsets + ((None, {'fields': (
             'comments_enabled',
-            'digest_enabled',
             'disqus_shortname',
             'disqus_category_id',
             'timezone',
@@ -97,6 +96,7 @@ class PlaceAdmin(admin.ModelAdmin):
 
     list_display = ('geo_title', 'title', 'status', 'time_created')
     search_fields = ['title', 'geo_title']
+    raw_id_fields = ('last_editor',)
     list_filter = ['time_created', 'status', 'geo_type']
     ordering = ['geo_title']
 
@@ -134,7 +134,7 @@ def get_linked_inline(model):
 class EntityBaseAdmin(SimpleHistoryAdmin):
 
     list_display = ('time_created', 'title', 'submitter',)
-    raw_id_fields = ('submitter',)
+    raw_id_fields = ('submitter', 'last_editor')
     search_fields = ['title', 'description']
     list_filter = ['time_created', 'status']
     ordering = ['-time_created']
