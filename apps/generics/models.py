@@ -136,8 +136,11 @@ class CommonEntityModel(models.Model):
     class Meta:
         abstract = True
 
-    autogenerate_slug = False  # Следует ли автоматически генерировать краткое имя в транслите для URL.
-    allow_linked = True  # Разрешена ли привязка элементов друг к другу.
+    autogenerate_slug = False
+    """Следует ли автоматически генерировать краткое имя в транслите для URL."""
+
+    allow_linked = True
+    """Разрешена ли привязка элементов друг к другу."""
 
     def generate_slug(self):
         """Генерирует краткое имя для URL и заполняет им атрибут slug.
@@ -158,7 +161,7 @@ class CommonEntityModel(models.Model):
         self.title = BasicTypograph.apply_to(self.title)
         self.description = BasicTypograph.apply_to(self.description)
 
-        if self.autogenerate_slug:
+        if not self.id and self.autogenerate_slug:
             self.slug = self.generate_slug()
 
         super().save(*args, **kwargs)
