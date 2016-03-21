@@ -237,7 +237,7 @@ def search(request):
     if not search_term:
         return redirect('index')
 
-    results = Reference.objects.filter(title__icontains=search_term)
+    results = Reference.find(search_term)
     total_results = len(results)
 
     if not total_results:

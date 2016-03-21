@@ -131,7 +131,7 @@ def get_inline_reference(term, items_limit=25):
     :rtype: list
     """
     results = []
-    found_items = Reference.objects.filter(title__icontains=term)[:items_limit]
+    found_items = Reference.find(term)[:items_limit]
 
     for item in found_items:
         title = item.title

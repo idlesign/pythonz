@@ -1,7 +1,6 @@
 from collections import OrderedDict
 from datetime import timedelta
 from itertools import chain
-from django.db.models import Min, Max, Count
 
 import requests
 from etc.models import InheritedModel
@@ -9,6 +8,7 @@ from etc.toolbox import choices_list, get_choices
 from sitecats.models import ModelWithCategory
 from simple_history.models import HistoricalRecords
 from django.db import models, IntegrityError
+from django.db.models import Min, Max, Count, Q
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.models import ContentType
@@ -760,6 +760,10 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         'Результат', max_length=250, null=True, blank=True,
         help_text='Для функций/методов. Описание результата, например: <i>int</i>.')
 
+    search_terms = models.CharField(
+        'Термины поиска', max_length=500, blank=True, default='',
+        help_text='Дополнительные фразы, по которым можно найти данную статью, например: <i>«список», для «list»</i>')
+
     history = HistoricalRecords()
 
     class Meta:
@@ -811,6 +815,15 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
             qs = qs.exclude(pk=exclude_id)
 
         return qs.order_by('-time_published').all()
+
+    @classmethod
+    def find(cls, search_term):
+        """Ищет указанный текст в справочнике. Возвращает QuerySet.
+
+        :param str search_term: Строка для поиска.
+        :rtype: QuerySet
+        """
+        return cls.get_actual().filter(Q(title__icontains=search_term) | Q(search_terms__icontains=search_term))
 
 
 class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,

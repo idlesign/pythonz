@@ -281,6 +281,7 @@ class ReferenceForm(RealmEditBaseForm):
             'text_src',
             'version_added',
             'version_deprecated',
+            'search_terms',
         )
         widgets = {
             'func_params': forms.Textarea(attrs={'rows': 4}),
