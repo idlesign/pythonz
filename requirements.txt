@@ -1,11 +1,11 @@
 awesome-slugify==1.6.5
-Django==1.9.3
-Fabric==1.10.2
-Pillow==3.1.1
+Django==1.9.5
+Fabric==1.11.1
+Pillow==3.2.0
 bleach==1.4.2
 beautifulsoup4==4.4.1
 feedparser==5.2.1
-pytz==2015.7
+pytz==2016.3
 pyTelegramBotAPI==1.4.2
 requests==2.9.1
 twitter==1.17.1
@@ -13,7 +13,7 @@ django-admirarchy==0.2.0
 django-datetime-widget==0.9.3
 django-debug-toolbar==1.4
 django-etc==0.7.2
-django-simple-history==1.8.0
+django-simple-history==1.8.1
 django-robots==2.0
 django-siteblocks==0.5.0
 django-sitecats==0.6.1
