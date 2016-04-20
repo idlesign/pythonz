@@ -93,7 +93,7 @@ def on_chat_id(message):
     :param telebot.types.Message message:
     """
     LOGGER.debug('Got /chat_id command.')
-    bot.reply_to(message, 'Идентификатор этого чата: ' % message.chat.id)
+    bot.reply_to(message, 'Идентификатор этого чата: %s' % message.chat.id)
 
 
 @bot.message_handler(commands=['help'])
