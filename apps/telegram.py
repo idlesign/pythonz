@@ -86,6 +86,16 @@ def on_start(message):
         message, 'Рад знакомству, %s.\nЧтобы получить справку, наберите команду /help.' % message.from_user.first_name)
 
 
+@bot.message_handler(commands=['chat_id'])
+def on_start(message):
+    """Ответ на команду /chat_id.
+
+    :param telebot.types.Message message:
+    """
+    LOGGER.debug('Got /chat_id command.')
+    bot.reply_to(message, 'Идентификатор этого чата: ' % message.chat.id)
+
+
 @bot.message_handler(commands=['help'])
 def on_help(message):
     """Ответ на команду /help.
