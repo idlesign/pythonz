@@ -193,7 +193,7 @@ def query_text(inline_query):
     bot.answer_inline_query(inline_query.id, results)
 
 
-@bot.message_handler(func=lambda message: True)
+#@bot.message_handler(func=lambda message: True)
 def echo_message(message):
     """Ответ на неподдерживаемое сообщение.
 
