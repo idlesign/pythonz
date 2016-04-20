@@ -87,7 +87,7 @@ def on_start(message):
 
 
 @bot.message_handler(commands=['chat_id'])
-def on_start(message):
+def on_chat_id(message):
     """Ответ на команду /chat_id.
 
     :param telebot.types.Message message:
