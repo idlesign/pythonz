@@ -48,6 +48,7 @@ YANDEX_SEARCH_ID = 'not_a_secret'
 
 TELEGRAM_BOT_TOKEN = 'not_a_secret'
 TELEGRAM_BOT_URL = 'not_a_secret'
+TELEGRAM_GROUP = 'group_id or @channel_name'
 
 # Переводит проект в агрессивный режим: задействует различную машинерию для привлечения внимания к проекту.
 AGRESSIVE_MODE = False

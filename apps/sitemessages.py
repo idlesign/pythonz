@@ -142,7 +142,7 @@ class PythonzTelegramEntyPublishedMessage(PlainTextMessage):
         """
         message = 'Новое: %s «%s» %s' % (
             entity.get_verbose_name(), entity.title, entity.get_absolute_url(with_prefix=True, utm_source='tele'))
-        cls(message).schedule(cls.recipients('telegram', 'pythonz'))
+        cls(message).schedule(cls.recipients('telegram', settings.TELEGRAM_GROUP))
 
 
 class PythonzEmailMessage(EmailHtmlMessage):
