@@ -2,7 +2,6 @@ from collections import OrderedDict
 from datetime import timedelta
 from itertools import chain
 
-import requests
 from etc.models import InheritedModel
 from etc.toolbox import choices_list, get_choices
 from sitecats.models import ModelWithCategory
@@ -17,7 +16,7 @@ from django.utils import timezone
 
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
 from .exceptions import RemoteSourceError
-from .utils import scrape_page, HhVacancyManager, format_currency, PyDigestResource, truncate_chars, UTM
+from .utils import scrape_page, HhVacancyManager, format_currency, PyDigestResource, truncate_chars, UTM, get_json
 
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
@@ -879,8 +878,8 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
             'width="%s" height="%s" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>'
             '</iframe>' % (video_id, cls.EMBED_WIDTH, cls.EMBED_HEIGHT))
 
-        response = requests.get('http://vimeo.com/api/v2/video/%s.json' % video_id)
-        cover_url = response.json()[0]['thumbnail_small']
+        json = get_json('http://vimeo.com/api/v2/video/%s.json' % video_id)
+        cover_url = json[0]['thumbnail_small']
 
         return embed_code, cover_url
 
