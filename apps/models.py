@@ -27,7 +27,7 @@ HINT_IMPERSONAL_REQUIRED = ('<strong>Без обозначения личног�
 
 
 class UtmReady:
-    """Примесь, добавляющая модели метод для получения URL с матками UTM.
+    """Примесь, добавляющая модели метод для получения URL с метками UTM.
 
     """
 
@@ -361,7 +361,7 @@ class Vacancy(UtmReady, RealmBaseModel):
         return ' '.join(map(str, chunks)).strip()
 
     def get_absolute_url(self, with_prefix=False, utm_source=None):
-        return self.url_site
+        return self.get_utm_url()
 
     def link_to_place(self):
         """Связывает запись с местом Place, заполняя атрибут place_id.
