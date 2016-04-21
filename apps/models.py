@@ -22,8 +22,8 @@ from .utils import scrape_page, HhVacancyManager, format_currency, PyDigestResou
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 
-HINT_IMPERSONAL_REQUIRED = ('<strong>Без обозначения личного отношения. '
-                            'Личное отношение можно выразить в Обсуждениях к материалу.</strong>')
+HINT_IMPERSONAL_REQUIRED = (
+    '<strong>Без обозначения личного отношения. Личное отношение можно выразить в Обсуждениях к материалу.</strong>')
 
 
 class UtmReady:
@@ -449,8 +449,9 @@ class Community(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Mod
         cover = 'Логотип'
         description = {
             'verbose_name': 'Кратко',
-            'help_text': ('Сжатая предварительная информация о сообществе (например, направление деятельности). %s' %
-                          HINT_IMPERSONAL_REQUIRED)
+            'help_text': (
+                'Сжатая предварительная информация о сообществе (например, направление деятельности). %s' %
+                HINT_IMPERSONAL_REQUIRED)
         }
         text_src = {
             'verbose_name': 'Описание, принципы работы, правила, контактная информация',
@@ -656,8 +657,8 @@ class Article(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Model
         }
         linked = {
             'verbose_name': 'Связанные статьи',
-            'help_text': ('Выберите статьи, которые имеют отношение к данной. '
-                          'Так, например, можно объединить статьи цикла.',)
+            'help_text': (
+                'Выберите статьи, которые имеют отношение к данной. Так, например, можно объединить статьи цикла.',)
         }
 
     def is_handmade(self):
@@ -695,8 +696,9 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         }
         text_src = {
             'verbose_name': 'Описание',
-            'help_text': ('Обзорное, более полное описание нововведений и изменений, произошедших в версии. %s' %
-                          HINT_IMPERSONAL_REQUIRED,)
+            'help_text': (
+                'Обзорное, более полное описание нововведений и изменений, произошедших в версии. %s' %
+                HINT_IMPERSONAL_REQUIRED),
         }
 
     class Meta:
@@ -851,8 +853,8 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         }
         linked = {
             'verbose_name': 'Связанные видео',
-            'help_text': ('Выберите видео, которые имеют отношение к данному. '
-                          'Например, можно связать несколько эпизодов видео.',)
+            'help_text': (
+                'Выберите видео, которые имеют отношение к данному. Например, можно связать несколько эпизодов видео.'),
         }
         year = 'Год съёмок'
 
@@ -966,8 +968,9 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
     specialization = models.PositiveIntegerField('Специализация', choices=get_choices(SPECS), default=SPEC_DEDICATED)
     type = models.PositiveIntegerField('Тип', choices=get_choices(TYPES), default=TYPE_MEETING)
     time_start = models.DateTimeField('Начало', null=True, blank=True)
-    time_finish = models.DateTimeField('Завершение', null=True, blank=True,
-                                       help_text='Дату завершения можно и не указывать.')
+    time_finish = models.DateTimeField(
+        'Завершение', null=True, blank=True,
+        help_text='Дату завершения можно и не указывать.')
     fee = models.BooleanField('Участие платное', default=False, db_index=True)
 
     history = HistoricalRecords()
