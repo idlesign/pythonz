@@ -1,7 +1,7 @@
 {% load sitemetrics sitetree pythonz_version cache %}
 <!DOCTYPE html>
 <html lang="ru" prefix="og: http://ogp.me/ns#">
-<head>
+<head itemscope itemtype="http://schema.org/WebSite">
     <meta charset="UTF-8">
     <meta name="language" content="ru" />
     <meta name="description" content="{% block page_description %}{% sitetree_page_description from "main" %}{% endblock %}">
@@ -12,6 +12,8 @@
     <meta property="og:url" content="{{ request.build_absolute_uri }}" />
 
     {% block meta_og %}{% endblock %}
+
+    <link rel="canonical" href="//pythonz.net/" itemprop="url">
 
     <script src="//yandex.st/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
 
@@ -31,7 +33,7 @@
         {% endif %}
     {% endblock %}
 
-    <title>{% block page_title %}{% sitetree_breadcrumbs from "main" template "sitetree/breadcrumbs-title.html" %}{% endblock %}</title>
+    <title itemprop="name">{% block page_title %}{% sitetree_breadcrumbs from "main" template "sitetree/breadcrumbs-title.html" %}{% endblock %}</title>
 
 </head>
 <body>
