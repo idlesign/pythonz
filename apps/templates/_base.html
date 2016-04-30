@@ -1,4 +1,4 @@
-{% load sitemetrics sitetree pythonz_version cache %}
+{% load sitemetrics sitetree pythonz_version cache etc_misc %}
 <!DOCTYPE html>
 <html lang="ru" prefix="og: http://ogp.me/ns#">
 <head itemscope itemtype="http://schema.org/WebSite">
@@ -13,7 +13,7 @@
 
     {% block meta_og %}{% endblock %}
 
-    <link rel="canonical" href="//pythonz.net/" itemprop="url">
+    <link rel="canonical" href="{% site_url %}" itemprop="url">
 
     <script src="//yandex.st/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
 
@@ -62,12 +62,12 @@
             {% endwith %}
 
             <div itemscope itemtype="http://schema.org/WebSite">
-                <meta itemprop="url" content="http://pythonz.net/"/>
+                <meta itemprop="url" content="{% site_url %}"/>
 
                 <form class="navbar-form navbar-left" action="/search/" itemprop="potentialAction" itemscope itemtype="http://schema.org/SearchAction">
                     {% csrf_token %}
                     <div class="form-group" role="search">
-                        <meta itemprop="target" content="http://pythonz.net/search/?search_term={search_term}"/>
+                        <meta itemprop="target" content="{% site_url %}/search/?search_term={search_term}"/>
                         <input type="text" class="form-control" name="search_term" placeholder="Поиск по справочнику" value="{{ search_term }}" required itemprop="query-input">
                     </div>
                 </form>
