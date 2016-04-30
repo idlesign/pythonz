@@ -19,7 +19,7 @@
 
 {% block details_contents %}
     <meta itemprop="uploadDate" content="{{ video.time_published|date:"c" }}" />
-    <meta itemprop="thumbnailUrl" content="{% thumbs_get_thumb_url video.cover 180 236 item.realm %}" />
+    <meta itemprop="thumbnailUrl" content="//pythonz.net{% thumbs_get_thumb_url video.cover 180 236 item.realm %}" />
 
     <div>
         {{ video.code|safe }}
