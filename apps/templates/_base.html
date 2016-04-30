@@ -67,7 +67,7 @@
                 <form class="navbar-form navbar-left" action="/search/" itemprop="potentialAction" itemscope itemtype="http://schema.org/SearchAction">
                     {% csrf_token %}
                     <div class="form-group" role="search">
-                        <meta itemprop="target" content="http://pythonz.net/search/?search_term={search_term_string}"/>
+                        <meta itemprop="target" content="http://pythonz.net/search/?search_term={search_term}"/>
                         <input type="text" class="form-control" name="search_term" placeholder="Поиск по справочнику" value="{{ search_term }}" required itemprop="query-input">
                     </div>
                 </form>
