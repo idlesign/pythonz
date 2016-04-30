@@ -92,6 +92,7 @@ STATIC_URL_FULL = SITE_URL + STATIC_URL
 
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -101,7 +102,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'apps.middleware.TimezoneMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 )
+
+CACHE_MIDDLEWARE_KEY_PREFIX = 'page_'
 
 
 TEMPLATE_DEBUG = DEBUG
