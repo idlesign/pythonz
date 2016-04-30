@@ -59,12 +59,18 @@
                 </div>
             {% endwith %}
 
-            <form class="navbar-form navbar-left" method="post" action="/search/">
-                {% csrf_token %}
-                <div class="form-group" role="search">
-                    <input type="text" class="form-control" name="search_term" placeholder="Поиск по справочнику" value="{{ search_term }}">
-                </div>
-            </form>
+            <div itemscope itemtype="http://schema.org/WebSite">
+                <meta itemprop="url" content="http://pythonz.net/"/>
+
+                <form class="navbar-form navbar-left" action="/search/" itemprop="potentialAction" itemscope itemtype="http://schema.org/SearchAction">
+                    {% csrf_token %}
+                    <div class="form-group" role="search">
+                        <meta itemprop="target" content="http://pythonz.net/search/?search_term={search_term_string}"/>
+                        <input type="text" class="form-control" name="search_term" placeholder="Поиск по справочнику" value="{{ search_term }}" required itemprop="query-input">
+                    </div>
+                </form>
+
+            </div>
 
             <ul class="nav navbar-nav navbar-right">
             {% if request.user.is_authenticated %}
