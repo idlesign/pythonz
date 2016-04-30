@@ -1,0 +1,19 @@
+{% load sitetree %}
+{% if sitetree_items|length_is:"1" %}
+{% else %}
+<ul class="breadcrumb" vocab="http://schema.org/" typeof="BreadcrumbList">
+    {% for item in sitetree_items %}
+        {% if not forloop.last %}
+            <li property="itemListElement" typeof="ListItem">
+                <a property="item" typeof="WebPage" href="{% sitetree_url for item %}">{{ item.title_resolved }}</a>
+                <meta property="position" content="{{ forloop.counter }}">
+            </li>
+        {% else %}
+            <li class="active" property="itemListElement" typeof="ListItem">
+                {{ item.title_resolved }}
+                <meta property="position" content="{{ forloop.counter }}">
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}

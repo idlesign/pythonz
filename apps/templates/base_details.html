@@ -35,7 +35,7 @@
         <div class="{% block details_main_col %}col-md-9{% endblock %}" itemscope itemtype="http://schema.org/{% block schema_type %}WebPage{% endblock %}">
 
             {% block breadcrumbs %}
-            {% sitetree_breadcrumbs from "main" template "sitetree/breadcrumbs_bootstrap3.html" %}
+            {% sitetree_breadcrumbs from "main" template "sitetree/crumbs.html" %}
             {% endblock %}
 
             {% include "sub_title_block.html" with hide_breadcurmbs=1 %}
