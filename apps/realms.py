@@ -123,8 +123,8 @@ def get_sitetree_root_item(children=None):
     """
     return item(
         'Про Python', '/', alias='topmenu', url_as_pattern=False,
-        description='Сайт про Питон. Здесь можно найти различные материалы по языку программирования '
-                    'Python: книги, видео, справочник, сообщества, события, обсуждения и многое другое.',
+        description='Сайт про Питон. Различные материалы по языку программирования Python: '
+                    'книги, видео, справочник, сообщества, события, обсуждения и многое другое.',
         children=children)
 
 
@@ -151,12 +151,17 @@ def build_sitetree():
 
             )),
             tree('about', 'О проекте', (
-                item('Что такое Python', '/promo/', description='Краткие сведения о языке программирования Python.',
+                item('Что такое Python', '/promo/',
+                     description='Краткие сведения о возможностях и областях применения языка программирования Python.',
                      url_as_pattern=False),
-                item('О проекте', '/about/', description='Информация о проекте.', url_as_pattern=False),
-                item('Карта сайта', '/sitemap/', description='Список разделов на сайте.',
+                item('О проекте', '/about/',
+                     description='Информация о проекте. О том, как, кем и для чего разрабатывается данный сайт.',
                      url_as_pattern=False),
-                item('Поиск по сайту', '/search/site/', url_as_pattern=False),
+                item('Карта сайта', '/sitemap/', description='Список разделов на сайте оформленный в виде карты сайта.',
+                     url_as_pattern=False),
+                item('Поиск по сайту', '/search/site/',
+                     description='Глобальный поиск по материалам, расположенным на сайте.',
+                     url_as_pattern=False),
                 item('Результаты поиска «{{ search_term }}»', '/search/', url_as_pattern=False, in_menu=False,
                      in_sitetree=False),
             ))
@@ -175,7 +180,7 @@ class BookRealm(RealmBase):
     txt_form_add = 'Добавить книгу'
     txt_form_edit = 'Изменить данные книги'
 
-    view_listing_description = 'Книги по программированию на языке Python. И просто книги по программированию.'
+    view_listing_description = 'Книги по программированию вообще и на языке Python в частности.'
     view_listing_keywords = 'книги по питону, литература по python'
 
     model = Book
@@ -193,7 +198,7 @@ class VideoRealm(RealmBase):
     txt_form_add = 'Добавить видео'
     txt_form_edit = 'Изменить данные видео'
 
-    view_listing_description = 'Видео. Лекции, курсы, доклады, связанные с языком программирования Python.'
+    view_listing_description = 'Видео-записи лекций, курсов, докладов, связанные с языком программирования Python.'
     view_listing_keywords = 'видео по питону, доклады по python'
 
     model = Video
@@ -208,7 +213,7 @@ class EventRealm(RealmBase):
     Область с событиями.
     """
 
-    view_listing_description = 'События. Встречи, конференции, спринты, круглые столы.'
+    view_listing_description = 'События, которые могут заинтересовать питонистов: встречи, конференции, спринты, и пр.'
     view_listing_keywords = 'конференции по питону, встречи сообществ python'
 
     txt_form_add = 'Добавить событие'
@@ -227,7 +232,7 @@ class VacancyRealm(RealmBase):
     allowed_views = ('listing',)
     name_plural = 'vacancies'
 
-    view_listing_description = 'Вакансии, связанные с языком программирования Python.'
+    view_listing_description = 'Список вакансий, так или иначе связанных с языком программирования Python.'
     view_listing_keywords = 'вакансии python, работа питон'
 
     view_listing_base_class = VacancyListingView
@@ -250,7 +255,7 @@ class ReferenceRealm(RealmBase):
     txt_form_add = 'Дополнить справочник'
     txt_form_edit = 'Редактировать статью'
 
-    view_listing_description = 'Справочные материалы по языку программирования Python.'
+    view_listing_description = 'Справочные и обучающие материалы по языку программирования Python.'
     view_listing_keywords = 'справочник питон, руководство python'
 
     view_listing_base_class = ReferenceListingView
@@ -301,7 +306,7 @@ class ArticleRealm(RealmBase):
     txt_form_add = 'Написать статью'
     txt_form_edit = 'Редактировать статью'
 
-    view_listing_description = 'Статьи, связанные с языком программирования Python.'
+    view_listing_description = 'Статьи и заметки, связанные с программированием Python и не только.'
     view_listing_keywords = 'статьи о питоне, материалы по python'
 
     model = Article
@@ -339,7 +344,7 @@ class DiscussionRealm(RealmBase):
     txt_form_add = 'Создать обсуждение'
     txt_form_edit = 'Редактировать обсуждение'
 
-    view_listing_description = 'Обсуждения тем, связанных с программированием на pythonz.net.'
+    view_listing_description = 'Обсуждения вопросов, связанных с программированием на Питоне.'
     view_listing_keywords = 'вопросы по питону, обсуждения python'
 
     model = Discussion
@@ -354,7 +359,7 @@ class UserRealm(RealmBase):
 
     txt_form_edit = 'Изменить настройки'
 
-    view_listing_description = 'Люди, связанные с языком программирования Python.'
+    view_listing_description = 'Список лиц так или иначе связанных с языком программирования Python.'
     view_listing_keywords = 'питонисты, разработчики python'
 
     view_details_base_class = UserDetailsView
@@ -381,8 +386,7 @@ class CategoryRealm(RealmBase):
     Область с категориями.
     """
 
-    view_listing_description = ('Категории материалов, связанных с языком программирования Python, '
-                                'представленных на pythonz.net.')
+    view_listing_description = 'Карта категорий материалов по языку программирования Python доступных на сайте.'
     view_listing_keywords = 'материалы по питону, python по категориям'
 
     model = get_category_model()
@@ -493,7 +497,7 @@ class CommunityRealm(RealmBase):
     txt_form_add = 'Зарегистрировать сообщество'
     txt_form_edit = 'Редактировать сообщество'
 
-    view_listing_description = 'Сообщества людей интересующихся и занимающихся программированием на языке Python.'
+    view_listing_description = 'Сообщества людей интересующихся и занимающихся программированием на Питоне.'
     view_listing_keywords = 'сообщества питонистов, программисты python'
 
     name = 'community'
