@@ -29,6 +29,8 @@ class RealmBase(object):
 
     # Слудет ли отображать на главной странице.
     show_on_main = True
+    # Слудет ли отображать в верхнем меню.
+    show_on_top = True
 
     # Кеш элементов древа сайта для данной области.
     sitetree_items = None
@@ -299,8 +301,11 @@ class RealmBase(object):
                 cls.view_listing_title or str(cls.model._meta.verbose_name_plural),
                 cls.get_listing_urlname(),
                 description=cls.view_listing_description,
-                children=children
+                children=children,
             )
+
+            cls.sitetree_items.show_on_top = cls.show_on_top
+
         return cls.sitetree_items
 
     @classmethod

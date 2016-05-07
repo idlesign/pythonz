@@ -373,6 +373,7 @@ class UserRealm(RealmBase):
     sitemap_changefreq = 'weekly'
     allowed_views = ('listing', 'details', 'edit')
     show_on_main = False
+    show_on_top = False
 
     syndication_enabled = False
 
@@ -396,7 +397,10 @@ class CategoryRealm(RealmBase):
     allowed_views = ('listing', 'details')
     ready_for_digest = False
     sitemap_enabled = False
+
     show_on_main = False
+    show_on_top = False
+
     view_listing_title = 'Путеводитель'
     view_listing_base_class = CategoryListingView
     view_details_base_class = CategoryListingView

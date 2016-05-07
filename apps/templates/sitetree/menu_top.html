@@ -1,11 +1,13 @@
 {% load sitetree %}
 <ul class="nav navbar-nav">
     {% for item in sitetree_items %}
-        {% sitetree_url for item as item_url %}
-        {% if item_url != '#unresolved' %}
-        <li class="{% if item.is_current or item.in_current_branch %}active{% endif %}">
-            <a href="{{ item_url }}">{{ item.title_resolved }}</a>
-        </li>
+        {% if item.show_on_top %}
+            {% sitetree_url for item as item_url %}
+            {% if item_url != '#unresolved' %}
+            <li class="{% if item.is_current or item.in_current_branch %}active{% endif %}">
+                <a href="{{ item_url }}">{{ item.title_resolved }}</a>
+            </li>
+            {% endif %}
         {% endif %}
     {% endfor %}
 </ul>
