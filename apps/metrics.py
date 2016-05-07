@@ -7,8 +7,8 @@ class MyYandex(Yandex):
     """
 
     params = {
-        'webvisor': False,
-        'clickmap': False,
+        'webvisor': True,
+        'clickmap': True,
         'track_links': True,
         'accurate_bounce': True,
         'no_index': False,
