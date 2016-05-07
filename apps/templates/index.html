@@ -4,6 +4,9 @@
 
 {% block page_contents %}
     <h1>Про Python</h1>
+    <div class="marg__b_mid">
+        {% include "sub_search_bar.html" %}
+    </div>
     <div id="index_box">
     {% for realm_data in realms_data %}
         {% include "sub_realm_card.html" %}
