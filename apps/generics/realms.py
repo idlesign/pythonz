@@ -13,7 +13,7 @@ SYNDICATION_URL_MARKER = 'feed'
 SYNDICATION_ITEMS_LIMIT = 15
 
 
-class RealmBase(object):
+class RealmBase:
     """Базовый класс области (книга, видео и пр)"""
 
     model = None  # Класс модели, связанный с областью

@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import AnonymousUser
 
 
-class TimezoneMiddleware(object):
+class TimezoneMiddleware:
     """Устанавливает текущую временную зону."""
 
     def process_request(self, request):

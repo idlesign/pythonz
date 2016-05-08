@@ -91,7 +91,7 @@ class UTM:
         return cls.add_to_url(url, source, 'link', 'promo')
 
 
-class BasicTypograph(object):
+class BasicTypograph:
     """Содержит базовые правила типографики.
     Позволяет применить эти правила к строке.
 
