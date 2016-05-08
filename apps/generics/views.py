@@ -13,7 +13,7 @@ from .models import ModelWithCompiledText
 from ..integration.partners import get_partner_links
 from ..exceptions import RedirectRequired, PythonzException
 from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event, Reference
-from ..shortcuts import message_warning, message_success, message_info, message_error
+from ..utils import message_info, message_warning, message_success, message_error
 
 
 class RealmView(View):

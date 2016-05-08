@@ -1,8 +1,10 @@
+import logging
 from textwrap import wrap
 from urllib.parse import urlsplit, urlunsplit, parse_qs, urlparse, urlencode, urlunparse
 
 import re
 from collections import OrderedDict
+from django.contrib import messages
 from django.utils.text import Truncator
 
 
@@ -140,3 +142,52 @@ def url_mangle(url):
         splitted[path] = '<...>%s' % splitted[path].split('/')[-1]  # Последний кусок пути.
     mangled = urlunsplit(splitted)
     return mangled
+
+
+def get_logger(name):
+    """Возвращает объект-журналёр для использования в модулях.
+
+    :param name:
+    :rtype: logging.Logger
+    """
+    return logging.getLogger('pythonz.%s' % name)
+
+
+def message_info(request, message):
+    """Регистрирует сообщение информирующего типа для вывода пользователю на странице.
+
+    :param Request request:
+    :param str message:
+    :return:
+    """
+    messages.add_message(request, messages.INFO, message, extra_tags='info')
+
+
+def message_warning(request, message):
+    """Регистрирует предупреждающее сообщение для вывода пользователю на странице.
+
+    :param Request request:
+    :param str message:
+    :return:
+    """
+    messages.add_message(request, messages.WARNING, message, extra_tags='warning')
+
+
+def message_success(request, message):
+    """Регистрирует ободряющее сообщение для вывода пользователю на странице.
+
+    :param Request request:
+    :param str message:
+    :return:
+    """
+    messages.add_message(request, messages.SUCCESS, message, extra_tags='success')
+
+
+def message_error(request, message):
+    """Регистрирует сообщение об ошибке для вывода пользователю на странице.
+
+    :param Request request:
+    :param str message:
+    :return:
+    """
+    messages.add_message(request, messages.ERROR, message, extra_tags='danger')

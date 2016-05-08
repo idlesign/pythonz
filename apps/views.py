@@ -25,7 +25,7 @@ from .integration.telegram import handle_request
 from .exceptions import RedirectRequired
 from .generics.views import DetailsView, RealmView, EditView, ListingView
 from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource
-from .shortcuts import message_warning
+from .utils import message_warning
 from .signals import sig_search_failed
 
 

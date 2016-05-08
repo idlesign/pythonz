@@ -4,8 +4,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.sitemaps import GenericSitemap
 from django.contrib.syndication.views import Feed
 
+from ..utils import get_logger
 from .views import ListingView, DetailsView, AddView, EditView, TagsView
-from ..logger import get_logger
 
 
 LOGGER = get_logger('realms')
