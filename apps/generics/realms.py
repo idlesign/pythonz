@@ -109,7 +109,7 @@ class RealmBase(object):
 
     @classmethod
     def _get_syndication_feed(cls, title, description, func_link, func_items, cls_name):
-        from ..utils import get_thumb_url
+        from ..integration.utils import get_thumb_url
         type_dict = {
             'title': title,
             'description': 'PYTHONZ. %s' % description,

@@ -1,14 +1,8 @@
 from textwrap import wrap
 from urllib.parse import urlsplit, urlunsplit, parse_qs, urlparse, urlencode, urlunparse
 
-import os
 import re
-import requests
-from PIL import Image  # Для работы с jpg требуется собрать с libjpeg-dev
 from collections import OrderedDict
-from django.conf import settings
-from django.core.cache import cache
-from django.utils import timezone
 from django.utils.text import Truncator
 
 
@@ -146,106 +140,3 @@ def url_mangle(url):
         splitted[path] = '<...>%s' % splitted[path].split('/')[-1]  # Последний кусок пути.
     mangled = urlunsplit(splitted)
     return mangled
-
-
-def get_thumb_url(realm, image, width, height, absolute_url=False):
-    """Создаёт на лету уменьшенную копию указанного изображения.
-
-    :param realm:
-    :param image:
-    :param width:
-    :param height:
-    :param absolute_url:
-    :return:
-    """
-    base_path = os.path.join('img', realm.name_plural, 'thumbs', '%sx%s' % (width, height))
-    try:
-        thumb_file_base = os.path.join(base_path, os.path.basename(image.path))
-    except (ValueError, AttributeError):
-        return ''
-
-    cache_key = 'thumbs|%s|%s' % (thumb_file_base, absolute_url)
-
-    url = cache.get(cache_key)
-
-    if url is None:
-
-        thumb_file = os.path.join(settings.MEDIA_ROOT, thumb_file_base)
-
-        if not os.path.exists(thumb_file):
-            try:
-                os.makedirs(os.path.join(settings.MEDIA_ROOT, base_path), mode=0o755)
-            except FileExistsError:
-                pass
-            img = Image.open(image)
-            img.thumbnail((width, height), Image.ANTIALIAS)
-            img.convert('RGB').save(thumb_file)
-
-        url = os.path.join(settings.MEDIA_URL, thumb_file_base)
-        if absolute_url:
-            url = '%s%s' % (settings.SITE_URL, url)
-
-        cache.set(cache_key, url, 86400)
-
-    return url
-
-
-def get_timezone_name(lat, lng):
-    """Возвращает имя часового пояса по геокоординатам, либо None.
-    Использует Сервис Google Time Zone API.
-
-    :param lat: широта
-    :param lng: долгота
-    :return:
-    """
-    url = (
-        'https://maps.googleapis.com/maps/api/timezone/json?'
-        'location=%(lat)s,%(lng)s&timestamp=%(ts)s&key=%(api_key)s' % {
-            'lat': lat,
-            'lng': lng,
-            'ts': timezone.now().timestamp(),
-            'api_key': settings.GOOGLE_API_KEY,
-        }
-    )
-    try:
-        result = requests.get(url)
-        doc = result.json()
-        tz_name = doc['timeZoneId']
-    except Exception:
-        return None
-    return tz_name
-
-
-def get_location_data(location_name):
-    """Возвращает геоданные об объекте по его имени, либо None.
-    Использует API Яндекс.Карт.
-
-    :param location_name:
-    :return:
-    """
-
-    url = 'http://geocode-maps.yandex.ru/1.x/?results=1&format=json&geocode=%s' % location_name
-    try:
-        result = requests.get(url)
-        doc = result.json()
-    except Exception:
-        return None
-
-    found = doc['response']['GeoObjectCollection']['metaDataProperty']['GeocoderResponseMetaData']['found']
-    if not int(found):
-        return None
-
-    object_dict = doc['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
-    object_bounds_dict = object_dict['boundedBy']['Envelope']
-    object_metadata_dict = object_dict['metaDataProperty']['GeocoderMetaData']
-
-    location_data = {
-        'requested_name': location_name,
-        'type': object_metadata_dict['kind'],
-        'name': object_metadata_dict['text'],
-        'country': object_metadata_dict['AddressDetails']['Country']['CountryName'],
-        'pos': ','.join(reversed(object_dict['Point']['pos'].split(' '))),
-        'bounds': '%s|%s' % (object_bounds_dict['lowerCorner'], object_bounds_dict['upperCorner']),
-    }
-
-    return location_data

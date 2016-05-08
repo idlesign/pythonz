@@ -1,6 +1,6 @@
 from django import template
 
-from ..utils import get_thumb_url
+from ..integration.utils import get_thumb_url
 
 
 register = template.Library()

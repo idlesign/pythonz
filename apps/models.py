@@ -218,7 +218,7 @@ class Place(RealmBaseModel, ModelWithDiscussions):
         :param name:
         :return:
         """
-        from .utils import get_location_data
+        from .integration.utils import get_location_data
         loc_data = get_location_data(name)
         if loc_data is None:
             return None
@@ -525,7 +525,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
             self.timezone = None
             return True
 
-        from .utils import get_timezone_name
+        from .integration.utils import get_timezone_name
         lat, lng = self.place.geo_pos.split(',')
         self.timezone = get_timezone_name(lat, lng)
 
