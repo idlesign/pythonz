@@ -262,7 +262,11 @@ class RealmBase(object):
 
         :return:
         """
-        return item(cls.txt_form_add, cls.get_add_urlname(), access_loggedin=True)
+
+        tree_item = item(cls.txt_form_add, cls.get_add_urlname(), access_loggedin=True)
+        tree_item.show_on_top = True
+
+        return tree_item
 
     @classmethod
     def get_tags_urlname(cls):
