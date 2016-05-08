@@ -8,7 +8,7 @@ from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.utils import timezone
 
-from pythonz import VERSION
+from .. import VERSION
 from ..signals import sig_integration_failed
 from ..utils import truncate_words, truncate_chars
 

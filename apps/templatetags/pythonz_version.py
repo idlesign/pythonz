@@ -1,6 +1,6 @@
 from django import template
 
-from pythonz import VERSION
+from .. import VERSION
 
 
 register = template.Library()
