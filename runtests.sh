@@ -6,4 +6,4 @@ then
 . ../venv/bin/activate
 fi
 
-./manage_dev.py test apps -t .
+py.test apps
