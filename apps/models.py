@@ -14,10 +14,13 @@ from sitecats.models import ModelWithCategory
 from etc.models import InheritedModel
 from etc.toolbox import choices_list, get_choices
 
-from .integration.resources import PyDigestResource
 from .exceptions import RemoteSourceError
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
-from .utils import scrape_page, HhVacancyManager, format_currency, truncate_chars, UTM, get_json
+from .utils import format_currency, truncate_chars, UTM
+from .integration.resources import PyDigestResource
+from .integration.vacancies import HhVacancyManager
+from .integration.utils import get_json, scrape_page
+
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 

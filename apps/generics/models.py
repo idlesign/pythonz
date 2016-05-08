@@ -180,7 +180,7 @@ class CommonEntityModel(models.Model):
         :param url:
         :return:
         """
-        from ..utils import get_image_from_url  # Потакаем поведению Django 1.7 при загрузке приложений.
+        from ..integration.utils import get_image_from_url
         img = get_image_from_url(url)
         self.cover.save(img.name, img, save=False)
 

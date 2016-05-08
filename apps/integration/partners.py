@@ -7,7 +7,7 @@ from django.db.models import signals
 from django.core.cache import cache
 from django.utils.timezone import now
 
-from ..utils import make_soup
+from .utils import make_soup
 
 
 _PARTNERS_REGISTRY = None

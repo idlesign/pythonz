@@ -5,20 +5,11 @@ import os
 import re
 import requests
 from PIL import Image  # Для работы с jpg требуется собрать с libjpeg-dev
-from bs4 import BeautifulSoup
 from collections import OrderedDict
 from django.conf import settings
 from django.core.cache import cache
-from django.core.files.base import ContentFile
 from django.utils import timezone
-from django.utils.dateparse import parse_datetime
 from django.utils.text import Truncator
-
-from pythonz import VERSION
-from .signals import sig_integration_failed
-
-
-USER_AGENT = 'pythonz.net/%s (press@pythonz.net)' % '.'.join(map(str, VERSION))
 
 
 def truncate_chars(text, to, html=False):
@@ -102,117 +93,6 @@ class UTM:
         :rtype: str
         """
         return cls.add_to_url(url, source, 'link', 'promo')
-
-
-def get_from_url(url):
-    """Возвращает объект ответа requests с указанного URL.
-
-    :param str url:
-    :return:
-    """
-    r_kwargs = {
-        'allow_redirects': True,
-        'headers': {'User-agent': USER_AGENT},
-    }
-    return requests.get(url, **r_kwargs)
-
-
-def get_json(url):
-    """Возвращает словарь, созданный из JSON документа, полученного
-    с указанного URL.
-
-    :param str url:
-    :return:
-    """
-
-    result = {}
-    try:
-        response = get_from_url(url)
-        response.raise_for_status()
-
-    except requests.exceptions.RequestException as e:
-
-        if getattr(e.response, 'status_code', 0) != 503:  # Temporary Unavailable. В следующий раз получится.
-            sig_integration_failed.send(None, description='URL %s. Error: %s' % (url, e))
-
-    else:
-        try:
-            result = response.json()
-        except ValueError:
-            pass
-
-    return result
-
-
-class HhVacancyManager:
-    """Объединяет инструменты для работы с вакансиями с hh.ru."""
-
-    @classmethod
-    def get_status(cls, url):
-        """Возвращает состояние вакансии по указанному URL.
-
-        :param url:
-        :return:
-        """
-        response = get_json(url)
-        if not response:
-            return
-
-        return response['archived']
-
-    @classmethod
-    def fetch_list(cls):
-        """Возвращает словарь с данными вакансий, полученный из внешнего
-        источника.
-
-        :return:
-        """
-        base_url = 'https://api.hh.ru/vacancies/'
-        query = (
-            'search_field=%(field)s&per_page=%(per_page)s'
-            '&order_by=publication_time&period=1&text=%(term)s' % {
-                'term': 'python',
-                'per_page': 500,
-                'field': 'name',  # description
-        })
-
-        response = get_json('%s?%s' % (base_url, query))
-
-        if 'items' not in response:
-            return None
-
-        results = []
-        for item in response['items']:
-            salary_from = salary_till = salary_currency = ''
-
-            if item['salary']:
-                salary = item['salary']
-                salary_from = salary['from']
-                salary_till = salary['to']
-                salary_currency = salary['currency']
-
-            employer = item['employer']
-            url_logo = employer['logo_urls']
-            if url_logo:
-                url_logo = url_logo['90']
-
-            results.append({
-                '__archived': item['archived'],
-                'src_id': item['id'],
-                'src_place_name': item['area']['name'],
-                'src_place_id': item['area']['id'],
-                'title': item['name'],
-                'url_site': item['alternate_url'],
-                'url_api': item['url'],
-                'url_logo': url_logo,
-                'employer_name': employer['name'],
-                'salary_from': salary_from or None,
-                'salary_till': salary_till or None,
-                'salary_currency': salary_currency,
-                'time_published': parse_datetime(item['published_at']),
-            })
-
-        return results
 
 
 class BasicTypograph(object):
@@ -310,15 +190,6 @@ def get_thumb_url(realm, image, width, height, absolute_url=False):
     return url
 
 
-def get_image_from_url(url):
-    """Забирает изображение с указанного URL.
-
-    :param url:
-    :return:
-    """
-    return ContentFile(requests.get(url).content, url.rsplit('/', 1)[-1])
-
-
 def get_timezone_name(lat, lng):
     """Возвращает имя часового пояса по геокоординатам, либо None.
     Использует Сервис Google Time Zone API.
@@ -378,44 +249,3 @@ def get_location_data(location_name):
     }
 
     return location_data
-
-
-def scrape_page(url):
-    """Возвращает словарь с данными о странице, либо None в случае ошибок.
-
-    Словарь вида:
-        {'title': '...', 'content_more': '...', 'content_less': '...', ...}
-
-    :param url:
-    :return:
-    """
-
-    # Функция использовала ныне недоступный Rich Content API от Яндекса для получения данных о странице.
-    # Если функциональность будет востребована, нужно будет перевести на использование догого механизма.
-    result = {}
-
-    if 'content' not in result:
-        return None
-
-    content = result['content']
-    result['content_less'] = truncate_words(content, 30)
-    result['content_more'] = truncate_chars(content, 900).replace('\n', '\n\n')
-
-    return result
-
-
-def make_soup(url):
-    """Возвращает объект BeautifulSoup, либо None для указанного URL.
-
-    :param str url:
-    :return: object
-    :rtype: BeautifulSoup|None
-    """
-    result = None
-    try:
-        response = get_from_url(url)
-        result = BeautifulSoup(response.text, 'html5lib')
-    except requests.exceptions.RequestException:
-        pass
-
-    return result
