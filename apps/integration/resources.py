@@ -1,6 +1,6 @@
 import feedparser
 
-from .signals import sig_integration_failed
+from ..signals import sig_integration_failed
 
 
 class PyDigestResource:

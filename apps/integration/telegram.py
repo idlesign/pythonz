@@ -5,10 +5,10 @@ from telebot.apihelper import _convert_inline_results, _make_request
 from bleach import clean
 from django.conf import settings
 
-from .utils import truncate_chars
-from .models import Reference
-from .zen import ZEN
-from .logger import get_logger
+from ..utils import truncate_chars
+from ..models import Reference
+from ..zen import ZEN
+from ..logger import get_logger
 
 
 LOGGER = get_logger('telebot')

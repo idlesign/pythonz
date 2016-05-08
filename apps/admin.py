@@ -1,3 +1,4 @@
+from admirarchy.toolbox import HierarchicalModelAdmin
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -6,12 +7,10 @@ from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.contenttypes.admin import GenericTabularInline
 from simple_history.admin import SimpleHistoryAdmin
 
-from admirarchy.toolbox import HierarchicalModelAdmin
-
+from .integration.partners import get_partners_choices
+from .forms.forms import BookForm
 from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version, PartnerLink, \
     Vacancy
-from .partners import get_partners_choices
-from .forms.forms import BookForm
 
 
 ##################################################################################

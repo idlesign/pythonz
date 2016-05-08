@@ -1,23 +1,23 @@
-from collections import OrderedDict
 from datetime import timedelta
 from itertools import chain
 
-from etc.models import InheritedModel
-from etc.toolbox import choices_list, get_choices
-from sitecats.models import ModelWithCategory
-from simple_history.models import HistoricalRecords
-from django.db import models, IntegrityError
-from django.db.models import Min, Max, Count, Q
+from collections import OrderedDict
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
+from django.db import models, IntegrityError
+from django.db.models import Min, Max, Count, Q
 from django.utils import timezone
+from simple_history.models import HistoricalRecords
+from sitecats.models import ModelWithCategory
+from etc.models import InheritedModel
+from etc.toolbox import choices_list, get_choices
 
-from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
+from .integration.resources import PyDigestResource
 from .exceptions import RemoteSourceError
+from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
 from .utils import scrape_page, HhVacancyManager, format_currency, truncate_chars, UTM, get_json
-from .resources import PyDigestResource
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 

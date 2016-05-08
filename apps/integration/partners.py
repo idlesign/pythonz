@@ -7,7 +7,7 @@ from django.db.models import signals
 from django.core.cache import cache
 from django.utils.timezone import now
 
-from .utils import make_soup
+from ..utils import make_soup
 
 
 _PARTNERS_REGISTRY = None
@@ -225,7 +225,7 @@ def init_partners_module():
         if ident in partners_settings:
             _PARTNERS_REGISTRY[ident] = partner_class(partners_settings[ident])
 
-    from .models import PartnerLink
+    from ..models import PartnerLink
 
     def partner_links_cache_invalidate(*args, **kwargs):
         """Сбрасывает кеш партнёрских ссылок при изменении данных

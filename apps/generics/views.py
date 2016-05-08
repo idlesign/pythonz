@@ -1,19 +1,19 @@
-from sitecats.utils import get_category_model
-from xross.toolbox import xross_view, xross_listener
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator, EmptyPage
+from django.http import Http404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.views.generic.base import View
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
-from django.contrib.auth.decorators import login_required
-from django.http import Http404
-from django.core.exceptions import PermissionDenied
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from sitecats.utils import get_category_model
+from xross.toolbox import xross_view, xross_listener
 
-from .models import ModelWithCompiledText, RealmBaseModel
-from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event, Reference
+from .models import ModelWithCompiledText
+from ..integration.partners import get_partner_links
 from ..exceptions import RedirectRequired, PythonzException
+from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event, Reference
 from ..shortcuts import message_warning, message_success, message_info, message_error
-from ..partners import get_partner_links
 
 
 class RealmView(View):
