@@ -16,8 +16,8 @@ from django.utils import timezone
 
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
 from .exceptions import RemoteSourceError
-from .utils import scrape_page, HhVacancyManager, format_currency, PyDigestResource, truncate_chars, UTM, get_json
-
+from .utils import scrape_page, HhVacancyManager, format_currency, truncate_chars, UTM, get_json
+from .resources import PyDigestResource
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 
