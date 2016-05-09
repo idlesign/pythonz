@@ -5,6 +5,7 @@ from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
+from django.views.decorators.http import condition
 from django.views.generic.base import View
 from sitecats.utils import get_category_model
 from xross.toolbox import xross_view, xross_listener
@@ -21,6 +22,23 @@ class RealmView(View):
 
     realm = None  # Во время исполнения будет содержать ссылку на объект области Realm
     name = None  # Во время исполнения будет содержать алиас этого представления (н.п. edit).
+
+    func_etag = None
+    """Может указывать на метод, реализующий возвращение ETag."""
+    func_last_mod = None
+    """Может указывать на метод, возвращающий дату Last-Modified."""
+
+    def dispatch(self, request, *args, **kwargs):
+
+        @condition(self.func_etag, self.func_last_mod)
+        def conditional_dispatch(request, *args, **kwargs):
+            return super(RealmView, self).dispatch(request, *args, **kwargs)
+
+        if request.method.lower() == 'get':
+            # Кеширование GET-выдач.
+            return conditional_dispatch(request, *args, **kwargs)
+
+        return super().dispatch(request, *args, **kwargs)
 
     def check_view_permissions(self, request, item):
         """Производит провердку возможности доступа к просмотру страницы.
@@ -135,6 +153,14 @@ class RealmView(View):
 class ListingView(RealmView):
     """Список объектов."""
 
+    def get_last_modified(self, *args, **kwargs):
+        """Возвращает Last-Modified для списка сущностей."""
+        field = 'time_published'
+        last = self.get_paginator_objects().values(field).order_by(field).last()
+        return last and last[field]
+
+    func_last_mod = get_last_modified
+
     def get_paginator_objects(self):
         """Возвращает объекты для страницы при постраницчной навигации.
 
@@ -205,7 +231,7 @@ class ListingView(RealmView):
 
 
 class DetailsView(RealmView):
-    """Дательная информация об объекте."""
+    """Детальная информация об объекте."""
 
     def _attach_support_data(self, item, request):
         """Цепляет к объекту данные о поданном за него голосе пользователя.
