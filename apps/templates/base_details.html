@@ -1,5 +1,5 @@
 {% extends "_base.html" %}
-{% load thumbs sitetree siteblocks %}
+{% load thumbs sitetree siteblocks etc_misc %}
 
 
 {% block head %}
@@ -23,9 +23,9 @@
 {% block meta_og %}
     <meta property="og:description" content="{{ item.get_short_description }}" />
     {% if item.cover %}
-        <meta property="og:image" content="{% thumbs_get_thumb_url item.cover 180 236 item.realm %}" />
+        <meta property="og:image" content="{% site_url %}{% thumbs_get_thumb_url item.cover 180 236 item.realm %}" />
     {% else %}
-        <meta property="og:image" content="{{ STATIC_URL }}img/realm_logos/pythonz_{{ item.realm.name_plural }}.png" />
+        <meta property="og:image" content="{% site_url %}{{ STATIC_URL }}img/realm_logos/pythonz_{{ item.realm.name_plural }}.png" />
     {% endif %}
 {% endblock %}
 
