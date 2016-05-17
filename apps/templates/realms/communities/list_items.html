@@ -14,7 +14,7 @@
             </div>
             <div class="media-right">
                 {% if thumb_url %}
-                    <img src="{{ thumb_url }}" class="img-rounded media-object faded" alt="{{ community.title }}">
+                    <img src="{{ thumb_url }}" class="img-rounded media-object {% if not nofade %}faded{% endif %}" alt="{{ community.title }}">
                 {% endif %}
             </div>
         </li>

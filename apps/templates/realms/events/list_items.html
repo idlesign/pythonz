@@ -8,7 +8,7 @@
             {% thumbs_get_thumb_url event.cover 100 131 event.realm as thumb_url %}
             <b>{{ abra }}</b>
             {% if thumb_url %}
-            <img src="{{ thumb_url }}" class="img-thumbnail faded" alt="{{ event.title }}">
+            <img src="{{ thumb_url }}" class="img-thumbnail {% if not nofade %}faded{% endif %}" alt="{{ event.title }}">
             {% else %}
                 <span class="img-thumbnail icon_entity glyphicon glyphicon-{{ realm.icon }}"></span>
             {% endif %}
