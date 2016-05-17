@@ -63,7 +63,7 @@
             <div class="marg__b_mid">
                 {% block most_voted %}
                     {% if items_most_voted %}
-                        {% include view.template_list_items with items=items_most_voted %}
+                        {% include view.template_list_items with items=items_most_voted nofade=1 %}
                     {% else %}
                         Пока этот список не сформирован. Оцените материалы раздела, чтобы исправить ситуацию.
                     {% endif %}
