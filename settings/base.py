@@ -31,12 +31,11 @@ DATABASES = {
     }
 }
 
-# Сюда помещаются реквизиты для пользования соответствующими службами доставки сообщений (cм. sitemessages.py).
-SITEMESSAGES_SETTINGS = {
-    'twitter': [],
-    'smtp': [],
-    'telegram': [],
-}
+SERVER_EMAIL = 'some@email.com'
+EMAIL_HOST = 'some.host.com'
+EMAIL_HOST_USER = 'some@email.com'
+EMAIL_HOST_PASSWORD = 'not_a_secret'
+EMAIL_USE_TLS = True
 
 
 # Здесь указываются партнёрские идентификаторы.
@@ -49,6 +48,27 @@ YANDEX_SEARCH_ID = 'not_a_secret'
 TELEGRAM_BOT_TOKEN = 'not_a_secret'
 TELEGRAM_BOT_URL = 'not_a_secret'
 TELEGRAM_GROUP = 'group_id or @channel_name'
+
+VK_ACCESS_TOKEN = 'not_a_secret'
+VK_GROUP = 'group id prefixed with -'
+
+FB_ACCESS_TOKEN = 'not_a_secret'
+
+# Сюда помещаются реквизиты для пользования соответствующими службами доставки сообщений (cм. sitemessages.py).
+SITEMESSAGES_SETTINGS = {
+    'twitter': [],
+    'smtp': [
+        SERVER_EMAIL,
+        EMAIL_HOST_USER,
+        EMAIL_HOST_PASSWORD,
+        EMAIL_HOST,
+        None,
+        EMAIL_USE_TLS
+    ],
+    'telegram': [TELEGRAM_BOT_TOKEN],
+    'fb': [FB_ACCESS_TOKEN],
+    'vk': [VK_ACCESS_TOKEN],
+}
 
 # Переводит проект в агрессивный режим: задействует различную машинерию для привлечения внимания к проекту.
 AGRESSIVE_MODE = False
