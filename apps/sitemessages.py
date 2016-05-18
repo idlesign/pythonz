@@ -29,6 +29,8 @@ def register_messengers():
     SETTINGS_TWITTER = SETTINGS['twitter']
     SETTINGS_SMTP = SETTINGS['smtp']
     SETTINGS_TELEGRAM = SETTINGS['telegram']
+    SETTINGS_FB = SETTINGS['fb']
+    SETTINGS_VK = SETTINGS['vk']
 
     messengers = []
     if SETTINGS_TWITTER:
@@ -42,6 +44,14 @@ def register_messengers():
     if SETTINGS_TELEGRAM:
         from sitemessage.messengers.telegram import TelegramMessenger
         messengers.append(TelegramMessenger(*SETTINGS_TELEGRAM))
+
+    if SETTINGS_FB:
+        from sitemessage.messengers.facebook import FacebookMessenger
+        messengers.append(FacebookMessenger(*SETTINGS_FB))
+
+    if SETTINGS_VK:
+        from sitemessage.messengers.vkontakte import VKontakteMessenger
+        messengers.append(VKontakteMessenger(*SETTINGS_VK))
 
     if messengers:
         register_messenger_objects(*messengers)
@@ -83,20 +93,26 @@ def connect_signals():
         entity = kwargs['entity']
         if not entity.notify_on_publish:
             return False
+
         PythonzTwitterMessage.create(entity)
-        PythonzTelegramEntyPublishedMessage.create(entity)
+        PythonzTelegramEntityPublishedMessage.create(entity)
+        PythonzFbEntityPublishedMessage.create(entity)
+        PythonzVkEntityPublishedMessage.create(entity)
+
     sig_entity_published.connect(notify_published, dispatch_uid='cfg_entity_published', weak=False)
 
 
 connect_signals()
 
 
-class PythonzTwitterMessage(PlainTextMessage):
-    """Базовый класс для сообщений, рассылаемых pythonz в Twitter."""
+class PythonzEntyPublishedBaseMessage(PlainTextMessage):
+    """Базовый класс для сообщений о новых материалах."""
+
+    alias = None
+    supported_messengers = None
 
     priority = 1  # Рассылается ежеминутно.
     send_retry_limit = 5
-    supported_messengers = ['twitter']
     title = 'Новое на сайте'
     allow_user_subscription = False
 
@@ -107,6 +123,42 @@ class PythonzTwitterMessage(PlainTextMessage):
         :param RealmBaseModel entity:
         :return:
         """
+        message = 'Новое: %s «%s» %s' % (
+            entity.get_verbose_name(), entity.title, entity.get_absolute_url(with_prefix=True, utm_source='tele'))
+        cls(message).schedule(cls.recipients('telegram', settings.TELEGRAM_GROUP))
+
+
+class PythonzFbEntityPublishedMessage(PythonzEntyPublishedBaseMessage):
+    """Класс для сообщений о новых материалах на сайте, публикуемых на стене в Facebook."""
+
+    alias = 'fb_update'
+    supported_messengers = ['fb']
+
+    @classmethod
+    def create(cls, entity):
+        message = entity.get_absolute_url(with_prefix=True, utm_source='fb')
+        cls(message).schedule(cls.recipients('fb', ''))
+
+
+class PythonzVkEntityPublishedMessage(PythonzEntyPublishedBaseMessage):
+    """Класс для сообщений о новых материалах на сайте, публикуемых на стене в ВКонтакте."""
+
+    alias = 'vk_update'
+    supported_messengers = ['vk']
+
+    @classmethod
+    def create(cls, entity):
+        message = entity.get_absolute_url(with_prefix=True, utm_source='vk')
+        cls(message).schedule(cls.recipients('vk', settings.VK_GROUP))
+
+
+class PythonzTwitterMessage(PythonzEntyPublishedBaseMessage):
+    """Базовый класс для сообщений, рассылаемых pythonz в Twitter."""
+
+    supported_messengers = ['twitter']
+
+    @classmethod
+    def create(cls, entity):
         MAX_LEN = 139  # Максимальная длина твита. Для верности меньше.
         URL_SHORTENED_LEN = 30  # Максимальная длина сокращённого URL
 
@@ -123,23 +175,14 @@ class PythonzTwitterMessage(PlainTextMessage):
         cls(message).schedule(cls.recipients('twitter', ''))
 
 
-class PythonzTelegramEntyPublishedMessage(PlainTextMessage):
+class PythonzTelegramEntityPublishedMessage(PythonzEntyPublishedBaseMessage):
     """Класс для сообщений о новых материалах на сайте, рассылаемых pythonz в Telegram."""
 
     alias = 'tele_update'
-    priority = 1  # Рассылается ежеминутно.
-    send_retry_limit = 5
     supported_messengers = ['telegram']
-    title = 'Новое на сайте'
-    allow_user_subscription = False
 
     @classmethod
     def create(cls, entity):
-        """Создаёт оповещение о публикации сущности.
-
-        :param RealmBaseModel entity:
-        :return:
-        """
         message = 'Новое: %s «%s» %s' % (
             entity.get_verbose_name(), entity.title, entity.get_absolute_url(with_prefix=True, utm_source='tele'))
         cls(message).schedule(cls.recipients('telegram', settings.TELEGRAM_GROUP))
@@ -355,7 +398,9 @@ class PythonzEmailDigest(PythonzEmailMessage):
 # Регистрируем наши типы сообщений.
 register_message_types(
     PythonzTwitterMessage,
-    PythonzTelegramEntyPublishedMessage,
+    PythonzTelegramEntityPublishedMessage,
+    PythonzFbEntityPublishedMessage,
+    PythonzVkEntityPublishedMessage,
     PythonzEmailMessage,
     PythonzEmailOneliner,
     PythonzEmailNewEntity,
