@@ -163,7 +163,11 @@ class ReadRu(PartnerBase):
         price = ''
 
         if page_soup:
-            matches = page_soup.select('.book_price3__fullprice')
+            matches = page_soup.select('.read2__book_price__fullprice')
+
+            if not matches:
+                matches = page_soup.select('.book_price3__fullprice')
+
             if matches:
                 price = matches[0].text
                 if price:
