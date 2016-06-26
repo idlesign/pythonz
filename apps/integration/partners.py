@@ -21,7 +21,7 @@ class PartnerBase():
     title = None
     link_mutator = None
 
-    RE_ICON_REL = re.compile('icon', re.I)
+    RE_ICON_REL = re.compile('(shortcut )?icon', re.I)
 
     def __init__(self, partner_id):
         self.partner_id = partner_id
