@@ -5,6 +5,7 @@ Pillow==3.2.0
 bleach==1.4.2
 beautifulsoup4==4.4.1
 feedparser==5.2.1
+lxml==3.6.0
 pytz==2016.4
 pyTelegramBotAPI==1.4.2
 pytest==2.9.1
