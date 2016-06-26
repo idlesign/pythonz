@@ -99,7 +99,7 @@ def make_soup(url):
     result = None
     try:
         response = get_from_url(url)
-        result = BeautifulSoup(response.text, 'lxml')
+        result = BeautifulSoup(response.text, 'html5lib')
     except requests.exceptions.RequestException:
         pass
 
