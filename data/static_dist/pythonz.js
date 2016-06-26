@@ -36,6 +36,98 @@ pythonz = {
         }, timeout);
     },
 
+    init_editor: function(textarea_el) {
+
+        if (!textarea_el) {
+            return
+        }
+
+        // _replaceSelection() взята из исходников SimpleMDE.
+        // https://github.com/NextStepWebs/simplemde-markdown-editor
+        // После минификации она обфусцируется и далее недоступна.
+
+        function _replaceSelection(cm, active, startEnd, url) {
+            if(/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
+                return;
+
+            var text;
+            var start = startEnd[0];
+            var end = startEnd[1];
+            var startPoint = cm.getCursor("start");
+            var endPoint = cm.getCursor("end");
+            if(url) {
+                end = end.replace("#url#", url);
+            }
+            if(active) {
+                text = cm.getLine(startPoint.line);
+                start = text.slice(0, startPoint.ch);
+                end = text.slice(startPoint.ch);
+                cm.replaceRange(start + end, {
+                    line: startPoint.line,
+                    ch: 0
+                });
+            } else {
+                text = cm.getSelection();
+                cm.replaceSelection(start + text + end);
+
+                startPoint.ch += start.length;
+                if(startPoint !== endPoint) {
+                    endPoint.ch += start.length;
+                }
+            }
+            cm.setSelection(startPoint, endPoint);
+            cm.focus();
+        }
+
+        function simpleAction(editor, buttonName){
+            _replaceSelection(
+                    editor.codemirror,
+                    editor.getState()[buttonName],
+                    editor.options.insertTexts[buttonName]);
+        }
+
+        function getButton(name, icon, title) {
+            return {
+                name: name,
+                action: function (editor) {simpleAction(editor, name)},
+                className: 'fa fa-' + icon,
+                title: title
+            }
+        }
+
+        return new SimpleMDE({
+            element: textarea_el,
+            forceSync: true,
+            indentWithTabs: false,
+            spellChecker: false,
+            toolbar: [
+                'bold',
+                'italic',
+                getButton('accent', 'flag', 'Акцент'),
+                getButton('quote', 'quote-left', 'Цитата'),
+                '|',
+                'image',
+                'link',
+                '|',
+                getButton('code', 'code', 'Код'),
+                getButton('gist', 'github', 'Gist'),
+                getButton('podster', 'headphones', 'Подкаст с podster.fm'),
+                '|',
+                'fullscreen'
+            ],
+            insertTexts: {
+                image: ['.. image:: ', ''],
+                gist: ['.. gist:: ', ''],
+                podster: ['.. podster:: ', ''],
+                link: ['`', '<>`_'],
+                accent: ['``', '``'],
+                code: ['\n.. code::\n', '\n\n\n'],
+                quote: ['\n```\n', '\n```']
+            }
+        });
+
+    },
+
     Reference: {
 
         RULE_PYVERSION_ADDED: [/\+py([\w\.]+)/g, '<small><div class="label label-info" title="Актуально с версии">$1</div></small>'],

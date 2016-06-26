@@ -3,6 +3,16 @@
 
 {% block head %}
     {{ form.media }}
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+
+{% endblock %}
+
+{% block js_bottom %}
+<script type="text/javascript">
+    pythonz.init_editor($('textarea', '#rst_src')[0]);
+</script>
 {% endblock %}
 
 {% block page_contents %}
