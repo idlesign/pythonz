@@ -172,7 +172,7 @@ class ReadRu(PartnerBase):
                 price = matches[0].text
                 if price:
                     try:
-                        price = price.encode('latin1').decode('cp1251').strip()
+                        price = price.encode('latin1').decode('cp1251').strip().split(' ')[0]
                     except UnicodeEncodeError:
                         pass
 
