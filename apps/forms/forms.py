@@ -279,6 +279,7 @@ class ReferenceForm(RealmEditBaseForm):
             'func_params',
             'func_result',
             'text_src',
+            'pep',
             'version_added',
             'version_deprecated',
             'search_terms',

@@ -77,6 +77,11 @@
     <meta itemprop="image" content="{{ STATIC_URL }}img/realm_logos/pythonz_references.png" />
 
     <div class="marg__b_mid pull-right">
+        {% if reference.pep %}
+            <div class="label label-primary">
+                <a href="https://www.python.org/dev/peps/pep-{{ reference.pep|stringformat:"04d" }}/" title="Перейти к связанному предложению по улучшению">
+                    {% model_field_verbose_name from reference.pep %}-{{ reference.pep }}</a></div>
+        {% endif %}
         {% if reference.version_added %}
         <div class="label label-info">{% model_field_verbose_name from reference.version_added %} {{ reference.version_added }}</div>
         {% endif %}

@@ -764,6 +764,10 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         'Результат', max_length=250, null=True, blank=True,
         help_text='Для функций/методов. Описание результата, например: <i>int</i>.')
 
+    pep = models.PositiveIntegerField(
+        'PEP', null=True, blank=True,
+        help_text='Номер предложения по улучшению Питона, связанного с этой статьёй, например: <i>8</i> для PEP-8')
+
     search_terms = models.CharField(
         'Термины поиска', max_length=500, blank=True, default='',
         help_text='Дополнительные фразы, по которым можно найти данную статью, например: <i>«список», для «list»</i>')
