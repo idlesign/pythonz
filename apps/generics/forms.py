@@ -38,8 +38,10 @@ class RealmEditBaseForm(CommonEntityForm):
 
             if field_name == 'description':
                 fld.widget = forms.Textarea(attrs={'rows': 3})
+
             elif field_name == 'text_src':
                 fld.widget = RstEditWidget(attrs={'rows': 12})
+                fld.strip = False  # Обрубать размеченный текст не следует.
 
             # Эти изменения нужны для стилизации форм.
             if isinstance(self.fields[field_name].widget, CheckboxInput):

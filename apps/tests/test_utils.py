@@ -1,4 +1,4 @@
-from ..utils import url_mangle, BasicTypograph
+from ..utils import url_mangle, BasicTypograph, TextCompiler
 
 
 def test_url_mangle():
@@ -25,3 +25,43 @@ def test_typography():
                    '«строка\nперенесена'
 
     assert BasicTypograph.apply_to(input_str) == expected_str
+
+
+def test_text_compiler():
+
+    compile = TextCompiler.compile
+
+    assert compile('**some**') == '<b>some</b>'
+    assert compile('*some*') == '<i>some</i>'
+    assert compile('```\nздесь цитата\n```') == '<blockquote>здесь цитата</blockquote>'
+
+    assert compile('``some``') == '<code>some</code>'
+
+    assert compile('http://some.url/') == '<a href="http://some.url/">http://some.url/</a>'
+    assert (
+        compile('Пробуем `ссылку с именем <http://some.com/here/there/>`_.') ==
+        'Пробуем <a href="http://some.com/here/there/">ссылку с именем </a>.')
+
+    assert (
+        compile('.. gist:: someuser/gisthashhere\n') ==
+        '<script src="https://gist.github.com/someuser/gisthashhere.js"></script>')
+
+    assert (
+        compile('.. podster:: http://mtpod.podster.fm/0\n') ==
+        '<iframe width="100%" height="85" src="http://mtpod.podster.fm/0/embed/13?link=1" '
+        'frameborder="0" allowtransparency="true"></iframe>')
+
+    assert (
+        compile('.. image:: http://some.url/img.png\n') ==
+        '<img alt="http://some.url/img.png" src="http://some.url/img.png" '
+        'data-canonical-src="http://some.url/img.png" style="max-width:100%;">')
+
+    assert (
+        compile('.. code:: python\nprint("some")\n\n\n') ==
+        '<pre><code class="python">print("some")</code></pre><br>')
+
+    assert (
+        compile('.. code:: html\nprint("some")\n\n\n') ==
+        '<pre><code class="html">print("some")</code></pre><br>')
+
+

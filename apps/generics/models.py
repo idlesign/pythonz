@@ -1,8 +1,6 @@
 import os
-import re
 from uuid import uuid4
 
-from bleach import clean
 from slugify import Slugify, CYRILLIC
 from siteflags.models import ModelWithFlag
 from django.core.cache import cache
@@ -13,7 +11,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.text import Truncator
 
-from ..utils import UTM
+from ..utils import UTM, TextCompiler
 from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
 
 
@@ -45,62 +43,17 @@ class ModelWithCompiledText(models.Model):
     text = models.TextField('Текст')
     text_src = models.TextField('Исходный текст')
 
-    RE_CODE = re.compile('\.{2}\s*code::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
-    RE_GIST = re.compile('\.{2}\s*gist::\s*([^\n]+)\n', re.S)
-    RE_PODSTER = re.compile('\.{2}\s*podster::\s*([^\n]+)[/]*\n', re.S)
-    RE_IMAGE = re.compile('\.{2}\s*image::\s*([^\n]+)[/]*\n', re.S)
-    RE_ACCENT = re.compile('`{2}([^`\n]+)`{2}')
-    RE_QUOTE = re.compile('`{3}\n+([^`]+)\n+`{3}')
-    RE_BOLD = re.compile('\*{2}([^*\n]+)\*{2}')  # todo 2 ** 10d
-    RE_ITALIC = re.compile('\*([^*\n]+)\*')
-    RE_URL = re.compile('(?<!["])(http[s]*[^\s\)]+)')
-    RE_URL_WITH_TITLE = re.compile('`([^\[]+)\n*\[([^\]]+)\]`_')
-
     class Meta:
         abstract = True
 
     @classmethod
     def compile_text(cls, text):
-        """Преобразует rst-подобное форматичрование в html.
+        """Преобразует rst-подобное форматирование в html.
 
         :param text:
         :return:
         """
-        from ..utils import url_mangle
-        href_replacer = lambda match: ('<a href="%s">%s</a>' %
-                                       (match.group(1), url_mangle(match.group(1))))
-
-        def code_replacer(match):
-            lang = match.group(1)
-            code = match.group(2)
-            return '<pre><code class="%s">\n%s\n</code></pre>\n' % ((lang or 'python').strip(), code)
-
-        # Заменяем некоторые символы для правила RE_URL_WITH_TITLE, чтобы их не устранил bleach.
-        text = text.replace('<ht', '[ht')
-        text = text.replace('>`', ']`')
-
-        text = clean(text)
-
-        text = text.replace('\r\n', '\n')
-        text = re.sub(cls.RE_BOLD, '<b>\g<1></b>', text)
-        text = re.sub(cls.RE_ITALIC, '<i>\g<1></i>', text)
-        text = re.sub(cls.RE_QUOTE, '<blockquote>\g<1></blockquote>', text)
-        text = re.sub(cls.RE_ACCENT, '<code>\g<1></code>', text)
-        text = re.sub(cls.RE_CODE, code_replacer, text)
-        text = re.sub(cls.RE_URL_WITH_TITLE, '<a href="\g<2>">\g<1></a>', text)
-        text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\g<1>.js"></script>', text)
-        text = re.sub(
-            cls.RE_PODSTER,
-            '<iframe width="100%" height="85" src="\g<1>/embed/13?link=1" frameborder="0" allowtransparency="true">'
-            '</iframe>',
-            text
-        )
-        text = re.sub(
-            cls.RE_IMAGE, '<img alt="\g<1>" src="\g<1>" data-canonical-src="\g<1>" style="max-width:100%;">', text)
-        text = re.sub(cls.RE_URL, href_replacer, text)
-
-        text = text.replace('\n', '<br>')
-        return text
+        return TextCompiler.compile(text)
 
     def save(self, *args, **kwargs):
         self.text = self.compile_text(self.text_src)
