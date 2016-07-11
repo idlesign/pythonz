@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
         try:
             for item in Reference.objects.all():
-                item.text_src.rstrip('-_')
+                item.text_src = item.text_src.rstrip('-_')
                 item.mark_unmodified()
                 item.save()
 
