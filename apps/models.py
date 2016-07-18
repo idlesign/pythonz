@@ -589,8 +589,8 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussio
 
     COVER_UPLOAD_TO = 'books'
 
-    isbn = models.CharField('Код ISBN', max_length=20, unique=True, null=True, blank=True)
-    isbn_ebook = models.CharField('Код ISBN эл. книги', max_length=20, unique=True, null=True, blank=True)
+    isbn = models.CharField('ISBN', max_length=20, unique=True, null=True, blank=True)
+    isbn_ebook = models.CharField('ISBN эл. книги', max_length=20, unique=True, null=True, blank=True)
 
     history = HistoricalRecords()
 

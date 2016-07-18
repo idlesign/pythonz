@@ -14,5 +14,4 @@ def goodreads_get_search_tag(query):
     :return:
     """
     url = 'https://www.goodreads.com/search/?%s' % urlencode({'query': query})
-    return safe(
-        '<a href="%s" title="Искать на goodreads.com"><span class="glyphicon glyphicon-search"></span></a>' % url)
+    return safe('<a href="%s" title="ISBN на goodreads.com">%s</a>' % (url, query))
