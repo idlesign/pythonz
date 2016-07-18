@@ -4,13 +4,13 @@
     {% if item.submitter %}
         <span class="marg__r_mid">
         <a href="{{ item.submitter.get_absolute_url }}" class="mod__has_tooltip" title="Добавил: {{ item.submitter.get_display_name }}">
-            <span class="glyphicon glyphicon-user"></span></a> &nbsp;{{ item.time_created|date:"d b. y H:i" }}
+            <i class="fa fa-fw fa-user"></i>{{ item.time_created|date:"d b. y H:i" }}</a>
         </span>
     {% endif %}
 
     {% if item.was_edited %}
         <a href="{{ item.last_editor.get_absolute_url }}" class="mod__has_tooltip" title="Редактировал: {{ item.last_editor.get_display_name }}">
-            <span class="glyphicon glyphicon-pencil"></span></a> &nbsp;{{ item.time_modified|date:"d b. y H:i" }}
+            <i class="fa fa-fw fa-pencil"></i>{{ item.time_modified|date:"d b. y H:i" }}</a>
     {% endif %}
 
     </small>

@@ -10,7 +10,7 @@
             {% if thumb_url %}
             <img src="{{ thumb_url }}" class="img-thumbnail {% if not nofade %}faded{% endif %}" alt="{{ event.title }}">
             {% else %}
-                <span class="img-thumbnail icon_entity glyphicon glyphicon-{{ realm.icon }}"></span>
+                <i class="img-thumbnail icon_entity fa fa-2x fa-{{ realm.icon }}"></i>
             {% endif %}
         </a>
         </div>

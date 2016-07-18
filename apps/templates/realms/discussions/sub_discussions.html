@@ -9,7 +9,7 @@
                 <input type="hidden" name="related_item_realm" value="{{ show_form_for.realm.name }}">
                 <input type="hidden" name="related_item_id" value="{{ show_form_for.id }}">
                 <button class="btn btn-sm">
-                    <span class="glyphicon glyphicon-list"></span> Обсудить&hellip;
+                    <i class="fa fa-bullhorn"></i> &nbsp;Обсудить&hellip;
                 </button>
             </form>
         </div>
@@ -41,7 +41,7 @@
                         <br>
 
                         <a href="{% url "discussions:details" discussion.id %}" class="item marg__t_min" title="Страница обсуждения">
-                            {% if show_texts %}<span class="glyphicon glyphicon-comment marg__r_min"></span>{% endif %}{{ discussion.title }}
+                            {% if show_texts %}<i class="fa fa-comments"></i> &nbsp;{% endif %}{{ discussion.title }}
                         </a>
 
                         {% if show_texts %}

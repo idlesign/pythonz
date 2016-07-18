@@ -9,19 +9,19 @@
 <span class="pull-right">
 {% if realm.syndication_enabled %}
     <a title="Подписаться на RSS раздела {% model_meta_verbose_name_plural realm.model %}" href="{{ realm.get_syndication_url }}">
-        <span class="fi-rss"></span>&nbsp;RSS
+        <i class="fa fa-fw fa-rss"></i>&nbsp;RSS
     </a> &nbsp;
 {% endif %}
 
 {% if realm.yawidget_code %}
     <a title="Добавить виджет раздела {% model_meta_verbose_name_plural realm.model %} на главную Яндекса" target="_blank" href="http://www.yandex.ru?add={{ realm.yawidget_code }}&from=promocode">
-        <span class="fi-projection-screen"></span>&nbsp;Яндекс.Виджет
+        <i class="fa fa-fw fa-newspaper-o"></i>&nbsp;Яндекс.Виджет
     </a> &nbsp;
 {% endif %}
 </span>
 
 <div class="page-header">
-    <span class="icon_entity glyphicon glyphicon-{{ realm.icon }}"></span>
+    <i class="icon_entity fa fa-2x fa-{{ realm.icon }}"></i>
     <h1 itemprop="name">{% sitetree_page_title from "main" %}</h1>
     <i>{% block subheader %}{{ subheader }}{% endblock %}</i>
 </div>
