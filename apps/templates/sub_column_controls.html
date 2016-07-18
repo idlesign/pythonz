@@ -7,7 +7,7 @@
 {% with linked=item.get_linked %}
     {% if linked.count %}
     <div class="linked panel panel-default">
-        <div class="panel-heading">Смотрите также:</div>
+        <div class="panel-heading">Смотрите также</div>
         <div class="panel-body">
             <ul>
                 {% for linked_item in item.get_linked %}
@@ -24,11 +24,9 @@
         {% siteblock "hints" as hint %}
     {% endif %}
     {% if hint %}
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Если вам интересно</h3>
-        </div>
-        <div class="panel-body">
+    <div class="panel panel-warning">
+        <div class="panel-heading">На заметку</div>
+        <div class="panel-body small">
             {{ hint }}
         </div>
     </div>
