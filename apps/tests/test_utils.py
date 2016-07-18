@@ -42,6 +42,9 @@ def test_text_compiler():
         compile('Пробуем `ссылку с именем <http://some.com/here/there/>`_.') ==
         'Пробуем <a href="http://some.com/here/there/">ссылку с именем </a>.')
 
+    assert compile('\n* Some.\n\n') == '<br><ul><li>Some.</li></ul><br>'
+    assert compile('\n* Some.\n* Other.\n\n') == '<br><ul><li>Some.</li><li>Other.</li></ul><br>'
+
     assert (
         compile('.. gist:: someuser/gisthashhere\n') ==
         '<script src="https://gist.github.com/someuser/gisthashhere.js"></script>')

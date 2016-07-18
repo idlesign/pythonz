@@ -105,6 +105,7 @@ pythonz = {
                 'italic',
                 getButton('accent', 'flag', 'Акцент'),
                 getButton('quote', 'quote-left', 'Цитата'),
+                getButton('list_ul', 'list-ul', 'Маркированный список'),
                 '|',
                 'image',
                 'link',
@@ -122,7 +123,8 @@ pythonz = {
                 link: ['`', '<>`_'],
                 accent: ['``', '``'],
                 code: ['\n.. code::\n', '\n\n\n'],
-                quote: ['\n```\n', '\n```']
+                quote: ['\n```\n', '\n```'],
+                list_ul: ['\n* ', '\n\n']
             }
         });
 

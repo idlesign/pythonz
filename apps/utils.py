@@ -139,6 +139,7 @@ class TextCompiler:
     RE_ITALIC = re.compile('\*([^*\n]+)\*')
     RE_URL = re.compile('(?<!["])(http[s]*[^\s\)]+)')
     RE_URL_WITH_TITLE = re.compile('`([^\[]+)\n*\[([^\]]+)\]`_')
+    RE_UL = re.compile('^\*\s+([^\n]+)\n', re.M)
 
     @classmethod
     def compile(cls, text):
@@ -162,6 +163,10 @@ class TextCompiler:
         text = clean(text)
 
         text = text.replace('\r\n', '\n')
+
+        text = re.sub(cls.RE_UL, '<li>\g<1></li>', text)
+        text = text.replace('\n<li>', '\n<ul><li>').replace('</li>\n', '</li></ul>\n')
+
         text = re.sub(cls.RE_BOLD, '<b>\g<1></b>', text)
         text = re.sub(cls.RE_ITALIC, '<i>\g<1></i>', text)
         text = re.sub(cls.RE_QUOTE, '<blockquote>\g<1></blockquote>', text)
