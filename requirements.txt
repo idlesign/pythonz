@@ -1,13 +1,13 @@
 awesome-slugify==1.6.5
-Django==1.9.6
+Django==1.9.8
 Fabric==1.11.1
-Pillow==3.2.0
-bleach==1.4.2
+Pillow==3.3.0
+bleach==1.4.3
 beautifulsoup4==4.4.1
 feedparser==5.2.1
 lxml==3.6.0
-pytz==2016.4
-pyTelegramBotAPI==1.4.2
+pytz==2016.6.1
+pyTelegramBotAPI==2.1.5
 pytest==2.9.1
 pytest-django==2.9.1
 requests==2.10.0
@@ -24,6 +24,6 @@ django-siteflags==0.4.1
 django-sitegate==0.10.3
 django-sitemessage==0.8.0
 django-sitemetrics==0.5.2
-django-siteprefs==0.5.2
+django-siteprefs==0.6.1
 django-sitetree==1.5.1
 django-xross==0.6.0
