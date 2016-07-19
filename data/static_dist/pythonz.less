@@ -95,14 +95,27 @@
 //------------------------------------------
 // Bootstrap overrides.
 
+.container {
+  border-radius: @gap__min;
+}
+
 .footer {
   border-bottom: none;
   margin-top: @gap__max;
   padding-top: @gap__mid;
+  margin-bottom: @gap__max;
+  padding-bottom: @gap__mid;
   font-size: 12px;
+  .menu {
+    padding-left: 0;
+    margin-left: 0;
+  }
   .menu li {
     display: inline-block;
     margin-right: @gap__min;
+  }
+  address i, a {
+    color: darken(@cl__white, 20%);
   }
 
 }
@@ -119,19 +132,26 @@
 
 .page-header {
   margin-top: 0;
+  padding-bottom: 0;
 }
 
 .navbar {
   margin-bottom: 0;
   input {
     margin-top: 4px;
-    height: 30px;
-    max-width: 180px;
-    font-size: 15px
+    height: 25px;
+    max-width: 150px;
+    min-width: 150px;
+    font-size: 10px
   }
   .navbar-brand img {
     margin: 5px;
   }
+}
+
+.navbar-brand {
+  padding: 6px;
+  padding-left: @gap__mid;
 }
 
 .control-label {
@@ -145,7 +165,7 @@
 }
 
 .breadcrumb {
-  font-size: 12px;
+  font-size: @gap__min;
   padding: 0;
   margin: 0;
 }
@@ -172,10 +192,13 @@ address .fa-2x {
   height: 28px !important;
 }
 
+body {
+  background: linear-gradient(to bottom, @cl__white, #e2e2e2);
+}
+
 header {
   h1 {
     font-family: @fnt__brand;
-    font-size: 45px;
   }
   a:hover {
     text-decoration: none;
@@ -184,6 +207,12 @@ header {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: @fnt__headers;
+}
+
+h2 {
+  font-size: @gap__mid;
+  margin-top: @gap__min;
+  margin-bottom: 0;
 }
 
 h6 {
@@ -230,14 +259,17 @@ input[type=checkbox] {
 // Custom classes singles.
 
 nav .submenu {
-  border-left: 4px @cl__green solid;
+  border-left: 10px @cl__green solid;
+  border-right: 10px @cl__green solid;
   li {
     padding-left: @gap__min;
+    padding-right: @gap__min;
   }
 }
 
 .body {
   background-color: @cl__white;
+  margin-top: @gap__max+@gap__mid;
   padding-top: @gap__mid;
   padding-bottom: @gap__mid;
 }
@@ -300,14 +332,8 @@ nav .submenu {
   }
 }
 
-.vacancies {
-  .label {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-  }
-}
 
 .tags_box {
-  font-family: Verdana, Arial, helvetica, sans-serif;
   .big {
      .title {
        font-size: @gap__mid;
@@ -365,16 +391,21 @@ nav .submenu {
 }
 
 .zen {
+  ;
   .eng {
+    margin-top: @gap__mid;
     line-height: 1.3em;
     font-size: @gap__min;
   }
   h2 {
     line-height: 1.2em;
+    font-size: @gap__max;
+    color: lighten(@cl__black, 30%);
   }
   .small {
     font-size: @gap__min;
     text-align: right;
+    color: lighten(@cl__black, 40%);
   }
 }
 
@@ -386,7 +417,7 @@ nav .submenu {
     }
   }
   i {
-    color: lighten(@cl__black, 50%);
+    color: @cl__blue;
     font-size: 28px;
   }
   a {
@@ -419,8 +450,8 @@ nav .submenu {
 
 .listing_item {
   padding: @gap__min;
-  min-width: 350px;
-  max-width: 350px;
+  min-width: 345px;
+  max-width: 345px;
   min-height: 150px;
   max-height: 150px;
   float: left;

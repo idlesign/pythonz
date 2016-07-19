@@ -17,29 +17,24 @@
 
 {% block page_contents %}
 
-    <div class="row">
-        <div class="col-md-12">
-            {% include "sub_title_block.html" %}
+    {% include "sub_title_block.html" %}
+
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">К сведению</h3>
+        </div>
+        <div class="panel-body">
+            {% block hint %}{% endblock %}
         </div>
     </div>
+    {% block right_bar %}{% endblock %}
 
-    <div class="row">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h3 class="panel-title">К сведению</h3>
-            </div>
-            <div class="panel-body">
-                {% block hint %}{% endblock %}
-            </div>
-        </div>
-        {% block right_bar %}{% endblock %}
+    {% block form %}
+        {% include "forms/sub_form.html" with form=form %}
+    {% endblock %}
 
-        {% block form %}
-            {% include "forms/sub_form.html" with form=form %}
-        {% endblock %}
+    {% block categories_editor %}
+        {% include "sub_box_tags.html" %}
+    {% endblock %}
 
-        {% block categories_editor %}
-            {% include "sub_box_tags.html" %}
-        {% endblock %}
-    </div>
 {%  endblock %}

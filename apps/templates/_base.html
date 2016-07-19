@@ -39,13 +39,12 @@
 <body>
     {% block body_start %}{% endblock %}
 
-    <nav class="navbar navbar-default navbar-static-top" itemscope itemtype="http://schema.org/SiteNavigationElement">
+    <nav class="header navbar navbar-default navbar-fixed-top" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <div class="container-fluid">
 
             <div class="navbar-header">
                 <a class="navbar-brand" href="/" title="На главную страницу pythonz.net">
-                    <img src="{{ STATIC_URL }}img/favicon.gif" class="pull-left" alt="pythonz">
-                    <span class="text-uppercase">pythonz</span>
+                    <img src="{{ STATIC_URL }}img/favicon.gif" alt="pythonz">
                 </a>
             </div>
 
@@ -88,7 +87,7 @@
     </nav>
 
 
-    <div class="container body marg__b_max">
+    <div class="container body">
         {% if messages %}
         <div id="notices">
             {% for message in messages %}
@@ -103,23 +102,19 @@
     </div>
 
     {% cache 21600 nav_bottom %}
-    <nav class="footer navbar navbar-default marg__t_max" itemscope itemtype="http://schema.org/SiteNavigationElement">
+    <nav class="footer navbar navbar-default navbar-inverse marg__t_max" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <div class="container">
             <div class="row">
-                <div class="col-md-2">
-                    <address>
-                        <i class="fa fa-fw fa-github"></i>&nbsp;&nbsp;<a href="https://github.com/idlesign/pythonz/" title="Проект разрабатывается открыто">{% pythonz_version %} βετα</a><br>
-                        <i class="fa fa-fw fa-envelope-o"></i>&nbsp;&nbsp;<a href="mailto:press@pythonz.net" title="Электронная почта">press@pythonz.net</a>
-                    </address>
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     {% sitetree_menu from "about" include "trunk" template "sitetree/menu_footer.html"  %}
                 </div>
                 <div class="col-md-5">
                     {% sitetree_menu from "main" include "topmenu" template "sitetree/menu_footer.html" %}
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3 text-right">
                     <address>
+                        <a href="mailto:press@pythonz.net" title="Почта для контактов"><i class="fa fa-fw fa-2x fa-envelope-o"></i></a>
+                        <a href="https://github.com/idlesign/pythonz/" title="На GitHub"><i class="fa fa-fw fa-2x fa-github"></i></a>
                         <a href="https://twitter.com/pythonz_net" title="В Твиттере"><i class="fa fa-fw fa-2x fa-twitter"></i></a>
                         <a href="http://vk.com/pythonz" title="Во ВКонтакте"><i class="fa fa-fw fa-2x fa-vk"></i></a>
                         <a href="https://www.facebook.com/pythonznet-504921523041334/" title="В Facebook"><i class="fa fa-fw fa-2x fa-facebook"></i></a>
