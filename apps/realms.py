@@ -178,7 +178,7 @@ class BookRealm(RealmBase):
     """
 
     txt_form_add = 'Добавить книгу'
-    txt_form_edit = 'Изменить данные книги'
+    txt_form_edit = 'Изменить книгу'
 
     view_listing_description = 'Книги по программированию вообще и на языке Python в частности.'
     view_listing_keywords = 'книги по питону, литература по python'
@@ -196,7 +196,7 @@ class VideoRealm(RealmBase):
     """
 
     txt_form_add = 'Добавить видео'
-    txt_form_edit = 'Изменить данные видео'
+    txt_form_edit = 'Изменить видео'
 
     view_listing_description = 'Видео-записи лекций, курсов, докладов, связанные с языком программирования Python.'
     view_listing_keywords = 'видео по питону, доклады по python'
@@ -303,7 +303,7 @@ class ArticleRealm(RealmBase):
     Область со статьями.
     """
 
-    txt_form_add = 'Написать статью'
+    txt_form_add = 'Добавить статью'
     txt_form_edit = 'Редактировать статью'
 
     view_listing_description = 'Статьи и заметки, связанные с программированием Python и не только.'
@@ -498,7 +498,7 @@ class CommunityRealm(RealmBase):
     Область с сообществами.
     """
 
-    txt_form_add = 'Зарегистрировать сообщество'
+    txt_form_add = 'Добавить сообщество'
     txt_form_edit = 'Редактировать сообщество'
 
     view_listing_description = 'Сообщества людей интересующихся и занимающихся программированием на Питоне.'
