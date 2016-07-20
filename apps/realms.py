@@ -329,7 +329,7 @@ class PlaceRealm(RealmBase):
 
     model = Place
     form = VideoForm
-    icon = 'picture'
+    icon = 'globe'
 
     sitemap_changefreq = 'weekly'
     allowed_views = ('listing', 'details')
@@ -349,7 +349,7 @@ class DiscussionRealm(RealmBase):
 
     model = Discussion
     form = DiscussionForm
-    icon = 'list'
+    icon = 'comments-o'
 
 
 class UserRealm(RealmBase):
@@ -367,7 +367,7 @@ class UserRealm(RealmBase):
 
     model = User
     form = UserForm
-    icon = 'user'
+    icon = 'users'
 
     sitemap_date_field = 'date_joined'
     sitemap_changefreq = 'weekly'
@@ -508,7 +508,7 @@ class CommunityRealm(RealmBase):
     name_plural = 'communities'
     model = Community
     form = CommunityForm
-    icon = 'home'
+    icon = 'building-o'
 
 
 register_realms(
