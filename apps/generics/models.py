@@ -102,6 +102,19 @@ class CommonEntityModel(models.Model):
         """
         return SLUGIFIER(self.title)
 
+    def validate_unique(self, exclude=None):
+
+        # Перекрываем для правильной обработки спарки unique=True и null=True
+        # в поле краткого имени URL.
+
+        if not exclude:
+            exclude = []
+
+        if not self.slug:
+            exclude.append('slug')
+
+        return super().validate_unique(exclude)
+
     def save(self, *args, **kwargs):
         """Перекрыт, чтобы привести заголовок в порядок.
 
@@ -116,6 +129,10 @@ class CommonEntityModel(models.Model):
 
         if not self.id and self.autogenerate_slug:
             self.slug = self.generate_slug()
+
+        # Требуется для правильной обработки спарки unique=True и null=True
+        if not self.slug:
+            self.slug = None
 
         super().save(*args, **kwargs)
 
