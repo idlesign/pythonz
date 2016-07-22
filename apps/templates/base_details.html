@@ -41,7 +41,7 @@
             {% include "sub_title_block.html" with hide_breadcurmbs=1 %}
 
             {% block details_contents %}{% endblock %}
-            {% block details_description %}<div class="marg__b_mid"><i itemprop="description">{{ item.description|urlize|linebreaksbr }}</i></div>{% endblock %}
+            {% block details_description %}<div class="marg__b_mid" itemprop="description">{{ item.description|urlize|linebreaksbr }}</div>{% endblock %}
             {% block details_contents_add %}{% endblock %}
             {% block details_author %}
             <div class="marg__t_mid text-muted pull-right">
