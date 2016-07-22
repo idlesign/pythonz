@@ -311,7 +311,7 @@ class ArticleRealm(RealmBase):
 
     model = Article
     form = ArticleForm
-    icon = 'file'
+    icon = 'file-o'
 
     yawidget_code = 173163
 
