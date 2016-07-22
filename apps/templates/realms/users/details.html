@@ -24,7 +24,7 @@
 
 
 {% block details_contents %}
-    <h4>Информация</h4>
+    <h4><i class="fa fa-fw fa-info-circle"></i> Информация</h4>
     <div class="marg__b_mid text-muted marg__l_mid">
         <small>
             <table>
@@ -65,7 +65,7 @@
     <div class="marg__t_max">
         {% if bookmarks %}
         <hr>
-        <h4>Избранное</h4>
+        <h4><i class="fa fa-fw fa-bookmark-o"></i> Избранное</h4>
         {% for realm_model, bookmark_list in bookmarks.items %}
             {% if bookmark_list %}
             <div class="marg__l_mid marg__t_mid">
