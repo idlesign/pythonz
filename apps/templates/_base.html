@@ -1,4 +1,6 @@
-{% load sitemetrics sitetree pythonz_version cache etc_misc %}
+{% load sitemetrics sitetree pythonz_version cache etc_misc static %}
+{% get_static_prefix as STATIC_URL %}
+
 <!DOCTYPE html>
 <html lang="ru" prefix="og: http://ogp.me/ns#">
 <head itemscope itemtype="http://schema.org/WebSite">

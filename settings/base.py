@@ -3,8 +3,6 @@
 #
 from os.path import dirname
 
-from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
-
 
 PATH_PROJECT = dirname(dirname(__file__))
 PATH_DATA = '%s/data' % PATH_PROJECT
@@ -124,12 +122,22 @@ MIDDLEWARE_CLASSES = (
 )
 
 
-TEMPLATE_DEBUG = DEBUG
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-TEMPLATE_CONTEXT_PROCESSORS += ('django.core.context_processors.request',)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'debug': DEBUG,
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 
 INSTALLED_APPS = (

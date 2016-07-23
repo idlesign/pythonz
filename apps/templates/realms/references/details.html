@@ -1,5 +1,6 @@
 {% extends "base_details.html" %}
-{% load model_field sitetree %}
+{% load model_field sitetree static %}
+{% get_static_prefix as STATIC_URL %}
 
 
 {% block page_description %}Описание {{ reference.title }} в Python{% endblock %}

@@ -1,5 +1,6 @@
 {% extends "base_details.html" %}
-{% load gravatar model_meta sitetree %}
+{% load gravatar model_meta sitetree static %}
+{% get_static_prefix as STATIC_URL %}
 
 
 {% block page_keywords %}{{ block.super }}, статья {{ article.title }}, что такое {{ article.title }}{% endblock %}
