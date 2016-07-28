@@ -72,8 +72,6 @@ class ArticleForm(RealmEditBaseForm):
     class Meta:
         model = Article
         fields = (
-            'location',
-            'url',
             'title',
             'description',
             'status',
@@ -98,7 +96,7 @@ class ArticleForm(RealmEditBaseForm):
         if self.data:
             try:
                 location = self.fields['location'].clean(self.data.get('location'))
-            except forms.ValidationError:
+            except (forms.ValidationError, KeyError):
                 pass
             else:
                 if location == Article.LOCATION_INTERNAL:
@@ -117,7 +115,7 @@ class ArticleForm(RealmEditBaseForm):
         return url
 
     def save(self, commit=True):
-        url = self.cleaned_data['url']
+        url = self.cleaned_data.get('url')
         if url:
             self.instance.update_data_from_url(url)
         return super().save(commit)
