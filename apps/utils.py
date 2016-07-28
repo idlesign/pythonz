@@ -130,6 +130,8 @@ class TextCompiler:
     """Предоставляет инструменты для RST-подобного форматирования в HTML."""
 
     RE_CODE = re.compile('\.{2}\s*code::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
+    RE_NOTE = re.compile('\.{2}\s*note::\s*([^\n]+)\n', re.S)
+    RE_WARNIGN = re.compile('\.{2}\s*warning::\s*([^\n]+)\n', re.S)
     RE_GIST = re.compile('\.{2}\s*gist::\s*([^\n]+)\n', re.S)
     RE_PODSTER = re.compile('\.{2}\s*podster::\s*([^\n]+)[/]*\n', re.S)
     RE_IMAGE = re.compile('\.{2}\s*image::\s*([^\n]+)[/]*\n', re.S)
@@ -174,6 +176,14 @@ class TextCompiler:
         text = re.sub(cls.RE_CODE, replace_code, text)
         text = re.sub(cls.RE_URL_WITH_TITLE, '<a href="\g<2>">\g<1></a>', text)
         text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\g<1>.js"></script>', text)
+
+        text = re.sub(
+            cls.RE_NOTE, '<div class="panel panel-primary"><div class="panel-heading">На заметку</div>'
+                         '<div class="panel-body">\g<1></div></div>', text)
+        text = re.sub(
+            cls.RE_WARNIGN, '<div class="panel panel-danger"><div class="panel-heading">Внимание</div>'
+                            '<div class="panel-body">\g<1></div></div>', text)
+
         text = re.sub(
             cls.RE_PODSTER,
             '<iframe width="100%" height="85" src="\g<1>/embed/13?link=1" frameborder="0" allowtransparency="true">'

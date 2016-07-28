@@ -67,4 +67,12 @@ def test_text_compiler():
         compile('.. code:: html\nprint("some")\n\n\n') ==
         '<pre><code class="html">print("some")</code></pre><br>')
 
+    assert (
+        compile('.. note:: a note\n') ==
+        '<div class="panel panel-primary"><div class="panel-heading">На заметку</div><div class="panel-body">a note</div></div>')
+
+    assert (
+        compile('.. warning:: a warn\n') ==
+        '<div class="panel panel-danger"><div class="panel-heading">Внимание</div><div class="panel-body">a warn</div></div>')
+
 
