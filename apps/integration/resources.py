@@ -16,7 +16,8 @@ class PyDigestResource:
         :return:
         """
         if cls.mapping is None:
-            from .realms import ArticleRealm, VideoRealm, EventRealm
+            from ..realms import ArticleRealm, VideoRealm, EventRealm
+
             mapping = {
                 ArticleRealm: ('article', 'authors'),
                 VideoRealm: ('video',),
