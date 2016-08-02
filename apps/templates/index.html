@@ -1,13 +1,52 @@
 {% extends "_base.html" %}
 
+
 {% block page_title %}Про Python{% endblock %}
+
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
+{% endblock %}
+
+
+{% block js_bottom %}
+    <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#carousel').slick({
+                dots: true,
+                autoplay: true,
+                arrows: false,
+                slidesToShow: 2
+            });
+        });
+    </script>
+{% endblock %}
+
 
 {% block page_contents %}
     <h1 class="text-uppercase">Про Python</h1>
     <div class="marg__b_mid">
         {% include "sub_search_bar.html" %}
     </div>
-    <div id="index_box">
+
+    <div id="carousel" class="marg__b_max">
+        {% for realm_data in realms_data %}
+            {% with local=realm_data.locals.0 %}
+            <div class="media">
+                <div class="media-left">{% include "sub_item_cover.html" with item=local nofade=1 %}</div>
+                <div class="media-body">
+                    <a href="{{ local.get_absolute_url }}">{{ local.title }}</a>
+                    <div class="cl__gray small">{{ local.get_description|safe }}</div>
+                </div>
+            </div>
+            {% endwith %}
+        {% endfor %}
+    </div>
+
+    <div id="index_box" class="marg__t_max">
     {% for realm_data in realms_data %}
         {% include "sub_realm_card.html" %}
     {% endfor %}
