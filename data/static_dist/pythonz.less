@@ -14,7 +14,6 @@
 @gap__no: 0;
 
 @fnt__brand: Belleza, sans-serif;
-@fnt__headers: 'PT Serif', serif;
 
 //------------------------------------------
 // Helpers.
@@ -205,10 +204,6 @@ header {
   }
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: @fnt__headers;
-}
-
 h2 {
   font-size: @gap__mid;
   margin-top: @gap__min;
@@ -284,7 +279,6 @@ nav .submenu {
 
 .icon_entity {
   font-size: @gap__max;
-  margin-right: @gap__mid;
   float: left;
   color: @cl__blue;
 }
@@ -430,8 +424,10 @@ nav .submenu {
 }
 
 .cover_img {
+  text-align: center;
   .icon_entity {
     padding: @gap__mid;
+    margin-right: @gap__min;
     color: lighten(@cl__gray, 20%);
     min-width: 100px;
   }
@@ -479,16 +475,21 @@ nav .submenu {
 }
 
 #index_box {
-  @width: 450px;
-  column-width: @width;
-  -webkit-column-width: @width;
-  -moz-column-width: @width;
-  .panel{
-    display: inline-block;
-    width: 100%;
+  .card{
+    border-top: 2px solid #eee;
+    padding: @gap__mid 0 @gap__mid 0;
+    margin-bottom: @gap__mid;
+  }
+
+  img {
+    border: 0;
   }
   h2 {
-    font-size: @gap__max / 1.8;
-    margin: 0;
+    a {
+      color: #333;
+    }
+    letter-spacing: 2px;
+    white-space: nowrap;
+    margin: @gap__min 0 @gap__mid 0;
   }
 }

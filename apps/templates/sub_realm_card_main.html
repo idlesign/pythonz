@@ -1,0 +1,7 @@
+<div class="media">
+    <div class="media-left cover_img">{% include "sub_item_cover.html" with item=local nofade=1 %}</div>
+    <div class="media-body">
+        <a href="{{ local.get_absolute_url }}">{{ local.title }}</a>
+        <div class="cl__gray small">{{ local.get_description|truncatewords_html:80|safe }}</div>
+    </div>
+</div>

@@ -198,19 +198,28 @@ def index(request):
     externals = ExternalResource.objects.filter(realm_name__in=realms_registry.keys())
     externals = {k: list(v) for k, v in groupby(externals, attrgetter('realm_name'))}
 
+    max_additional = 5
+
     for name, realm in realms_registry.items():
         if not realm.show_on_main:
             continue
 
         realm_externals = externals.get(name, [])
-        locals_count = 1
-        if not realm_externals:
-            locals_count = 2
+        count_externals = len(realm_externals)
+
+        count_locals = 1
+        if count_externals < max_additional:
+            count_locals += max_additional - count_externals
+
+        realm_locals = realm.model.get_actual()[:count_locals]
+
+        main = realm_locals[0]
+        additional = list(realm_locals[1:]) + realm_externals
 
         realms_data.append({
             'cls': realm,
-            'locals': realm.model.get_actual()[:locals_count],
-            'externals': realm_externals,
+            'main': main,
+            'additional': additional,
         })
 
     return render(request, 'index.html', {'realms_data': realms_data})

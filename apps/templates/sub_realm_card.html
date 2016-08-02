@@ -1,34 +1,31 @@
 {% load sitetree model_meta %}
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h2>
-            <i class="fa fa-fw fa-{{ realm_data.cls.icon }}"></i>
-            <a href="{% url realm_data.cls.get_listing_urlname %}">
-                {% model_meta_verbose_name_plural realm_data.cls.model %}
-            </a>
-        </h2>
-    </div>
-    <div class="panel-body ">
-        <ul class="marg__b_min">
-        {% for local in realm_data.locals %}
-            <li class="media">
-                <div class="media-body">
-                    <a href="{{ local.get_absolute_url }}">{{ local.title }}</a>
-                    <div class="cl__gray small">{{ local.get_description|truncatechars_html:110|safe }}</div>
-                </div>
-                <div class="media-right">{% include "sub_item_cover.html" with item=local nofade=1 %}</div>
-            </li>
-        {% endfor %}
-        </ul>
+<div class="card col-md-12">
 
-        {% if realm_data.externals %}
-            <hr>
-            <ul class="small">
-                {% for external in realm_data.externals %}
-                <li><a href="{{ external.get_utm_url }}">{{ external.title }}</a></li>
+    <h2 class="text-uppercase">
+        <a href="{% url realm_data.cls.get_listing_urlname %}">
+            {% model_meta_verbose_name_plural realm_data.cls.model %}
+        </a>
+    </h2>
+
+    <div class="row">
+
+        <div class="col-md-5">
+        {% with local=realm_data.main %}
+            {% include "sub_realm_card_main.html" %}
+        {% endwith %}
+        </div>
+
+        <div class="col-md-7">
+        {% if realm_data.additional %}
+            <ul class="list-unstyled">
+                {% for item in realm_data.additional %}
+                <li class="marg__b_min"><a href="{% if item.src_alias %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">{{ item.title }}</a></li>
                 {% endfor %}
             </ul>
         {% endif %}
+        </div>
+
     </div>
+    <div class="clearfix"></div>
 </div>

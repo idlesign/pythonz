@@ -232,6 +232,8 @@ class VacancyRealm(RealmBase):
     allowed_views = ('listing',)
     name_plural = 'vacancies'
 
+    show_on_main = False
+
     view_listing_description = 'Список вакансий, так или иначе связанных с языком программирования Python.'
     view_listing_keywords = 'вакансии python, работа питон'
 
@@ -509,6 +511,8 @@ class CommunityRealm(RealmBase):
     model = Community
     form = CommunityForm
     icon = 'building-o'
+
+    show_on_main = False
 
 
 register_realms(

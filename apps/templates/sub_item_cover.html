@@ -4,5 +4,5 @@
 {% if thumb_url %}
     <img src="{{ thumb_url }}" class="img-thumbnail media-object {% if not nofade %}faded{% endif %}" alt="{{ item.title }}">
 {% else %}
-    <i class="faded img-thumbnail icon_entity fa fa-2x fa-{{ item.realm.icon }}"></i>
+    <i class="img-thumbnail icon_entity fa fa-2x fa-{{ item.realm.icon }} {% if not nofade %}faded{% endif %}"></i>
 {% endif %}

@@ -32,16 +32,11 @@
         {% include "sub_search_bar.html" %}
     </div>
 
+    <h2 class="text-uppercase">Свежее</h2>
     <div id="carousel" class="marg__b_max">
         {% for realm_data in realms_data %}
-            {% with local=realm_data.locals.0 %}
-            <div class="media">
-                <div class="media-left">{% include "sub_item_cover.html" with item=local nofade=1 %}</div>
-                <div class="media-body">
-                    <a href="{{ local.get_absolute_url }}">{{ local.title }}</a>
-                    <div class="cl__gray small">{{ local.get_description|truncatewords_html:80|safe }}</div>
-                </div>
-            </div>
+            {% with local=realm_data.main %}
+                {% include "sub_realm_card_main.html" %}
             {% endwith %}
         {% endfor %}
     </div>
