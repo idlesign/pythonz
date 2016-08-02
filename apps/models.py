@@ -281,6 +281,10 @@ class Vacancy(UtmReady, RealmBaseModel):
     url_attr = 'url_site'
 
     @property
+    def cover(self):
+        return self.url_logo
+
+    @property
     def description(self):
         # todo Убрать после перевода всего на get_description.
         return self.get_description()

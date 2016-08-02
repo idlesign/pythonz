@@ -17,4 +17,9 @@ def thumbs_get_thumb_url(context, image, width, height, realm):
     :param realm:
     :return:
     """
-    return get_thumb_url(realm, image, width, height)
+    if isinstance(image, str):
+        url = image
+    else:
+        url = get_thumb_url(realm, image, width, height)
+
+    return url
