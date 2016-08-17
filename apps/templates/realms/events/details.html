@@ -43,12 +43,14 @@
                 </span>
                 {% endif %}
             {% endif %}
+
             {% if event.place %}
-                <span class="small marg__l_mid">
+                <div class="small">
                     <meta itemprop="location" content="{{ event.place.title }}" />
                     <a href="{{ event.place.get_absolute_url }}">{{ event.place.title }}</a>
-                </span>
+                </div>
             {% endif %}
+
         </div>
     </div>
 
