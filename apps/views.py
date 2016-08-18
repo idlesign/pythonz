@@ -24,7 +24,7 @@ from xross.toolbox import xross_view
 from .integration.telegram import handle_request
 from .exceptions import RedirectRequired
 from .generics.views import DetailsView, RealmView, EditView, ListingView
-from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource
+from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource, ReferenceMissing
 from .utils import message_warning
 from .signals import sig_search_failed
 
@@ -252,7 +252,9 @@ def search(request):
     if not total_results:
         # Поиск не дал результатов. Запомним, что искали и сообщим администраторам,
         # чтобы приняли меры по возможности.
-        sig_search_failed.send(None, search_term=search_term)
+
+        if ReferenceMissing.add(search_term):
+            sig_search_failed.send(None, search_term=search_term)
 
         message_warning(request, 'Поиск по справочнику не дал результатов, и мы переключились на поиск по всему сайту.')
 

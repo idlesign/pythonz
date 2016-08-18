@@ -715,6 +715,39 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
     notify_on_publish = False
 
 
+class ReferenceMissing(models.Model):
+    """Промахи при поиске в справочнике."""
+
+    term = models.CharField('Термин', max_length=255, unique=True)
+    synonyms = models.TextField('Синонимы', blank=True)
+    hits = models.PositiveIntegerField('Запросы', default=0)
+
+    class Meta:
+        verbose_name = 'Промах справочника'
+        verbose_name_plural = 'Промахи справочника'
+
+    def __unicode__(self):
+        return self.term
+
+    @classmethod
+    def add(cls, search_term):
+        """Добавляет данные по указанному термину в реестр промахов.
+        Возвращает True, если была добавлена новая запись.
+
+        :param str search_term: Термин для поиска.
+        :rtype: bool
+        """
+        obj = cls.objects.filter(Q(term__icontains=search_term) | Q(synonyms__icontains=search_term)).first()
+
+        if obj:
+            obj.hits += 1
+            obj.save()
+        else:
+            cls(term=search_term, hits=1).save()
+
+        return obj is None
+
+
 class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
     """Модель сущности `Справочник`."""
 

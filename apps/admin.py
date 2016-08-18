@@ -10,7 +10,7 @@ from simple_history.admin import SimpleHistoryAdmin
 from .integration.partners import get_partners_choices
 from .forms.forms import BookForm
 from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version, PartnerLink, \
-    Vacancy
+    Vacancy, ReferenceMissing
 
 
 ##################################################################################
@@ -177,6 +177,14 @@ class ReferenceAdmin(HierarchicalModelAdmin, EntityBaseAdmin):
     list_filter = ['time_created', 'status', 'type', 'version_added', 'version_deprecated']
 
 admin.site.register(Reference, ReferenceAdmin)
+
+
+class ReferenceMissingAdmin(admin.ModelAdmin):
+
+    list_display = ('term', 'synonyms', 'hits')
+    ordering = ['-hits']
+
+admin.site.register(ReferenceMissing, ReferenceMissingAdmin)
 
 
 class VersionAdmin(EntityBaseAdmin):
