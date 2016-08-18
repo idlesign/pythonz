@@ -182,7 +182,7 @@ admin.site.register(Reference, ReferenceAdmin)
 class ReferenceMissingAdmin(admin.ModelAdmin):
 
     list_display = ('term', 'synonyms', 'hits')
-    ordering = ['-hits']
+    ordering = ['-hits', 'term']
 
 admin.site.register(ReferenceMissing, ReferenceMissingAdmin)
 
