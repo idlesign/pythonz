@@ -8,14 +8,14 @@ var pythonz = {
         "use strict";
         xross.automate();
         $(function(){
-            pythonz.mark_user();
+            pythonz.markUser();
             sitecats.bootstrap();
             sitecats.make_cloud('tags_box');
             $('.mod__has_tooltip').tooltip();
         });
     },
 
-    mark_user: function() {
+    markUser: function() {
         "use strict";
         $('.py_user').each(function(i, el) {
             var html = el.innerHTML.replace(/\[u:(\d+):\s*([^\]]+)\s*\]/g, '<a href="http://pythonz.net/users/$1" title="Профиль на pythonz">$2</a>');
@@ -23,7 +23,7 @@ var pythonz = {
         });
     },
 
-    activate_comments_tab: function(timeout) {
+    activateCommentsTab: function(timeout) {
         "use strict";
         setTimeout(function(){
             var maxCount = 0,
@@ -41,10 +41,10 @@ var pythonz = {
         }, timeout);
     },
 
-    init_editor: function(textarea_el) {
+    initEditor: function(textareaEl) {
         "use strict";
 
-        if (!textarea_el) {
+        if (!textareaEl) {
             return;
         }
 
@@ -101,7 +101,7 @@ var pythonz = {
         }
 
         return new SimpleMDE({
-            element: textarea_el,
+            element: textareaEl,
             forceSync: true,
             indentWithTabs: false,
             spellChecker: false,
@@ -158,9 +158,9 @@ var pythonz = {
         ],
         RULE_EMDASH: [/\s+-\s+/g, ' &#8212; '],
 
-        decorate_description: function(area_id) {
+        decorateDescription: function(areaId) {
             "use strict";
-            this.decorate_area(area_id,
+            this.decorateArea(areaId,
                 [
                     this.RULE_PYVERSION_REMOVED,
                     this.RULE_PYVERSION_ADDED,
@@ -171,28 +171,28 @@ var pythonz = {
             );
         },
 
-        decorate_func_result: function(area_id) {
+        decorateFuncResult: function(areaId) {
             "use strict";
-            this.decorate_area(area_id,
+            this.decorateArea(areaId,
                 [
                     this.RULE_PYVERSION_REMOVED,
                     this.RULE_PYVERSION_ADDED,
                     this.RULE_BASE_TYPES,
                     this.RULE_EMDASH
                 ]
-            )
+            );
         },
 
-        decorate_func_params: function(area_id) {
+        decorateFuncParams: function(areaId) {
             "use strict";
-            var func_process_args = function (match_str, arg_name, separator) {
-                    arg_name = arg_name.replace(/([^=]+)(=.+)/g, '$1<span class="text-muted">$2</span>');
-                    return '<small><span class="glyphicon glyphicon-certificate"></span></small> <b>' + arg_name + '</b>' + separator;
+            var funcProcessArgs = function (matchStr, argName, separator) {
+                    argName = argName.replace(/([^=]+)(=.+)/g, '$1<span class="text-muted">$2</span>');
+                    return '<small><span class="glyphicon glyphicon-certificate"></span></small> <b>' + argName + '</b>' + separator;
                 };
 
-            this.decorate_area(area_id,
+            this.decorateArea(areaId,
                 [
-                    [/([^>\s]+)(\s--)/g, func_process_args],
+                    [/([^>\s]+)(\s--)/g, funcProcessArgs],
                     [/--/g, ':'],
                     this.RULE_PYVERSION_REMOVED,
                     this.RULE_PYVERSION_ADDED,
@@ -205,9 +205,9 @@ var pythonz = {
             );
         },
 
-        decorate_area: function(area_id, rules) {
+        decorateArea: function(areaId, rules) {
             "use strict";
-            var $area = $('#' + area_id),
+            var $area = $('#' + areaId),
                 html = $area.html();
 
             if (html !== undefined) {
@@ -222,31 +222,31 @@ var pythonz = {
 
     },
 
-    Map: function (map_el_id, objects) {
+    Map: function (mapElementId, objects) {
         "use strict";
         var self = this,
-            _map_el = $('#'+map_el_id),
-            _map_objs = objects;
+            _mapEl = $('#' + mapElementId),
+            _mapObjs = objects;
 
-        this.get_bounds_for_coords = function(coords) {
-            return ymaps.util.bounds.getCenterAndZoom(coords, [_map_el.width(), _map_el.height()])
+        this.getBoundsForCoords = function(coords) {
+            return ymaps.util.bounds.getCenterAndZoom(coords, [_mapEl.width(), _mapEl.height()])
         };
 
-        this.get_placemarks_from_map_objects = function(objects) {
-            var all_marks = [],
-                mark_idx = 0;
+        this.getPlacemarksFromMapObjects = function(objects) {
+            var allMarks = [],
+                markIdx = 0;
 
             if (objects===undefined) {
-                objects = _map_objs;
+                objects = _mapObjs;
             }
 
             $.each(objects, function(id, props) {
                 var coords = props.coords,
                     title = props.title,
-                        descr = props.descr,
-                        link = props.link;
+                    descr = props.descr,
+                    link = props.link;
 
-                all_marks[mark_idx] = new ymaps.Placemark(coords, {
+                allMarks[markIdx] = new ymaps.Placemark(coords, {
                         balloonContentHeader: title,
                         balloonContentBody: descr,
                         balloonContentFooter: link,
@@ -257,13 +257,13 @@ var pythonz = {
                         preset: 'islands#darkBlueCircleDotIcon'
                     });
 
-                mark_idx++;
+                markIdx++;
             });
-            return all_marks
+            return allMarks;
         };
 
-        this.get_clusterer = function() {
-            var objs = self.get_placemarks_from_map_objects(),
+        this.getClusterer = function() {
+            var objs = self.getPlacemarksFromMapObjects(),
                 clusterer = new ymaps.Clusterer({
                     preset: 'islands#darkBlueClusterIcons',
                     clusterDisableClickZoom: true,
@@ -276,21 +276,21 @@ var pythonz = {
             return clusterer;
         };
 
-        this.init_map = function () {
+        this.initMap = function () {
             ymaps.ready(function () {
-                var clusterer = self.get_clusterer(),
-                    map_state = self.get_bounds_for_coords(clusterer.getBounds());
+                var clusterer = self.getClusterer(),
+                    mapState = self.getBoundsForCoords(clusterer.getBounds());
 
-                $.extend(map_state, {
+                $.extend(mapState, {
                     controls: ['zoomControl']
                 });
 
-                var map = new ymaps.Map(_map_el.attr('id'), map_state);
+                var map = new ymaps.Map(_mapEl.attr('id'), mapState);
                 map.geoObjects.add(clusterer);
             });
         };
 
-        self.init_map();
+        self.initMap();
     }
 
 };
