@@ -835,7 +835,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     allow_linked = False
 
     def is_type_callable(self):
-        return self.type in (self.TYPE_METHOD, self.TYPE_FUNCTION)
+        return self.type in (self.TYPE_METHOD, self.TYPE_FUNCTION, self.TYPE_CLASS)
 
     def is_type_method(self):
         return self.type == self.TYPE_METHOD
