@@ -5,8 +5,11 @@
     {{ block.super }}
     <script type="text/javascript">
 
-        function toggle_form_fields() {
-            var show = $.inArray($('#id_type').val(), ['4', '6']) > -1;
+        function toggleFormFields() {
+            var idFunc = '4',
+                idClass = '5',
+                idMethod = '6',
+                show = $.inArray($('#id_type').val(), [idFunc, idClass, idMethod]) > -1;
 
             $('.form-group', '#edit_form').each(function(idx, el){
                 var $el = $(el);
@@ -20,8 +23,8 @@
         }
 
         $(function(){
-            $('#id_type').on('change', toggle_form_fields);
-            toggle_form_fields();
+            $('#id_type').on('change', toggleFormFields);
+            toggleFormFields();
         });
     </script>
 {% endblock %}
