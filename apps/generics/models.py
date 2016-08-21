@@ -352,6 +352,7 @@ class RealmBaseModel(ModelWithFlag):
         # TODO Не инвалидирует кеш в категориях раздела. При случае решить, а нужно ли вообще.
         cache.delete(cls.cache_get_key_most_voted_objects(class_name=kwargs['sender']))
 
+    @property
     def is_draft(self):
         """Возвращает булево указывающее на то, является ли сущность черновиком.
 
@@ -359,6 +360,7 @@ class RealmBaseModel(ModelWithFlag):
         """
         return self.status == self.STATUS_DRAFT
 
+    @property
     def is_deleted(self):
         """Возвращает булево указывающее на то, помечена ли сущность удаленной.
 
@@ -366,6 +368,7 @@ class RealmBaseModel(ModelWithFlag):
         """
         return self.status == self.STATUS_DRAFT
 
+    @property
     def is_published(self):
         """Возвращает булево указывающее на то, опубликована ли сущность.
 

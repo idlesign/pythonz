@@ -49,11 +49,11 @@ class RealmView(View):
         :return:
         """
         if not request.user.is_superuser:
-            if item.is_deleted():
+            if item.is_deleted:
                 # Запрещаем доступ к удалённым.
                 raise Http404()
 
-            elif item.is_draft() and hasattr(item, 'submitter') and item.submitter != request.user:
+            elif item.is_draft and hasattr(item, 'submitter') and item.submitter != request.user:
                 # Закрываем доступ к чужим черновикам.
                 raise PermissionDenied()
 
@@ -84,7 +84,7 @@ class RealmView(View):
 
                 # Запрещаем редактирование опубликованных материалов.
                 public_edit_models = Community, Event, Reference
-                if item.is_published() and self.realm.model not in public_edit_models:
+                if item.is_published and self.realm.model not in public_edit_models:
                     message_warning(
                         request, 'Этот материал уже прошёл модерацию и был опубликован. '
                                  'На данный момент в проекте запрещено редактирование опубликованных материалов.')

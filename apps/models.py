@@ -554,6 +554,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
             bookmarks[realm_model] = items
         return bookmarks
 
+    @property
     def is_deleted(self):
         return not self.is_active
 
@@ -667,6 +668,7 @@ class Article(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Model
                 'Выберите статьи, которые имеют отношение к данной. Так, например, можно объединить статьи цикла.',)
         }
 
+    @property
     def is_handmade(self):
         """Возвращат флаг, указывающий на то, что статья создана на этом сайте.
 
@@ -834,18 +836,23 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     autogenerate_slug = True
     allow_linked = False
 
+    @property
     def is_type_callable(self):
         return self.type in (self.TYPE_METHOD, self.TYPE_FUNCTION, self.TYPE_CLASS)
 
+    @property
     def is_type_method(self):
         return self.type == self.TYPE_METHOD
 
+    @property
     def is_type_module(self):
         return self.type == self.TYPE_MODULE
 
+    @property
     def is_type_class(self):
         return self.type == self.TYPE_CLASS
 
+    @property
     def is_type_chapter(self):
         return self.type == self.TYPE_CHAPTER
 
@@ -1044,12 +1051,14 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
     def get_display_specialization(self):
         return self.SPECS[self.specialization]
 
+    @property
     def is_in_past(self):
         field = self.time_finish or self.time_start
         if field is None:
             return None
         return field < timezone.now()
 
+    @property
     def is_now(self):
         if not all([self.time_start, self.time_finish]):
             return False
