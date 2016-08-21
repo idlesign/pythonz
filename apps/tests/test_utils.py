@@ -68,6 +68,11 @@ def test_text_compiler():
         '<pre><code class="html">print("some")</code></pre><br>')
 
     assert (
+        compile('.. table::\n1|2|3\n4|5|6\n\n\n') ==
+        '<div class="table-responsive"><table class="table table-striped table-hover">'
+        '<tr><td>1</td><td>2</td><td>3</td></tr><tr><td>4</td><td>5</td><td>6</td></tr></table></div><br>')
+
+    assert (
         compile('.. note:: a note\n') ==
         '<div class="panel panel-primary"><div class="panel-heading">На заметку</div><div class="panel-body">a note</div></div>')
 

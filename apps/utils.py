@@ -130,6 +130,7 @@ class TextCompiler:
     """Предоставляет инструменты для RST-подобного форматирования в HTML."""
 
     RE_CODE = re.compile('\.{2}\s*code::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
+    RE_TABLE = re.compile('\.{2}\s*table::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
     RE_NOTE = re.compile('\.{2}\s*note::\s*([^\n]+)\n', re.S)
     RE_WARNIGN = re.compile('\.{2}\s*warning::\s*([^\n]+)\n', re.S)
     RE_GIST = re.compile('\.{2}\s*gist::\s*([^\n]+)\n', re.S)
@@ -158,6 +159,18 @@ class TextCompiler:
             code = match.group(2)
             return '<pre><code class="%s">%s</code></pre>\n' % ((lang or 'python').strip(), code)
 
+        def replace_table(match):
+            opt = match.group(1)  # Зарезервированная опция.
+            body = match.group(2)
+            rows = []
+
+            for line in body.splitlines():
+                rows.append('<tr><td>%s</td></tr>' % '</td><td>'.join(line.split('|')))
+
+            return (
+                '<div class="table-responsive"><table class="table table-striped table-hover">%s</table></div>\n' %
+                ''.join(rows))
+
         # Заменяем некоторые символы для правила RE_URL_WITH_TITLE, чтобы их не устранил bleach.
         text = text.replace('<ht', '[ht')
         text = text.replace('>`', ']`')
@@ -176,6 +189,7 @@ class TextCompiler:
         text = re.sub(cls.RE_CODE, replace_code, text)
         text = re.sub(cls.RE_URL_WITH_TITLE, '<a href="\g<2>">\g<1></a>', text)
         text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\g<1>.js"></script>', text)
+        text = re.sub(cls.RE_TABLE, replace_table, text)
 
         text = re.sub(
             cls.RE_NOTE, '<div class="panel panel-primary"><div class="panel-heading">На заметку</div>'

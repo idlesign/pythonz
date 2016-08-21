@@ -1,18 +1,22 @@
+/*globals $ xross sitecats SimpleMDE ymaps */
+
 //xross.debug = true;
 
-pythonz = {
+var pythonz = {
 
     bootstrap: function() {
+        "use strict";
         xross.automate();
         $(function(){
             pythonz.mark_user();
             sitecats.bootstrap();
             sitecats.make_cloud('tags_box');
-            $('.mod__has_tooltip').tooltip()
+            $('.mod__has_tooltip').tooltip();
         });
     },
 
     mark_user: function() {
+        "use strict";
         $('.py_user').each(function(i, el) {
             var html = el.innerHTML.replace(/\[u:(\d+):\s*([^\]]+)\s*\]/g, '<a href="http://pythonz.net/users/$1" title="Профиль на pythonz">$2</a>');
             $(el).html(html);
@@ -20,6 +24,7 @@ pythonz = {
     },
 
     activate_comments_tab: function(timeout) {
+        "use strict";
         setTimeout(function(){
             var maxCount = 0,
                 ids = ['comments_vk', 'comments_fb', 'comments_disqus', 'comments_internal'];
@@ -37,9 +42,10 @@ pythonz = {
     },
 
     init_editor: function(textarea_el) {
+        "use strict";
 
         if (!textarea_el) {
-            return
+            return;
         }
 
         // _replaceSelection() взята из исходников SimpleMDE.
@@ -47,8 +53,7 @@ pythonz = {
         // После минификации она обфусцируется и далее недоступна.
 
         function _replaceSelection(cm, active, startEnd, url) {
-            if(/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
-                return;
+            if(/editor-preview-active/.test(cm.getWrapperElement().lastChild.className)) {return;}
 
             var text;
             var start = startEnd[0];
@@ -89,10 +94,10 @@ pythonz = {
         function getButton(name, icon, title) {
             return {
                 name: name,
-                action: function (editor) {simpleAction(editor, name)},
+                action: function (editor) {simpleAction(editor, name);},
                 className: 'fa fa-' + icon,
                 title: title
-            }
+            };
         }
 
         return new SimpleMDE({
@@ -106,6 +111,7 @@ pythonz = {
                 getButton('accent', 'flag', 'Акцент'),
                 getButton('quote', 'quote-left', 'Цитата'),
                 getButton('list_ul', 'list-ul', 'Маркированный список'),
+                getButton('table', 'table', 'Таблица'),
                 '|',
                 'image',
                 'link',
@@ -127,6 +133,7 @@ pythonz = {
                 podster: ['.. podster:: ', ''],
                 link: ['`', '<>`_'],
                 accent: ['``', '``'],
+                table: ['\n.. table::\n ', '|\n\n\n'],
                 code: ['\n.. code::\n', '\n\n\n'],
                 quote: ['\n```\n', '\n```'],
                 list_ul: ['\n* ', '\n\n']
@@ -152,6 +159,7 @@ pythonz = {
         RULE_EMDASH: [/\s+-\s+/g, ' &#8212; '],
 
         decorate_description: function(area_id) {
+            "use strict";
             this.decorate_area(area_id,
                 [
                     this.RULE_PYVERSION_REMOVED,
@@ -160,10 +168,11 @@ pythonz = {
                     this.RULE_EXCEPTIONS,
                     this.RULE_EMDASH
                 ]
-            )
+            );
         },
 
         decorate_func_result: function(area_id) {
+            "use strict";
             this.decorate_area(area_id,
                 [
                     this.RULE_PYVERSION_REMOVED,
@@ -175,6 +184,7 @@ pythonz = {
         },
 
         decorate_func_params: function(area_id) {
+            "use strict";
             var func_process_args = function (match_str, arg_name, separator) {
                     arg_name = arg_name.replace(/([^=]+)(=.+)/g, '$1<span class="text-muted">$2</span>');
                     return '<small><span class="glyphicon glyphicon-certificate"></span></small> <b>' + arg_name + '</b>' + separator;
@@ -192,10 +202,11 @@ pythonz = {
                     this.RULE_EXCEPTIONS,
                     this.RULE_EMDASH
                 ]
-            )
+            );
         },
 
         decorate_area: function(area_id, rules) {
+            "use strict";
             var $area = $('#' + area_id),
                 html = $area.html();
 
@@ -212,7 +223,7 @@ pythonz = {
     },
 
     Map: function (map_el_id, objects) {
-
+        "use strict";
         var self = this,
             _map_el = $('#'+map_el_id),
             _map_objs = objects;
@@ -226,7 +237,7 @@ pythonz = {
                 mark_idx = 0;
 
             if (objects===undefined) {
-                objects = _map_objs
+                objects = _map_objs;
             }
 
             $.each(objects, function(id, props) {
@@ -276,7 +287,7 @@ pythonz = {
 
                 var map = new ymaps.Map(_map_el.attr('id'), map_state);
                 map.geoObjects.add(clusterer);
-            })
+            });
         };
 
         self.init_map();
