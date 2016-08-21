@@ -23,9 +23,9 @@
         ymaps.ready(function() {
             var pos = [{{ item.geo_pos }}],
                 title = '{{ item.title }}',
-                cover_map = new ymaps.Map('cover_map', {center: pos, zoom: 2, controls: []}),
-                place_mark = new ymaps.Placemark(pos, {iconContent: title}, {preset: 'islands#darkBlueStretchyIcon'});
-            cover_map.geoObjects.add(place_mark);
+                coverMap = new ymaps.Map('cover_map', {center: pos, zoom: 2, controls: []}),
+                placeMark = new ymaps.Placemark(pos, {iconContent: title}, {preset: 'islands#darkBlueStretchyIcon'});
+            coverMap.geoObjects.add(placeMark);
         });
     </script>
 {% endblock %}
