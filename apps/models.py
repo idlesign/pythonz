@@ -63,7 +63,7 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
     class Fields:
         text = 'Обсуждение'
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Обсуждение %s для %s %s' % (self.id, self.content_type, self.object_id)
 
     def save(self, *args, **kwargs):
@@ -161,8 +161,8 @@ class PartnerLink(models.Model):
         verbose_name = 'Партнёрская ссылка'
         verbose_name_plural = 'Партнёрские ссылки'
 
-    def __unicode__(self):
-        return 'Партнёрская ссылка %s для %s %s' % (self.id, self.content_type, self.object_id)
+    def __str__(self):
+        return 'Ссылка %s для %s %s' % (self.id, self.content_type, self.object_id)
 
 
 class ModelWithPartnerLinks(models.Model):
@@ -237,7 +237,7 @@ class Place(RealmBaseModel, ModelWithDiscussions):
             place = cls.objects.get(geo_title=full_title)
         return place
 
-    def __unicode__(self):
+    def __str__(self):
         return self.geo_title
 
 
@@ -728,7 +728,7 @@ class ReferenceMissing(models.Model):
         verbose_name = 'Промах справочника'
         verbose_name_plural = 'Промахи справочника'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.term
 
     @classmethod
