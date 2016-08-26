@@ -69,8 +69,13 @@ def test_text_compiler():
 
     assert (
         compile('.. table::\n1|2|3\n4|5|6\n\n\n') ==
-        '<div class="table-responsive"><table class="table table-striped table-hover">'
+        '<div class="table-responsive"><table class="table table-striped table-bordered table-hover">'
         '<tr><td>1</td><td>2</td><td>3</td></tr><tr><td>4</td><td>5</td><td>6</td></tr></table></div><br>')
+
+    assert (
+        compile('.. table::\n! 1|2|3\n4|5|6\n\n\n') ==
+        '<div class="table-responsive"><table class="table table-striped table-bordered table-hover">'
+        '<thead><tr><th>1</th><th>2</th><th>3</th></tr></thead><tr><td>4</td><td>5</td><td>6</td></tr></table></div><br>')
 
     assert (
         compile('.. note:: a note\n') ==

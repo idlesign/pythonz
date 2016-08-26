@@ -165,11 +165,17 @@ class TextCompiler:
             rows = []
 
             for line in body.splitlines():
-                rows.append('<tr><td>%s</td></tr>' % '</td><td>'.join(line.split('|')))
+                if line.startswith('!'):
+                    # Заголовок таблицы.
+                    rows.append(
+                        '<thead><tr><th>%s</th></tr></thead>' %
+                        '</th><th>'.join(line.lstrip(' !').split('|')))
+                else:
+                    rows.append('<tr><td>%s</td></tr>' % '</td><td>'.join(line.split('|')))
 
             return (
-                '<div class="table-responsive"><table class="table table-striped table-hover">%s</table></div>\n' %
-                ''.join(rows))
+                '<div class="table-responsive">'
+                '<table class="table table-striped table-bordered table-hover">%s</table></div>\n' % ''.join(rows))
 
         # Заменяем некоторые символы для правила RE_URL_WITH_TITLE, чтобы их не устранил bleach.
         text = text.replace('<ht', '[ht')
