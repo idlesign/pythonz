@@ -86,10 +86,10 @@ class ArticleForm(RealmEditBaseForm):
             'text_src': RstEditWidget(attrs={'rows': 25}),
         }
 
-    def make_fields_optional(self, fields):
+    def set_fields_required(self, fields, required=True):
 
         for field in fields:
-            self.fields[field].required = False
+            self.fields[field].required = required
 
     def full_clean(self):
 
@@ -101,10 +101,11 @@ class ArticleForm(RealmEditBaseForm):
             else:
                 if location == Article.LOCATION_INTERNAL:
                     self.data['url'] = None
-                    self.make_fields_optional(['url'])
+                    self.set_fields_required(['url'], False)
 
                 elif location == Article.LOCATION_EXTERNAL:
-                    self.make_fields_optional(['url', 'title', 'description', 'text_src'])
+                    self.set_fields_required(['url'])
+                    self.set_fields_required(['title', 'description', 'text_src'], False)
 
         return super().full_clean()
 

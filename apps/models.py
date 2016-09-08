@@ -646,7 +646,7 @@ class Article(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Model
         help_text='Статью можно написать прямо на этом сайте, либо сформировать статью-ссылку на внешний ресурс.')
 
     url = models.URLField(
-        'URL статьи', null=True, blank=False, unique=True,
+        'URL статьи', null=True, blank=True, unique=True,
         help_text='Внешний URL, по которому доступна статья, которой вы желаете поделиться.')
 
     published_by_author = models.BooleanField('Я являюсь автором данной статьи', default=True)
@@ -675,6 +675,14 @@ class Article(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Model
         :return:
         """
         return self.source == self.SOURCE_HANDMADE
+
+    def save(self, *args, **kwargs):
+
+        # Для верного определения уникальности.
+        if not self.url:
+            self.url = None
+
+        super().save(*args, **kwargs)
 
     def update_data_from_url(self, url):
         """Обновляет данные статьи, собирая информация, доступную по указанному URL.
