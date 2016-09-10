@@ -59,6 +59,12 @@
                     <td><a href="{{ user.get_utm_url }}">{{ user.url }}</a></td>
                 </tr>
             {% endif %}
+            {% if user.twitter %}
+                <tr>
+                    <td>{% model_field_verbose_name from user.twitter %}:</td>
+                    <td><a href="https://twitter.com/{{ user.twitter }}">{{ user.twitter }}</a></td>
+                </tr>
+            {% endif %}
             </table>
         </small>
     </div>
@@ -83,7 +89,18 @@
 {%  endblock %}
 
 {% block details_share %}{% endblock %}
-{% block details_tags %}{% endblock %}
+
+{% block column_controls %}
+    {% with hide_hint=1 %}
+        {{ block.super }}
+    {% endwith %}
+
+    {% if user.twitter %}
+        <div>
+            {% include "sub_twitter_timeline.html" with username=user.twitter %}
+        </div>
+    {% endif %}
+{% endblock %}
 
 {% block cover %}
     <img src="{% gravatar_get_url user 180 %}" class="img-thumbnail" alt="{{ user.get_display_name }}">
