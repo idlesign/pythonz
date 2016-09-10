@@ -514,6 +514,10 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         'Эл. почта', null=True, blank=True,
         help_text='Адрес электронной почты для показа посетителям сайта.')
 
+    twitter = models.CharField(
+        'Twitter', max_length=100, blank=True, default='',
+        help_text='Имя в Twitter.')
+
     url = models.URLField('Страница в сети', null=True, blank=True)
 
     class Meta:
