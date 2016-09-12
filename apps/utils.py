@@ -141,7 +141,7 @@ class TextCompiler:
     RE_BOLD = re.compile('\*{2}([^*\n]+)\*{2}')  # todo 2 ** 10d
     RE_ITALIC = re.compile('\*([^*\n]+)\*')
     RE_URL = re.compile('(?<!["])(http[s]*[^\s\)]+)')
-    RE_URL_WITH_TITLE = re.compile('`([^\[]+)\n*\[([^\]]+)\]`_')
+    RE_URL_WITH_TITLE = re.compile('`([^\◀]+)\n*\◀([^\▶]+)\▶`_', re.U)
     RE_UL = re.compile('^\*\s+([^\n]+)\n', re.M)
 
     @classmethod
@@ -178,8 +178,8 @@ class TextCompiler:
                 '<table class="table table-striped table-bordered table-hover">%s</table></div>\n' % ''.join(rows))
 
         # Заменяем некоторые символы для правила RE_URL_WITH_TITLE, чтобы их не устранил bleach.
-        text = text.replace('<ht', '[ht')
-        text = text.replace('>`', ']`')
+        text = text.replace('<ht', '◀ht')
+        text = text.replace('>`', '▶`')
 
         text = clean(text)
 
