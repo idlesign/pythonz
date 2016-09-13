@@ -189,6 +189,6 @@ admin.site.register(ReferenceMissing, ReferenceMissingAdmin)
 
 class VersionAdmin(EntityBaseAdmin):
 
-    list_display = ('title', 'current')
+    list_display = ('title', 'current', 'status', 'slug')
 
 admin.site.register(Version, VersionAdmin)

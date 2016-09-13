@@ -706,10 +706,14 @@ class Article(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Model
 
 class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
 
-    current = models.BooleanField('Текущая', default=False, db_index=True)
+    current = models.BooleanField('Текущая', default=False)
+    date = models.DateField('Дата выпуска')
 
     class Fields:
-        title = 'Номер'
+        title = {
+            'verbose_name': 'Номер',
+            'help_text': 'Номер версии с тремя разрядами. Например: 2.7.12, 3.6.0',
+        }
         description = {
             'verbose_name': 'Введение',
             'help_text': 'Краткое описание основных изменений в версии.',
@@ -724,9 +728,10 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
     class Meta:
         verbose_name = 'Версия Python'
         verbose_name_plural = 'Версии Python'
-        ordering = ('title',)
+        ordering = ('-date',)
 
     notify_on_publish = False
+    autogenerate_slug = True
 
 
 class ReferenceMissing(models.Model):
