@@ -734,6 +734,12 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
     autogenerate_slug = True
     items_per_page = 50
 
+    @classmethod
+    def get_paginator_objects(cls):
+        qs = super().get_paginator_objects()
+        qs = qs.order_by('-date')
+        return qs
+
 
 class ReferenceMissing(models.Model):
     """Промахи при поиске в справочнике."""
