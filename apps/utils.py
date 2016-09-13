@@ -207,6 +207,7 @@ class TextCompiler:
 
         # Заменяем некоторые символы для правила RE_URL_WITH_TITLE, чтобы их не устранил bleach.
         text = text.replace('<ht', '◀ht')
+        text = text.replace('</', '◀/')
         text = text.replace('>`', '▶`')
 
         text = clean(text)
