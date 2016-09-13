@@ -536,7 +536,6 @@ class VersionRealm(RealmBase):
     icon = 'code-fork'
 
     ready_for_digest = False
-    sitemap_enabled = False
     syndication_enabled = False
 
     show_on_main = False
