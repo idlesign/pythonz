@@ -213,8 +213,12 @@ def index(request):
 
         realm_locals = realm.model.get_actual()[:count_locals]
 
-        main = realm_locals[0]
-        additional = list(realm_locals[1:]) + realm_externals
+        if realm_locals:
+            main = realm_locals[0]
+            additional = list(realm_locals[1:]) + realm_externals
+        else:
+            main = {}
+            additional = []
 
         realms_data.append({
             'cls': realm,
