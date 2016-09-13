@@ -712,7 +712,7 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
     class Fields:
         title = {
             'verbose_name': 'Номер',
-            'help_text': 'Номер версии с тремя разрядами. Например: 2.7.12, 3.6.0',
+            'help_text': 'Номер версии с двумя обязательными разрядами и третим опциональным. Например: 2.7.12, 3.6.',
         }
         description = {
             'verbose_name': 'Введение',
@@ -732,6 +732,7 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
 
     notify_on_publish = False
     autogenerate_slug = True
+    items_per_page = 50
 
 
 class ReferenceMissing(models.Model):
