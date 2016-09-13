@@ -77,7 +77,7 @@ class RealmBase:
     view_details = None
     view_details_base_class = DetailsView
     view_details_url = r'^(?P<obj_id>\d+)/$'
-    view_details_slug_url = r'^named/(?P<obj_id>[A-z\.-]+)/$'
+    view_details_slug_url = r'^named/(?P<obj_id>[0-9A-z\.-]+)/$'
 
     # Представление для добавления нового элемента.
     view_add = None
