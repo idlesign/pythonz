@@ -164,14 +164,42 @@ class TextCompiler:
             body = match.group(2)
             rows = []
 
+            bg_map = {
+                'i': 'info',
+                's': 'success',
+                'w': 'warning',
+                'd': 'danger',
+            }
+
             for line in body.splitlines():
-                if line.startswith('!'):
+                if line.startswith('! '):
                     # Заголовок таблицы.
                     rows.append(
                         '<thead><tr><th>%s</th></tr></thead>' %
                         '</th><th>'.join(line.lstrip(' !').split('|')))
                 else:
-                    rows.append('<tr><td>%s</td></tr>' % '</td><td>'.join(line.split('|')))
+                    attrs_row = ''
+                    cells = []
+                    for value in map(str.strip, line.split('|')):
+
+                        attrs_cell = ''
+                        # Подсветка. Например, !b:d+ для всего ряда или !b:d ячейки.
+                        if value.startswith('!b:'):
+                            bg_letter, row_sign = value[3:5]
+                            value = value[5:].strip()
+
+                            bg_class = bg_map.get(bg_letter, '')
+                            if bg_class:
+                                attr = ' class="%s"' % bg_class
+
+                                if row_sign == '+':
+                                    attrs_row = attr
+                                else:
+                                    attrs_cell = attr
+
+                        cells.append('<td%s>%s</td>' % (attrs_cell, value))
+
+                    rows.append('<tr%s>%s</tr>' % (attrs_row, ''.join(cells)))
 
             return (
                 '<div class="table-responsive">'

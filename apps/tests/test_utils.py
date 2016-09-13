@@ -78,6 +78,12 @@ def test_text_compiler():
         '<thead><tr><th>1</th><th>2</th><th>3</th></tr></thead><tr><td>4</td><td>5</td><td>6</td></tr></table></div><br>')
 
     assert (
+        compile('.. table::\n!b:d+ 1|2|3\n4|!b:i 5|6\n\n\n') ==
+        '<div class="table-responsive"><table class="table table-striped table-bordered table-hover">'
+        '<tr class="danger"><td>1</td><td>2</td><td>3</td></tr>'
+        '<tr><td>4</td><td class="info">5</td><td>6</td></tr></table></div><br>')
+
+    assert (
         compile('.. note:: a note\n') ==
         '<div class="panel panel-primary"><div class="panel-heading">На заметку</div><div class="panel-body">a note</div></div>')
 
