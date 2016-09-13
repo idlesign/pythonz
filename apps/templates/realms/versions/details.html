@@ -17,7 +17,7 @@
 
 {% block details_contents_add %}
 
-    <div class="marg__b_mid">{{ version.text }}</div>
+    <div class="marg__b_mid">{{ version.text|safe }}</div>
 
     {% if added %}
         <div class="marg__b_mid">
