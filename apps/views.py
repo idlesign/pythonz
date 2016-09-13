@@ -181,6 +181,15 @@ class CategoryListingView(RealmView):
         return self.render(request, {self.realm.name: category, 'item': category, 'realm_list': realm_list})
 
 
+class VersionDetailsView(DetailsView):
+    """Представление с детальной информацией о версии Питона."""
+
+    def update_context(self, context, request):
+        version = context['item']
+        context['added'] = version.reference_added.all()
+        context['deprecated'] = version.reference_deprecated.all()
+
+
 # Наши страницы ошибок.
 permission_denied = lambda request, exception: dj_permission_denied(request, exception, template_name='static/403.html')
 page_not_found = lambda request, exception: dj_page_not_found(request, exception, template_name='static/404.html')

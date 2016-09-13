@@ -1,0 +1,17 @@
+<table class="table table-responsive table-bordered table-striped table-hover">
+<thead>
+    <tr><th>Версия</th><th>Дата выпуска</th></tr>
+</thead>
+<tbody>
+{% for version in items %}
+    <tr {% if version.current %}class="success"{% endif %}>
+        <td>
+            <a href="{{ version.get_absolute_url }}">Python {{ version.title }}</a>
+        </td>
+        <td>
+            {{ version.date }}
+        </td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>

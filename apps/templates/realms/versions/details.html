@@ -1,0 +1,44 @@
+{% extends "base_details.html" %}
+
+
+{% block page_keywords %}{{ block.super }}, версия {{ version.title }}, что нового в {{ version.title }}{% endblock %}
+
+
+{% block head %}
+    {{ block.super }}
+    {% include "sub_vk_head.html" %}
+{% endblock %}
+
+
+{% block details_contents %}
+    <div class="pull-right label label-info">Дата выпуска: {{ version.date }}</div>
+{% endblock %}
+
+
+{% block details_contents_add %}
+
+    <div class="marg__b_mid">{{ version.text }}</div>
+
+    {% if added %}
+        <div class="marg__b_mid">
+            <h6>Добавлены</h6>
+            <ul>
+                {% for one in added %}
+                    <li><a href="{{ one.get_absolute_url }}">{{ one.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {% if deprecated %}
+        <div class="marg__b_mid">
+            <h6>Устарели</h6>
+            <ul>
+                {% for one in deprecated %}
+                    <li><a href="{{ one.get_absolute_url }}">{{ one.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+{% endblock %}

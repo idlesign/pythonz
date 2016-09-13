@@ -10,13 +10,13 @@ from sitetree.utils import tree, item
 from sitecats.toolbox import get_tie_model, get_category_model
 
 from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm, \
-    ReferenceForm
+    ReferenceForm, VersionForm
 from .generics.realms import RealmBase, SYNDICATION_URL_MARKER, SYNDICATION_ITEMS_LIMIT
 from .generics.models import RealmBaseModel
-from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy
+from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy, Version
 from .signals import sig_support_changed
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
-    ReferenceListingView, ReferenceDetailsView, VacancyListingView
+    ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView
 from .zen import register_zen_siteblock
 
 
@@ -515,6 +515,34 @@ class CommunityRealm(RealmBase):
     show_on_main = False
 
 
+class VersionRealm(RealmBase):
+    """
+    Область с версиями.
+    """
+
+    txt_form_add = 'Добавить версию'
+    txt_form_edit = 'Редактировать версию'
+
+    view_listing_description = 'Вышедшие и будущие выпуски Python.'
+    view_listing_keywords = 'версии python, выпуски Питона'
+
+    allowed_views = ('listing', 'details', 'add', 'edit')
+    view_details_base_class = VersionDetailsView
+
+    name = 'version'
+    name_plural = 'versions'
+    model = Version
+    form = VersionForm
+    icon = 'code-fork'
+
+    ready_for_digest = False
+    sitemap_enabled = False
+    syndication_enabled = False
+
+    show_on_main = False
+    show_on_top = False
+
+
 register_realms(
     CategoryRealm,
     BookRealm,
@@ -526,5 +554,6 @@ register_realms(
     UserRealm,
     PlaceRealm,
     DiscussionRealm,
-    CommunityRealm
+    CommunityRealm,
+    VersionRealm,
 )

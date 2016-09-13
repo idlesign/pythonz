@@ -1,11 +1,21 @@
 from django.conf import settings
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from datetimewidget.widgets import DateTimeWidget
+from datetimewidget.widgets import DateTimeWidget, DateWidget
 
-from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference
+from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference, Version
 from ..generics.forms import RealmEditBaseForm
 from .widgets import RstEditWidget, ReadOnlyWidget, PlaceWidget
+
+
+CALENDAR_OPTIONS = {
+    'options': {
+        'todayHighlight': True,
+        'weekStart': 1
+    },
+    'usel10n': True,
+    'bootstrap_version': 3
+}
 
 
 class DiscussionForm(RealmEditBaseForm):
@@ -65,6 +75,24 @@ class DiscussionForm(RealmEditBaseForm):
                     args[0] = data
 
         super().__init__(*args, **kwargs)
+
+
+class VersionForm(RealmEditBaseForm):
+
+    class Meta:
+        model = Version
+        fields = (
+            'title',
+            'date',
+            'status',
+            'current',
+            'description',
+            'text_src',
+        )
+        widgets = {
+            'text_src': RstEditWidget(attrs={'rows': 25}),
+            'date': DateWidget(**CALENDAR_OPTIONS),
+        }
 
 
 class ArticleForm(RealmEditBaseForm):
@@ -187,12 +215,6 @@ class VideoForm(RealmEditBaseForm):
         return super().save(*args, **kwargs)
 
 
-CALENDAR_OPTIONS = {
-    'todayHighlight': True,
-    'weekStart': 1
-}
-
-
 class EventForm(RealmEditBaseForm):
 
     class Meta:
@@ -213,8 +235,8 @@ class EventForm(RealmEditBaseForm):
         )
         widgets = {
             'place': PlaceWidget(),
-            'time_start': DateTimeWidget(usel10n=True, options=CALENDAR_OPTIONS, bootstrap_version=3),
-            'time_finish': DateTimeWidget(usel10n=True, options=CALENDAR_OPTIONS, bootstrap_version=3),
+            'time_start': DateTimeWidget(**CALENDAR_OPTIONS),
+            'time_finish': DateTimeWidget(**CALENDAR_OPTIONS),
         }
 
 
