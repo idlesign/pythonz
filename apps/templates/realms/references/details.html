@@ -79,15 +79,19 @@
 
     <div class="marg__b_mid pull-right">
         {% if reference.pep %}
-            <div class="label label-primary">
+            <div class="label label-primary marg__r_min">
                 <a href="https://www.python.org/dev/peps/pep-{{ reference.pep|stringformat:"04d" }}/" title="Перейти к связанному предложению по улучшению">
                     {% model_field_verbose_name from reference.pep %}-{{ reference.pep }}</a></div>
         {% endif %}
         {% if reference.version_added %}
-        <div class="label label-info">{% model_field_verbose_name from reference.version_added %} {{ reference.version_added }}</div>
+        <div class="label label-info marg__r_min">
+            <a href="{{ reference.version_added.get_absolute_url }}">{% model_field_verbose_name from reference.version_added %} {{ reference.version_added }}</a>
+        </div>
         {% endif %}
         {% if reference.version_deprecated %}
-        <div class="label label-danger">{% model_field_verbose_name from reference.version_deprecated %} {{ reference.version_deprecated }}</div>
+        <div class="label label-danger">
+            <a href="{{ reference.version_deprecated.get_absolute_url }}">{% model_field_verbose_name from reference.version_deprecated %} {{ reference.version_deprecated }}</a>
+        </div>
         {% endif %}
     </div>
 
