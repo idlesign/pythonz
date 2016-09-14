@@ -91,7 +91,7 @@ class VersionForm(RealmEditBaseForm):
         )
         widgets = {
             'text_src': RstEditWidget(attrs={'rows': 25}),
-            'date': DateWidget(**CALENDAR_OPTIONS),
+            'date': DateWidget(usel10n=True, bootstrap_version=3),
         }
 
 
