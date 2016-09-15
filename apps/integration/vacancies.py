@@ -13,9 +13,9 @@ class HhVacancyManager:
         :param url:
         :return:
         """
-        response = get_json(url)
+        response = get_json(url, return_none_statuses=[404])
         if not response:
-            return
+            return response
 
         return response['archived']
 

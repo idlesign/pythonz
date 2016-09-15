@@ -29,22 +29,30 @@ def get_from_url(url):
     return requests.get(url, **r_kwargs)
 
 
-def get_json(url):
+def get_json(url, return_none_statuses=None):
     """Возвращает словарь, созданный из JSON документа, полученного
     с указанного URL.
 
     :param str url:
-    :return:
+    :param list return_none_statuses: Коды статусов, для которых требуется вернуть None.
+    :rtype dict|None: Note в случае возникновения ошибок из перечня return_none_statuses.
     """
-
+    return_none_statuses = return_none_statuses or []
     result = {}
+
     try:
         response = get_from_url(url)
         response.raise_for_status()
 
     except requests.exceptions.RequestException as e:
 
-        if getattr(e.response, 'status_code', 0) != 503:  # Temporary Unavailable. В следующий раз получится.
+        status = getattr(e.response, 'status_code', 0)
+
+        if status in return_none_statuses:
+            return None
+
+        elif status != 503:
+            # Temporary Unavailable. В следующий раз получится.
             sig_integration_failed.send(None, description='URL %s. Error: %s' % (url, e))
 
     else:

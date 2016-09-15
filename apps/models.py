@@ -397,9 +397,14 @@ class Vacancy(UtmReady, RealmBaseModel):
         for vacancy in cls.objects.published():
             manager = cls.MANAGERS.get(vacancy.src_alias)
             if manager:
-                archived = manager.get_status(vacancy.url_api)
-                if archived:
+                status = manager.get_status(vacancy.url_api)
+
+                if status:
                     vacancy.status = cls.STATUS_ARCHIVED
+                    vacancy.save()
+
+                elif status is None:
+                    vacancy.status = cls.STATUS_DELETED
                     vacancy.save()
 
     @classmethod
