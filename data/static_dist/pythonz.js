@@ -144,8 +144,14 @@ var pythonz = {
 
     Reference: {
 
-        RULE_PYVERSION_ADDED: [/\+py([\w\.]+)/g, '<small><div class="label label-info" title="Актуально с версии">$1</div></small>'],
-        RULE_PYVERSION_REMOVED: [/-py([\w\.]+)/g, '<small><div class="label label-danger" title="Устрело в версии">$1</div></small>'],
+        RULE_PYVERSION_ADDED: [
+            /\+py([\w\.]+)/g,
+            '<small><div class="label label-info" title="Актуально с версии"><a href="/versions/named/$1/">$1</a></div></small>'],
+
+        RULE_PYVERSION_REMOVED: [
+            /-py([\w\.]+)/g,
+            '<small><div class="label label-danger" title="Устрело в версии"><a href="/versions/named/$1/">$1</a></div></small>'],
+
         RULE_LITERAL: [/'([^']+)'/g, '<strong class="cl__green">$1</strong>'],
         RULE_UNDERMETHOD: [/(__[^\s]+__)/g, '<i>$1</i>'],
         RULE_BASE_TYPES: [
