@@ -52,6 +52,8 @@ VK_GROUP = 'group id prefixed with -'
 
 FB_ACCESS_TOKEN = 'not_a_secret'
 
+RAVEN_DSN = ''
+
 # Сюда помещаются реквизиты для пользования соответствующими службами доставки сообщений (cм. sitemessages.py).
 SITEMESSAGES_SETTINGS = {
     'twitter': [],
@@ -167,7 +169,13 @@ INSTALLED_APPS = (
     'datetimewidget',
     'simple_history',
     'robots',
+    'raven.contrib.django.raven_compat',
 )
+
+
+RAVEN_CONFIG = {
+    'dsn': RAVEN_DSN,
+}
 
 
 LOGGING = {
@@ -195,6 +203,10 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
+        'sentry': {
+            'level': 'WARNING',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -208,16 +220,30 @@ LOGGING = {
         },
     },
     'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
+        'root': {
+            'level': 'WARNING',
+            'handlers': ['sentry'],
+        },
+        'django.db.backends': {
             'level': 'ERROR',
-            'propagate': True,
+            'handlers': ['console'],
+            'propagate': False,
         },
         'pythonz': {
             'level': 'DEBUG',
             'filters': ['require_debug_true'],
             'handlers': ['console'],
             'propagate': True,
+        },
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'sentry.errors': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
         },
     }
 }

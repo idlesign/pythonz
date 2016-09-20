@@ -10,6 +10,7 @@ pytz==2016.6.1
 pyTelegramBotAPI==2.1.5
 pytest==3.0.1
 pytest-django==3.0.0
+raven==5.27.1
 requests==2.11.1
 twitter==1.17.1
 django-admirarchy==0.2.0
