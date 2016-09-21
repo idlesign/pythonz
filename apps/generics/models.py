@@ -216,8 +216,11 @@ class RealmBaseModel(ModelWithFlag):
         (STATUS_ARCHIVED, 'В архиве'),
     )
 
-    FLAG_STATUS_BOOKMARK = 1  # Фильтр флагов-закладок.
-    FLAG_STATUS_SUPPORT = 2  # Фильтр флагов-голосов-поддержки.
+    FLAG_STATUS_BOOKMARK = 1
+    """Идентификатор флагов-закладок."""
+
+    FLAG_STATUS_SUPPORT = 2
+    """Идентификатор флагов-голосов-поддержки."""
 
     objects = RealmsManager()
 
@@ -234,11 +237,23 @@ class RealmBaseModel(ModelWithFlag):
     class Meta:
         abstract = True
 
-    realm = None  # Во время исполнения здесь будет объект области (Realm).
-    items_per_page = 10  # Количество объектов для вывода на страницах списков.
-    edit_form = None  # Во время исполнения здесь будет форма редактирования.
-    notify_on_publish = True  # Следует ли оповещать внешние системы о публикации сущности.
+    realm = None
+    """Во время исполнения здесь будет объект области (Realm)."""
+
+    edit_form = None
+    """Во время исполнения здесь будет форма редактирования."""
+
+    items_per_page = 10
+    """Количество объектов для вывода на страницах списков."""
+
+    notify_on_publish = True
+    """Следует ли оповещать внешние системы о публикации сущности."""
+
     paginator_related = ['submitter']
+    """Поле, из которого следует тянуть данные одним запросом
+    при обращении к постраничному списку объектов.
+
+    """
 
     def mark_unmodified(self):
         """Используется для того, чтобы при следующем вызове save()
