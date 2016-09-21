@@ -851,6 +851,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     autogenerate_slug = True
     items_per_page = 1000
     details_related = None
+    notify_on_publish = False
 
     def generate_slug(self):
         # Дополняется нулями слева до четырёх знаков.
