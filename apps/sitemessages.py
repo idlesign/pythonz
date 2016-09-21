@@ -116,17 +116,6 @@ class PythonzEntyPublishedBaseMessage(PlainTextMessage):
     title = 'Новое на сайте'
     allow_user_subscription = False
 
-    @classmethod
-    def create(cls, entity):
-        """Создаёт оповещение о публикации сущности.
-
-        :param RealmBaseModel entity:
-        :return:
-        """
-        message = 'Новое: %s «%s» %s' % (
-            entity.get_verbose_name(), entity.title, entity.get_absolute_url(with_prefix=True, utm_source='tele'))
-        cls(message).schedule(cls.recipients('telegram', settings.TELEGRAM_GROUP))
-
 
 class PythonzFbEntityPublishedMessage(PythonzEntyPublishedBaseMessage):
     """Класс для сообщений о новых материалах на сайте, публикуемых на стене в Facebook."""
