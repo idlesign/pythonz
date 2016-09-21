@@ -181,13 +181,13 @@ def sync():
     map_statuses = {
         'Draft': PEP.STATUS_DRAFT,
         'Active': PEP.STATUS_ACTIVE,
-        'Withdrawn': PEP.STATUS_ACTIVE,
-        'Deferred': PEP.STATUS_ACTIVE,
-        'Rejected': PEP.STATUS_ACTIVE,
-        'Accepted': PEP.STATUS_ACTIVE,
-        'Final': PEP.STATUS_ACTIVE,
-        'Superseded': PEP.STATUS_ACTIVE,
-        'April Fool!': PEP.STATUS_ACTIVE,
+        'Withdrawn': PEP.STATUS_WITHDRAWN,
+        'Deferred': PEP.STATUS_DEFERRED,
+        'Rejected': PEP.STATUS_REJECTED,
+        'Accepted': PEP.STATUS_ACCEPTED,
+        'Final': PEP.STATUS_FINAL,
+        'Superseded': PEP.STATUS_SUPERSEDED,
+        'April Fool!': PEP.STATUS_FOOL,
 
     }
     map_types = {
@@ -196,8 +196,7 @@ def sync():
         'Informational': PEP.TYPE_INFO,
     }
 
-    peps = get_peps(
-        exclude_peps=PEP.objects.filter(status__in=PEP.STATUSES_DEADEND).values_list('slug', flat=True))
+    peps = get_peps()
 
     known_peps = {pep.num: pep for pep in PEP.objects.all()}
     known_versions = []
