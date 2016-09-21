@@ -178,8 +178,23 @@ def sync():
     """Синхронизирует данные БД сайта с данными PEP из репозитория."""
     from ..models import Version, PEP
 
-    map_statuses = PEP.MAP_STATUSES
-    map_types = PEP.MAP_TYPES
+    map_statuses = {
+        'Draft': PEP.STATUS_DRAFT,
+        'Active': PEP.STATUS_ACTIVE,
+        'Withdrawn': PEP.STATUS_ACTIVE,
+        'Deferred': PEP.STATUS_ACTIVE,
+        'Rejected': PEP.STATUS_ACTIVE,
+        'Accepted': PEP.STATUS_ACTIVE,
+        'Final': PEP.STATUS_ACTIVE,
+        'Superseded': PEP.STATUS_ACTIVE,
+        'April Fool!': PEP.STATUS_ACTIVE,
+
+    }
+    map_types = {
+        'Process': PEP.TYPE_PROCESS,
+        'Standards Track': PEP.TYPE_STANDARD,
+        'Informational': PEP.TYPE_INFO,
+    }
 
     peps = get_peps(
         exclude_peps=PEP.objects.filter(status__in=PEP.STATUSES_DEADEND).values_list('slug', flat=True))
@@ -206,8 +221,8 @@ def sync():
     for pep in peps:  # type: PepInfo
 
         num = pep.num
-        status_id = int(map_statuses[pep.status][0])
-        type_id = int(map_types[pep.type][0])
+        status_id = int(map_statuses[pep.status])
+        type_id = int(map_types[pep.type])
 
         if num in known_peps:
             pep_model = known_peps[num]
