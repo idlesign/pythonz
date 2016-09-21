@@ -1,0 +1,80 @@
+{% extends "base_details.html" %}
+{% load model_field %}
+
+
+{% block page_keywords %}{{ block.super }}, PEP {{ pep.title }}, преложение по улучшению {{ pep.title }}{% endblock %}
+
+
+{% block head %}
+    {{ block.super }}
+    {% include "sub_vk_head.html" %}
+{% endblock %}
+
+
+{% block details_contents %}
+    <div class="pull-right label label-info">Дата публикации: {{ pep.time_published|date }}</div>
+{% endblock %}
+
+
+{% block details_description %}
+    <h2 class="marg__b_mid" itemprop="description">PEP {{ pep.num }}: {{ item.description|urlize|linebreaksbr }}</h2>
+{% endblock %}
+
+
+{% block details_contents_add %}
+
+    <table class="table table-bordered table-responsive table-striped">
+        <tr>
+            <th width="20%">{% model_field_verbose_name from pep.type %}</th><td>{{ pep.display_type }}</td>
+        </tr>
+        <tr>
+            <th>{% model_field_verbose_name from pep.status %}</th><td class="{{ pep.bg_class }}">{{ pep.display_status }}</td>
+        </tr>
+
+        {% with pep.versions.all as versions %}
+            {% if versions %}
+            <tr>
+                <th>{% model_field_verbose_name from pep.versions %}</th>
+                <td>
+                    {% for version in versions %}
+                        <a href="{{ version.get_absolute_url }}">{{ version.title }}</a>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endif %}
+        {% endwith %}
+    </table>
+
+    {% with pep.superseded.all as superseded %}
+        {% if superseded %}
+            <div class="marg__b_mid">
+                <h6>Предложения, пришедшие на смену данному</h6>
+                {% include "realms/peps/list_items.html" with items=superseded %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% with pep.replaces.all as replaces %}
+        {% if replaces %}
+            <div class="marg__b_mid">
+                <h6>Предложения, которые были заменены данным</h6>
+                {% include "realms/peps/list_items.html" with items=replaces %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% with pep.requires.all as requires %}
+        {% if requires %}
+            <div class="marg__b_mid">
+                <h6>Данное предложение зависит от следующих</h6>
+                {% include "realms/peps/list_items.html" with items=requires %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="marg__t_max">
+            Полный текст улучшения на английском языке доступен по адресу
+            <a href="https://www.python.org/dev/peps/pep-{{ pep.slug }}">python.org/dev/peps/pep-{{ pep.slug }}</a>.
+    </div>
+
+{% endblock %}

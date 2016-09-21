@@ -178,6 +178,7 @@ class VersionDetailsView(DetailsView):
         version = context['item']
         context['added'] = version.reference_added.all()
         context['deprecated'] = version.reference_deprecated.all()
+        context['peps'] = version.peps.all()
 
 
 # Наши страницы ошибок.

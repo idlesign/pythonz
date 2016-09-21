@@ -41,4 +41,11 @@
         </div>
     {% endif %}
 
+    {% if peps %}
+        <div class="marg__b_mid">
+            <h6>Предложения по улучшению (PEP)</h6>
+            {% include "realms/peps/list_items.html" with items=peps %}
+        </div>
+    {% endif %}
+
 {% endblock %}

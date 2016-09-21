@@ -1,0 +1,78 @@
+{% extends "base_listing.html" %}
+
+
+{% block page_contents %}
+
+    <h6>Легенда</h6>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+                <th></th>
+                <th> Тип</th>
+                <th></th>
+                <th> Состояние</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><code>И</code></td>
+                <td>Информация</td>
+                <td><code>Ч</code></td>
+                <td>Черновик</td>
+            </tr>
+            <tr>
+                <td><code>П</code></td>
+                <td>Процесс</td>
+                <td class="info"><code>Р</code></td>
+                <td class="info">В разработке</td>
+            </tr>
+            <tr>
+                <td><code>С</code></td>
+                <td>Стандарт</td>
+                <td class="danger"><code>Х</code></td>
+                <td class="danger">Отозвано [автором]</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><code>Л</code></td>
+                <td>Отложено</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td class="danger"><code>О</code></td>
+                <td class="danger">Отклонёно</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td class="info"><code>У</code></td>
+                <td class="info">Утверждено (принято; возможно не реализовано)</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td class="success"><code>Ф</code></td>
+                <td class="success">Финализировано (работа завершена; реализовано)</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td class="warning"><code>З</code></td>
+                <td class="warning">Заменено (имеется большее актуальное PEP)</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><code>Д</code></td>
+                <td>Розыгрыш на 1 апреля</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h6>Список</h6>
+    {{ block.super }}
+{% endblock %}

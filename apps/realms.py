@@ -13,7 +13,7 @@ from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleF
     ReferenceForm, VersionForm
 from .generics.realms import RealmBase, SYNDICATION_URL_MARKER, SYNDICATION_ITEMS_LIMIT
 from .generics.models import RealmBaseModel
-from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy, Version
+from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy, Version, PEP
 from .signals import sig_support_changed
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
     ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView
@@ -542,6 +542,26 @@ class VersionRealm(RealmBase):
     show_on_top = False
 
 
+class PepRealm(RealmBase):
+    """
+    Область с предложениями по улучшению.
+    """
+
+    view_listing_description = 'Предложения по улучшению Питона (PEP).'
+    view_listing_keywords = 'python pep, преложения по улучшению, пепы, пеп'
+
+    allowed_views = ('listing', 'details')
+
+    name = 'pep'
+    name_plural = 'peps'
+    model = PEP
+
+    icon = 'bell'
+
+    show_on_main = False
+    show_on_top = False
+
+
 register_realms(
     CategoryRealm,
     BookRealm,
@@ -555,4 +575,5 @@ register_realms(
     DiscussionRealm,
     CommunityRealm,
     VersionRealm,
+    PepRealm
 )
