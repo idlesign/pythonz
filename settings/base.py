@@ -226,6 +226,7 @@ LOGGING = {
         'root': {
             'level': 'WARNING',
             'handlers': ['sentry'],
+            'filters': ['require_debug_false'],
         },
         'django.db.backends': {
             'level': 'ERROR',
