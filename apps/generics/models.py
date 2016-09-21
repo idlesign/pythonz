@@ -280,11 +280,11 @@ class RealmBaseModel(ModelWithFlag):
 
         :param args:
         :param kwargs: Среди прочего, поддерживаются:
-            just_published - флаг, указывающий на то, что сущность только что опубликована.
-                Позволяет разослать оповещенияо данном событии.
+            notify_published - флаг, указывающий на то, требуется ли отослать
+                оповещения о публикации сущности.
         """
         initial_pk = self.pk
-        just_published = kwargs.pop('just_published', False)
+        notify_published = kwargs.pop('notify_published', False)
 
         now = timezone.now()
 
@@ -293,7 +293,7 @@ class RealmBaseModel(ModelWithFlag):
             self._consider_modified = False
             if self.status == self.STATUS_PUBLISHED:
                 setattr(self, 'time_published', now)
-                just_published = True
+                notify_published = True
 
         if self._consider_modified:
             setattr(self, 'time_modified', now)
@@ -307,7 +307,7 @@ class RealmBaseModel(ModelWithFlag):
                 sig_entity_new.send(self.__class__, entity=self)
 
         with suppress(AttributeError):  # Пропускаем модели, в которых нет нужных атрибутов.
-            just_published and sig_entity_published.send(self.__class__, entity=self)
+            notify_published and sig_entity_published.send(self.__class__, entity=self)
 
     @classmethod
     def get_actual(cls):

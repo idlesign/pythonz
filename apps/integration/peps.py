@@ -241,7 +241,7 @@ def sync():
                 time_published=pep.created or '2000-01-01',
                 submitter_id=submitter_id,
             )
-            pep_model.save(just_published=True)
+            pep_model.save(notify_published=True)
             known_peps[num] = pep_model
 
         if pep.versions:
