@@ -40,6 +40,9 @@ EMAIL_USE_TLS = True
 PARTNER_IDS = {}
 
 
+ROBOT_USER_ID = 111
+"""Идентификатор пользователя-робота."""
+
 GOOGLE_API_KEY = 'not_a_secret'
 YANDEX_SEARCH_ID = 'not_a_secret'
 
