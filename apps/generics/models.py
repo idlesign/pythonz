@@ -278,7 +278,7 @@ class RealmBaseModel(ModelWithFlag):
                 Позволяет разослать оповещенияо данном событии.
         """
         initial_pk = self.pk
-        just_published = kwargs.get('just_published', False)
+        just_published = kwargs.pop('just_published', False)
 
         now = timezone.now()
 
