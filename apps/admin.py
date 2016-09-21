@@ -120,6 +120,15 @@ class EntityBaseAdmin(SimpleHistoryAdmin):
     list_filter = ['time_created', 'status']
     ordering = ['-time_created']
 
+    actions = ['publish',]
+
+    def publish(self, request, queryset):
+        for obj in queryset:
+            obj.status = obj.STATUS_PUBLISHED
+            obj.save()
+
+    publish.short_description = 'Опубликовать'
+
 
 class ArticleAdmin(EntityBaseAdmin):
 
