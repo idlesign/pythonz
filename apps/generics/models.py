@@ -1,5 +1,6 @@
 import os
 from uuid import uuid4
+from contextlib import suppress
 
 from slugify import Slugify, CYRILLIC
 from siteflags.models import ModelWithFlag
@@ -257,11 +258,12 @@ class RealmBaseModel(ModelWithFlag):
         и выставить время модификации соответствующим образом.
 
         :param args:
-        :param kwargs:
-        :return:
+        :param kwargs: Среди прочего, поддерживаются:
+            just_published - флаг, указывающий на то, что сущность только что опубликована.
+                Позволяет разослать оповещенияо данном событии.
         """
         initial_pk = self.pk
-        just_published = False
+        just_published = kwargs.get('just_published', False)
 
         now = timezone.now()
 
@@ -276,19 +278,15 @@ class RealmBaseModel(ModelWithFlag):
             setattr(self, 'time_modified', now)
         else:
             self._consider_modified = True
+
         super().save(*args, **kwargs)
 
-        try:
+        with suppress(AttributeError):  # Пропускаем модели, в которых нет нужных атрибутов.
             if not initial_pk and self.pk:
                 sig_entity_new.send(self.__class__, entity=self)
-        except AttributeError:
-            pass  # Пропускаем модели, в которых нет нужных атрибутов.
 
-        try:
-            if just_published:
-                sig_entity_published.send(self.__class__, entity=self)
-        except AttributeError:
-            pass  # Пропускаем модели, в которых нет нужных атрибутов.
+        with suppress(AttributeError):  # Пропускаем модели, в которых нет нужных атрибутов.
+            just_published and sig_entity_published.send(self.__class__, entity=self)
 
     @classmethod
     def get_actual(cls):
