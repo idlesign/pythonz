@@ -10,7 +10,7 @@ from simple_history.admin import SimpleHistoryAdmin
 from .integration.partners import get_partners_choices
 from .forms.forms import BookForm
 from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version, PartnerLink, \
-    Vacancy, ReferenceMissing
+    Vacancy, ReferenceMissing, PEP
 
 
 ##################################################################################
@@ -168,6 +168,16 @@ class VideoAdmin(EntityBaseAdmin):
     pass
 
 admin.site.register(Video, VideoAdmin)
+
+
+class PEPAdmin(EntityBaseAdmin):
+
+    list_display = ('num', 'title', 'type', 'status')
+    search_fields = ['title', 'description']
+    list_filter = ['status', 'type']
+    raw_id_fields = ('versions', 'superseded', 'replaces', 'requires', 'linked')
+
+admin.site.register(PEP, PEPAdmin)
 
 
 class ReferenceAdmin(HierarchicalModelAdmin, EntityBaseAdmin):

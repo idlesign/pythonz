@@ -1,7 +1,7 @@
 from datetime import timedelta
 from itertools import chain
-
 from collections import OrderedDict
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -19,6 +19,7 @@ from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWith
 from .utils import format_currency, truncate_chars, UTM
 from .integration.resources import PyDigestResource
 from .integration.vacancies import HhVacancyManager
+from .integration.peps import sync as sync_peps
 from .integration.utils import get_json, scrape_page
 
 
@@ -744,6 +745,120 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         qs = super().get_paginator_objects()
         qs = qs.order_by('-date')
         return qs
+
+    @classmethod
+    def create_stub(cls, version_number):
+        """Создаёт запись о версии, основываясь только на номере.
+        Использует для автоматического создания версий, например, из PEP.
+
+        :param str version_number:
+        :rtype: Version
+        """
+        stub = cls(
+            title=version_number,
+            description='Python версии %s' % version_number,
+            text_src='Описание версии ещё не сформировано.',
+            submitter_id=settings.ROBOT_USER_ID,
+            date=timezone.now().date()
+        )
+        stub.save()
+        return stub
+
+
+class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
+    """Предложения по улучшению Питона.
+
+    Заполняются автоматически из репозитория https://github.com/python/peps
+
+    """
+    TPL_URL_PYORG = 'https://www.python.org/dev/peps/pep-%04d/'
+
+    STATUS_DRAFT = 1
+    STATUS_ACTIVE = 2
+    STATUS_WITHDRAWN = 3
+    STATUS_DEFERRED = 4
+    STATUS_REJECTED = 5
+    STATUS_ACCEPTED = 6
+    STATUS_FINAL = 7
+    STATUS_SUPERSEDED = 8
+    STATUS_FOOL = 9
+
+    STATUSES = choices_list(
+        (STATUS_DRAFT, 'Черновик'),
+        (STATUS_ACTIVE, 'Действует'),
+        (STATUS_WITHDRAWN, 'Отозвано [автором]'),
+        (STATUS_DEFERRED, 'Отложено'),
+        (STATUS_REJECTED, 'Отклонено'),
+        (STATUS_ACCEPTED, 'Утверждено (принято; возможно не реализовано)'),
+        (STATUS_FINAL, 'Финализировано (работа завершена; реализовано)'),
+        (STATUS_SUPERSEDED, 'Заменено (имеется более актуальное PEP)'),
+        (STATUS_FOOL, 'Розыгрыш на 1 апреля'),
+    )
+
+    STATUSES_DEADEND = [STATUS_WITHDRAWN, STATUS_REJECTED, STATUS_SUPERSEDED, STATUS_ACTIVE]
+
+    MAP_STATUSES = {
+        # (ид, литера, идентификатор_стиля_для_подсветки_строки_таблицы)
+        'Draft': (STATUS_DRAFT, 'Ч', ''),
+        'Active': (STATUS_ACTIVE, 'Д', 'success'),
+        'Withdrawn': (STATUS_ACTIVE, 'Х', 'danger'),
+        'Deferred': (STATUS_ACTIVE, 'Л', ''),
+        'Rejected': (STATUS_ACTIVE, 'О', 'danger'),
+        'Accepted': (STATUS_ACTIVE, 'У', 'info'),
+        'Final': (STATUS_ACTIVE, 'Ф', 'success'),
+        'Superseded': (STATUS_ACTIVE, 'З', 'warning'),
+        'April Fool!': (STATUS_ACTIVE, 'А', ''),
+
+    }
+
+    TYPE_PROCESS = 1
+    TYPE_STANDARD = 2
+    TYPE_INFO = 3
+
+    TYPES = choices_list(
+        (TYPE_PROCESS, 'Процесс'),
+        (TYPE_STANDARD, 'Стандарт'),
+        (TYPE_INFO, 'Информация'),
+    )
+
+    MAP_TYPES = {
+        'Process': (TYPE_PROCESS, 'П'),
+        'Standards Track': (TYPE_STANDARD, 'С'),
+        'Informational': (TYPE_INFO, 'И'),
+    }
+
+    # title - перевод заголовка на русский
+    # description - английский заголовок
+    # slug - номер предложения дополненный нулями до 4х знаков
+    # time_published - дата создания PEP
+
+    title = models.CharField('Название', max_length=255)
+    num = models.PositiveIntegerField('Номер')
+    status = models.PositiveIntegerField('Статус', choices=get_choices(STATUSES), default=STATUS_DRAFT)
+    type = models.PositiveIntegerField('Тип', choices=get_choices(TYPES), default=TYPE_STANDARD)
+
+    versions = models.ManyToManyField(Version, verbose_name='Версии Питона', related_name='peps')
+    superseded = models.ManyToManyField('self', verbose_name='Заменено на')
+    replaces = models.ManyToManyField('self', verbose_name='Поглощает')
+    requires = models.ManyToManyField('self', verbose_name='Зависит от')
+
+    class Meta:
+        verbose_name = 'PEP'
+        verbose_name_plural = 'Список PEP'
+
+    def __str__(self):
+        return '%s' % self.num
+
+    autogenerate_slug = True
+
+    def generate_slug(self):
+        # Дополняется нулями слева до четырёх знаков.
+        return str(self.num).zfill(4)
+
+    @classmethod
+    def sync_from_repository(cls):
+        """Синхронизирует данные в локальной БД с данными репозитория PEP."""
+        sync_peps()
 
 
 class ReferenceMissing(models.Model):
