@@ -131,9 +131,6 @@ class RealmView(View):
         :return:
         """
 
-    get_object_related_fields = ['submitter', 'last_editor']
-    """Поля связей по внешним ключам, которые следует использовать."""
-
     def get_object_or_404(self, obj_id):
         """Реализует механизм обнаружения объекта нужного типа для области,
         к которой привязано это представление.
@@ -141,15 +138,18 @@ class RealmView(View):
         :param obj_id:
         :return:
         """
-        q = self.realm.model.objects
+        model = self.realm.model
 
-        if self.get_object_related_fields:
-            q = q.select_related(*self.get_object_related_fields)
+        q = model.objects
 
-        try:
-            return get_object_or_404(q, pk=obj_id)
-        except Http404:
+        related = getattr(model, 'details_related', None)
+        if related:
+            q = q.select_related(*related)
+
+        if 'named/' in self.request.path:
             return get_object_or_404(q, slug=obj_id)
+        else:
+            return get_object_or_404(q, pk=obj_id)
 
 
 class ListingView(RealmView):
