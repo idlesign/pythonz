@@ -196,7 +196,8 @@ def sync():
         'Informational': PEP.TYPE_INFO,
     }
 
-    peps = get_peps()
+    peps = get_peps(
+        exclude_peps=PEP.objects.filter(status__in=PEP.STATUSES_DEADEND).values_list('slug', flat=True))
 
     known_peps = {pep.num: pep for pep in PEP.objects.all()}
     known_versions = []

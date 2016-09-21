@@ -739,7 +739,6 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         verbose_name_plural = 'Версии Python'
         ordering = ('-date',)
 
-    notify_on_publish = False
     autogenerate_slug = True
     items_per_page = 50
 
@@ -851,7 +850,6 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     autogenerate_slug = True
     items_per_page = 1000
     details_related = None
-    notify_on_publish = False
 
     def generate_slug(self):
         # Дополняется нулями слева до четырёх знаков.
@@ -860,6 +858,10 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     @classmethod
     def get_paginator_objects(cls):
         return cls.objects.order_by('num')
+
+    def get_description(self):
+        # Русское наименование для показа в рассылке и подобном.
+        return self.title
 
     @classmethod
     def sync_from_repository(cls):
