@@ -32,8 +32,6 @@ from .signals import sig_search_failed
 class UserDetailsView(DetailsView):
     """Представление с детальной информацией о пользователе."""
 
-    get_object_related_fields = ['place']
-
     def check_view_permissions(self, request, item):
         super().check_view_permissions(request, item)
 
@@ -48,8 +46,6 @@ class UserDetailsView(DetailsView):
 
 class UserEditView(EditView):
     """Представление редактирования пользователя."""
-
-    get_object_related_fields = ['last_editor']
 
     def check_edit_permissions(self, request, item):
         # Пользователи не могут редактировать других пользователей.
@@ -73,8 +69,6 @@ class UserEditView(EditView):
 
 class PlaceDetailsView(DetailsView):
     """Представление с детальной информацией о месте."""
-
-    get_object_related_fields = ['last_editor']
 
     def set_im_here(self, request, xross=None):
         """Используется xross. Прописывает место и часовой пояс в профиль пользователя.
@@ -117,8 +111,6 @@ class PlaceListingView(RealmView):
 class VacancyListingView(ListingView):
     """Представление со списком вакансий."""
 
-    get_object_related_fields = ['place']
-
     def update_context(self, context, request):
         context['stats_salary'] = Vacancy.get_salary_stats()
         context['stats_places'] = Vacancy.get_places_stats()
@@ -137,8 +129,6 @@ class ReferenceListingView(RealmView):
 
 class ReferenceDetailsView(DetailsView):
     """Представление статьи справочника."""
-
-    get_object_related_fields = ['parent', 'submitter']
 
     def update_context(self, context, request):
         reference = context['item']

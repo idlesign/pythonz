@@ -178,6 +178,8 @@ class ModelWithPartnerLinks(models.Model):
 class Place(RealmBaseModel, ModelWithDiscussions):
     """Географическое место. Для людей, событий и пр."""
 
+    details_related = ['last_editor']
+
     TYPE_COUNTRY = 'country'
     TYPE_LOCALITY = 'locality'
     TYPE_HOUSE = 'house'
@@ -485,6 +487,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
 
     items_per_page = 100
+    details_related = ['place']
 
     objects = UserManager()
 
@@ -798,16 +801,16 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     STATUSES_DEADEND = [STATUS_WITHDRAWN, STATUS_REJECTED, STATUS_SUPERSEDED, STATUS_ACTIVE]
 
     MAP_STATUSES = {
-        # (ид, литера, идентификатор_стиля_для_подсветки_строки_таблицы)
-        'Draft': (STATUS_DRAFT, 'Ч', ''),
-        'Active': (STATUS_ACTIVE, 'Д', 'success'),
-        'Withdrawn': (STATUS_ACTIVE, 'Х', 'danger'),
-        'Deferred': (STATUS_ACTIVE, 'Л', ''),
-        'Rejected': (STATUS_ACTIVE, 'О', 'danger'),
-        'Accepted': (STATUS_ACTIVE, 'У', 'info'),
-        'Final': (STATUS_ACTIVE, 'Ф', 'success'),
-        'Superseded': (STATUS_ACTIVE, 'З', 'warning'),
-        'April Fool!': (STATUS_ACTIVE, 'А', ''),
+        # (литера, идентификатор_стиля_для_подсветки_строки_таблицы)
+        STATUS_DRAFT: ('Ч', ''),
+        STATUS_ACTIVE: ('Д', 'success'),
+        STATUS_WITHDRAWN: ('Х', 'danger'),
+        STATUS_DEFERRED: ('Л', ''),
+        STATUS_REJECTED: ('О', 'danger'),
+        STATUS_ACCEPTED: ('У', 'info'),
+        STATUS_FINAL: ('Ф', 'success'),
+        STATUS_SUPERSEDED: ('З', 'warning'),
+        STATUS_FOOL: ('А', ''),
 
     }
 
@@ -821,12 +824,6 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         (TYPE_INFO, 'Информация'),
     )
 
-    MAP_TYPES = {
-        'Process': (TYPE_PROCESS, 'П'),
-        'Standards Track': (TYPE_STANDARD, 'С'),
-        'Informational': (TYPE_INFO, 'И'),
-    }
-
     # title - перевод заголовка на русский
     # description - английский заголовок
     # slug - номер предложения дополненный нулями до 4х знаков
@@ -838,9 +835,11 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     type = models.PositiveIntegerField('Тип', choices=get_choices(TYPES), default=TYPE_STANDARD)
 
     versions = models.ManyToManyField(Version, verbose_name='Версии Питона', related_name='peps')
-    superseded = models.ManyToManyField('self', verbose_name='Заменено на')
-    replaces = models.ManyToManyField('self', verbose_name='Поглощает')
-    requires = models.ManyToManyField('self', verbose_name='Зависит от')
+    requires = models.ManyToManyField('self', verbose_name='Зависит от', symmetrical=False, related_name='used_by')
+
+    # Следующие два поля кажутся взаимообратными, но пока это не доказано.
+    superseded = models.ManyToManyField('self', verbose_name='Заменено на', symmetrical=False, related_name='supersedes')
+    replaces = models.ManyToManyField('self', verbose_name='Поглощает', symmetrical=False, related_name='replaced_by')
 
     class Meta:
         verbose_name = 'PEP'
@@ -850,15 +849,41 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         return '%s' % self.num
 
     autogenerate_slug = True
+    items_per_page = 1000
+    details_related = None
 
     def generate_slug(self):
         # Дополняется нулями слева до четырёх знаков.
         return str(self.num).zfill(4)
 
     @classmethod
+    def get_paginator_objects(cls):
+        return cls.objects.order_by('num')
+
+    @classmethod
     def sync_from_repository(cls):
         """Синхронизирует данные в локальной БД с данными репозитория PEP."""
         sync_peps()
+
+    @property
+    def bg_class(self):
+        return self.MAP_STATUSES[self.status][1]
+
+    @property
+    def display_status(self):
+        return self.STATUSES[self.status]
+
+    @property
+    def display_type(self):
+        return self.TYPES[self.type]
+
+    @property
+    def display_status_letter(self):
+        return self.MAP_STATUSES[self.status][0]
+
+    @property
+    def display_type_letter(self):
+        return self.TYPES[self.type][0]
 
 
 class ReferenceMissing(models.Model):
@@ -979,6 +1004,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
 
     autogenerate_slug = True
     allow_linked = False
+    details_related = ['parent', 'submitter']
 
     @property
     def is_type_callable(self):
