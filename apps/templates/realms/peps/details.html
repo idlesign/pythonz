@@ -12,12 +12,12 @@
 
 
 {% block details_contents %}
-    <div class="pull-right label label-info">Дата публикации: {{ pep.time_published|date }}</div>
+    <div class="pull-right label label-info">{{ pep.time_published|date }}</div>
 {% endblock %}
 
 
 {% block details_description %}
-    <h2 class="marg__b_mid" itemprop="description">PEP {{ pep.num }}: {{ item.description|urlize|linebreaksbr }}</h2>
+    <div class="marg__b_mid" itemprop="description"><strong>PEP {{ pep.num }}</strong>: {{ item.description|urlize|linebreaksbr }}</div>
 {% endblock %}
 
 
