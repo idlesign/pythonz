@@ -80,7 +80,7 @@
     <div class="marg__b_mid pull-right">
         {% if reference.pep %}
             <div class="label label-primary marg__r_min">
-                <a href="https://www.python.org/dev/peps/pep-{{ reference.pep|stringformat:"04d" }}/" title="Перейти к связанному предложению по улучшению">
+                <a href="/peps/named/{{ reference.pep|stringformat:"04d" }}/" title="Перейти к связанному предложению по улучшению">
                     {% model_field_verbose_name from reference.pep %}-{{ reference.pep }}</a></div>
         {% endif %}
         {% if reference.version_added %}
