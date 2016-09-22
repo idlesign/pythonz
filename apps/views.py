@@ -176,9 +176,9 @@ class VersionDetailsView(DetailsView):
 
     def update_context(self, context, request):
         version = context['item']
-        context['added'] = version.reference_added.all()
-        context['deprecated'] = version.reference_deprecated.all()
-        context['peps'] = version.peps.all()
+        context['added'] = version.reference_added.order_by('title')
+        context['deprecated'] = version.reference_deprecated.order_by('title')
+        context['peps'] = version.peps.order_by('num')
 
 
 # Наши страницы ошибок.
