@@ -190,15 +190,15 @@ class CommonEntityModel(models.Model):
         return self.title
 
 
-class RealmsManager(models.Manager):
-    """Менеджер объектов областей."""
+class RealmFilteredQuerySet(models.QuerySet):
+    """Реализует поддержку запросов с фильтрами для обсластей."""
 
     def published(self):
         """Возвращает только опубликованные сущности.
 
         :return:
         """
-        return super(RealmsManager, self).get_queryset().filter(status=RealmBaseModel.STATUS_PUBLISHED)
+        return self.filter(status=RealmBaseModel.STATUS_PUBLISHED)
 
 
 class RealmBaseModel(ModelWithFlag):
@@ -222,7 +222,7 @@ class RealmBaseModel(ModelWithFlag):
     FLAG_STATUS_SUPPORT = 2
     """Идентификатор флагов-голосов-поддержки."""
 
-    objects = RealmsManager()
+    objects = RealmFilteredQuerySet().as_manager()
 
     time_created = models.DateTimeField('Дата создания', auto_now_add=True, editable=False)
     time_published = models.DateTimeField('Дата публикации', null=True, editable=False)
