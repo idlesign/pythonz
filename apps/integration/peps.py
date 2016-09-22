@@ -88,7 +88,10 @@ def get_peps(exclude_peps=None, limit=None):
         version = pep.get('python-version', [])
 
         if version:
-            version = [match[0] for match in RE_VERSION.findall(version)]
+            version_ = []
+            for match in RE_VERSION.findall(version):
+                version_.append(match[0].replace(',', '.').replace('3000', '3.0'))
+            version = version_
 
         pep['python-version'] = version
         pep['created'] = normalize_date(pep['created'])
