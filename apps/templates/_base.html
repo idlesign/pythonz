@@ -120,13 +120,13 @@
     <nav class="footer navbar navbar-default navbar-inverse marg__t_max" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <div class="container">
             <div class="row">
-                <div class="col-md-4 col-xs-7">
+                <div class="col-md-3 hidden-xs">
                     {% sitetree_menu from "about" include "trunk" template "sitetree/menu_footer.html"  %}
                 </div>
-                <div class="col-md-5 hidden-xs">
+                <div class="col-md-6 col-xs-9">
                     {% sitetree_menu from "main" include "topmenu" template "sitetree/menu_footer.html" %}
                 </div>
-                <div class="col-md-3 text-right">
+                <div class="col-md-3 col-xs-3 text-right">
                     <address>
                         <a href="mailto:press@pythonz.net" title="Почта для контактов"><i class="fa fa-fw fa-2x fa-envelope-o"></i></a>
                         <a href="https://github.com/idlesign/pythonz/" title="На GitHub"><i class="fa fa-fw fa-2x fa-github"></i></a>
