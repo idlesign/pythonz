@@ -801,15 +801,15 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     MAP_STATUSES = {
         # (литера, идентификатор_стиля_для_подсветки_строки_таблицы)
-        STATUS_DRAFT: ('Ч', ''),
-        STATUS_ACTIVE: ('Д', 'success'),
-        STATUS_WITHDRAWN: ('Х', 'danger'),
-        STATUS_DEFERRED: ('Л', ''),
-        STATUS_REJECTED: ('О', 'danger'),
-        STATUS_ACCEPTED: ('У', 'info'),
-        STATUS_FINAL: ('Ф', 'success'),
-        STATUS_SUPERSEDED: ('З', 'warning'),
-        STATUS_FOOL: ('А', ''),
+        STATUS_DRAFT: ('Черн.', ''),
+        STATUS_ACTIVE: ('Действ.', 'success'),
+        STATUS_WITHDRAWN: ('Отозв.', 'danger'),
+        STATUS_DEFERRED: ('Отл.', ''),
+        STATUS_REJECTED: ('Откл.', 'danger'),
+        STATUS_ACCEPTED: ('Утв.', 'info'),
+        STATUS_FINAL: ('Фин.', 'success'),
+        STATUS_SUPERSEDED: ('Зам.', 'warning'),
+        STATUS_FOOL: ('Апр.', ''),
 
     }
 
