@@ -263,6 +263,10 @@ class RealmBaseModel(ModelWithFlag):
 
     """
 
+    def mark_published(self):
+        """Помечает материал опубликованным."""
+        self.status = self.STATUS_PUBLISHED
+
     def mark_unmodified(self):
         """Используется для того, чтобы при следующем вызове save()
         объекта он не считался изменённым.
@@ -293,7 +297,7 @@ class RealmBaseModel(ModelWithFlag):
         if self._status_backup != self.status:
             # Если сохраняем с переходом статуса, наивно полагаем объект немодифицированным.
             self._consider_modified = False
-            if self.status == self.STATUS_PUBLISHED:
+            if self.is_published:
                 setattr(self, 'time_published', now)
                 notify_published = True
 

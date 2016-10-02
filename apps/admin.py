@@ -124,7 +124,7 @@ class EntityBaseAdmin(SimpleHistoryAdmin):
 
     def publish(self, request, queryset):
         for obj in queryset:
-            obj.status = obj.STATUS_PUBLISHED
+            obj.mark_published()
             obj.save()
 
     publish.short_description = 'Опубликовать'

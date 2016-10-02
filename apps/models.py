@@ -69,7 +69,7 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.status = self.STATUS_PUBLISHED
+            self.mark_published()
         super().save(*args, **kwargs)
 
     def get_description(self):
@@ -126,7 +126,7 @@ class ExternalResource(UtmReady, RealmBaseModel):
             for entry_data in entries:
                 new_resource = cls(**entry_data)
                 new_resource.src_alias = resource_alias
-                new_resource.status = cls.STATUS_PUBLISHED
+                new_resource.mark_published()
 
                 try:
                     new_resource.save()
@@ -479,7 +479,7 @@ class Community(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Mod
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.status = self.STATUS_PUBLISHED
+            self.mark_published()
         super().save(*args, **kwargs)
 
 
@@ -866,6 +866,9 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         # Русское наименование для показа в рассылке и подобном.
         return self.title
 
+    def mark_published(self):
+        """Не использует общий механизм публикации."""
+
     @classmethod
     def sync_from_repository(cls):
         """Синхронизирует данные в локальной БД с данными репозитория PEP."""
@@ -1218,7 +1221,7 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.status = self.STATUS_PUBLISHED
+            self.mark_published()
         super().save(*args, **kwargs)
 
     def get_display_type(self):

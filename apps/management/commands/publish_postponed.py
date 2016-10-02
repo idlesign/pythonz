@@ -44,7 +44,7 @@ class Command(BaseCommand):
                     # Пока публикуем только первый из назначенных к публикации материалов.
                     # В последующем возможно логика будет усложнена.
                     item = items[0]
-                    item.status = status_published
+                    item.mark_published()
                     item.save()
 
         self.stdout.write('Postponed publishing finished.\n')
