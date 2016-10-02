@@ -208,10 +208,12 @@ class RealmBaseModel(ModelWithFlag):
     STATUS_PUBLISHED = 2
     STATUS_DELETED = 3
     STATUS_ARCHIVED = 4
+    STATUS_POSTPONED = 5
 
     STATUSES = (
         (STATUS_DRAFT, 'Черновик'),
         (STATUS_PUBLISHED, 'Опубликован'),
+        (STATUS_POSTPONED, 'К отложенной публикации'),
         (STATUS_DELETED, 'Удален'),
         (STATUS_ARCHIVED, 'В архиве'),
     )
