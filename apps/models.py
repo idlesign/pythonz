@@ -833,12 +833,15 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     status = models.PositiveIntegerField('Статус', choices=get_choices(STATUSES), default=STATUS_DRAFT)
     type = models.PositiveIntegerField('Тип', choices=get_choices(TYPES), default=TYPE_STANDARD)
 
-    versions = models.ManyToManyField(Version, verbose_name='Версии Питона', related_name='peps')
-    requires = models.ManyToManyField('self', verbose_name='Зависит от', symmetrical=False, related_name='used_by')
+    versions = models.ManyToManyField(Version, verbose_name='Версии Питона', related_name='peps', blank=True)
+    requires = models.ManyToManyField(
+        'self', verbose_name='Зависит от', symmetrical=False, related_name='used_by', blank=True)
 
     # Следующие два поля кажутся взаимообратными, но пока это не доказано.
-    superseded = models.ManyToManyField('self', verbose_name='Заменено на', symmetrical=False, related_name='supersedes')
-    replaces = models.ManyToManyField('self', verbose_name='Поглощает', symmetrical=False, related_name='replaced_by')
+    superseded = models.ManyToManyField(
+        'self', verbose_name='Заменено на', symmetrical=False, related_name='supersedes', blank=True)
+    replaces = models.ManyToManyField(
+        'self', verbose_name='Поглощает', symmetrical=False, related_name='replaced_by', blank=True)
 
     class Meta:
         verbose_name = 'PEP'
