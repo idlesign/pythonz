@@ -24,7 +24,7 @@ class Command(BaseCommand):
         # если данный автор не публиковался более суток.
         date_before = timezone.now() - timedelta(days=1)
 
-        for realm in get_realms():
+        for realm in get_realms().values():
             realm_model = realm.model
             postponed_by_submitter = defaultdict(list)
 
