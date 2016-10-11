@@ -21,8 +21,8 @@ class Command(BaseCommand):
         status_published = RealmBaseModel.STATUS_PUBLISHED
 
         # В каждой области будем публиковать отложенные материалы,
-        # если данный автор не публиковался более суток.
-        date_before = timezone.now() - timedelta(days=1)
+        # если данный автор не публиковался более узананного периода.
+        date_before = timezone.now() - timedelta(hours=22)
 
         for realm in get_realms().values():
             realm_model = realm.model
