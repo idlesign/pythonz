@@ -1,7 +1,6 @@
 from functools import lru_cache
 
 import telebot
-from telebot.apihelper import _convert_inline_results, _make_request
 from bleach import clean
 from django.conf import settings
 
@@ -14,27 +13,7 @@ from ..utils import get_logger
 LOGGER = get_logger('telebot')
 
 
-# Перекрыта до выпуска версии с https://github.com/eternnoir/pyTelegramBotAPI/pull/116
-def answer_inline_query_patched(token, inline_query_id, results, cache_time=None, is_personal=None, next_offset=None):
-    method_url = 'answerInlineQuery'
-    payload = {'inline_query_id': inline_query_id, 'results': _convert_inline_results(results)}
-    if cache_time:
-        payload['cache_time'] = cache_time
-    if is_personal:
-        payload['is_personal'] = is_personal
-    if next_offset:
-        payload['next_offset'] = next_offset
-    return _make_request(token, method_url, params=payload, method='post')
-
-
-# Перекрыт до выпуска версии с https://github.com/eternnoir/pyTelegramBotAPI/pull/116
-class TeleBotPatched(telebot.TeleBot):
-
-    def answer_inline_query(self, inline_query_id, results, cache_time=None, is_personal=None, next_offset=None):
-        return answer_inline_query_patched(self.token, inline_query_id, results, cache_time, is_personal, next_offset)
-
-
-bot = TeleBotPatched(settings.TELEGRAM_BOT_TOKEN, threaded=False)
+bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN, threaded=False)
 
 
 def get_webhook_url():
@@ -123,9 +102,9 @@ def get_inline_zen():
         zen_ru = clean(zen_ru, tags=[], strip=True)
         results.append(
             telebot.types.InlineQueryResultArticle(
-                id='zen%s' % idx,
-                title='%s. %s' % (idx, zen_ru),
-                message_text='%s. %s — %s' % (idx, zen_en, zen_ru),
+                'zen%s' % idx,
+                '%s. %s' % (idx, zen_ru),
+                telebot.types.InputTextMessageContent('%s. %s — %s' % (idx, zen_en, zen_ru)),
                 description=zen_en
             ))
 
@@ -150,9 +129,9 @@ def get_inline_reference(term, items_limit=25):
         description = truncate_chars(item.description, 30)
         results.append(
             telebot.types.InlineQueryResultArticle(
-                id=str(item.id),
-                title=title,
-                message_text='%s — %s' % (title, item.get_absolute_url(True, 'telesearch')),
+                str(item.id),
+                title,
+                telebot.types.InputTextMessageContent('%s — %s' % (title, item.get_absolute_url(True, 'telesearch'))),
                 description=description
             ))
     return results
@@ -166,9 +145,9 @@ def get_inline_no_query():
     """
     results = [
         telebot.types.InlineQueryResultArticle(
-            id='index',
-            title='pythonz.net',
-            message_text='http://pythonz.net',
+            'index',
+            'pythonz.net',
+            telebot.types.InputTextMessageContent('http://pythonz.net'),
             description='Про Python',
         )
     ]
