@@ -6,7 +6,7 @@
 {% block page_description %}Описание {{ reference.title }} в Python{% endblock %}
 
 
-{% block page_keywords %}{{ block.super }}, справка по {{ reference.title }}, описание {{ reference.title }}{% endblock %}
+{% block page_keywords %}{{ block.super }}, справка по {{ reference.title }}, описание {{ reference.title }}, {{ reference.search_terms }}{% endblock %}
 
 
 {% block js_bottom %}
@@ -137,6 +137,12 @@
     <div id="area_description">
         {{ reference.text|safe }}
     </div>
+
+    {% if reference.search_terms %}
+    <div class="marg__t_mid small cl__gray">
+        Синонимы поиска: {{ reference.search_terms }}
+    </div>
+    {% endif %}
 
 {% endblock %}
 
