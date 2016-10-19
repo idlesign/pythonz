@@ -201,6 +201,7 @@ admin.site.register(Reference, ReferenceAdmin)
 class ReferenceMissingAdmin(admin.ModelAdmin):
 
     list_display = ('term', 'synonyms', 'hits')
+    search_fields = ['term', 'synonyms']
     ordering = ['-hits', 'term']
 
 admin.site.register(ReferenceMissing, ReferenceMissingAdmin)
