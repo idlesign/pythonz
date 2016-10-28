@@ -1,6 +1,7 @@
 from datetime import timedelta
 from itertools import chain
 from collections import OrderedDict
+from django.core.exceptions import FieldError
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
@@ -546,11 +547,39 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         lat, lng = self.place.geo_pos.split(',')
         self.timezone = get_timezone_name(lat, lng)
 
+    def get_stats(self):
+        """Возвращает словарь со статистикой пользователя.
+        Индексирован названиями разделов сайта; значения — словарь со статистикой:
+            cnt_published - кол-во опубликованных материалов
+            cnt_postponed - кол-во материалов, назначенных к отложенной публикации
+
+        :rtype: dict
+        """
+        from .realms import get_realms
+
+        stats = OrderedDict()
+        for realm_model in (r.model for r in get_realms().values()):
+
+            try:
+                realm_name = realm_model.get_verbose_name_plural()
+                cnt_published = realm_model.objects.published().filter(submitter_id=self.id).count()
+                cnt_postponed = realm_model.objects.postponed().filter(submitter_id=self.id).count()
+                if cnt_published or cnt_postponed:
+                    stats[realm_name] = {
+                        'cnt_published': cnt_published,
+                        'cnt_postponed': cnt_postponed,
+                    }
+
+            except (FieldError, AttributeError):
+                pass
+
+        return stats
+
     def get_bookmarks(self):
-        """Возвращает словарь с избранными пользователем эелементами (закладками).
+        """Возвращает словарь с избранными пользователем элементами (закладками).
         Словарь индексирован классами моделей различных сущностей, в значениях - списки с самими сущностями.
 
-        :return:
+        :rtype: dict
         """
         from siteflags.utils import get_flag_model
         from .realms import get_realms

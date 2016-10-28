@@ -24,23 +24,22 @@
 
 
 {% block details_contents %}
-    <h4><i class="fa fa-fw fa-info-circle"></i> Информация</h4>
+    <h4><i class="fa fa-fw fa-user-circle-o"></i> Общая информация</h4>
     <div class="marg__b_mid text-muted marg__l_mid">
-        <small>
-            <table>
-                <tr>
-                    <td width="45%">{% model_field_verbose_name from user.username %}:</td>
-                    <td>{{ user.get_username_partial }}</td>
-                </tr>
-                <tr>
-                    <td>{% model_field_verbose_name from user.date_joined %}:</td>
-                    <td>{{ user.date_joined }}</td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        &nbsp;
-                    </td>
-                </tr>
+        <table class="small" width="40%">
+            <tr>
+                <td width="45%">{% model_field_verbose_name from user.username %}:</td>
+                <td>{{ user.get_username_partial }}</td>
+            </tr>
+            <tr>
+                <td>{% model_field_verbose_name from user.date_joined %}:</td>
+                <td>{{ user.date_joined }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    &nbsp;
+                </td>
+            </tr>
             {% if user.place %}
                 <tr>
                     <td>{% model_field_verbose_name from user.place %}:</td>
@@ -65,11 +64,37 @@
                     <td><a href="https://twitter.com/{{ user.twitter }}">{{ user.twitter }}</a></td>
                 </tr>
             {% endif %}
-            </table>
-        </small>
+        </table>
     </div>
+
+
+    {% if stats %}
     <div class="marg__t_max">
-        {% if bookmarks %}
+        <hr>
+        <h4><i class="fa fa-fw fa-share-alt"></i> Вклад в сообщество
+            <sup class="small mod__has_tooltip" title="Статистика по материалам, размещенным пользователем на нашем сайте"><i class="fa fa-info-circle"></i></sup>
+        </h4>
+        <div class="marg__b_mid text-muted marg__l_mid">
+            <table class="small" width="40%">
+                {% for realm_name, stats in stats.items %}
+                    <tr>
+                        <td width="45%">{{ realm_name }}</td>
+                        <td width="10%">{{ stats.cnt_published }}</td>
+                        <td>
+                            {% if stats.cnt_postponed %}
+                                <span class="mod__has_tooltip cl__green" title="Ожидают публикации">+{{ stats.cnt_postponed }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+
+    {% if bookmarks %}
+    <div class="marg__t_max">
         <hr>
         <h4><i class="fa fa-fw fa-bookmark-o"></i> Избранное</h4>
         {% for realm_model, bookmark_list in bookmarks.items %}
@@ -84,8 +109,9 @@
             </div>
             {% endif %}
         {% endfor %}
-        {% endif %}
     </div>
+    {% endif %}
+
 {%  endblock %}
 
 {% block details_share %}{% endblock %}

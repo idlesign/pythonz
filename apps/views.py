@@ -42,6 +42,7 @@ class UserDetailsView(DetailsView):
     def update_context(self, context, request):
         user = context['item']
         context['bookmarks'] = user.get_bookmarks()
+        context['stats'] = user.get_stats()
 
 
 class UserEditView(EditView):

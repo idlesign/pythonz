@@ -200,6 +200,13 @@ class RealmFilteredQuerySet(models.QuerySet):
         """
         return self.filter(status=RealmBaseModel.STATUS_PUBLISHED)
 
+    def postponed(self):
+        """Возвращает только сущности, назначенные к отложенной публикации.
+
+        :return:
+        """
+        return self.filter(status=RealmBaseModel.STATUS_POSTPONED)
+
 
 class RealmBaseModel(ModelWithFlag):
     """Базовый класс для моделей, использующихся в областях (realms) сайта."""
