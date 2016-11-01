@@ -2,3 +2,21 @@
 <script type="text/javascript">
     VK.Widgets.Comments('vk_comments', {limit: 20, attach: 'link'}, '{{ item.realm.name }}_{{ item.id }}');
 </script>
+
+<script type="application/ecmascript">
+    $(function() {
+        VK.Api.call(
+            'widgets.getComments',
+            {
+                widget_api_id: window.VK_APP_ID,
+                page_id: '{{ item.realm.name }}_{{ item.id }}',
+                v: '5.59'
+            },
+            function(result) {
+                if (result.response) {
+                    $('#comments_vk_cnt').html(result.response.count)
+                }
+            }
+        );
+    })
+</script>
