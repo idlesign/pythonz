@@ -6,11 +6,13 @@ bleach==1.5.0
 beautifulsoup4==4.5.1
 feedparser==5.2.1
 lxml==3.6.4
+pip==9.0.0
 pytz==2016.7
 pyTelegramBotAPI==2.2.3
 pytest==3.0.3
 pytest-django==3.0.0
 raven==5.27.1
+regex==2016.10.22
 requests==2.11.1
 twitter==1.17.1
 django-admirarchy==0.2.0
