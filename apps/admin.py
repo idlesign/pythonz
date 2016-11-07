@@ -145,6 +145,7 @@ class BookAdmin(EntityBaseAdmin):
 
     list_display = ('time_created', 'title', 'submitter', 'isbn')
     search_fields = ['title', 'isbn']
+    inlines = [PartnerLinkInline]
 
 admin.site.register(Book, BookAdmin)
 
