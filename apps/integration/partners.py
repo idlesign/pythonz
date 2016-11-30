@@ -137,15 +137,10 @@ class Ozon(PartnerBase):
         price = ''
 
         if page_soup:
-            match = page_soup.find(itemprop='price')
-            if not match:
-                matches = page_soup.select('#bOzonPrice .eOzonPrice_main')
+            matches = page_soup.findAll('span', attrs={'itemprop': 'price', 'class': 'hidden'})
 
-                if matches:
-                    match = matches[0]
-
-            if match:
-                price = match.text
+            if matches:
+                price = matches[0].text
 
         return price
 
