@@ -883,6 +883,17 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     items_per_page = 1000
     details_related = None
 
+    is_deleted = False
+    """Отключаем общую логику работы с удалёнными.
+    Здесь у понятия "отозван" своё значение.
+
+    """
+    is_draft = False
+    """Отключаем общую логику работы с черновиками.
+    Здесь у понятия "черновик" своё значение.
+
+    """
+
     def generate_slug(self):
         # Дополняется нулями слева до четырёх знаков.
         return str(self.num).zfill(4)
