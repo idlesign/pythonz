@@ -17,7 +17,10 @@
 
 
 {% block details_description %}
-    <div class="marg__b_mid" itemprop="description"><strong>PEP {{ pep.num }}</strong>: {{ item.description|urlize|linebreaksbr }}</div>
+    <div class="marg__b_mid" itemprop="description">
+        <strong>PEP {{ pep.num }}</strong>:
+        <a href="https://www.python.org/dev/peps/pep-{{ pep.slug }}" title="Полный текст улучшения на английском языке">{{ item.description }}</a>
+    </div>
 {% endblock %}
 
 
@@ -71,10 +74,5 @@
             </div>
         {% endif %}
     {% endwith %}
-
-    <div class="marg__t_max">
-            Полный текст улучшения на английском языке доступен по адресу
-            <a href="https://www.python.org/dev/peps/pep-{{ pep.slug }}">python.org/dev/peps/pep-{{ pep.slug }}</a>.
-    </div>
 
 {% endblock %}
