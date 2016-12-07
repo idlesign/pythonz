@@ -200,7 +200,7 @@ def query_text(inline_query):
             results = get_inline_zen()
 
         elif term.startswith('pep'):
-            results = get_inline_pep()
+            results = get_inline_pep(term.strip('pep').strip())
 
         else:
             results = get_inline_reference(term)
