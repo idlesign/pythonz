@@ -1,6 +1,7 @@
 from functools import lru_cache
 
 import telebot
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from bleach import clean
 from django.conf import settings
 
@@ -143,12 +144,22 @@ def get_inline_no_query():
 
     :rtype: list
     """
+    markup = InlineKeyboardMarkup(row_width=4)
+    markup.row(InlineKeyboardButton('Перейти с ботом в другой разговор', switch_inline_query=''))
+    markup.add(
+        InlineKeyboardButton('Книги', url='http://pythonz.net/books/'),
+        InlineKeyboardButton('Видео', url='http://pythonz.net/videos/'),
+        InlineKeyboardButton('Статьи', url='http://pythonz.net/articles/'),
+        InlineKeyboardButton('Работа', url='http://pythonz.net/vacancies/'),
+    )
+
     results = [
         telebot.types.InlineQueryResultArticle(
             'index',
             'pythonz.net',
             telebot.types.InputTextMessageContent('http://pythonz.net'),
             description='Про Python',
+            reply_markup=markup,
         )
     ]
     return results
