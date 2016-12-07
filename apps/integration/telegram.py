@@ -145,23 +145,21 @@ def get_inline_no_query():
     :rtype: list
     """
     markup = InlineKeyboardMarkup()
-    markup.row(InlineKeyboardButton('Перейти с ботом в другой разговор', switch_inline_query=''))
+    markup.row(InlineKeyboardButton('Взять бота в другой чат', switch_inline_query=''))
     markup.row(
         InlineKeyboardButton('Дзен', switch_inline_query_current_chat='zen '),
     )
     markup.row(
-        InlineKeyboardButton('Книги', url='http://pythonz.net/books/'),
-        InlineKeyboardButton('Видео', url='http://pythonz.net/videos/'),
-        InlineKeyboardButton('Статьи', url='http://pythonz.net/articles/'),
-        InlineKeyboardButton('Работа', url='http://pythonz.net/vacancies/'),
+        InlineKeyboardButton('На pythonz.net', url='http://pythonz.net/'),
     )
 
     results = [
         telebot.types.InlineQueryResultArticle(
             'index',
-            'pythonz.net',
-            telebot.types.InputTextMessageContent('http://pythonz.net'),
-            description='Про Python',
+            'Пульт управления роботом',
+            telebot.types.InputTextMessageContent(
+                'Нажимайте на кнопки, расположенные ниже, — получайте результат.'),
+            description='Нажмите сюда, чтобы вызвать пульт управления.',
             reply_markup=markup,
         )
     ]
