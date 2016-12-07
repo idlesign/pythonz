@@ -144,9 +144,12 @@ def get_inline_no_query():
 
     :rtype: list
     """
-    markup = InlineKeyboardMarkup(row_width=4)
+    markup = InlineKeyboardMarkup()
     markup.row(InlineKeyboardButton('Перейти с ботом в другой разговор', switch_inline_query=''))
-    markup.add(
+    markup.row(
+        InlineKeyboardButton('Дзен', switch_inline_query_current_chat='zen '),
+    )
+    markup.row(
         InlineKeyboardButton('Книги', url='http://pythonz.net/books/'),
         InlineKeyboardButton('Видео', url='http://pythonz.net/videos/'),
         InlineKeyboardButton('Статьи', url='http://pythonz.net/articles/'),
@@ -174,10 +177,13 @@ def query_text(inline_query):
     term = inline_query.query.strip()
 
     if term:
-        results = get_inline_reference(term)
+        if term.startswith('zen'):
+            results = get_inline_zen()
+        else:
+            results = get_inline_reference(term)
 
     else:
-        results = get_inline_zen()
+        results = get_inline_no_query()
 
     LOGGER.debug('Answering inline.')
     bot.answer_inline_query(inline_query.id, results)
