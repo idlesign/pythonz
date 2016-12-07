@@ -6,7 +6,7 @@ from bleach import clean
 from django.conf import settings
 
 from ..utils import truncate_chars
-from ..models import Reference
+from ..models import Reference, PEP
 from ..zen import ZEN
 from ..utils import get_logger
 
@@ -112,6 +112,30 @@ def get_inline_zen():
     return results
 
 
+def compose_entities_inline_result(entities):
+    """Возвращает список сущностей для вывода в качестве встрочных результатов поиска ботом.
+
+    :param entities:
+    :rtype: list
+    """
+    results = []
+
+    for entity in entities:
+        title = entity.title
+        # Усечение чтобы уложиться в 64 Кб на одно сообщение
+        # иначе, по словам техподдержки, получаем HTTP 414 Request-URI Too Large
+        description = truncate_chars(entity.description, 30)
+        results.append(
+            telebot.types.InlineQueryResultArticle(
+                str(entity.id),
+                title,
+                telebot.types.InputTextMessageContent(
+                    '%s — %s' % (title, entity.get_absolute_url(True, 'telesearch'))),
+                description=description
+            ))
+    return results
+
+
 @lru_cache(maxsize=64)
 def get_inline_reference(term, items_limit=25):
     """Возвращает статьи справочника.
@@ -120,22 +144,18 @@ def get_inline_reference(term, items_limit=25):
     :param int items_limit: Максимальное кол-во элементов для получения.
     :rtype: list
     """
-    results = []
-    found_items = Reference.find(term)[:items_limit]
+    return compose_entities_inline_result(Reference.find(term)[:items_limit])
 
-    for item in found_items:
-        title = item.title
-        # Усечение чтобы уложиться в 64 Кб на одно сообщение
-        # иначе, по словам техподдержки, получаем HTTP 414 Request-URI Too Large
-        description = truncate_chars(item.description, 30)
-        results.append(
-            telebot.types.InlineQueryResultArticle(
-                str(item.id),
-                title,
-                telebot.types.InputTextMessageContent('%s — %s' % (title, item.get_absolute_url(True, 'telesearch'))),
-                description=description
-            ))
-    return results
+
+@lru_cache(maxsize=20)
+def get_inline_pep(term, items_limit=10):
+    """Возвращает ссылки на PEP.
+
+    :param str term: Текст запроса
+    :param int items_limit: Максимальное кол-во элементов для получения.
+    :rtype: list
+    """
+    return compose_entities_inline_result(PEP.find(term)[:items_limit])
 
 
 @lru_cache(maxsize=2)
@@ -145,9 +165,10 @@ def get_inline_no_query():
     :rtype: list
     """
     markup = InlineKeyboardMarkup()
-    markup.row(InlineKeyboardButton('Взять бота в другой чат', switch_inline_query=''))
+    markup.row(InlineKeyboardButton('Бота в другой чат', switch_inline_query=''))
     markup.row(
         InlineKeyboardButton('Дзен', switch_inline_query_current_chat='zen '),
+        InlineKeyboardButton('Поиск PEP', switch_inline_query_current_chat='pep '),
     )
     markup.row(
         InlineKeyboardButton('На pythonz.net', url='http://pythonz.net/'),
@@ -159,7 +180,7 @@ def get_inline_no_query():
             'Пульт управления роботом',
             telebot.types.InputTextMessageContent(
                 'Нажимайте на кнопки, расположенные ниже, — получайте результат.'),
-            description='Нажмите сюда, чтобы вызвать пульт управления.',
+            description='Нажмите сюда, чтобы вызвать пульт.',
             reply_markup=markup,
         )
     ]
@@ -177,6 +198,10 @@ def query_text(inline_query):
     if term:
         if term.startswith('zen'):
             results = get_inline_zen()
+
+        elif term.startswith('pep'):
+            results = get_inline_pep()
+
         else:
             results = get_inline_reference(term)
 

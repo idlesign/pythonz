@@ -934,6 +934,18 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     def display_type_letter(self):
         return self.TYPES[self.type][0]
 
+    @classmethod
+    def find(cls, search_term):
+        """Ищет указанный текст в справочнике. Возвращает QuerySet.
+
+        :param str search_term: Строка для поиска.
+        :rtype: QuerySet
+        """
+        return cls.get_actual().filter(
+            Q(slug__icontains=search_term) |
+            Q(title__icontains=search_term) |
+            Q(description__icontains=search_term))
+
 
 class ReferenceMissing(models.Model):
     """Промахи при поиске в справочнике."""
