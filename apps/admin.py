@@ -115,10 +115,11 @@ admin.site.register(Vacancy, VacancyAdmin)
 class EntityBaseAdmin(SimpleHistoryAdmin):
 
     list_display = ('time_created', 'title', 'submitter',)
-    raw_id_fields = ('submitter', 'last_editor', 'linked')
+    raw_id_fields = ['submitter', 'last_editor', 'linked']
     search_fields = ['title', 'description']
     list_filter = ['time_created', 'status']
     ordering = ['-time_created']
+    readonly_fields = ['time_published']
 
     actions = ['publish',]
 
@@ -185,7 +186,8 @@ class PEPAdmin(EntityBaseAdmin):
     list_display = ('num', 'title', 'type', 'status')
     search_fields = ['title', 'description']
     list_filter = ['status', 'type']
-    raw_id_fields = ('versions', 'superseded', 'replaces', 'requires', 'linked')
+    raw_id_fields = EntityBaseAdmin.raw_id_fields + ['versions', 'superseded', 'replaces', 'requires', 'linked']
+    readonly_fields = EntityBaseAdmin.readonly_fields + ['status', 'type', 'description']
 
 admin.site.register(PEP, PEPAdmin)
 
