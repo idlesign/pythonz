@@ -45,6 +45,7 @@
 
             </div>
         </div>
+
         <div id="bar__most_voted" class="col-md-4 hidden-xs container-fluid">
             {% block bar_right %}
             <div>
@@ -67,6 +68,12 @@
                 <div class="clearfix"></div>
             </div>
             {% endblock %}
+        </div>
+
+        <div class="marg__t_mid col-md-4 hidden-xs container-fluid">
+        {% block bar_right_after %}
+            {% include "sub_hint.html" %}
+        {% endblock %}
         </div>
     </div>
 

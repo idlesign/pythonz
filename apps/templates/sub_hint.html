@@ -1,0 +1,14 @@
+{% load siteblocks %}
+
+{% if not hide_hint %}
+    {% siteblock "hints" as hint %}
+{% endif %}
+
+{% if hint %}
+    <div class="panel panel-warning">
+        <div class="panel-heading">На заметку</div>
+        <div class="panel-body small">
+            {{ hint }}
+        </div>
+    </div>
+{% endif %}

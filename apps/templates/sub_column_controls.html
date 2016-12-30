@@ -1,4 +1,4 @@
-{% load thumbs siteblocks %}
+{% load thumbs %}
 
 {% block details_tags %}{% include "sub_box_tags.html" %}{% endblock %}
 
@@ -7,15 +7,5 @@
 {% include "sub_linked.html" %}
 
 {% block right_bar %}
-    {% if not hide_hint %}
-        {% siteblock "hints" as hint %}
-    {% endif %}
-    {% if hint %}
-    <div class="panel panel-warning">
-        <div class="panel-heading">На заметку</div>
-        <div class="panel-body small">
-            {{ hint }}
-        </div>
-    </div>
-    {% endif %}
+    {% include "sub_hint.html" %}
 {% endblock %}
