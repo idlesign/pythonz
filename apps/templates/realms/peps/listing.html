@@ -1,78 +1,75 @@
 {% extends "base_listing.html" %}
 
 
-{% block page_contents %}
+{% block bar_right %}
+    <div>
+        <h2>Легенда</h2><hr>
 
-    <h6>Легенда</h6>
-    <div class="table-responsive">
         <table class="table table-striped table-bordered table-hover">
             <thead>
-            <tr>
-                <th></th>
-                <th> Тип</th>
-                <th></th>
-                <th> Состояние</th>
-            </tr>
+                <tr><th colspan="2">Состояние</th></tr>
             </thead>
             <tbody>
             <tr>
-                <td><code>И</code></td>
-                <td>Информация</td>
                 <td><code>Черн.</code></td>
                 <td>Черновик</td>
             </tr>
             <tr>
-                <td><code>П</code></td>
-                <td>Процесс</td>
                 <td class="info"><code>Действ.</code></td>
                 <td class="info">Действует</td>
             </tr>
             <tr>
-                <td><code>С</code></td>
-                <td>Стандарт</td>
                 <td class="danger"><code>Отозв.</code></td>
                 <td class="danger">Отозвано [автором]</td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
                 <td><code>Отл.</code></td>
                 <td>Отложено</td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
                 <td class="danger"><code>Откл.</code></td>
                 <td class="danger">Отклонёно</td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
                 <td class="info"><code>Утв.</code></td>
                 <td class="info">Утверждено (принято; возможно не реализовано)</td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
                 <td class="success"><code>Фин.</code></td>
                 <td class="success">Финализировано (работа завершена; реализовано)</td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
                 <td class="warning"><code>Зам.</code></td>
                 <td class="warning">Заменено (имеется большее актуальное PEP)</td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
                 <td><code>Апр.</code></td>
                 <td>Розыгрыш на 1 апреля</td>
             </tr>
             </tbody>
         </table>
+
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr><th colspan="2">Тип</th></tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><code>И</code></td>
+                <td>Информация</td>
+            </tr>
+            <tr>
+                <td><code>П</code></td>
+                <td>Процесс</td>
+            </tr>
+            <tr>
+                <td><code>С</code></td>
+                <td>Стандарт</td>
+            </tr>
+            </tbody>
+        </table>
+
     </div>
 
-    <h6>Список</h6>
     {{ block.super }}
 {% endblock %}
