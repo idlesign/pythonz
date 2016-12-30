@@ -5,7 +5,7 @@ from ...sitemessages import PythonzEmailDigest
 
 class Command(BaseCommand):
 
-    help = 'Created dispatches for pythonz weekly digest.'
+    help = 'Creates dispatches for pythonz weekly digest.'
 
     def handle(self, *args, **options):
 
