@@ -1305,4 +1305,4 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
         now = timezone.now().date().isoformat()
         # Сначала грядущие в порядке приближения, потом прошедшие.
         return cls.objects.published().extra(
-            select={'in_future': "time_start > '%s'" % now}).order_by('-in_future', 'time_start').all()
+            select={'in_future': "time_start > '%s'" % now}).order_by('-in_future', '-time_start').all()
