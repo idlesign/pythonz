@@ -15,6 +15,6 @@ class Command(BaseCommand):
 
         LOG.info('Updating persons ...')
 
-        sync(skip_deadend_peps=False, limit=5)
+        sync(skip_deadend_peps=False)
 
         LOG.info('Updating persons done')
