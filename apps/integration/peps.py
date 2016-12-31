@@ -5,10 +5,13 @@ from os.path import splitext
 from datetime import datetime
 
 import requests
-
 from django.conf import settings
 from django.utils import timezone
 
+from ..utils import sync_many_to_many, get_logger
+
+
+LOG = get_logger(__name__)
 
 KEYS_REQUIRED = ['pep', 'title', 'status', 'type', 'author', 'created']
 KEYS_OPTIONAL = ['python-version', 'superseded-by', 'replaces', 'requires']
@@ -74,8 +77,9 @@ def get_peps(exclude_peps=None, limit=None):
 
     :param list exclude_peps: Номера PEP (с ведущиеми нулями), которые можно пропустить.
     :param int limit: Максимальное количесто PEP, которые следует обработать.
-    :rtype: list(PEPInfo)
+    :rtype: listPepInfo]
     """
+    LOG.debug('Getting PEPs ...')
 
     def make_list(pep, key):
         pep[key] = [int(chunk.strip()) for chunk in pep.get(key, '').split(',') if chunk.strip()] or []
@@ -101,6 +105,8 @@ def get_peps(exclude_peps=None, limit=None):
         make_list(pep, 'requires')
 
     def get_pep_info(download_url):
+        LOG.debug('Getting PEP info from %s ...', download_url)
+
         response = requests.get(download_url).text
 
         info_dict = {}
@@ -174,12 +180,20 @@ def get_peps(exclude_peps=None, limit=None):
             if pep_counter == limit:
                 break
 
+    LOG.debug('Getting PEPs done')
+
     return peps
 
 
-def sync():
-    """Синхронизирует данные БД сайта с данными PEP из репозитория."""
-    from ..models import Version, PEP
+def sync(skip_deadend_peps=True, limit=None):
+    """Синхронизирует данные БД сайта с данными PEP из репозитория.
+
+    :param bool skip_deadend_peps: Следует ли пропустить ПУПы, состояние которых уже не измениться.
+    :param int limit: Максимальное количесто PEP, которые следует обработать.
+    """
+    from ..models import Version, PEP, Person
+
+    LOG.debug('Syncing PEPs ...')
 
     map_statuses = {
         'Draft': PEP.STATUS_DRAFT,
@@ -199,33 +213,24 @@ def sync():
         'Informational': PEP.TYPE_INFO,
     }
 
-    peps = get_peps(
-        exclude_peps=PEP.objects.filter(status__in=PEP.STATUSES_DEADEND).values_list('slug', flat=True))
+    exclude_peps = None
+    if skip_deadend_peps:
+        exclude_peps = PEP.objects.filter(status__in=PEP.STATUSES_DEADEND).values_list('slug', flat=True)
+
+    peps = get_peps(exclude_peps=exclude_peps, limit=limit)
 
     known_peps = {pep.num: pep for pep in PEP.objects.all()}
     known_versions = []
 
     submitter_id = settings.ROBOT_USER_ID
 
-    def sync_many_to_many(attr, key, item_registry):
-        info_attr = getattr(pep, attr)
-
-        if not info_attr:
-            return
-
-        m2m_model_attr = getattr(pep_model, attr)
-
-        if {m2m_model_attr.values_list(key, flat=True)} != set(info_attr):
-            # Данные двух наборов (хранящегося в БД и полученнго) не совпадают.
-            # Синхронизируем данные в БД.
-            m2m_model_attr.clear()
-            m2m_model_attr.add(*(item_registry[item] for item in info_attr))
-
     for pep in peps:  # type: PepInfo
 
         num = pep.num
         status_id = int(map_statuses[pep.status])
         type_id = int(map_types[pep.type])
+
+        LOG.info('Working on PEP %s ...', num)
 
         if num in known_peps:
             pep_model = known_peps[num]
@@ -235,6 +240,8 @@ def sync():
                 pep_model.save()
 
         else:
+            LOG.debug('PEP %s is new. Creating ...', num)
+
             pep_model = PEP(
                 num=num,
                 title=pep.title,
@@ -254,16 +261,28 @@ def sync():
             for version in set(pep.versions).difference(known_versions):
                 known_versions[version] = Version.create_stub(version)
 
-            sync_many_to_many('versions', 'title', known_versions)
+            sync_many_to_many(pep, pep_model, 'versions', 'title', known_versions)
+
+    known_persons = Person.get_known_persons()
+
+    def create_person(person_name, persons):
+        """Создаёт персону и добавляет её в словарь известных персон.
+
+        :param str person_name:
+        :param dict persons:
+        :rtype: Person
+        """
+        person = Person.create(person_name, save=True)
+        Person.contribute_to_known_persons(person, persons)
+        return person
 
     for pep in peps:  # type: PepInfo
         # Для правильного связывания необходимо, чтобы в БД уже были все известные PEP.
         # В этом повторном проходе мы производим связывание.
         pep_model = known_peps[pep.num]
-        sync_many_to_many('superseded', 'num', known_peps)
-        sync_many_to_many('replaces', 'num', known_peps)
-        sync_many_to_many('requires', 'num', known_peps)
+        sync_many_to_many(pep, pep_model, 'superseded', 'num', known_peps)
+        sync_many_to_many(pep, pep_model, 'replaces', 'num', known_peps)
+        sync_many_to_many(pep, pep_model, 'requires', 'num', known_peps)
+        sync_many_to_many(pep, pep_model, 'authors', 'name', known_persons, unknown_handler=create_person)
 
-        # todo: Подумать над общей для всего сайт возможностью хранения авторов и фильтрации по ним.
-        # sync_many_to_many('authors', 'name', known_authors)
-
+    LOG.debug('Syncing PEPs done')

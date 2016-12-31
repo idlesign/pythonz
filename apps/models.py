@@ -1,8 +1,8 @@
 from datetime import timedelta
 from itertools import chain
-from collections import OrderedDict
-from django.core.exceptions import FieldError
+from collections import OrderedDict, defaultdict
 
+from django.core.exceptions import FieldError
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -531,8 +531,8 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
     url = models.URLField('Страница в сети', null=True, blank=True)
 
     class Meta:
-        verbose_name = 'Персона'
-        verbose_name_plural = 'Люди'
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     def set_timezone_from_place(self):
         """Устанавливает временную зону, исходя из места расположения.
@@ -862,6 +862,8 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     status = models.PositiveIntegerField('Статус', choices=get_choices(STATUSES), default=STATUS_DRAFT)
     type = models.PositiveIntegerField('Тип', choices=get_choices(TYPES), default=TYPE_STANDARD)
 
+    authors = models.ManyToManyField('Person', verbose_name='Авторы', related_name='peps', blank=True)
+
     versions = models.ManyToManyField(Version, verbose_name='Версии Питона', related_name='peps', blank=True)
     requires = models.ManyToManyField(
         'self', verbose_name='Зависит от', symmetrical=False, related_name='used_by', blank=True)
@@ -874,7 +876,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     class Meta:
         verbose_name = 'PEP'
-        verbose_name_plural = 'Список PEP'
+        verbose_name_plural = 'PEP'
 
     def __str__(self):
         return '%s' % self.num
@@ -1306,3 +1308,143 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
         # Сначала грядущие в порядке приближения, потом прошедшие.
         return cls.objects.published().extra(
             select={'in_future': "time_start > '%s'" % now}).order_by('-in_future', '-time_start').all()
+
+
+class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
+    """Модель сущности `Персона`.
+
+    Персона не обязана являться пользователем сайта, но между этими сущностями может быть связь.
+
+    """
+    details_related = []
+    paginator_related = []
+    paginator_order = 'name'
+    items_per_page = 1000
+
+    user = models.OneToOneField(User, verbose_name='Пользователь', related_name='person', null=True, blank=True)
+    name = models.CharField('Имя', max_length=90, blank=True)
+    name_en = models.CharField('Имя англ.', max_length=90, blank=True)
+    aka = models.CharField('Другие имена', max_length=255, blank=True)  # Разделены ;
+
+    class Meta:
+        verbose_name = 'Персона'
+        verbose_name_plural = 'Персоны'
+
+    class Fields:
+        text = {'verbose_name': 'Описание'}
+        text_src = {'verbose_name': 'Описание (исх.)'}
+
+    def __str__(self):
+        return self.get_display_name()
+
+    @classmethod
+    def get_known_persons(cls):
+        """Возвращает словарь, индексированный именами персон.
+
+        Где значения являются списками с объектами моделей персон.
+        Если в списке больше одной модели, значит этому имени соответствует
+        несколько разных моделей персон.
+
+        :rtype: dict
+        """
+        known = defaultdict(list)
+        for person in cls.objects.published():
+            cls.contribute_to_known_persons(person, known_persons=known)
+        return known
+
+    @classmethod
+    def contribute_to_known_persons(cls, person, known_persons):
+        """Добавляет объект указанной персоны в словарь с известными персонами.
+
+        :param Person person:
+        :param dict known_persons:
+        """
+        def add_name(name):
+            name = name.strip()
+            name and known_persons[name].append(person)
+
+        add_name(person.name)
+        add_name(person.name_en)
+
+        for aka_chunk in person.aka.split(';'):
+            add_name(aka_chunk)
+
+    @classmethod
+    def find(cls, name):
+        """Ищет персону по указанному имени.
+
+        :param str name: Имя для поиска.
+        :rtype: models.QuerySet
+        """
+        return cls.get_actual().filter(
+            Q(name__icontains=name) |
+            Q(name_en__icontains=name) |
+            Q(aka__icontains=name)
+        )
+
+    @classmethod
+    def create(cls, name, save=False):
+        """Создаёт объект персоны по имени.
+
+        :param str name:
+        :param bool save: Следует ли сохранить объект в БД.
+        :rtype: Person
+        """
+        person = cls(
+            name=name,
+            status=cls.STATUS_PUBLISHED,
+            text_src='Описание отсутствует',
+            submitter_id=settings.ROBOT_USER_ID,
+        )
+        save and person.save()
+        return person
+
+    @classmethod
+    def get_paginator_objects(cls):
+        persons = super().get_paginator_objects()
+
+        def sort_by_surname(person):
+            split = person.name.rsplit(' ', 1)
+            name = ' '.join(reversed(split))
+            person.name = name
+            return name
+
+        result = sorted(persons, key=sort_by_surname)
+        return result
+
+    def get_materials(self):
+        """Возвращает словарь с матералами, созданными персоной.
+
+        Индексирован названиями разделов сайта; значения — список моделей материалов.
+
+        :rtype: dict
+        """
+        from .realms import get_realm
+
+        realms = [get_realm('pep')]  # Пока ограничимся.
+
+        materials = OrderedDict()
+        for realm in realms:
+            realm_model = realm.model
+            realm_name = realm_model.get_verbose_name_plural()
+
+            _, plural = realm.get_names()
+
+            items = getattr(self, plural).all()
+
+            if items:
+                materials[realm_name] = items
+
+        return materials
+
+    def get_display_name(self):
+        """Возвращает имя для отображения.
+
+        :rtype:
+        """
+        return self.name
+
+    @property
+    def title(self):
+        """Общепринятое свойство."""
+        return self.get_display_name()

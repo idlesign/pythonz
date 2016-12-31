@@ -1,0 +1,60 @@
+{% extends "base_details.html" %}
+{% load gravatar model_meta model_field sitetree static %}
+{% get_static_prefix as STATIC_URL %}
+
+
+{% block page_keywords %}{{ block.super }}, {{ person.name }}, {{ person.name_en }}, {{ person.aka }}{% endblock %}
+
+
+{% block head %}
+    {{ block.super }}
+    {% include "sub_vk_head.html" %}
+{% endblock %}
+
+
+{% block meta_og %}
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content="{{ person.get_display_name }}" />
+    <meta property="og:description" content="{% sitetree_page_description from "main" %}" />
+{% endblock %}
+
+
+{% block schema_type %}Person{% endblock %}
+
+
+{% block details_contents %}
+    <div class="marg__b_mid text-muted marg__l_mid">
+        <table class="small" width="40%">
+            <tr>
+                <td width="45%">{% model_field_verbose_name from person.name %}:</td>
+                <td>{{ person.name }}</td>
+            </tr>
+            <tr>
+                <td>{% model_field_verbose_name from person.name_en %}:</td>
+                <td>{{ person.name_en }}</td>
+            </tr>
+            <tr>
+                <td>{% model_field_verbose_name from person.aka %}:</td>
+                <td>{{ person.aka }}</td>
+            </tr>
+        </table>
+    </div>
+
+    {% if materials %}
+    <div class="marg__t_max">
+        <hr>
+        <h4><i class="fa fa-fw fa-bookmark-o"></i> Автор</h4>
+        {% for realm_name, material_list in materials.items %}
+            <div class="marg__l_mid marg__t_mid">
+                <h5>{{ realm_name }}</h5>
+                <ul>
+                    {% for item in material_list %}
+                        <li><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+{% endblock %}

@@ -45,6 +45,14 @@ class UserDetailsView(DetailsView):
         context['stats'] = user.get_stats()
 
 
+class PersonDetailsView(DetailsView):
+    """Представление с детальной информацией о персоне."""
+
+    def update_context(self, context, request):
+        user = context['item']
+        context['materials'] = user.get_materials()
+
+
 class UserEditView(EditView):
     """Представление редактирования пользователя."""
 

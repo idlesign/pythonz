@@ -10,7 +10,22 @@ from simple_history.admin import SimpleHistoryAdmin
 from .integration.partners import get_partners_choices
 from .forms.forms import BookForm
 from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version, PartnerLink, \
-    Vacancy, ReferenceMissing, PEP
+    Vacancy, ReferenceMissing, PEP, Person
+
+
+def get_inline(model, field_name):
+    """Возвращает класс встраиваемого редактора для использования
+    в inlines в случаях полей многие-ко-многим.
+
+    :param model:
+    :param str field_name:
+    :rtype: class
+    """
+    inline_cls = type('%sInline' % model.__name__.capitalize, (admin.TabularInline,), {
+        'model': getattr(model, field_name).through,
+        'extra': 0,
+    })
+    return inline_cls
 
 
 ##################################################################################
@@ -91,6 +106,7 @@ admin.site.register(PartnerLink, PartnerLinkAdmin)
 
 ##################################################################################
 
+
 class PlaceAdmin(admin.ModelAdmin):
 
     list_display = ('geo_title', 'title', 'status', 'time_created')
@@ -119,9 +135,9 @@ class EntityBaseAdmin(SimpleHistoryAdmin):
     search_fields = ['title', 'description']
     list_filter = ['time_created', 'status']
     ordering = ['-time_created']
-    readonly_fields = ['time_published']
+    readonly_fields = ['time_published', 'supporters_num']
 
-    actions = ['publish',]
+    actions = ['publish']
 
     def publish(self, request, queryset):
         for obj in queryset:
@@ -186,7 +202,7 @@ class PEPAdmin(EntityBaseAdmin):
     list_display = ('num', 'title', 'type', 'status')
     search_fields = ['title', 'description']
     list_filter = ['status', 'type']
-    raw_id_fields = EntityBaseAdmin.raw_id_fields + ['versions', 'superseded', 'replaces', 'requires', 'linked']
+    raw_id_fields = EntityBaseAdmin.raw_id_fields + ['versions', 'superseded', 'replaces', 'requires', 'linked', 'authors']
     readonly_fields = EntityBaseAdmin.readonly_fields + ['status', 'type', 'description']
 
 admin.site.register(PEP, PEPAdmin)
@@ -215,3 +231,15 @@ class VersionAdmin(EntityBaseAdmin):
     list_display = ('title', 'current', 'status', 'slug')
 
 admin.site.register(Version, VersionAdmin)
+
+
+class PersonAdmin(admin.ModelAdmin):
+
+    list_display = ('name', 'name_en', 'time_created')
+    search_fields = ['name', 'name_en', 'aka']
+    list_filter = ['status']
+    ordering = ['name']
+    raw_id_fields = ['user', 'last_editor']
+    readonly_fields = ['text', 'supporters_num']
+
+admin.site.register(Person, PersonAdmin)

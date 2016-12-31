@@ -239,6 +239,11 @@ LOGGING = {
             'handlers': ['console'],
             'propagate': True,
         },
+        'pythonz.apps.management.commands': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
         'raven': {
             'level': 'DEBUG',
             'handlers': ['console'],

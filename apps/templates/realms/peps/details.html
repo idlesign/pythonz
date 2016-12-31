@@ -46,6 +46,20 @@
             </tr>
             {% endif %}
         {% endwith %}
+
+        {% with pep.authors.all as authors %}
+            {% if authors %}
+            <tr>
+                <th>{% model_field_verbose_name from pep.authors %}</th>
+                <td>
+                    {% for author in authors %}
+                        <a href="{{ author.get_absolute_url }}">{{ author.title }}</a><br>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endif %}
+        {% endwith %}
+
     </table>
 
     {% with pep.superseded.all as superseded %}

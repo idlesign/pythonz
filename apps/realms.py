@@ -13,10 +13,11 @@ from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleF
     ReferenceForm, VersionForm
 from .generics.realms import RealmBase, SYNDICATION_URL_MARKER, SYNDICATION_ITEMS_LIMIT
 from .generics.models import RealmBaseModel
-from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy, Version, PEP
+from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy, Version, \
+    PEP, Person
 from .signals import sig_support_changed
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
-    ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView
+    ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView, PersonDetailsView
 from .zen import register_zen_siteblock
 
 
@@ -356,13 +357,13 @@ class DiscussionRealm(RealmBase):
 
 class UserRealm(RealmBase):
     """
-    Область с персоналиями.
+    Область с пользователями сайта.
     """
 
     txt_form_edit = 'Изменить настройки'
 
-    view_listing_description = 'Список лиц так или иначе связанных с языком программирования Python.'
-    view_listing_keywords = 'питонисты, разработчики python'
+    view_listing_description = 'Список пользователей сайта.'
+    view_listing_keywords = 'питонисты, разработчики python, пользователи сайта'
 
     view_details_base_class = UserDetailsView
     view_edit_base_class = UserEditView
@@ -561,6 +562,27 @@ class PepRealm(RealmBase):
     show_on_top = False
 
 
+class PersonRealm(RealmBase):
+    """Область персон."""
+
+    view_listing_description = 'Персоны, тем или иным образом связанные с языком Python.'
+    view_listing_keywords = 'персоны python, питонисты, разработчики python'
+
+    allowed_views = ('listing', 'details')
+    view_details_base_class = PersonDetailsView
+
+    name = 'person'
+    name_plural = 'persons'
+    model = Person
+
+    icon = 'user'
+
+    show_on_main = False
+    show_on_top = False
+
+    syndication_enabled = False
+
+
 register_realms(
     CategoryRealm,
     BookRealm,
@@ -569,10 +591,11 @@ register_realms(
     ReferenceRealm,
     EventRealm,
     VacancyRealm,
-    UserRealm,
     PlaceRealm,
     DiscussionRealm,
     CommunityRealm,
     VersionRealm,
-    PepRealm
+    PepRealm,
+    PersonRealm,
+    UserRealm,
 )

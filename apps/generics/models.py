@@ -80,7 +80,6 @@ class CommonEntityModel(models.Model):
     title = models.CharField('Название', max_length=255, unique=True)
     slug = models.CharField('Краткое имя для URL', max_length=200, null=True, blank=True, unique=True)
     description = models.TextField('Описание', blank=False, null=False)
-    submitter = models.ForeignKey(USER_MODEL, related_name='%(class)s_submitters', verbose_name='Добавил')
     cover = models.ImageField('Обложка', max_length=255, upload_to=get_upload_to, null=True, blank=True)
     year = models.CharField('Год', max_length=10, null=True, blank=True)
 
@@ -239,6 +238,8 @@ class RealmBaseModel(ModelWithFlag):
     status = models.PositiveIntegerField('Статус', choices=STATUSES, default=STATUS_DRAFT)
     supporters_num = models.PositiveIntegerField('Поддержка', default=0)
 
+    submitter = models.ForeignKey(
+        USER_MODEL, verbose_name='Добавил', related_name='%(class)s_submitters', default=settings.ROBOT_USER_ID)
     last_editor = models.ForeignKey(
         USER_MODEL, verbose_name='Редактор', related_name='%(class)s_editors', null=True, blank=True,
         help_text='Пользователь, последним отредактировавший объект.')
@@ -257,6 +258,12 @@ class RealmBaseModel(ModelWithFlag):
 
     notify_on_publish = True
     """Следует ли оповещать внешние системы о публикации сущности."""
+
+    paginator_order = '-time_created'
+    """Поле, по которому следует сортировать объекты
+    при обращении к постраничному списку.
+
+    """
 
     paginator_related = ['submitter']
     """Поле, из которого следует тянуть данные одним запросом
@@ -339,7 +346,7 @@ class RealmBaseModel(ModelWithFlag):
         qs = cls.objects.published()
         if cls.paginator_related:
             qs = qs.select_related(*cls.paginator_related)
-        qs = qs.order_by('-time_created')
+        qs = qs.order_by(cls.paginator_order)
 
         return qs
 
@@ -372,7 +379,11 @@ class RealmBaseModel(ModelWithFlag):
                 base_query = cls.objects.published()
 
             query = base_query.filter(supporters_num__gt=0)
-            query = query.select_related('submitter').order_by('-supporters_num')
+
+            if cls.paginator_related:
+                query = query.select_related(*cls.paginator_related)
+
+            query = query.order_by('-supporters_num')
             objects = query.all()[:5]
 
             cache.set(cache_key, objects, 86400)

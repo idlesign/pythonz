@@ -158,7 +158,14 @@ class ListingView(RealmView):
     def get_last_modified(self, *args, **kwargs):
         """Возвращает Last-Modified для списка сущностей."""
         field = 'time_published'
-        last = self.get_paginator_objects().values(field).order_by(field).last()
+        objects = self.get_paginator_objects()
+
+        if isinstance(objects, list):
+            # Если пришёл список, значит кеширование должно
+            # было быть реализовано при его составлении.
+            return
+
+        last = objects.values(field).order_by(field).last()
         return last and last[field]
 
     func_last_mod = get_last_modified

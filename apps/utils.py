@@ -9,6 +9,18 @@ from django.contrib import messages
 from django.utils.text import Truncator
 
 
+def get_logger(name):
+    """Возвращает объект-журналёр для использования в модулях.
+
+    :param name:
+    :rtype: logging.Logger
+    """
+    return logging.getLogger('pythonz.%s' % name)
+
+
+LOG = get_logger(__name__)
+
+
 def truncate_chars(text, to, html=False):
     """Укорачивает поданный на вход текст до опционально указанного количества символов."""
     return Truncator(text).chars(to, html=html)
@@ -27,6 +39,72 @@ def format_currency(val):
     :return:
     """
     return ' '.join(wrap(str(int(val))[::-1], 3))[::-1]
+
+
+def sync_many_to_many(src_obj, model, m2m_attr, related_attr, known_items, unknown_handler=None):
+    """Синхронизирует (при необходимости) список из указанного атрибута
+    объекта-источника в поле многие-ко-многим указанной модели.
+
+    Возвращает список неизвестных (отсутствующих known_items) элементов из src_obj.m2m_attr,
+    либо созданных при помощи unknown_handler.
+
+    Внимание: для правильной работы необходимо, чтобы в БД уже был и объект model и объекты из known_items.
+
+    :param object src_obj: Объект-источник, в котором есть src_obj.m2m_attr, содержащий
+        список (например строк), которым будут сопоставлены объекты из known_items.
+
+    :param Model model: Модель, поле которой требуется обновить при необходимости.
+
+    :param str m2m_attr: Имя атрибута модели, являющегося полем многие-ко-многим.
+
+    :param str related_attr: Имя атрибута, из в объектах многие-ко-многим, считающееся ключевым.
+        Значения из этого атрибута ожидаются в списке из src_obj.m2m_attr.
+
+    :param dict known_items: Ключи - это значения из src_obj.m2m_attr,
+        а значения - это модель из отношения многие-ко-многим, либо список моделей.
+
+    :param callable unknown_handler: Функция-обработчик для неизвестных элементов,
+        создающая объект налету. Должна принимать элемент списка src_obj.m2m_attr,
+        по которому будет создан объект, а также словарь known_items, который следует
+        дополнить созданным объектом.
+
+    :rtype: list
+    """
+    new_list = getattr(src_obj, m2m_attr)
+
+    if not new_list:
+        return
+
+    m2m_model_attr = getattr(model, m2m_attr)
+    old_many = {m2m_model_attr.values_list(related_attr, flat=True)}
+
+    unknown = []
+    unknown_handler = unknown_handler or (lambda item, known_items: None)
+
+    if old_many != set(new_list):
+        # Данные двух наборов (хранящегося в БД и полученнго) не совпадают.
+        # Синхронизируем данные в БД.
+        m2m_model_attr.clear()
+        to_add = []
+        for item in new_list:
+            val = known_items.get(item, None)  # Модель или список моделей.
+
+            if val is None:
+                LOG.debug('Handling unknown item in sync_many_to_many(): %s', item)
+                val = unknown_handler(item, known_items)
+                if val is None:
+                    unknown.append(item)
+                    continue
+
+            if not isinstance(val, list):
+                val = [val]
+
+            for item in val:
+                to_add.append(item)
+
+        m2m_model_attr.add(*to_add)
+
+    return unknown
 
 
 def update_url_qs(url, new_qs_params):
@@ -264,15 +342,6 @@ def url_mangle(url):
         splitted[path] = '<...>%s' % splitted[path].split('/')[-1]  # Последний кусок пути.
     mangled = urlunsplit(splitted)
     return mangled
-
-
-def get_logger(name):
-    """Возвращает объект-журналёр для использования в модулях.
-
-    :param name:
-    :rtype: logging.Logger
-    """
-    return logging.getLogger('pythonz.%s' % name)
 
 
 def message_info(request, message):
