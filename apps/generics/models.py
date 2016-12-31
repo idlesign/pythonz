@@ -299,21 +299,30 @@ class RealmBaseModel(ModelWithFlag):
         и выставить время модификации соответствующим образом.
 
         :param args:
+
         :param kwargs: Среди прочего, поддерживаются:
+
             notify_published - флаг, указывающий на то, требуется ли отослать
                 оповещения о публикации сущности.
+
+            notify_new - флаг, указывающий на то, требуется ли отослать
+                оповещения о создании сущности.
         """
         initial_pk = self.pk
-        notify_published = kwargs.pop('notify_published', False)
+        notify_published = kwargs.pop('notify_published', None)
+        notify_new = kwargs.pop('notify_new', True)
 
         now = timezone.now()
 
         if self._status_backup != self.status:
             # Если сохраняем с переходом статуса, наивно полагаем объект немодифицированным.
             self._consider_modified = False
+
             if self.is_published:
                 setattr(self, 'time_published', now)
-                notify_published = True
+
+                if notify_published is None:
+                    notify_published = True
 
         if self._consider_modified:
             setattr(self, 'time_modified', now)
@@ -323,7 +332,7 @@ class RealmBaseModel(ModelWithFlag):
         super().save(*args, **kwargs)
 
         with suppress(AttributeError):  # Пропускаем модели, в которых нет нужных атрибутов.
-            if not initial_pk and self.pk:
+            if notify_new and (not initial_pk and self.pk):
                 sig_entity_new.send(self.__class__, entity=self)
 
         with suppress(AttributeError):  # Пропускаем модели, в которых нет нужных атрибутов.

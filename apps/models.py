@@ -1396,7 +1396,9 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
             text_src='Описание отсутствует',
             submitter_id=settings.ROBOT_USER_ID,
         )
-        save and person.save()
+        if save:
+            person.save(notify_published=False, notify_new=False)
+
         return person
 
     @classmethod
