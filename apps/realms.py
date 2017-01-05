@@ -581,6 +581,7 @@ class PersonRealm(RealmBase):
     show_on_top = False
 
     syndication_enabled = False
+    ready_for_digest = False
 
 
 register_realms(
