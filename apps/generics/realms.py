@@ -178,14 +178,6 @@ class RealmBase:
         return '%s:listing' % realm_name_plural
 
     @classmethod
-    def get_sitetree_listing_item(cls):
-        """Возвращает элемент древа сайта, указывающий на страницу со списком объектов.
-
-        :return:
-        """
-        return item('Список', cls.get_listing_urlname(), description=cls.view_listing_description, in_menu=False)
-
-    @classmethod
     def get_details_urlname(cls, slugged=False):
         """Возвращает название URL страницы с детальной информацией об объекте.
 
@@ -296,7 +288,7 @@ class RealmBase:
         if cls.sitetree_items is None:
             children = []
             for view_name in cls.allowed_views:
-                if view_name != 'edit':
+                if view_name not in ('listing', 'edit'):
                     items = getattr(cls, 'get_sitetree_%s_item' % view_name)()
                     if not isinstance(items, list):
                         items = [items]
