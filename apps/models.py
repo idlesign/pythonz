@@ -1392,6 +1392,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         """
         person = cls(
             name=name,
+            name_en=name,
             status=cls.STATUS_PUBLISHED,
             text_src='Описание отсутствует',
             submitter_id=settings.ROBOT_USER_ID,
