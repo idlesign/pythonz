@@ -1,4 +1,50 @@
-from ..utils import url_mangle, BasicTypograph, TextCompiler
+from ..utils import url_mangle, BasicTypograph, TextCompiler, PersonName
+
+
+def test_person_name():
+    name = PersonName('Иван Иванов')
+
+    assert name.first_last == 'Иван Иванов'
+    assert name.last_first == 'Иванов Иван'
+    assert name.full == 'Иван Иванов'
+    assert name.short == 'И. Иванов'
+    assert name.first == 'Иван'
+    assert name.last == 'Иванов'
+    assert name.is_valid
+    assert len(name.get_variants()) == 3
+
+    name = PersonName('Guido van Rossum')
+
+    assert name.first_last == 'Guido Rossum'
+    assert name.last_first == 'Rossum Guido'
+    assert name.full == 'Guido van Rossum'
+    assert name.short == 'G. van Rossum'
+    assert name.first == 'Guido'
+    assert name.last == 'Rossum'
+    assert name.is_valid
+    assert len(name.get_variants()) == 4
+
+    name = PersonName('Натаниэль Дж. Смит')
+
+    assert name.first_last == 'Натаниэль Смит'
+    assert name.last_first == 'Смит Натаниэль'
+    assert name.full == 'Натаниэль Дж. Смит'
+    assert name.short == 'Н. Дж. Смит'
+    assert name.first == 'Натаниэль'
+    assert name.last == 'Смит'
+    assert name.is_valid
+    assert len(name.get_variants()) == 4
+
+    name = PersonName('Петров')
+
+    assert name.first_last == ''
+    assert name.last_first == ''
+    assert name.full == ''
+    assert name.short == ''
+    assert name.first == ''
+    assert name.last == ''
+    assert not name.is_valid
+    assert name.get_variants() == []
 
 
 def test_url_mangle():
@@ -90,5 +136,3 @@ def test_text_compiler():
     assert (
         compile('.. warning:: a warn\n') ==
         '<div class="panel panel-danger"><div class="panel-heading">Внимание</div><div class="panel-body">a warn</div></div>')
-
-

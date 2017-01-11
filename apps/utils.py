@@ -21,6 +21,94 @@ def get_logger(name):
 LOG = get_logger(__name__)
 
 
+class PersonName(object):
+    """Предоставляет инструменты для представления имени персоны в разном виде."""
+
+    __slots__ = ['_name', 'is_valid']
+
+    def __init__(self, name):
+        name = re.sub('\s+', ' ', name).strip()
+
+        self._name = name.split(' ')
+
+        self.is_valid = len(self._name) > 1
+        """Флаг, указывающие на то, что имя состоит хотя бы из двух частей (имя и фамилия).
+
+        :type: bool
+        """
+
+        if not self.is_valid:
+            self._name = ['', '']
+
+    def get_variants(self):
+        """Возвращает наиболее часто встречающиеся варианты представления имени.
+
+        :rtype: str
+        """
+        variants = []
+        other = [self.full, self.short, self.first_last, self.last_first]
+
+        for variant in other:
+            if variant and variant not in variants:
+                variants.append(variant)
+
+        return variants
+
+    @property
+    def last_first(self):
+        """Фамилия и имя (отчество/второе имя исключаются).
+
+        :rtype: str
+        """
+        return ('%s %s' % (self._name[-1], self._name[0])).strip()
+
+    @property
+    def first_last(self):
+        """Имя и фамилия (отчество/второе имя исключаются).
+
+        :rtype: str
+        """
+        return ('%s %s' % (self._name[0], self._name[-1])).strip()
+
+    @property
+    def first(self):
+        """Имя.
+
+        :rtype: str
+        """
+        return self._name[0].strip()
+
+    @property
+    def last(self):
+        """Фамилия.
+
+        :rtype: str
+        """
+        return self._name[-1].strip()
+
+    @property
+    def full(self):
+        """Имя, отчество, фамилия.
+
+        :rtype: str
+        """
+        return ' '.join(self._name).strip()
+
+    @property
+    def short(self):
+        """Возвращает инициал имени и фамилию.
+
+        :param str name:
+        :rtype: str
+        """
+        if not self.is_valid:
+            return ''
+
+        name = self._name
+        short = '%s. %s' % (name[0][0], ' '.join(name[1:]))
+        return short
+
+
 def truncate_chars(text, to, html=False):
     """Укорачивает поданный на вход текст до опционально указанного количества символов."""
     return Truncator(text).chars(to, html=html)
