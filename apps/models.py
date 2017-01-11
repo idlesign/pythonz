@@ -1,6 +1,6 @@
 from datetime import timedelta
 from itertools import chain
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 
 from django.core.exceptions import FieldError
 from django.conf import settings
@@ -17,7 +17,7 @@ from etc.toolbox import choices_list, get_choices
 
 from .exceptions import RemoteSourceError
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
-from .utils import format_currency, truncate_chars, UTM
+from .utils import format_currency, truncate_chars, UTM, PersonName
 from .integration.resources import PyDigestResource
 from .integration.vacancies import HhVacancyManager
 from .integration.peps import sync as sync_peps
@@ -1347,8 +1347,8 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
 
         :rtype: dict
         """
-        known = defaultdict(list)
-        for person in cls.objects.published():
+        known = {}
+        for person in cls.objects.exclude(status=cls.STATUS_DELETED):
             cls.contribute_to_known_persons(person, known_persons=known)
         return known
 
@@ -1360,8 +1360,16 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         :param dict known_persons:
         """
         def add_name(name):
-            name = name.strip()
-            name and known_persons[name].append(person)
+            """Заносит имя в разных вариантах в реестр известных имён.
+
+            :param str name:
+            """
+            name = PersonName(name)
+
+            for variant in name.get_variants():
+                persons_for_variant = known_persons.setdefault(variant, [])
+                if person not in persons_for_variant:  # Дубли не нужны.
+                    persons_for_variant.append(person)
 
         add_name(person.name)
         add_name(person.name_en)

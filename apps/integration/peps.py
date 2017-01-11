@@ -8,7 +8,7 @@ import requests
 from django.conf import settings
 from django.utils import timezone
 
-from ..utils import sync_many_to_many, get_logger
+from ..utils import sync_many_to_many, get_logger, PersonName
 
 
 LOG = get_logger(__name__)
@@ -43,7 +43,9 @@ def strip_mail(value):
         if matches:
             name = matches.group(1).strip()
 
-        names.append(name.strip())
+        name = PersonName(name)
+        name = name.full
+        name and names.append(name)
 
     return names
 
