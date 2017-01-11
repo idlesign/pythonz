@@ -534,6 +534,13 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
+    def __str__(self):
+        return self.get_full_name() or self.get_username_partial()
+
+    @property
+    def title(self):
+        return self.get_display_name()
+
     def set_timezone_from_place(self):
         """Устанавливает временную зону, исходя из места расположения.
 
@@ -613,10 +620,6 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         query = cls.objects.filter(supporters_num__gt=0)
         query = query.select_related('submitter').order_by('-supporters_num')
         return query.all()[:5]
-
-    def get_display_name(self):
-        return self.get_full_name() or self.get_username_partial()
-    title = property(get_display_name)
 
     def get_username_partial(self):
         return self.username.split('@')[0]
@@ -879,7 +882,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         verbose_name_plural = 'PEP'
 
     def __str__(self):
-        return '%s' % self.num
+        return '%s — %s' % (self.num, self.title)
 
     autogenerate_slug = True
     items_per_page = 1000
@@ -1335,6 +1338,10 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         text_src = {'verbose_name': 'Описание (исх.)'}
 
     def __str__(self):
+        return self.name
+
+    @property
+    def title(self):
         return self.get_display_name()
 
     @classmethod
@@ -1447,15 +1454,3 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
                 materials[realm_name] = items
 
         return materials
-
-    def get_display_name(self):
-        """Возвращает имя для отображения.
-
-        :rtype:
-        """
-        return self.name
-
-    @property
-    def title(self):
-        """Общепринятое свойство."""
-        return self.get_display_name()

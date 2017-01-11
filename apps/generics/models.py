@@ -589,3 +589,10 @@ class RealmBaseModel(ModelWithFlag):
         """
         tmp, realm_name_plural = self.realm.get_names()
         return reverse('%s:tags' % realm_name_plural, args=[str(category.id)])
+
+    def get_display_name(self):
+        """Имя для отображения в интерфейсе.
+
+        :rtype: str
+        """
+        return self.__str__()
