@@ -1,4 +1,4 @@
-from ..utils import url_mangle, BasicTypograph, TextCompiler, PersonName
+from pythonz.apps.utils import url_mangle, BasicTypograph, TextCompiler, PersonName
 
 
 def test_person_name():
