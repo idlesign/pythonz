@@ -37,16 +37,31 @@
                         new pythonz.Map('map', places);
                     });
                 </script>
-                <ul class="marg__t_max">
-                    {% for place in places %}
-                        <li class="block marg__r_mid">
-                            <a href="{{ place.get_absolute_url }}">{{ place.title }}</a> <sup title="поддержка">{{ place.supporters_num }}</sup>
-                        </li>
-                    {% endfor %}
-                </ul>
+
+                <div class="marg__t_mid">
+                    <ul id="indexed">
+                        {% for place in places %}
+                            <li>
+                                <a href="{{ place.get_absolute_url }}">{{ place.title }}</a> <sup title="поддержка">{{ place.supporters_num }}</sup>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
             {% else %}
                 <div class="jumbotron">Как только нам будет, что вам показать, здесь появится карта местности.</div>
             {% endif %}
         </div>
     </div>
 {%  endblock %}
+
+{% block js_bottom %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/jquery.alphaindex.min.js" type="text/javascript"></script>
+    <script>
+        $(function(){
+            var index = $('#indexed').makeAlphaIndex();
+                index.alphaIndexBar.addClass('list-inline');
+        });
+    </script>
+{% endblock %}

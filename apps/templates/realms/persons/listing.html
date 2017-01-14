@@ -1,1 +1,12 @@
 {% extends "base_listing.html" %}
+
+{% block js_bottom %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/jquery.alphaindex.min.js" type="text/javascript"></script>
+    <script>
+        $(function(){
+            var index = $('#indexed').makeAlphaIndex();
+                index.alphaIndexBar.addClass('list-inline');
+        });
+    </script>
+{% endblock %}
