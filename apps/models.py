@@ -541,6 +541,11 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
     def title(self):
         return self.get_display_name()
 
+    @property
+    def is_draft(self):
+        # Не считаем черновиком, считаем опубликованным.
+        return False
+
     def set_timezone_from_place(self):
         """Устанавливает временную зону, исходя из места расположения.
 
