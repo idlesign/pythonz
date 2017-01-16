@@ -46,34 +46,38 @@
             </div>
         </div>
 
-        <div id="bar__most_voted" class="col-md-4 hidden-xs container-fluid">
-            {% block bar_right %}
-            <div>
-                <h2>
-                    Лучшие
-                    <sup class="small mod__has_tooltip" title="По мнению пользователей сайта">
-                        <i class="fa fa-question-circle"></i>
-                    </sup>
-                </h2><hr>
-            </div>
+        <div class="col-md-4 hidden-xs container-fluid">
 
-            <div class="marg__b_mid">
-                {% block most_voted %}
-                    {% if items_most_voted %}
-                        {% include view.template_list_items with items=items_most_voted nofade=1 %}
-                    {% else %}
-                        Пока этот список не сформирован. Оцените материалы раздела, чтобы исправить ситуацию.
-                    {% endif %}
+            <div id="bar__most_voted" class="col-md-12">
+                {% block bar_right %}
+                <div>
+                    <h2>
+                        Лучшие
+                        <sup class="small mod__has_tooltip" title="По мнению пользователей сайта">
+                            <i class="fa fa-question-circle"></i>
+                        </sup>
+                    </h2><hr>
+                </div>
+
+                <div class="marg__b_mid">
+                    {% block most_voted %}
+                        {% if items_most_voted %}
+                            {% include view.template_list_items with items=items_most_voted nofade=1 %}
+                        {% else %}
+                            Пока этот список не сформирован. Оцените материалы раздела, чтобы исправить ситуацию.
+                        {% endif %}
+                    {% endblock %}
+                    <div class="clearfix"></div>
+                </div>
                 {% endblock %}
-                <div class="clearfix"></div>
             </div>
-            {% endblock %}
-        </div>
+            <div class="clearfix"></div>
 
-        <div class="marg__t_mid col-md-4 hidden-xs container-fluid">
-        {% block bar_right_after %}
-            {% include "sub_hint.html" %}
-        {% endblock %}
+            <div class="marg__t_mid">
+            {% block bar_right_after %}
+                {% include "sub_hint.html" %}
+            {% endblock %}
+            </div>
         </div>
     </div>
 
