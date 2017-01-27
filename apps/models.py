@@ -1225,9 +1225,11 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
     SPEC_DEDICATED = 1
     SPEC_HAS_SECTION = 2
     SPEC_HAS_SOME = 3
+    SPEC_MOST = 4
 
     SPECS = choices_list(
         (SPEC_DEDICATED, 'Только Python'),
+        (SPEC_MOST, 'В основном Python'),
         (SPEC_HAS_SECTION, 'Есть секция/отделение про Python'),
         (SPEC_HAS_SOME, 'Есть упоминания про Python'),
     )
