@@ -285,6 +285,6 @@ def sync(skip_deadend_peps=True, limit=None):
         sync_many_to_many(pep, pep_model, 'superseded', 'num', known_peps)
         sync_many_to_many(pep, pep_model, 'replaces', 'num', known_peps)
         sync_many_to_many(pep, pep_model, 'requires', 'num', known_peps)
-        sync_many_to_many(pep, pep_model, 'authors', 'name', known_persons, unknown_handler=create_person)
+        sync_many_to_many(pep, pep_model, 'authors', 'name_en', known_persons, unknown_handler=create_person)
 
     LOG.debug('Syncing PEPs done')
