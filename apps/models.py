@@ -887,7 +887,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         verbose_name_plural = 'PEP'
 
     def __str__(self):
-        return '%s — %s' % (self.num, self.title)
+        return '%s — %s' % (self.slug, self.title)
 
     autogenerate_slug = True
     items_per_page = 1000
@@ -1455,7 +1455,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
 
             _, plural = realm.get_names()
 
-            items = getattr(self, plural).all()
+            items = getattr(self, plural).order_by('slug', 'title')
 
             if items:
                 materials[realm_name] = items
