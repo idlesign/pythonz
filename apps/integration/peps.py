@@ -171,7 +171,8 @@ def get_peps(exclude_peps=None, limit=None):
 
         name_split = splitext(name)
 
-        if item['type'] == 'file' and name_split[1] == '.txt':
+        ext = name_split[1]
+        if item['type'] == 'file' and ext in ('.txt', '.rst'):
 
             pep_num = name_split[0].replace('pep-', '')
             if pep_num in exclude_peps:
