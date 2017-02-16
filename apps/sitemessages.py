@@ -16,7 +16,8 @@ from django.utils import timezone
 from django.utils.text import Truncator
 
 from .realms import get_realms, get_realm
-from .signals import sig_entity_published, sig_entity_new, sig_search_failed, sig_integration_failed
+from .signals import sig_entity_published, sig_entity_new, sig_search_failed, sig_integration_failed, \
+    sig_send_generic_telegram
 
 
 def register_messengers():
@@ -88,16 +89,20 @@ def connect_signals():
         lambda sender, **kwargs: PythonzEmailOneliner.create('Ошибка интеграции', kwargs['description']))
     sig_integration_failed.connect(notify_handler, dispatch_uid='cfg_integration_failed', weak=False)
 
+    # Сообщение в Телеграм.
+    notify_handler = lambda sender, **kwargs: PythonzTelegramMessage.create(kwargs['text'])
+    sig_send_generic_telegram.connect(notify_handler, dispatch_uid='cfg_telegram_generic', weak=False)
+
     # Материал опубликован.
     def notify_published(sender, **kwargs):
         entity = kwargs['entity']
         if not entity.notify_on_publish:
             return False
 
-        PythonzTwitterMessage.create(entity)
-        PythonzTelegramEntityPublishedMessage.create(entity)
-        PythonzFbEntityPublishedMessage.create(entity)
-        PythonzVkEntityPublishedMessage.create(entity)
+        PythonzTwitterMessage.create_published(entity)
+        PythonzTelegramMessage.create_published(entity)
+        PythonzFacebookMessage.create_published(entity)
+        PythonzVkontakteMessage.create_published(entity)
 
     sig_entity_published.connect(notify_published, dispatch_uid='cfg_entity_published', weak=False)
 
@@ -105,7 +110,7 @@ def connect_signals():
 connect_signals()
 
 
-class PythonzEntyPublishedBaseMessage(PlainTextMessage):
+class PythonzBaseMessage(PlainTextMessage):
     """Базовый класс для сообщений о новых материалах."""
 
     alias = None
@@ -113,41 +118,49 @@ class PythonzEntyPublishedBaseMessage(PlainTextMessage):
 
     priority = 1  # Рассылается ежеминутно.
     send_retry_limit = 5
-    title = 'Новое на сайте'
+    title = 'Оповещение'
     allow_user_subscription = False
 
 
-class PythonzFbEntityPublishedMessage(PythonzEntyPublishedBaseMessage):
+class PythonzFacebookMessage(PythonzBaseMessage):
     """Класс для сообщений о новых материалах на сайте, публикуемых на стене в Facebook."""
 
     alias = 'fb_update'
     supported_messengers = ['fb']
 
     @classmethod
-    def create(cls, entity):
+    def create_published(cls, entity):
         message = entity.get_absolute_url(with_prefix=True, utm_source='fb')
+        cls.create(message)
+
+    @classmethod
+    def create(cls, message):
         cls(message).schedule(cls.recipients('fb', ''))
 
 
-class PythonzVkEntityPublishedMessage(PythonzEntyPublishedBaseMessage):
+class PythonzVkontakteMessage(PythonzBaseMessage):
     """Класс для сообщений о новых материалах на сайте, публикуемых на стене в ВКонтакте."""
 
     alias = 'vk_update'
     supported_messengers = ['vk']
 
     @classmethod
-    def create(cls, entity):
+    def create_published(cls, entity):
         message = entity.get_absolute_url(with_prefix=True, utm_source='vk')
+        cls.create(message)
+
+    @classmethod
+    def create(cls, message):
         cls(message).schedule(cls.recipients('vk', settings.VK_GROUP))
 
 
-class PythonzTwitterMessage(PythonzEntyPublishedBaseMessage):
+class PythonzTwitterMessage(PythonzBaseMessage):
     """Базовый класс для сообщений, рассылаемых pythonz в Twitter."""
 
     supported_messengers = ['twitter']
 
     @classmethod
-    def create(cls, entity):
+    def create_published(cls, entity):
         MAX_LEN = 139  # Максимальная длина твита. Для верности меньше.
         URL_SHORTENED_LEN = 30  # Максимальная длина сокращённого URL
 
@@ -161,19 +174,28 @@ class PythonzTwitterMessage(PythonzEntyPublishedBaseMessage):
         url = entity.get_absolute_url(with_prefix=True, utm_source='twee')
         message = '%s%s%s %s' % (prefix, title, postfix, url)
 
+        cls.create(message)
+
+    @classmethod
+    def create(cls, message):
         cls(message).schedule(cls.recipients('twitter', ''))
 
 
-class PythonzTelegramEntityPublishedMessage(PythonzEntyPublishedBaseMessage):
+class PythonzTelegramMessage(PythonzBaseMessage):
     """Класс для сообщений о новых материалах на сайте, рассылаемых pythonz в Telegram."""
 
     alias = 'tele_update'
     supported_messengers = ['telegram']
 
     @classmethod
-    def create(cls, entity):
+    def create_published(cls, entity):
         message = 'Новое: %s «%s» %s' % (
             entity.get_verbose_name(), entity.title, entity.get_absolute_url(with_prefix=True, utm_source='tele'))
+
+        cls.create(message)
+
+    @classmethod
+    def create(cls, message):
         cls(message).schedule(cls.recipients('telegram', settings.TELEGRAM_GROUP))
 
 
@@ -387,9 +409,9 @@ class PythonzEmailDigest(PythonzEmailMessage):
 # Регистрируем наши типы сообщений.
 register_message_types(
     PythonzTwitterMessage,
-    PythonzTelegramEntityPublishedMessage,
-    PythonzFbEntityPublishedMessage,
-    PythonzVkEntityPublishedMessage,
+    PythonzTelegramMessage,
+    PythonzFacebookMessage,
+    PythonzVkontakteMessage,
     PythonzEmailMessage,
     PythonzEmailOneliner,
     PythonzEmailNewEntity,
