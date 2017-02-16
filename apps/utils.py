@@ -175,7 +175,9 @@ def sync_many_to_many(src_obj, model, m2m_attr, related_attr, known_items, unkno
         m2m_model_attr.clear()
         to_add = []
         for item in new_list:
-            item = item.strip()
+
+            if isinstance(item, str):
+                item = item.strip()
 
             if not item:
                 continue
