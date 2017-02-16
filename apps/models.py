@@ -834,7 +834,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         (STATUS_FOOL, 'Розыгрыш на 1 апреля'),
     )
 
-    STATUSES_DEADEND = [STATUS_WITHDRAWN, STATUS_REJECTED, STATUS_SUPERSEDED, STATUS_ACTIVE]
+    STATUSES_DEADEND = [STATUS_WITHDRAWN, STATUS_REJECTED, STATUS_SUPERSEDED, STATUS_ACTIVE, STATUS_FOOL, STATUS_FINAL]
 
     MAP_STATUSES = {
         # (литера, идентификатор_стиля_для_подсветки_строки_таблицы)
