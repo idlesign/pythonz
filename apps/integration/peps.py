@@ -9,6 +9,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from ..utils import sync_many_to_many, get_logger, PersonName
+from ..signals import sig_send_generic_telegram
 
 
 LOG = get_logger(__name__)
@@ -235,11 +236,15 @@ def sync(skip_deadend_peps=True, limit=None):
         LOG.info('Working on PEP %s ...', num)
 
         if num in known_peps:
-            pep_model = known_peps[num]
+            pep_model = known_peps[num]  # type: PEP
 
             if pep_model.status != status_id:
                 pep_model.status = status_id
                 pep_model.save()
+
+                sig_send_generic_telegram.send(
+                    None, text='PEP %s сменил статус на «%s»' %
+                    (pep_model.num, PEP.STATUSES.get(status_id, 'Неизвестный')))
 
         else:
             LOG.debug('PEP %s is new. Creating ...', num)
