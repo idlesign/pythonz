@@ -1318,9 +1318,9 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
 
         # Сначала грядущие в порядке приближения, потом прошедшие в порядке отдалённости.
         qs = cls.objects.published().annotate(
-            future=models.Case(
-                models.When(time_start__gte=now, then=True),
-                models.When(time_start__lt=now, then=False),
+            past=models.Case(
+                models.When(time_start__gte=now, then=False),
+                models.When(time_start__lt=now, then=True),
                 output_field=models.BooleanField(),
             )
         ).annotate(
@@ -1329,7 +1329,7 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
                 models.When(time_start__lt=now, then=now - F('time_start')),
                 output_field=models.DurationField(),
             )
-        ).order_by('future', 'gap')
+        ).order_by('past', 'gap')
 
         return qs
 
