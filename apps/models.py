@@ -8,7 +8,7 @@ from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, IntegrityError
-from django.db.models import Min, Max, Count, Q
+from django.db.models import Min, Max, Count, Q, F
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
@@ -1314,10 +1314,24 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
 
     @classmethod
     def get_paginator_objects(cls):
-        now = timezone.now().date().isoformat()
-        # Сначала грядущие в порядке приближения, потом прошедшие.
-        return cls.objects.published().extra(
-            select={'in_future': "time_start > '%s'" % now}).order_by('-in_future', '-time_start').all()
+        now = timezone.now()
+
+        # Сначала грядущие в порядке приближения, потом прошедшие в порядке отдалённости.
+        qs = cls.objects.published().annotate(
+            future=models.Case(
+                models.When(time_start__gte=now, then=True),
+                models.When(time_start__lt=now, then=False),
+                output_field=models.BooleanField(),
+            )
+        ).annotate(
+            gap=models.Case(
+                models.When(time_start__gte=now, then=F('time_start') - now),
+                models.When(time_start__lt=now, then=now - F('time_start')),
+                output_field=models.DurationField(),
+            )
+        ).order_by('future', 'gap')
+
+        return qs
 
 
 class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
