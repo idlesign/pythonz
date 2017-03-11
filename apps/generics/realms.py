@@ -208,7 +208,7 @@ class RealmBase:
 
         def get_item(urlname, id_attr='id'):
             return item(
-                '{{ %s.title }}' % realm_name,
+                '{{ %s }}' % realm_name,
                 '%s %s.%s' % (urlname, realm_name, id_attr),  # Например books:details book.id
                 children=children,
                 in_menu=False,

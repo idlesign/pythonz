@@ -169,7 +169,7 @@ class PythonzTwitterMessage(PythonzBaseMessage):
         if settings.AGRESSIVE_MODE:
             postfix = '%s #python' % postfix
 
-        title = Truncator(entity.title).chars(MAX_LEN - URL_SHORTENED_LEN - len(prefix) - len(postfix))
+        title = Truncator(str(entity)).chars(MAX_LEN - URL_SHORTENED_LEN - len(prefix) - len(postfix))
 
         url = entity.get_absolute_url(with_prefix=True, utm_source='twee')
         message = '%s%s%s %s' % (prefix, title, postfix, url)
@@ -190,7 +190,7 @@ class PythonzTelegramMessage(PythonzBaseMessage):
     @classmethod
     def create_published(cls, entity):
         message = 'Новое: %s «%s» %s' % (
-            entity.get_verbose_name(), entity.title, entity.get_absolute_url(with_prefix=True, utm_source='tele'))
+            entity.get_verbose_name(), str(entity), entity.get_absolute_url(with_prefix=True, utm_source='tele'))
 
         cls.create(message)
 
@@ -272,9 +272,9 @@ class PythonzEmailNewEntity(PythonzEmailMessage):
         if not entity.notify_on_publish:
             return False
 
-        subject = cls.get_full_subject('Новое - %s' % entity.title)
+        subject = cls.get_full_subject('Новое - %s' % entity)
         context = {
-            'entity_title': entity.title,
+            'entity_title': str(entity),
             'entity_url': entity.get_absolute_url()
         }
         cls(subject, context).schedule(cls.recipients('smtp', cls.get_admins_emails()))

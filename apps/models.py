@@ -65,9 +65,6 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
     class Fields:
         text = 'Обсуждение'
 
-    def __str__(self):
-        return 'Обсуждение %s для %s %s' % (self.id, self.content_type, self.object_id)
-
     def save(self, *args, **kwargs):
         if not self.pk:
             self.mark_published()
@@ -204,6 +201,9 @@ class Place(RealmBaseModel, ModelWithDiscussions):
         verbose_name = 'Место'
         verbose_name_plural = 'Места'
 
+    def __str__(self):
+        return self.geo_title
+
     def get_pos(self):
         """Возвращает координаты объекта в виде кортежа: (широта, долгота).
 
@@ -240,9 +240,6 @@ class Place(RealmBaseModel, ModelWithDiscussions):
         except IntegrityError:
             place = cls.objects.get(geo_title=full_title)
         return place
-
-    def __str__(self):
-        return self.geo_title
 
 
 class Vacancy(UtmReady, RealmBaseModel):
@@ -778,6 +775,9 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
 
     autogenerate_slug = True
     items_per_page = 50
+
+    def __str__(self):
+        return 'Python %s' % self.title
 
     @classmethod
     def get_paginator_objects(cls):
