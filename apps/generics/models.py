@@ -581,6 +581,10 @@ class RealmBaseModel(ModelWithFlag):
 
         return url
 
+    @property
+    def absolute_url_prefixed(self):
+        return self.get_absolute_url(with_prefix=True)
+
     def get_category_absolute_url(self, category):
         """Возвращает URL страницы с разбивкой по данной категории.
 

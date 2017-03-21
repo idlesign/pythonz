@@ -10,12 +10,14 @@
     <meta name="keywords" content="{% block page_keywords %}pythonz, сайт про python, материалы по python{% endblock %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta property="og:site_name" content="Про Python" />
-    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-
     {% block meta_og %}{% endblock %}
 
-    <link rel="canonical" href="{{ request.build_absolute_uri }}" itemprop="url">
+    <meta property="og:site_name" content="Про Python" />
+
+    {% if item %}{% with url=item.absolute_url_prefixed %}
+    <meta property="og:url" content="{{ url }}" />
+    <link rel="canonical" href="{{ url }}" itemprop="url">
+    {% endwith %}{% endif %}
 
     <script src="//yandex.st/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
 
