@@ -61,11 +61,13 @@ class UserAdmin(BaseUserAdmin):
     list_display = BaseUserAdmin.list_display + ('is_active',)
 
     fieldsets = BaseUserAdmin.fieldsets + ((None, {'fields': (
+            'profile_public',
             'comments_enabled',
             'disqus_shortname',
             'disqus_category_id',
             'timezone',
             'url',
+            'twitter',
             'email_public'
     )}),)
 
