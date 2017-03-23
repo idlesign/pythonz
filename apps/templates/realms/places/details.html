@@ -54,10 +54,42 @@
 
 
 {% block details_contents_after %}
-    <div class="marg__b_mid marg__t_max">
-        {% include "realms/places/sub_realm_links.html" with items=users title="Люди" %}
-        {% include "realms/places/sub_realm_links.html" with items=communities title="Сообщества" %}
-        {% include "realms/places/sub_realm_links.html" with items=events title="События" %}
-        {% include "realms/places/sub_realm_links.html" with items=vacancies title="Вакансии" %}
+
+<div class="panel panel-default panel-body">
+    <ul class="nav nav-tabs marg__b_mid" role="tablist" id="realms_tabs">
+        {% if vacancies %}<li role="presentation">
+            <a href="#vacancies" aria-controls="vacancies" role="tab" data-toggle="tab">Вакансии</a>
+        </li>{% endif %}
+
+        {% if events %}<li role="presentation">
+            <a href="#events" aria-controls="events" role="tab" data-toggle="tab">События</a>
+        </li>{% endif %}
+
+        {% if users %}<li role="presentation">
+            <a href="#users" aria-controls="users" role="tab" data-toggle="tab">Пользователи</a>
+        </li>{% endif %}
+
+        {% if communities %}<li role="presentation">
+            <a href="#communities" aria-controls="communities" role="tab" data-toggle="tab">Сообщества</a>
+        </li>{% endif %}
+
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="vacancies">{% include "realms/places/sub_realm_links.html" with items=vacancies %}</div>
+        <div role="tabpanel" class="tab-pane active" id="users">{% include "realms/places/sub_realm_links.html" with items=users %}</div>
+        <div role="tabpanel" class="tab-pane active" id="communities">{% include "realms/places/sub_realm_links.html" with items=communities %}</div>
+        <div role="tabpanel" class="tab-pane active" id="events">{% include "realms/places/sub_realm_links.html" with items=events %}</div>
     </div>
+</div>
+
+{% endblock %}
+
+{% block js_bottom %}
+
+    <script type="text/javascript">
+        $(function() {
+            $('#realms_tabs a:first').tab('show');
+        });
+    </script>
+
 {% endblock %}

@@ -1,13 +1,10 @@
 {% if items %}
-    <div class="marg__b_mid">
-        <h4>{{ title }}</h4>
-        <ul>
-        {% for item in items %}
-            <li class="marg__t_min">
-                <a href="{{ item.get_absolute_url }}">{{ item.title }}</a><br>
-                <small class="cl__gray">{{ item.description }}</small>
-            </li>
-        {% endfor %}
-        </ul>
-    </div>
+    <ul>
+    {% for item in items %}
+        <li class="marg__t_min">
+            <a href="{{ item.get_absolute_url }}">{{ item.title }}</a><br>
+            <small class="cl__gray">{{ item.description }}</small>
+        </li>
+    {% endfor %}
+    </ul>
 {% endif %}
