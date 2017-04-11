@@ -13,7 +13,7 @@ class ReadOnlyWidget(forms.Widget):
     def value_from_datadict(self, data, files, name):
         return getattr(self.model, self.field_name)  # Чтобы поле не считалось изменённым.
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if hasattr(self, 'initial'):
             value = self.initial
         return '%s' % (value or '')
@@ -25,7 +25,7 @@ class PlaceWidget(TextInput):
     _place_cached = False
     _place_cache = None
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if value and self.model:
             value = self.model.place.geo_title  # Выводим полное название места.
         return super().render(name, value, attrs=attrs)
@@ -60,12 +60,12 @@ class RstEditWidget(forms.Widget):
             default_attrs.update(attrs)
         super().__init__(default_attrs)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
 
         if value is None:
             value = ''
 
-        final_attrs = self.build_attrs(attrs, name=name)
+        final_attrs = self.build_attrs(attrs, {'name': name})
 
         html = loader.render_to_string('sub_rst_hints.html')
         return format_html(html, flatatt(final_attrs), force_text(value))

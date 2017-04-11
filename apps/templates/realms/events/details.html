@@ -54,7 +54,7 @@
         </div>
     </div>
 
-    {% if not event.is_now and not event.is_in_past %}
+    {% if not event.is_now and not event.is_in_past and event.time_start %}
         <div class="marg__t_min marg__b_mid">
             {% include "sub_ya_forgetmenot.html" %}
         </div>
