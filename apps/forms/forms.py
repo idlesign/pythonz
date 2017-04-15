@@ -168,6 +168,7 @@ class BookForm(RealmEditBaseForm):
 
     @staticmethod
     def clean_isbn_(isbn):
+        isbn = isbn or ''
         isbn = isbn.replace('-', '').strip()
         length = len(isbn)
         if length:
