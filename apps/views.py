@@ -266,8 +266,7 @@ def search(request):
         # Поиск не дал результатов. Запомним, что искали и сообщим администраторам,
         # чтобы приняли меры по возможности.
 
-        if ReferenceMissing.add(search_term):
-            sig_search_failed.send(None, search_term=search_term)
+        ReferenceMissing.add(search_term)
 
         message_warning(request, 'Поиск по справочнику не дал результатов, и мы переключились на поиск по всему сайту.')
 
