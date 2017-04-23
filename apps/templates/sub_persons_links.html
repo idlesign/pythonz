@@ -1,0 +1,3 @@
+{% for person in persons %}
+    <a href="{{ person.get_absolute_url }}">{{ person.title }}</a><br>
+{% endfor %}

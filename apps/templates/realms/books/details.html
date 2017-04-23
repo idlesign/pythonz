@@ -21,7 +21,9 @@
 {% block details_contents %}
     <div class="marg__b_mid text-muted">
         <small>
-            <span class="marg__r_mid py_user">{% model_field_verbose_name from book.author %}: {{ book.author }}</span>
+            <span class="marg__r_mid">
+                {% model_field_verbose_name from book.author %}: {% include "sub_persons_links.html" with persons=book.authors.all %}
+            </span>
             <span class="marg__r_mid">{% model_field_verbose_name from book.year %}: {{ book.year }}</span>
             {% if book.isbn or book.isbn_ebook %}
                 <span>

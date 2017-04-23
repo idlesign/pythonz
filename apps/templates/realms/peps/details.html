@@ -51,11 +51,7 @@
             {% if authors %}
             <tr>
                 <th>{% model_field_verbose_name from pep.authors %}</th>
-                <td>
-                    {% for author in authors %}
-                        <a href="{{ author.get_absolute_url }}">{{ author.title }}</a><br>
-                    {% endfor %}
-                </td>
+                <td>{% include "sub_persons_links.html" with persons=authors %}</td>
             </tr>
             {% endif %}
         {% endwith %}

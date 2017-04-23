@@ -1,0 +1,24 @@
+<ul class="nav nav-tabs marg__b_mid" role="tablist" id="realms_tabs">
+{% for realm_name, data_tuple in realms_links.items %}
+    <li role="presentation">
+        <a href="#{{ data_tuple.0 }}" aria-controls="{{ data_tuple.0 }}" role="tab" data-toggle="tab">{{ realm_name }}</a>
+    </li>
+{% endfor %}
+</ul>
+<div class="tab-content">
+{% for realm_name, data_tuple in materials.items %}
+    <div role="tabpanel" class="tab-pane active" id="{{ data_tuple.0 }}">
+        <ul>
+        {% for item in data_tuple.1 %}
+            <li><a href="{{ item.get_absolute_url }}">{{ item.get_display_name }}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endfor %}
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        $('#realms_tabs a:first').tab('show');
+    });
+</script>

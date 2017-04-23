@@ -195,7 +195,7 @@ def sync(skip_deadend_peps=True, limit=None):
     :param bool skip_deadend_peps: Следует ли пропустить ПУПы, состояние которых уже не измениться.
     :param int limit: Максимальное количесто PEP, которые следует обработать.
     """
-    from ..models import Version, PEP, Person
+    from ..models import Version, PEP, Person, PersonsLinked
 
     LOG.debug('Syncing PEPs ...')
 
@@ -273,16 +273,7 @@ def sync(skip_deadend_peps=True, limit=None):
 
     known_persons = Person.get_known_persons()
 
-    def create_person(person_name, persons):
-        """Создаёт персону и добавляет её в словарь известных персон.
-
-        :param str person_name:
-        :param dict persons:
-        :rtype: Person
-        """
-        person = Person.create(person_name, save=True)
-        Person.contribute_to_known_persons(person, persons)
-        return person
+    create_person = PersonsLinked.create_person
 
     for pep in peps:  # type: PepInfo
         # Для правильного связывания необходимо, чтобы в БД уже были все известные PEP.

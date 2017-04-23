@@ -1,5 +1,6 @@
 from datetime import timedelta
 from itertools import chain
+from functools import partial
 from collections import OrderedDict
 
 from django.core.exceptions import FieldError
@@ -17,7 +18,7 @@ from etc.toolbox import choices_list, get_choices
 
 from .exceptions import RemoteSourceError
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
-from .utils import format_currency, truncate_chars, UTM, PersonName
+from .utils import format_currency, truncate_chars, UTM, PersonName, sync_many_to_many
 from .integration.resources import PyDigestResource
 from .integration.vacancies import HhVacancyManager
 from .integration.peps import sync as sync_peps
@@ -635,8 +636,56 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         return self.get_display_name()
 
 
+class PersonsLinked(models.Model):
+    """Примесь для моделей, имеющих поля многие-ко-многим, ссылающиеся на Person."""
+
+    persons_fields = []
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.sync_persons_fields()
+
+    def sync_persons_fields(self, known_persons=None):
+        if not self.persons_fields:
+            return
+
+        if known_persons is None:
+            known_persons = Person.get_known_persons()
+
+        for field in self.persons_fields:
+            src_field = field.rstrip('s')  # authors - > author
+            self._sync_persons(getattr(self, src_field), field, known_persons)
+
+    def _sync_persons(self, names_str, persons_field, known_persons, related_attr='name'):
+        names_list = []
+        for name in names_str.split(','):
+            # Убираем разметку типа [u:1:идле]
+            name = name.strip(' []').rpartition(':')[2]
+            name and names_list.append(name)
+
+        sync_many_to_many(
+            names_list, self, persons_field, related_attr, known_persons,
+            unknown_handler=partial(self.create_person, publish=False))
+
+    @classmethod
+    def create_person(cls, person_name, known_persons, publish=True):
+        """Создаёт персону и добавляет её в словарь известных персон.
+
+        :param str person_name:
+        :param dict known_persons:
+        :param bool publish:
+        :rtype: Person
+        """
+        person = Person.create(person_name, save=True, publish=publish)
+        Person.contribute_to_known_persons(person, known_persons)
+        return person
+
+
 class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
-           ModelWithAuthorAndTranslator, ModelWithPartnerLinks):
+           ModelWithAuthorAndTranslator, ModelWithPartnerLinks, PersonsLinked):
     """Модель сущности `Книга`."""
 
     COVER_UPLOAD_TO = 'books'
@@ -644,7 +693,11 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussio
     isbn = models.CharField('ISBN', max_length=20, unique=True, null=True, blank=True)
     isbn_ebook = models.CharField('ISBN эл. книги', max_length=20, unique=True, null=True, blank=True)
 
+    authors = models.ManyToManyField('Person', verbose_name='Авторы', related_name='books', blank=True)
+
     history = HistoricalRecords()
+
+    persons_fields = ['authors']
 
     class Meta:
         verbose_name = 'Книга'
@@ -1120,7 +1173,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
 
 
 class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
-            ModelWithAuthorAndTranslator):
+            ModelWithAuthorAndTranslator, PersonsLinked):
     """Модель сущности `Видео`."""
 
     EMBED_WIDTH = 560
@@ -1130,7 +1183,11 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
     code = models.TextField('Код')
     url = models.URLField('URL')
 
+    authors = models.ManyToManyField('Person', verbose_name='Авторы', related_name='videos', blank=True)
+
     history = HistoricalRecords()
+
+    persons_fields = ['authors']
 
     class Meta:
         verbose_name = 'Видео'
@@ -1419,17 +1476,18 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         )
 
     @classmethod
-    def create(cls, name, save=False):
+    def create(cls, name, save=False, publish=True):
         """Создаёт объект персоны по имени.
 
         :param str name:
         :param bool save: Следует ли сохранить объект в БД.
+        :param bool publish: Следует ли пометить объект опубликованным.
         :rtype: Person
         """
         person = cls(
             name=name,
             name_en=name,
-            status=cls.STATUS_PUBLISHED,
+            status=cls.STATUS_PUBLISHED if publish else cls.STATUS_DRAFT,
             text_src='Описание отсутствует',
             submitter_id=settings.ROBOT_USER_ID,
         )
@@ -1460,7 +1518,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         """
         from .realms import get_realm
 
-        realms = [get_realm('pep')]  # Пока ограничимся.
+        realms = [get_realm('pep'), get_realm('book'), get_realm('video')]  # Пока ограничимся.
 
         materials = OrderedDict()
         for realm in realms:
@@ -1472,6 +1530,6 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
             items = getattr(self, plural).order_by('slug', 'title')
 
             if items:
-                materials[realm_name] = items
+                materials[realm_name] = (plural, items)
 
         return materials

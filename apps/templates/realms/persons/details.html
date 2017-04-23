@@ -42,18 +42,7 @@
 
     {% if materials %}
     <div class="marg__t_max">
-        <hr>
-        <h4><i class="fa fa-fw fa-bookmark-o"></i> Автор</h4>
-        {% for realm_name, material_list in materials.items %}
-            <div class="marg__l_mid marg__t_mid">
-                <h5>{{ realm_name }}</h5>
-                <ul>
-                    {% for item in material_list %}
-                        <li><a href="{{ item.get_absolute_url }}">{{ item.get_display_name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endfor %}
+        {% include "sub_realms_links_tabs.html" with realms_links=materials %}
     </div>
     {% endif %}
 

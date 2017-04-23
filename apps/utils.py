@@ -133,19 +133,20 @@ def sync_many_to_many(src_obj, model, m2m_attr, related_attr, known_items, unkno
     """Синхронизирует (при необходимости) список из указанного атрибута
     объекта-источника в поле многие-ко-многим указанной модели.
 
-    Возвращает список неизвестных (отсутствующих known_items) элементов из src_obj.m2m_attr,
+    Возвращает список неизвестных (отсутствующих в known_items) элементов из src_obj.m2m_attr,
     либо созданных при помощи unknown_handler.
 
     Внимание: для правильной работы необходимо, чтобы в БД уже был и объект model и объекты из known_items.
 
     :param object src_obj: Объект-источник, в котором есть src_obj.m2m_attr, содержащий
         список (например строк), которым будут сопоставлены объекты из known_items.
+        Либо может быть указан список напрямую.
 
     :param Model model: Модель, поле которой требуется обновить при необходимости.
 
     :param str m2m_attr: Имя атрибута модели, являющегося полем многие-ко-многим.
 
-    :param str related_attr: Имя атрибута, из в объектах многие-ко-многим, считающееся ключевым.
+    :param str related_attr: Имя атрибута, в объектах многие-ко-многим, считающееся ключевым.
         Значения из этого атрибута ожидаются в списке из src_obj.m2m_attr.
 
     :param dict known_items: Ключи - это значения из src_obj.m2m_attr,
@@ -158,7 +159,10 @@ def sync_many_to_many(src_obj, model, m2m_attr, related_attr, known_items, unkno
 
     :rtype: list
     """
-    new_list = getattr(src_obj, m2m_attr)
+    if isinstance(src_obj, list):
+        new_list = src_obj
+    else:
+        new_list = getattr(src_obj, m2m_attr)
 
     if not new_list:
         return
