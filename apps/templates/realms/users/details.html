@@ -64,6 +64,17 @@
                     <td><a href="https://twitter.com/{{ user.twitter }}">{{ user.twitter }}</a></td>
                 </tr>
             {% endif %}
+            {% if user.person %}
+            <tr>
+                <td colspan="2">
+                    <div class="marg__t_mid">
+                        <a href="{{ user.person.get_absolute_url  }}" class="btn btn-primary btn-sm">
+                            {{ user.get_display_name }} в разделе &laquo;Персоны&raquo; &hellip;
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endif %}
         </table>
     </div>
 

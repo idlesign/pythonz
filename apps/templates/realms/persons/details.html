@@ -37,6 +37,15 @@
                 <td>{% model_field_verbose_name from person.aka %}:</td>
                 <td>{{ person.aka }}</td>
             </tr>
+            {% if person.user %}
+            <tr>
+                <td colspan="2">
+                    <div class="marg__t_mid">
+                        <a href="{{ person.user.get_absolute_url  }}" class="btn btn-primary btn-sm">Профиль пользователя сайта &hellip;</a>
+                    </div>
+                </td>
+            </tr>
+            {% endif %}
         </table>
     </div>
 
