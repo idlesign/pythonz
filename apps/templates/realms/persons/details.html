@@ -1,5 +1,5 @@
 {% extends "base_details.html" %}
-{% load gravatar model_meta model_field sitetree static %}
+{% load gravatar model_meta model_field sitetree static cache %}
 {% get_static_prefix as STATIC_URL %}
 
 
@@ -49,10 +49,13 @@
         </table>
     </div>
 
+
+{% cache 300 person_materials person.pk %}
     {% if materials %}
     <div class="marg__t_max">
         {% include "sub_realms_links_tabs.html" with realms_links=materials %}
     </div>
     {% endif %}
+{% endcache %}
 
 {% endblock %}

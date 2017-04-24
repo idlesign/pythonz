@@ -1,5 +1,5 @@
 {% extends "base_details.html" %}
-{% load gravatar sitetree model_field %}
+{% load gravatar sitetree model_field cache %}
 
 
 {% block page_description %}Профиль питониста «{{ user.title }}»{% endblock %}
@@ -79,6 +79,7 @@
     </div>
 
 
+{% cache 300 user_stats user.pk %}
     {% if stats %}
     <div class="marg__t_max">
         <hr>
@@ -102,6 +103,7 @@
         </div>
     </div>
     {% endif %}
+{% endcache %}
 
 
     {% if bookmarks %}

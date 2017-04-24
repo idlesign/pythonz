@@ -42,7 +42,7 @@ class UserDetailsView(DetailsView):
     def update_context(self, context, request):
         user = context['item']
         context['bookmarks'] = user.get_bookmarks()
-        context['stats'] = user.get_stats()
+        context['stats'] = lambda: user.get_stats()  # Ленивость для кеша в шаблоне
 
 
 class PersonDetailsView(DetailsView):
@@ -50,7 +50,7 @@ class PersonDetailsView(DetailsView):
 
     def update_context(self, context, request):
         user = context['item']
-        context['materials'] = user.get_materials()
+        context['materials'] = lambda: user.get_materials()  # Ленивость для кеша в шаблоне
 
 
 class UserEditView(EditView):
