@@ -486,7 +486,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
 
     items_per_page = 100
-    details_related = ['place']
+    details_related = ['last_editor', 'person', 'place']
 
     objects = UserManager()
 
@@ -1397,7 +1397,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
     Персона не обязана являться пользователем сайта, но между этими сущностями может быть связь.
 
     """
-    details_related = []
+    details_related = ['submitter', 'last_editor', 'user']
     paginator_related = []
     paginator_order = 'name'
     items_per_page = 1000
