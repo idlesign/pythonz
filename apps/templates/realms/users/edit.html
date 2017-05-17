@@ -11,13 +11,14 @@
 
 
 {% block form %}
-    {{ block.super }}
-
     <h3>Подписка</h3>
     <form class="form-horizontal" role="form" method="post">
         {% csrf_token %}
         {% sitemessage_prefs_table from subscr_prefs template "sitemessage/user_prefs_table-bootstrap.html" %}
 
-        <input type="submit" class="btn btn-default btn-block btn-primary" value="Сохранить настройки" />
+        <input type="submit" class="btn btn-default btn-block btn-primary" value="Применить" />
     </form>
+    <div class="marg__t_max">
+    {{ block.super }}
+    </div>
 {% endblock %}
