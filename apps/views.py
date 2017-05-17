@@ -2,6 +2,7 @@ from itertools import groupby
 from urllib.parse import quote_plus
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
@@ -288,3 +289,9 @@ def search(request):
 def login(request):
     """Страница авторизации и регистрации."""
     return render(request, 'static/login.html')
+
+
+@login_required
+def user_settings(request):
+    """Перенаправляет на страницу настроек текущего пользователя."""
+    return redirect('users:edit', request.user.pk)

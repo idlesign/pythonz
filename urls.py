@@ -12,7 +12,7 @@ from sitemessage.toolbox import get_sitemessage_urls
 from robots.views import rules_list
 
 from apps.realms import bootstrap_realms  # Здесь относительный импорт работать не будет.
-from apps.views import page_not_found, permission_denied, server_error, index, search, login, telebot
+from apps.views import page_not_found, permission_denied, server_error, index, search, login, telebot, user_settings
 
 
 urlpatterns = [
@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^search/site/$', render, {'template_name': 'static/search_site.html'}, name='search_site'),
     url(r'^search/$', search, name='search'),
     url(r'^login/$', login, name='login'),
+    url(r'^settings/$', user_settings, name='settings'),
     url(r'^logout/$', logout, {'next_page': '/'}, name='logout'),
     url(r'^promo/$', render, {'template_name': 'static/promo.html'}),
     url(r'^about/$', render, {'template_name': 'static/about.html'}),
