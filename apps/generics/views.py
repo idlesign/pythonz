@@ -73,7 +73,7 @@ class RealmView(View):
         if not request.user.is_superuser:
 
             try:
-                edit_by_owner = (request.user == item.submitter)
+                edit_by_owner = (request.user_id == item.submitter_id)
             except AttributeError:
                 edit_by_owner = (request.user == item)  # Модель User
 
