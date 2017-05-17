@@ -141,11 +141,11 @@ def build_sitetree():
             tree('main', 'Основное дерево', (
                 get_sitetree_root_item((realm.get_sitetree_items() for realm in get_realms().values())),
                 item('Вход', 'login', access_guest=True, in_menu=False, in_breadcrumbs=False),
-                item('Личное меню', '#', alias='personal', url_as_pattern=False, access_loggedin=True, in_menu=False,
+                item('', '/', alias='personal', url_as_pattern=False, access_loggedin=True, in_menu=False,
                      in_sitetree=False, children=(
-                        item('Профиль', 'users:details request.user.id', access_loggedin=True, in_breadcrumbs=False,
+                        item('Профиль', 'users:details request.user.id', access_loggedin=True, in_breadcrumbs=True,
                              in_sitetree=False),
-                        item('Настройки', 'users:edit request.user.id', access_loggedin=True, in_breadcrumbs=False,
+                        item('Настройки', 'users:edit request.user.id', access_loggedin=True, in_breadcrumbs=True,
                              in_sitetree=False),
                         item('Выход', 'logout', access_loggedin=True, in_breadcrumbs=False, in_sitetree=False),
                 )),
