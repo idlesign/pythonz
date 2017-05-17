@@ -102,6 +102,9 @@ ADMIN_URL = 'admin'
 MEDIA_ROOT = '%s/media/' % PATH_DATA
 MEDIA_URL = '/media/'
 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'settings'
+
 STATIC_ROOT = '%s/static/' % PATH_DATA
 STATIC_URL = '/static/'
 STATICFILES_DIRS = ('%s/static_src/' % PATH_DATA,)
