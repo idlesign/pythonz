@@ -311,6 +311,7 @@ class TextCompiler:
     RE_NOTE = re.compile('\.{2}\s*note::\s*([^\n]+)\n', re.S)
     RE_WARNIGN = re.compile('\.{2}\s*warning::\s*([^\n]+)\n', re.S)
     RE_GIST = re.compile('\.{2}\s*gist::\s*([^\n]+)\n', re.S)
+    RE_POLL = re.compile('\.{2}\s*poll::\s*([^\n]+)\n', re.S)
     RE_PODSTER = re.compile('\.{2}\s*podster::\s*([^\n]+)[/]*\n', re.S)
     RE_IMAGE = re.compile('\.{2}\s*image::\s*([^\n]+)[/]*\n', re.S)
     RE_ACCENT = re.compile('`{2}([^`\n]+)`{2}')
@@ -401,6 +402,7 @@ class TextCompiler:
         text = re.sub(cls.RE_CODE, replace_code, text)
         text = re.sub(cls.RE_URL_WITH_TITLE, '<a href="\g<2>">\g<1></a>', text)
         text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\g<1>.js"></script>', text)
+        text = re.sub(cls.RE_POLL, '<script src="http://static.polldaddy.com/p/\g<1>.js"></script>', text)
         text = re.sub(cls.RE_TABLE, replace_table, text)
 
         text = re.sub(
