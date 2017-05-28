@@ -244,8 +244,8 @@ def sync(skip_deadend_peps=True, limit=None):
                 pep_model.save()
 
                 sig_send_generic_telegram.send(
-                    None, text='PEP %s сменил статус на «%s»' %
-                    (pep_model.num, PEP.STATUSES.get(status_id, 'Неизвестный')))
+                    None, text='PEP %s сменил статус на «%s»\n%s' %
+                    (pep_model.num, PEP.STATUSES.get(status_id, 'Неизвестный'), pep_model.get_link_to_pyorg()))
 
         else:
             LOG.debug('PEP %s is new. Creating ...', num)

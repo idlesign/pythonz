@@ -23,3 +23,14 @@ def test_person():
         'Nathaniel J. Smith',
         'N. J. Smith'
     }
+
+
+def test_pep():
+
+    from apps.models import PEP
+
+    pep1 = PEP(num=1)
+    pep9999 = PEP(num=9999)
+
+    assert pep1.get_link_to_pyorg() == 'https://www.python.org/dev/peps/pep-0001/'
+    assert pep9999.get_link_to_pyorg() == 'https://www.python.org/dev/peps/pep-9999/'
