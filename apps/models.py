@@ -957,6 +957,10 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     """
 
+    def get_link_to_pyorg(self):
+        # Получает ссылку на pep в python.org
+        return self.TPL_URL_PYORG % self.num
+
     def generate_slug(self):
         # Дополняется нулями слева до четырёх знаков.
         return str(self.num).zfill(4)
