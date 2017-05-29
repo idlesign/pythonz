@@ -2,8 +2,5 @@
 ====================
 
 
-* Игорь ``идле сигн`` Стариков <https://github.com/idlesign/>
-
-  Идея, код, оформление.
-
-
+* Игорь 'idle sign' Стариков <https://github.com/idlesign/>
+* Руслан Насонов <https://github.com/rusnasonov>
