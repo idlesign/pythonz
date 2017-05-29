@@ -863,7 +863,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     Заполняются автоматически из репозитория https://github.com/python/peps
 
     """
-    TPL_URL_PYORG = 'https://www.python.org/dev/peps/pep-%04d/'
+    TPL_URL_PYORG = 'https://www.python.org/dev/peps/pep-%s/'
 
     STATUS_DRAFT = 1
     STATUS_ACTIVE = 2
@@ -959,7 +959,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     def get_link_to_pyorg(self):
         # Получает ссылку на pep в python.org
-        return self.TPL_URL_PYORG % self.num
+        return self.TPL_URL_PYORG % self.slug
 
     def generate_slug(self):
         # Дополняется нулями слева до четырёх знаков.

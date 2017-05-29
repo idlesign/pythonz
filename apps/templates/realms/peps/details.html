@@ -19,7 +19,7 @@
 {% block details_description %}
     <div class="marg__b_mid" itemprop="description">
         <strong>PEP {{ pep.num }}</strong>:
-        <a href="https://www.python.org/dev/peps/pep-{{ pep.slug }}" title="Полный текст улучшения на английском языке">{{ item.description }}</a>
+        <a href="{{ pep.get_link_to_pyorg }}" title="Полный текст улучшения на английском языке">{{ item.description }}</a>
     </div>
 {% endblock %}
 
