@@ -2,6 +2,7 @@
 .pydevproject
 .idea
 .tox
+.cache
 __pycache__
 /data/media/
 /data/db/
