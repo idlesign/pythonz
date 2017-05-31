@@ -1,13 +1,13 @@
 import re
 from collections import OrderedDict
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 from django.conf import settings
 from django.db.models import signals
 from django.core.cache import cache
 from django.utils.timezone import now
 
-from .utils import make_soup
+from .utils import make_soup, get_from_url, post_from_url
 
 
 _PARTNERS_REGISTRY = None
@@ -63,8 +63,13 @@ class PartnerBase():
         return data
 
     @classmethod
+    def get_page(cls, url):
+        return get_from_url(url)
+
+    @classmethod
     def get_page_soup(cls, url):
-        return make_soup(url)
+        page = cls.get_page(url)
+        return make_soup(page.text)
 
     @classmethod
     def get_price(cls, page_soup):
@@ -91,6 +96,14 @@ class BooksRu(PartnerBase):
     title = 'books.ru'
     link_mutator = '?partner={partner_id}'
 
+    change_location_url = "https://www.books.ru/change_region.php"
+    locations = {
+        'nsk': {'mainregion_other': 1, 'subregion_other': 277},
+        'msk': {'mainregion_other': 1, 'subregion_other': 271},
+        'ned': {'mainregion_other': 0, 'subregion_other': 157}
+    }
+    default_location = 'nsk'
+
     @classmethod
     def get_price(cls, page_soup):
 
@@ -102,6 +115,15 @@ class BooksRu(PartnerBase):
                 price = matches[0].text
 
         return price
+
+    @classmethod
+    def get_page(cls, url):
+        resp = post_from_url(
+            cls.change_location_url,
+            data=cls.locations[cls.default_location],
+            params={'back_url': urlparse(url).path}
+        )
+        return resp
 
 
 class LitRes(PartnerBase):
