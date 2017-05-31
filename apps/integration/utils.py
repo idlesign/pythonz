@@ -16,38 +16,23 @@ from ..utils import truncate_words, truncate_chars
 USER_AGENT = 'pythonz.net/%s (press@pythonz.net)' % '.'.join(map(str, VERSION))
 
 
-def get_from_url(url):
+def get_from_url(url, method='get', **kwargs):
     """Возвращает объект ответа requests с указанного URL.
     
-    запрос производится методом GET
+    По умолчанию запрос производится методом GET.
     
     :param str url:
+    :param str method: get, post
     :rtype: requests.Response
     """
     r_kwargs = {
         'allow_redirects': True,
         'headers': {'User-agent': USER_AGENT},
     }
-    return requests.get(url, **r_kwargs)
-
-
-def post_from_url(url, *args, **kwargs):
-    """Возвращает объект ответа requests с указанного URL.
-
-    запрос производится методом POST
-
-    :param str url:
-    :rtype: requests.Response
-    """
-
-    r_kwargs = {
-        'allow_redirects': True,
-        'headers': {'User-agent': USER_AGENT},
-    }
-
     r_kwargs.update(kwargs)
 
-    return requests.post(url, *args, **r_kwargs)
+    method = getattr(requests, method)
+    return method(url, **r_kwargs)
 
 
 def get_json(url, return_none_statuses=None):

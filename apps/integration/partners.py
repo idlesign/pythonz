@@ -7,7 +7,7 @@ from django.db.models import signals
 from django.core.cache import cache
 from django.utils.timezone import now
 
-from .utils import make_soup, get_from_url, post_from_url
+from .utils import make_soup, get_from_url
 
 
 _PARTNERS_REGISTRY = None
@@ -118,10 +118,11 @@ class BooksRu(PartnerBase):
 
     @classmethod
     def get_page(cls, url):
-        resp = post_from_url(
+        resp = get_from_url(
             cls.change_location_url,
             data=cls.locations[cls.default_location],
-            params={'back_url': urlparse(url).path}
+            params={'back_url': urlparse(url).path},
+            method='post',
         )
         return resp
 

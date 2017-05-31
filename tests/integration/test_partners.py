@@ -1,3 +1,5 @@
+
+
 def test_booksru(mocker):
     from apps.integration import partners
     from apps.models import PartnerLink
