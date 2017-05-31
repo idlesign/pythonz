@@ -18,15 +18,36 @@ USER_AGENT = 'pythonz.net/%s (press@pythonz.net)' % '.'.join(map(str, VERSION))
 
 def get_from_url(url):
     """Возвращает объект ответа requests с указанного URL.
-
+    
+    запрос производится методом GET
+    
     :param str url:
-    :return:
+    :rtype: requests.Response
     """
     r_kwargs = {
         'allow_redirects': True,
         'headers': {'User-agent': USER_AGENT},
     }
     return requests.get(url, **r_kwargs)
+
+
+def post_from_url(url, *args, **kwargs):
+    """Возвращает объект ответа requests с указанного URL.
+
+    запрос производится методом POST
+
+    :param str url:
+    :rtype: requests.Response
+    """
+
+    r_kwargs = {
+        'allow_redirects': True,
+        'headers': {'User-agent': USER_AGENT},
+    }
+
+    r_kwargs.update(kwargs)
+
+    return requests.post(url, *args, **r_kwargs)
 
 
 def get_json(url, return_none_statuses=None):
@@ -97,7 +118,7 @@ def scrape_page(url):
     return result
 
 
-def make_soup(url):
+def make_soup(page):
     """Возвращает объект BeautifulSoup, либо None для указанного URL.
 
     :param str url:
@@ -106,8 +127,7 @@ def make_soup(url):
     """
     result = None
     try:
-        response = get_from_url(url)
-        result = BeautifulSoup(response.text, 'lxml')
+        result = BeautifulSoup(page, 'lxml')
     except requests.exceptions.RequestException:
         pass
 
