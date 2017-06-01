@@ -54,6 +54,7 @@ class UserCreationForm(BaseUserCreationForm):
         raise forms.ValidationError(self.error_messages['duplicate_username'])
 
 
+@admin.register(User)
 class UserAdmin(BaseUserAdmin):
 
     form = UserChangeForm
@@ -70,9 +71,6 @@ class UserAdmin(BaseUserAdmin):
             'twitter',
             'email_public'
     )}),)
-
-admin.site.register(User, UserAdmin)
-
 
 ##################################################################################
 # Партнёрские ссылки.
@@ -99,16 +97,17 @@ class PartnerLinkInline(GenericTabularInline):
     extra = 0
 
 
+@admin.register(PartnerLink)
 class PartnerLinkAdmin(admin.ModelAdmin):
 
     list_display = ('linked_object', 'partner_alias', 'url')
     list_filter = ['partner_alias']
 
-admin.site.register(PartnerLink, PartnerLinkAdmin)
 
 ##################################################################################
 
 
+@admin.register(Place)
 class PlaceAdmin(admin.ModelAdmin):
 
     list_display = ('geo_title', 'title', 'status', 'time_created')
@@ -117,17 +116,14 @@ class PlaceAdmin(admin.ModelAdmin):
     list_filter = ['time_created', 'status', 'geo_type']
     ordering = ['geo_title']
 
-admin.site.register(Place, PlaceAdmin)
 
-
+@admin.register(Vacancy)
 class VacancyAdmin(admin.ModelAdmin):
 
     list_display = ('title', 'src_id', 'status', 'time_created')
     search_fields = ['title', 'src_id']
     list_filter = ['status', 'place']
     ordering = ['-time_created']
-
-admin.site.register(Vacancy, VacancyAdmin)
 
 
 class EntityBaseAdmin(SimpleHistoryAdmin):
@@ -149,15 +145,13 @@ class EntityBaseAdmin(SimpleHistoryAdmin):
     publish.short_description = 'Опубликовать'
 
 
+@admin.register(Article)
 class ArticleAdmin(EntityBaseAdmin):
 
     list_display = ('time_created', 'title', 'submitter', 'source', 'published_by_author')
     list_filter = ['time_created', 'status', 'source', 'published_by_author']
 
-
-admin.site.register(Article, ArticleAdmin)
-
-
+@admin.register(Book)
 class BookAdmin(EntityBaseAdmin):
 
     form = BookForm
@@ -166,39 +160,32 @@ class BookAdmin(EntityBaseAdmin):
     search_fields = ['title', 'isbn']
     inlines = [PartnerLinkInline]
 
-admin.site.register(Book, BookAdmin)
 
-
+@admin.register(Community)
 class CommunityAdmin(EntityBaseAdmin):
 
     search_fields = ['title', 'description', 'text']
 
-admin.site.register(Community, CommunityAdmin)
 
-
+@admin.register(Discussion)
 class DiscussionAdmin(EntityBaseAdmin):
 
     search_fields = ['title', 'description', 'text']
 
-admin.site.register(Discussion, DiscussionAdmin)
 
-
+@admin.register(Event)
 class EventAdmin(EntityBaseAdmin):
 
     list_display = ('time_created', 'title', 'submitter', 'type', 'specialization')
     search_fields = ['title', 'description', 'text']
     list_filter = ['time_created', 'status', 'type', 'specialization']
 
-admin.site.register(Event, EventAdmin)
+
+@admin.register(Video)
+class VideoAdmin(EntityBaseAdmin): pass
 
 
-class VideoAdmin(EntityBaseAdmin):
-
-    pass
-
-admin.site.register(Video, VideoAdmin)
-
-
+@admin.register(PEP)
 class PEPAdmin(EntityBaseAdmin):
 
     list_display = ('num', 'title', 'type', 'status')
@@ -207,34 +194,30 @@ class PEPAdmin(EntityBaseAdmin):
     raw_id_fields = EntityBaseAdmin.raw_id_fields + ['versions', 'superseded', 'replaces', 'requires', 'linked', 'authors']
     readonly_fields = EntityBaseAdmin.readonly_fields + ['status', 'type', 'description']
 
-admin.site.register(PEP, PEPAdmin)
 
-
+@admin.register(Reference)
 class ReferenceAdmin(HierarchicalModelAdmin, EntityBaseAdmin):
 
     hierarchy = True
     list_display = ('title', 'submitter', 'type')
     list_filter = ['time_created', 'status', 'type', 'version_added', 'version_deprecated']
 
-admin.site.register(Reference, ReferenceAdmin)
 
-
+@admin.register(ReferenceMissing)
 class ReferenceMissingAdmin(admin.ModelAdmin):
 
     list_display = ('term', 'synonyms', 'hits')
     search_fields = ['term', 'synonyms']
     ordering = ['-hits', 'term']
 
-admin.site.register(ReferenceMissing, ReferenceMissingAdmin)
 
-
+@admin.register(Version)
 class VersionAdmin(EntityBaseAdmin):
 
     list_display = ('title', 'current', 'status', 'slug')
 
-admin.site.register(Version, VersionAdmin)
 
-
+@admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'name_en', 'time_created')
@@ -243,5 +226,3 @@ class PersonAdmin(admin.ModelAdmin):
     ordering = ['name']
     raw_id_fields = ['user', 'last_editor']
     readonly_fields = ['text', 'supporters_num']
-
-admin.site.register(Person, PersonAdmin)
