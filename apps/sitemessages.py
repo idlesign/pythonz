@@ -190,7 +190,7 @@ class PythonzTelegramMessage(PythonzBaseMessage):
     @classmethod
     def create_published(cls, entity):
         message = 'Новое: %s «%s» %s' % (
-            entity.get_verbose_name(), str(entity), entity.get_absolute_url(with_prefix=True, utm_source='tele'))
+            entity.get_verbose_name(), str(entity), entity.get_absolute_url(with_prefix=True))
 
         cls.create(message)
 
