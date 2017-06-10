@@ -20,8 +20,8 @@
 {% endif %}
 </span>
 
+{% sitetree_page_title from "main" as title %}
 <div class="page-header">
-    <i class="icon_entity fa fa-2x fa-{{ realm.icon }}"></i>
-    <h1 itemprop="name">{% sitetree_page_title from "main" %}</h1>
+    <h1 itemprop="name" data-geopattern="{{ title }}"><i class="fa fa-{{ realm.icon }}"></i> {{ title }}</h1>
     <i>{% block subheader %}{{ subheader }}{% endblock %}</i>
 </div>

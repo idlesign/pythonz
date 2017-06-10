@@ -1,17 +1,27 @@
 /*globals $ xross sitecats SimpleMDE ymaps */
 
-//xross.debug = true;
-
 var pythonz = {
 
     bootstrap: function() {
         "use strict";
         xross.automate();
+
         $(function(){
+            pythonz.makeGeopatterns();
             pythonz.markUser();
+
             sitecats.bootstrap();
             sitecats.make_cloud('tags_box');
+
             $('.mod__has_tooltip').tooltip();
+        });
+    },
+
+    makeGeopatterns: function () {
+        "use strict";
+        $.each($('[data-geopattern]'), function(idx, el) {
+            el = $(el);
+            el.css('background-image', GeoPattern.generate(el.data('geopattern') + 'a').toDataUrl());
         });
     },
 

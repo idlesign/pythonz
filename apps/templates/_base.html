@@ -62,9 +62,7 @@
 
             <div class="collapse navbar-collapse" id="nav_toggable">
 
-                {% cache 21600 nav_top %}
-                    {% sitetree_menu from "main" include "topmenu" template "sitetree/menu_top.html" %}
-                {% endcache %}
+                {% sitetree_menu from "main" include "topmenu" template "sitetree/menu_top.html" %}
 
                 {% with template_path="sitetree/menu_top_sub.html" %}
 
@@ -157,6 +155,7 @@
         hljs.configure({useBR: true});
         hljs.initHighlightingOnLoad();
     </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
 
     {% block js_bottom %}{% endblock %}
 

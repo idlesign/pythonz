@@ -4,29 +4,6 @@
 {% block page_title %}Про Python{% endblock %}
 
 
-{% block js_bottom %}
-    <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
-
-    <script type="text/javascript">
-        $(function () {
-            makeGeopatterns()
-        });
-
-        function makeGeopatterns() {
-            $.each($('[data-geopattern]'), function(idx, el) {
-                el = $(el);
-                el.css('background-image', GeoPattern.generate(el.data('geopattern')).toDataUrl());
-            });
-
-        }
-
-    </script>
-
-
-{% endblock %}
-
-
 {% block page_contents %}
 
     <div class="row">
