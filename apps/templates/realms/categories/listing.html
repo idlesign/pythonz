@@ -3,24 +3,8 @@
 
 
 {% block workarea %}
-    <div class="col-md-12 features section">
-        <h4>Разделы</h4>
-        <div class="features_row marg__t_mid">
-            {% for realm in realms %}
-                {% if realm.show_on_main %}
-                <div class="feature text-center pull-left">
-                    <a href="{% url realm.get_listing_urlname %}">
-                        <i class="fa fa-fw fa-{{ realm.icon }}"></i><h5>{% model_meta_verbose_name_plural realm.model %}</h5>
-                    </a>
-                </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-
     <div class="col-md-12 tags_box" id="tags_box">
-        <h4>Материалы по категориям</h4>
-        <div class="big marg__t_max">
+        <div class="big">
             {% sitecats_categories from item %}
         </div>
     </div>
