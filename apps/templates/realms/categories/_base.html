@@ -8,6 +8,16 @@
     </div>
 
     <div class="row">
-        {% block workarea %}{% endblock %}
+        <div class="col-md-8 container-fluid">
+            {% block workarea %}{% endblock %}
+        </div>
+
+        <div class="col-md-4 hidden-xs container-fluid">
+
+            <div class="marg__t_mid">
+                {% include "sub_hint.html" %}
+            </div>
+
+        </div>
     </div>
 {%  endblock %}

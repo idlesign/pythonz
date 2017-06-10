@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from itertools import groupby
 from urllib.parse import quote_plus
 
@@ -167,18 +168,25 @@ class CategoryListingView(RealmView):
         category_model = get_category_model()
         category = get_object_or_404(category_model.objects.select_related('parent'), pk=obj_id)
 
-        realm_list = []
+        realms_links = OrderedDict()
         for realm in realms:
-            if hasattr(realm.model, 'categories'):  # ModelWithCategory
-                objs = realm.model.get_objects_in_category(category)[:5]
-                if objs:
-                    realm_list.append({
-                        'objects': objs,
-                        'url': reverse(realm.get_tags_urlname(), args=[category.id]),
-                        'realm': realm
-                    })
+            realm_model = realm.model
 
-        return self.render(request, {self.realm.name: category, 'item': category, 'realm_list': realm_list})
+            if not hasattr(realm_model, 'categories'):  # ModelWithCategory
+                continue
+
+            items = realm_model.get_objects_in_category(category)
+
+            if not items:
+                continue
+
+            realm_title = realm_model.get_verbose_name_plural()
+
+            _, plural = realm.get_names()
+
+            realms_links[realm_title] = (plural, items)
+
+        return self.render(request, {self.realm.name: category, 'item': category, 'realms_links': realms_links})
 
 
 class VersionDetailsView(DetailsView):

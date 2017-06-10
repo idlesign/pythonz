@@ -6,7 +6,7 @@
 {% endfor %}
 </ul>
 <div class="tab-content">
-{% for realm_name, data_tuple in materials.items %}
+{% for realm_name, data_tuple in realms_links.items %}
     <div role="tabpanel" class="tab-pane active" id="{{ data_tuple.0 }}">
         <ul>
         {% for item in data_tuple.1 %}
