@@ -494,9 +494,7 @@ nav .submenu {
 
 #index_box {
   .card{
-    border-top: 2px solid #eee;
-    padding: @gap__mid 0 @gap__mid 0;
-    margin-bottom: @gap__mid;
+    padding: @gap__mid @gap__mid 0 @gap__mid;
   }
 
   img {
@@ -504,10 +502,13 @@ nav .submenu {
   }
   h2 {
     a {
-      color: #333;
+      color: #fff;
     }
+    background-color: #222;
+    background-blend-mode: screen;
     letter-spacing: 2px;
     white-space: nowrap;
+    padding: @gap__min;
     margin: @gap__min 0 @gap__mid 0;
   }
 }

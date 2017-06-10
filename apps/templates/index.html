@@ -4,25 +4,26 @@
 {% block page_title %}Про Python{% endblock %}
 
 
-{% block head %}
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
-{% endblock %}
-
-
 {% block js_bottom %}
     <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
 
     <script type="text/javascript">
         $(function () {
-            $('#carousel').slick({
-                dots: true,
-                autoplay: true,
-                arrows: false,
-                slidesToShow: 2
-            });
+            makeGeopatterns()
         });
+
+        function makeGeopatterns() {
+            $.each($('[data-geopattern]'), function(idx, el) {
+                el = $(el);
+                el.css('background-image', GeoPattern.generate(el.data('geopattern')).toDataUrl());
+            });
+
+        }
+
     </script>
+
+
 {% endblock %}
 
 
@@ -34,22 +35,11 @@
         <li><a href="/about/">Что это за сайт</a></li>
     </ul>
 
-    <div class="marg__b_mid">
+    <div>
         {% include "sub_search_bar.html" %}
     </div>
 
-    <div class="hidden-xs">
-        <h2 class="text-uppercase">Свежее</h2>
-        <div id="carousel" class="marg__b_max">
-            {% for realm_data in realms_data %}
-                {% with local=realm_data.main %}
-                    {% include "sub_realm_card_main.html" %}
-                {% endwith %}
-            {% endfor %}
-        </div>
-    </div>
-
-    <div id="index_box" class="marg__t_max">
+    <div id="index_box">
     {% for realm_data in realms_data %}
         {% include "sub_realm_card.html" %}
     {% endfor %}

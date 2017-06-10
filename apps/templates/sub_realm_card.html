@@ -1,31 +1,20 @@
 {% load sitetree model_meta %}
 
-<div class="card col-md-12">
+<div class="card col-md-6">
 
-    <h2 class="text-uppercase">
+    <h2 class="text-uppercase"  data-geopattern="{{ realm_data.main.title }}">
         <a href="{% url realm_data.cls.get_listing_urlname %}">
             {% model_meta_verbose_name_plural realm_data.cls.model %}
         </a>
     </h2>
 
-    <div class="row">
+    <ul>
+        <li class="marg__b_min"><a href="{{ realm_data.main.get_absolute_url }}">{{ realm_data.main.title }}</a></li>
+    {% if realm_data.additional %}
+        {% for item in realm_data.additional %}
+        <li class="marg__b_min"><a href="{% if item.src_alias %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">{{ item.title }}</a></li>
+        {% endfor %}
+    {% endif %}
+    </ul>
 
-        <div class="col-md-6">
-        {% with local=realm_data.main %}
-            {% include "sub_realm_card_main.html" %}
-        {% endwith %}
-        </div>
-
-        <div class="col-md-6">
-        {% if realm_data.additional %}
-            <ul class="list-unstyled">
-                {% for item in realm_data.additional %}
-                <li class="marg__b_min"><a href="{% if item.src_alias %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">{{ item.title }}</a></li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        </div>
-
-    </div>
-    <div class="clearfix"></div>
 </div>
