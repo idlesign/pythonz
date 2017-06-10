@@ -337,6 +337,7 @@ class PlaceRealm(RealmBase):
     sitemap_changefreq = 'weekly'
     allowed_views = ('listing', 'details')
     show_on_main = False
+    show_on_top = False
 
 
 class DiscussionRealm(RealmBase):
@@ -353,6 +354,7 @@ class DiscussionRealm(RealmBase):
     model = Discussion
     form = DiscussionForm
     icon = 'comments-o'
+    show_on_top = False
 
 
 class UserRealm(RealmBase):
@@ -514,6 +516,7 @@ class CommunityRealm(RealmBase):
     icon = 'building-o'
 
     show_on_main = False
+    show_on_top = False
 
 
 class VersionRealm(RealmBase):

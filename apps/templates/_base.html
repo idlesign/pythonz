@@ -44,7 +44,7 @@
     {% block body_start %}{% endblock %}
 
     <nav class="header navbar navbar-default navbar-fixed-top" itemscope itemtype="http://schema.org/SiteNavigationElement">
-        <div class="container-fluid">
+        <div class="container">
 
             <div class="navbar-header">
 
@@ -62,8 +62,11 @@
 
             <div class="collapse navbar-collapse" id="nav_toggable">
 
-                {% with template_path="sitetree/menu_top.html" %}
-                    {% sitetree_menu from "main" include "topmenu" template template_path %}
+                {% cache 21600 nav_top %}
+                    {% sitetree_menu from "main" include "topmenu" template "sitetree/menu_top.html" %}
+                {% endcache %}
+
+                {% with template_path="sitetree/menu_top_sub.html" %}
 
                     <div class="submenu navbar-nav navbar-left marg__l_mid bg-success">
                     {% if view.name == 'listing' %}

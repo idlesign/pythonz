@@ -1,13 +1,25 @@
 {% load sitetree %}
 <ul class="nav navbar-nav">
+
     {% for item in sitetree_items %}
         {% if item.show_on_top %}
-            {% sitetree_url for item as item_url %}
-            {% if item_url != '#unresolved' %}
             <li {% if item.is_current or item.in_current_branch %}class="active"{% endif %}>
-                <a href="{{ item_url }}">{{ item.title_resolved }}</a>
+                <a href="{% sitetree_url for item %}">{{ item.title_resolved }}</a>
             </li>
-            {% endif %}
         {% endif %}
     {% endfor %}
+
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ещё&hellip; <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+        {% for item in sitetree_items %}
+            {% if not item.show_on_top %}
+                <li {% if item.is_current or item.in_current_branch %}class="active"{% endif %}>
+                    <a href="{% sitetree_url for item %}">{{ item.title_resolved }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+    </li>
+
 </ul>
