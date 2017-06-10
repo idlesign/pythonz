@@ -538,7 +538,6 @@ class VersionRealm(RealmBase):
 
     syndication_enabled = False
 
-    show_on_main = False
     show_on_top = False
 
 
@@ -558,7 +557,6 @@ class PepRealm(RealmBase):
 
     icon = 'bell'
 
-    show_on_main = False
     show_on_top = False
 
 
