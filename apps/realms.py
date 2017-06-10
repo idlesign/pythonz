@@ -586,17 +586,20 @@ class PersonRealm(RealmBase):
 
 register_realms(
     CategoryRealm,
-    BookRealm,
-    VideoRealm,
     ArticleRealm,
     ReferenceRealm,
-    EventRealm,
+    VideoRealm,
+    BookRealm,
     VacancyRealm,
+    EventRealm,
+
     PlaceRealm,
     DiscussionRealm,
     CommunityRealm,
+
     VersionRealm,
     PepRealm,
     PersonRealm,
+
     UserRealm,
 )
