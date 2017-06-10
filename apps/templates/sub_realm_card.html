@@ -9,10 +9,16 @@
     </h2>
 
     <ul>
-        <li class="marg__b_min"><a href="{{ realm_data.main.get_absolute_url }}">{{ realm_data.main.title }}</a></li>
+        <li class="marg__b_min">
+            <a href="{{ realm_data.main.get_absolute_url }}">
+                {{ realm_data.main.title|truncatechars:57 }}</a>
+        </li>
     {% if realm_data.additional %}
         {% for item in realm_data.additional %}
-        <li class="marg__b_min"><a href="{% if item.src_alias %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">{{ item.title }}</a></li>
+        <li class="marg__b_min">
+            <a href="{% if item.src_alias %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">
+                {{ item.title|truncatechars:57 }}</a>
+        </li>
         {% endfor %}
     {% endif %}
     </ul>
