@@ -43,3 +43,11 @@ def test_pep():
 
     assert pep1.get_absolute_url(with_prefix=True) == 'http://pythonz.net/peps/named/0001/'
     assert pep9999.get_absolute_url(with_prefix=True) == 'http://pythonz.net/peps/named/9999/'
+
+
+@pytest.mark.django_db
+def test_summary():
+
+    from apps.models import Summary
+
+    Summary.create_article()

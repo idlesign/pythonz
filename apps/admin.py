@@ -10,7 +10,7 @@ from simple_history.admin import SimpleHistoryAdmin
 from .integration.partners import get_partners_choices
 from .forms.forms import BookForm
 from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version, PartnerLink, \
-    Vacancy, ReferenceMissing, PEP, Person, ExternalResource
+    Vacancy, ReferenceMissing, PEP, Person, ExternalResource, Summary
 
 
 def get_inline(model, field_name):
@@ -105,6 +105,13 @@ class PartnerLinkAdmin(admin.ModelAdmin):
 
 
 ##################################################################################
+
+@admin.register(Summary)
+class SummaryAdmin(admin.ModelAdmin):
+
+    list_display = ('time_created',)
+    list_filter = ['time_created']
+
 
 @admin.register(ExternalResource)
 class ExternalResourceAdmin(admin.ModelAdmin):

@@ -59,7 +59,7 @@
                 <div class="lead" itemprop="description">{{ article.description|linebreaksbr }}</div>
                 <div class="py_user">{{ article.text|safe }}</div>
 
-                {% if not article.is_handmade %}
+                {% if not article.is_handmade and article.url %}
                     <div class="marg__t_mid">
                         <i class="cl__gray fa fa-copyright"></i>
                         <i>С полным текстом статьи можно ознакомиться здесь: <a href="{{ article.get_utm_url }}">{{ article.title }}</a></i>

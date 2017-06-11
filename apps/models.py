@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta
 from itertools import chain
 from functools import partial
@@ -12,14 +13,15 @@ from django.db import models, IntegrityError
 from django.db.models import Min, Max, Count, Q, F
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
-from sitecats.models import ModelWithCategory
+from sitecats.models import ModelWithCategory, Category
 from etc.models import InheritedModel
 from etc.toolbox import choices_list, get_choices
 
 from .exceptions import RemoteSourceError
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
-from .utils import format_currency, truncate_chars, UTM, PersonName, sync_many_to_many
+from .utils import format_currency, truncate_chars, UTM, PersonName, sync_many_to_many, get_datetime_from_till
 from .integration.resources import PyDigestResource
+from .integration.summary import SUMMARY_FETCHERS
 from .integration.vacancies import HhVacancyManager
 from .integration.peps import sync as sync_peps
 from .integration.utils import get_json, scrape_page
@@ -29,6 +31,10 @@ USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 
 HINT_IMPERSONAL_REQUIRED = (
     '<strong>Без обозначения личного отношения. Личное отношение можно выразить в Обсуждениях к материалу.</strong>')
+
+
+if False:  # pragma: nocover
+    from .integration.summary.base import ItemsFetcherBase, SummaryItem
 
 
 class UtmReady:
@@ -136,6 +142,115 @@ class ExternalResource(UtmReady, RealmBaseModel):
             if added:
                 # Оставляем только те записи, которые до сих пор выдаёт внешний ресурс.
                 cls.objects.filter(src_alias=resource_alias).exclude(url__in=chain(added, existing)).delete()
+
+
+class Summary(RealmBaseModel):
+    """Cводки. Ссылки на материалы, собранные с внешних ресурсов."""
+
+    SUMMARY_CATEGORY_ID = 164
+
+    data_items = models.TextField('Элементы сводки')
+    data_result = models.TextField('Результат компоновки сводки')
+
+    class Meta:
+        verbose_name = 'Сводка'
+        verbose_name_plural = 'Сводки'
+        ordering = ('-time_created',)
+
+    def __str__(self):
+        return '%s' % self.time_created
+
+    @classmethod
+    def make_text(cls, fetched):
+        """Компонует текст из полученных извне данных.
+
+        :param dict fetched:
+        :rtype: str
+        """
+        summary_text = []
+
+        for fetcher_alias, items in fetched.items():
+            if not items:
+                continue
+
+            summary_text.append('.. title:: %s' % SUMMARY_FETCHERS[fetcher_alias].title)
+            summary_text.append('.. table::')
+
+            for item in items:  # type: SummaryItem
+                line = '`%s<%s>`_' % (item.title, item.url)
+
+                if item.description:
+                    line += ' — %s' % item.description
+
+                summary_text.append(line)
+
+            summary_text.append('\n')
+
+        if not summary_text:
+            return ''
+
+        summary_text.append('')
+        summary_text = '\n'.join(summary_text)
+        return summary_text
+
+    @classmethod
+    def create_article(cls):
+        """Создаёт сводку, используя данные, полученные извне.
+
+        :rtype: Summary|None
+
+        """
+        summary_text = cls.make_text(cls.fetch())
+
+        format_date = lambda d: d.date().strftime('%d.%m.%Y')
+        date_from, date_till = get_datetime_from_till(7)
+
+        robot_id = settings.ROBOT_USER_ID
+
+        article = Article(
+            title='Сводка %s — %s' % (format_date(date_from), format_date(date_till)),
+            description='А теперь о том, что происходило в последнее время на других ресурсах.',
+            submitter_id=robot_id,
+            text_src=summary_text,
+            source=Article.SOURCE_SCRAPING,
+            published_by_author=False,
+        )
+        article.mark_published()
+        article.save()
+
+        article.add_to_category(Category(pk=cls.SUMMARY_CATEGORY_ID), User(pk=robot_id))
+
+        return article
+
+    @classmethod
+    def fetch(cls):
+        """Добывает данные из источников, складирует их и возвращает в виде словаря."""
+        latest = cls.objects.order_by('-pk').first()
+
+        prev_results = json.loads(getattr(latest, 'data_result', '{}'))
+        prev_dt = getattr(latest, 'time_created', None)
+
+        all_items = OrderedDict()
+        all_results = {}
+
+        for fetcher_alias, fetcher_cls in SUMMARY_FETCHERS.items():
+            prev_result = prev_results.get(fetcher_alias) or []
+            fetcher = fetcher_cls(previous_result=prev_result, previous_dt=prev_dt)  # type: ItemsFetcherBase
+            result = fetcher.run()
+
+            if result is None:
+                # По всей видимости, произошла необработанная ошибка.
+                items, result = [], prev_result
+            else:
+                items, result = result
+
+            all_items[fetcher_alias] = items
+            all_results[fetcher_alias] = result
+
+        new_summary = cls(data_items=json.dumps(all_items), data_result=json.dumps(all_results))
+        new_summary.save()
+
+        return all_items
 
 
 class PartnerLink(models.Model):
