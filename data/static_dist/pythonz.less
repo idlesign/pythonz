@@ -148,14 +148,11 @@
   .icon_entity {
     margin-right: @gap__min;
   }
-  color: @cl__white;
   border-bottom: none;
   h1 {
     padding: @gap__mid;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    background-color: #333;
-    background-blend-mode: screen;
+    .gepattern-mixin;
   }
 }
 
@@ -318,6 +315,7 @@ nav .submenu {
 
 .float_panel {
   min-width: 250px;
+  padding: @gap__min;
 }
 
 .userlist_item {
@@ -511,11 +509,21 @@ nav .submenu {
     a {
       color: @cl__white;
     }
-    background-color: #333;
-    background-blend-mode:  screen;
-    letter-spacing: 2px;
+    .gepattern-mixin;
     white-space: nowrap;
-    padding: @gap__min;
     margin: @gap__min 0 @gap__mid 0;
   }
+}
+
+.gepattern-mixin() {
+  color: @cl__white;
+  background-color: #333;
+  background-blend-mode:  screen;
+  letter-spacing: 2px;
+  padding: @gap__min;
+}
+
+.subtitle {
+  .gepattern-mixin;
+  display: inline-block;
 }
