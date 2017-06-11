@@ -17,3 +17,5 @@ class RedirectRequired(PythonzException):
 
     """
 
+class LogicError(PythonzException):
+    """Логическая ошибка в приложении."""
