@@ -15,6 +15,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.utils.text import Truncator
 
+from .utils import get_datetime_from_till
 from .realms import get_realms, get_realm
 from .signals import sig_entity_published, sig_entity_new, sig_search_failed, sig_integration_failed, \
     sig_send_generic_telegram
@@ -298,8 +299,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
         :return:
         """
         format_date = lambda d: d.date().strftime('%d.%m.%Y')
-        date_till = timezone.now()
-        date_from = date_till - timedelta(days=7)
+        date_from, date_till = get_datetime_from_till(7)
 
         subject = cls.get_full_subject('Подборка материалов %s-%s' % (format_date(date_from), format_date(date_till)))
         context = {

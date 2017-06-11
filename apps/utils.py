@@ -1,11 +1,13 @@
 import re
 import logging
-from bleach import clean
+from datetime import timedelta
 from collections import OrderedDict
 from textwrap import wrap
 from urllib.parse import urlsplit, urlunsplit, parse_qs, urlparse, urlencode, urlunparse
 
+from bleach import clean
 from django.contrib import messages
+from django.utils import timezone
 from django.utils.text import Truncator
 
 
@@ -19,6 +21,18 @@ def get_logger(name):
 
 
 LOG = get_logger(__name__)
+
+
+def get_datetime_from_till(days_gap):
+    """Возвращает даты "с" и "по", где "по" - текущая дата,
+    а "с" отстоит от неё в прошлое на указанное количество дней.
+
+    :param int days_gap:
+    :rtype: tuple
+    """
+    date_till = timezone.now()
+    date_from = date_till - timedelta(days=days_gap)
+    return date_from, date_till
 
 
 class PersonName(object):
@@ -309,6 +323,7 @@ class TextCompiler:
     RE_CODE = re.compile('\.{2}\s*code::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
     RE_TABLE = re.compile('\.{2}\s*table::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
     RE_NOTE = re.compile('\.{2}\s*note::\s*([^\n]+)\n', re.S)
+    RE_TITLE = re.compile('\.{2}\s*title::\s*([^\n]+)\n', re.S)
     RE_WARNIGN = re.compile('\.{2}\s*warning::\s*([^\n]+)\n', re.S)
     RE_GIST = re.compile('\.{2}\s*gist::\s*([^\n]+)\n', re.S)
     RE_POLL = re.compile('\.{2}\s*poll::\s*([^\n]+)\n', re.S)
@@ -404,6 +419,8 @@ class TextCompiler:
         text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\g<1>.js"></script>', text)
         text = re.sub(cls.RE_POLL, '<script src="http://static.polldaddy.com/p/\g<1>.js"></script>', text)
         text = re.sub(cls.RE_TABLE, replace_table, text)
+
+        text = re.sub(cls.RE_TITLE, '<h4 data-geopattern="\g<1>" class="subtitle">\g<1></h4>', text)
 
         text = re.sub(
             cls.RE_NOTE, '<div class="panel panel-primary"><div class="panel-heading">На заметку</div>'
