@@ -442,7 +442,8 @@ class Vacancy(UtmReady, RealmBaseModel):
         """
         filter_kwargs = {
             'salary_currency__isnull': False,
-            'salary_till__isnull': False
+            'salary_till__isnull': False,
+            'salary_from__gt': 900,
         }
         if place is not None:
             filter_kwargs['place'] = place
