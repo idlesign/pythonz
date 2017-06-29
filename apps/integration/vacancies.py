@@ -53,7 +53,7 @@ class HhVacancyManager:
             employer = item['employer']
             url_logo = employer['logo_urls']
             if url_logo:
-                url_logo = url_logo['90']
+                url_logo = url_logo.get('90')
 
             results.append({
                 '__archived': item['archived'],
