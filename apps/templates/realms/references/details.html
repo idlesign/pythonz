@@ -42,7 +42,7 @@
 
     <div id="ref_links">
 
-        {% if children %}
+        {% if children and not reference.is_type_chapter %}
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h5 class="panel-title">{{ reference.title }}</h5>

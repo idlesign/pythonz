@@ -1,4 +1,4 @@
-<table class="text-muted table {% if detailed %}able-bordered{% else %}table-hover small{% endif %}">
+<table class="text-muted table {% if detailed %}table-bordered{% else %}table-hover small{% endif %}">
 {% for item in items %}
     <tr>
         <td {% if not detailed %}class="mod__has_tooltip" title="{{ item.description|truncatechars:70 }}" {% endif %}>
