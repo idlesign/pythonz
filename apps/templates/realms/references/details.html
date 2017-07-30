@@ -144,6 +144,12 @@
     </div>
     {% endif %}
 
+
+    {% if children and reference.is_type_chapter %}
+    <h6 class="marg__t_mid">Статьи раздела</h6>
+    {% include "realms/references/sub_list.html" with items=children detailed=True %}
+    {% endif %}
+
 {% endblock %}
 
 {% block details_author %}

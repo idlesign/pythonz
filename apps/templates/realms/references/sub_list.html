@@ -1,15 +1,16 @@
-<table class="text-muted table table-hover small">
+<table class="text-muted table {% if detailed %}able-bordered{% else %}table-hover small{% endif %}">
 {% for item in items %}
     <tr>
-        <td class="mod__has_tooltip" title="{{ item.description|truncatechars:70 }}">
+        <td {% if not detailed %}class="mod__has_tooltip" title="{{ item.description|truncatechars:70 }}" {% endif %}>
         {% with item.version_deprecated as del %}
-
             {% if del %}<del title="Устарело">{% endif %}
-            <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
-            {% if del %}</del>{% endif %}
 
-            </td>
+            <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+
+            {% if del %}</del>{% endif %}
         {% endwith %}
+        </td>
+        {% if detailed %}<td>{{ item.description|truncatechars:70 }}</td>{% endif %}
     </tr>
 {% endfor %}
 </table>
