@@ -10,5 +10,9 @@
                 &nbsp; <span class="label label-success">{{ item.supporters_num }}</span> &nbsp;<i class="fa fa-thumbs-o-up"></i>
             </button>
         {% endif %}
+    {% else %}
+            <a href="{% url "login" %}" class="btn btn-default" title="Рекомендую!">
+                &nbsp; <span class="label label-success">{{ item.supporters_num }}</span> &nbsp;<i class="fa fa-thumbs-o-up"></i>
+            </a>
     {% endif %}
 </div>
