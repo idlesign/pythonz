@@ -104,36 +104,26 @@
         <div class="marg__b_mid">
 
             {% if reference.func_proto %}
-            <div class="marg__b_mid">
-                <h6>Прототип</h6>
-                <div id="area_func_proto">
+            <div class="marg__b_mid well well-sm">
+                <div id="area_func_proto" class="block">
                     {{ reference.func_proto }}
                 </div>
+                {% if reference.func_result %} -> <span id="area_func_result">{{ reference.func_result }}</span>{% endif %}
             </div>
             {% endif %}
 
             {% if reference.func_params %}
             <div class="marg__b_mid">
-                <h6>Параметры</h6>
                 <div id="area_func_params">
                     {{ reference.func_params|linebreaksbr }}
                 </div>
             </div>
             {% endif %}
 
-            {% if reference.func_result %}
-            <div class="marg__b_mid">
-                <h6>Результат</h6>
-                <div id="area_func_result">
-                    {{ reference.func_result }}
-                </div>
-            </div>
-            {% endif %}
-
+        <hr>
         </div>
     {% endif %}
 
-    <h6>Описание</h6>
     <div id="area_description">
         {{ reference.text|safe }}
     </div>
