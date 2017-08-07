@@ -82,7 +82,11 @@ class GithubTrending(ItemsFetcherBase):
 
             item_url = url_base + link.attrs['href']
             item_title = link.text.strip()
-            item_description = list_item.select('div p')[0].text.strip()
+
+            try:
+                item_description = list_item.select('div p')[0].text.strip()
+            except IndexError:
+                item_description = ''
 
             items[item_url] = SummaryItem(item_url, item_title, item_description)
 
