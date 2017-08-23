@@ -121,7 +121,7 @@ def compose_entities_inline_result(entities):
     results = []
 
     for entity in entities:
-        title = entity.title
+        title = str(entity)
         # Усечение чтобы уложиться в 64 Кб на одно сообщение
         # иначе, по словам техподдержки, получаем HTTP 414 Request-URI Too Large
         description = truncate_chars(entity.description, 30)
@@ -129,8 +129,7 @@ def compose_entities_inline_result(entities):
             telebot.types.InlineQueryResultArticle(
                 str(entity.id),
                 title,
-                telebot.types.InputTextMessageContent(
-                    '%s — %s' % (title, entity.get_absolute_url(True, 'telesearch'))),
+                telebot.types.InputTextMessageContent('%s — %s' % (title, entity.get_absolute_url(True))),
                 description=description
             ))
     return results
