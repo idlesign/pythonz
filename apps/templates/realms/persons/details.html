@@ -3,6 +3,7 @@
 {% get_static_prefix as STATIC_URL %}
 
 
+{% block page_description %}{{ person.name }}. Вклад в развитие языка программирования Python.{% endblock %}
 {% block page_keywords %}{{ block.super }}, {{ person.name }}, {{ person.name_en }}, {{ person.aka }}{% endblock %}
 
 
