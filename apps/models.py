@@ -1073,6 +1073,10 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     """
 
+    @classmethod
+    def get_actual(cls):
+        return cls.objects.order_by('-time_published').all()
+
     def get_link_to_pyorg(self):
         # Получает ссылку на pep в python.org
         return self.TPL_URL_PYORG % self.slug
