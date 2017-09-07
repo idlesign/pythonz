@@ -84,6 +84,8 @@ def test_text_compiler():
     assert compile('``some``') == '<code>some</code>'
 
     assert compile('http://some.url/') == '<a href="http://some.url/">http://some.url/</a>'
+    assert compile(
+        '`This is httpserver link<http://some.url/>`_') == '<a href="http://some.url/">This is httpserver link</a>'
     assert (
         compile('Пробуем `ссылку с [именем] <http://some.com/here/there/>`_.') ==
         'Пробуем <a href="http://some.com/here/there/">ссылку с [именем] </a>.')
