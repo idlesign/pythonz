@@ -16,7 +16,7 @@ django-admirarchy==0.2.2
 django-datetime-widget==0.9.3
 django-debug-toolbar==1.8
 django-etc==0.10.0
-django-simple-history==1.9.0
+django-simple-history==1.8.2
 django-robots==3.0
 django-siteblocks==0.5.2
 django-sitecats==0.6.3
