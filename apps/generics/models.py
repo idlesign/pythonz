@@ -393,7 +393,7 @@ class RealmBaseModel(ModelWithFlag):
                 query = query.select_related(*cls.paginator_related)
 
             query = query.order_by('-supporters_num')
-            objects = query.all()[:5]
+            objects = query.all()[:3]
 
             cache.set(cache_key, objects, 86400)
 
