@@ -1,8 +1,9 @@
 {% extends "static/_base_sitetreed.html" %}
 
 {% block body %}
+    <div class="marg__b_mid">{% include "sub_box_ads.html" with area="searchtop" term=search_term %}</div>
     <div class="marg__b_mid small">Количество результатов: {{ results|length }}</div>
-    <div class="marg__l_mid" itemscope itemtype="http://schema.org/SearchResultsPage">
+    <div class="marg__l_mid marg__b_mid" itemscope itemtype="http://schema.org/SearchResultsPage">
         {% if results %}
             <ol>
             {% for result in results %}
@@ -16,6 +17,7 @@
             <div class="alert alert-warning" role="alert">К сожалению, ничего не найдено.</div>
         {% endif %}
     </div>
+    <div>{% include "sub_box_ads.html" with area="searchbottom" term=search_term %}</div>
 {%  endblock %}
 
 {% block zen %}{% endblock %}

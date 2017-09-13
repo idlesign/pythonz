@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% load cache %}
 
 
 {% block page_keywords %}{{ realm.view_listing_keywords }}{% if category %}, {{ category.title }}{% endif %}{% endblock %}
@@ -48,10 +49,12 @@
 
         <div class="col-md-4 hidden-xs container-fluid">
 
+            {% block ad_rightbar %}
             <div class="col-md-12 marg__b_mid">
-                {% include "sub_box_ad_rightbar.html" %}
+                {% include "sub_box_ads.html" with area="rightbar" %}
             </div>
             <div class="clearfix"></div>
+            {% endblock %}
 
             <div id="bar__most_voted" class="col-md-12">
                 {% block bar_right %}

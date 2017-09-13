@@ -63,6 +63,13 @@
 
         {% block column_right%}
             <div class="col-md-3">
+                {% block ad_rightbar %}
+                <div class="col-md-12 marg__b_mid">
+                    {% include "sub_box_ads.html" with area="rightbar" %}
+                </div>
+                <div class="clearfix"></div>
+                {% endblock %}
+
                 {% block column_right_contents %}
                 <div class="text-center hidden-xs">
                     <div class="block marg__b_mid">

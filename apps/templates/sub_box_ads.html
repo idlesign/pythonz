@@ -1,0 +1,37 @@
+
+{% if area == "rightbar" %}<!-- Yandex.RTB R-A-247489-1 -->
+
+<div id="yandex_rtb_R-A-247489-1"></div>
+<script type="text/javascript">
+    yaAd({
+        blockId: "R-A-247489-1",
+        renderTo: "yandex_rtb_R-A-247489-1",
+        async: true
+    })
+</script>
+
+{% elif area == "searchtop" %}<!-- Yandex.Premium P-A-247488-1 -->
+
+<div id="yandex_direct_P-A-247488-1"></div>
+<script type="text/javascript">
+    yaAd({
+        blockId: "P-A-247488-1",
+        renderTo: "yandex_direct_P-A-247488-1",
+        searchText: getGet('text', '{{ search_term }}'),
+        searchPageNumber: parseInt(getGet('p', 1))
+    });
+</script>
+
+{% elif area == "searchbottom" %}<!-- Yandex.Direct D-A-247488-2 -->
+
+<div id="yandex_direct_D-A-247488-2"></div>
+<script type="text/javascript">
+    yaAd({
+        blockId: "D-A-247488-2",
+        renderTo: "yandex_direct_D-A-247488-2",
+        searchText: getGet('text', '{{ search_term }}'),
+        searchPageNumber: parseInt(getGet('p', 1))
+    });
+</script>
+
+{% endif %}
