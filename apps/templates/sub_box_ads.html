@@ -1,14 +1,28 @@
 
-{% if area == "rightbar" %}<!-- Yandex.RTB R-A-247489-1 -->
+{% if area == "rightbar" %}
 
-<div id="yandex_rtb_R-A-247489-1"></div>
-<script type="text/javascript">
-    yaAd({
-        blockId: "R-A-247489-1",
-        renderTo: "yandex_rtb_R-A-247489-1",
-        async: true
-    })
-</script>
+    {% if type == "details" %}<!-- Yandex.RTB R-A-247489-2 -->
+
+        <div id="yandex_rtb_R-A-247489-2"></div>
+        <script type="text/javascript">
+            yaAd({
+                blockId: "R-A-247489-2",
+                renderTo: "yandex_rtb_R-A-247489-2",
+                async: true
+            })
+        </script>
+
+    {% else %}<!-- Yandex.RTB R-A-247489-1 -->
+
+        <div id="yandex_rtb_R-A-247489-1"></div>
+        <script type="text/javascript">
+            yaAd({
+                blockId: "R-A-247489-1",
+                renderTo: "yandex_rtb_R-A-247489-1",
+                async: true
+            })
+        </script>
+    {% endif %}
 
 {% elif area == "searchtop" %}<!-- Yandex.Premium P-A-247488-1 -->
 
