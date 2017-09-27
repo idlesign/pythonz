@@ -27,13 +27,6 @@
                 <meta itemprop="about" content="{{ discussion.title }}" />
 
                 <div class="pull-right marg__l_mid marg__b_mid float_panel">
-                    {% block ad_rightbar %}
-                    <div class="col-md-12 marg__b_mid">
-                        {% include "sub_box_ads.html" with area="rightbar" type="details" %}
-                    </div>
-                    <div class="clearfix"></div>
-                    {% endblock %}
-
                     <div class="well marg__b_mid text-center">
                         {% with discussion.submitter.get_absolute_url as submitter_url %}
                         <a href="{{ submitter_url }}">{% gravatar_get_img discussion.submitter 64 %}</a><br>
@@ -42,6 +35,13 @@
                     </div>
                     {% include "sub_box_controls.html" %}
                     {% include "sub_box_tags.html" %}
+
+                    {% block ad_rightbar %}
+                    <div class="col-md-12 marg__b_mid">
+                        {% include "sub_box_ads.html" with area="rightbar" type="details" %}
+                    </div>
+                    <div class="clearfix"></div>
+                    {% endblock %}
                 </div>
                 <div class="marg__b_min ">
                     <small class="text-muted">

@@ -37,13 +37,6 @@
         <div class="col-md-12">
             <div>
                 <div class="pull-right marg__l_mid marg__b_mid float_panel">
-                    {% block ad_rightbar %}
-                    <div class="col-md-12 marg__b_mid">
-                        {% include "sub_box_ads.html" with area="rightbar" type="details" %}
-                    </div>
-                    <div class="clearfix"></div>
-                    {% endblock %}
-
                     {% if article.published_by_author %}
                     <div class="well marg__b_mid text-center">
                         {% with article.submitter.get_absolute_url as submitter_url %}
@@ -55,6 +48,13 @@
                     {% include "sub_box_controls.html" %}
                     {% include "sub_box_tags.html" %}
                     {% include "sub_linked.html" %}
+
+                    {% block ad_rightbar %}
+                    <div class="col-md-12 marg__b_mid">
+                        {% include "sub_box_ads.html" with area="rightbar" type="details" %}
+                    </div>
+                    <div class="clearfix"></div>
+                    {% endblock %}
                 </div>
                 <div class="marg__b_mid text-muted">
                     <small>
