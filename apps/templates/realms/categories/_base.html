@@ -18,6 +18,13 @@
                 {% include "sub_hint.html" %}
             </div>
 
+            {% block ad_rightbar %}
+            <div class="col-md-12 marg__b_mid">
+                {% include "sub_box_ads.html" with area="rightbar" %}
+            </div>
+            <div class="clearfix"></div>
+            {% endblock %}
+
         </div>
     </div>
 {%  endblock %}
