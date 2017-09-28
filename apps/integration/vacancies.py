@@ -31,7 +31,7 @@ class HhVacancyManager:
             'search_field=%(field)s&per_page=%(per_page)s'
             '&order_by=publication_time&period=1&text=%(term)s' % {
                 'term': 'python',
-                'per_page': 500,
+                'per_page': 100,
                 'field': 'name',  # description
         })
 
