@@ -1,7 +1,7 @@
 {% with linked=item.get_linked %}
     {% if linked.count %}
     <div class="linked panel panel-default">
-        <div class="panel-heading">Смотрите также</div>
+        <div class="panel-heading">Связанные материалы</div>
         <div class="panel-body small">
             <ul>
                 {% for linked_item in item.get_linked %}
