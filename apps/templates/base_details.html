@@ -39,6 +39,8 @@
             {% sitetree_breadcrumbs from "main" template "sitetree/crumbs.html" %}
             {% endblock %}
 
+            <div>{% include "sub_box_controls.html" %}</div>
+
             {% include "sub_title_block.html" with hide_breadcurmbs=1 %}
 
             {% block details_contents %}{% endblock %}

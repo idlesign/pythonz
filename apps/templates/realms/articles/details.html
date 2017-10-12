@@ -45,7 +45,6 @@
                         {% endwith %}
                     </div>
                     {% endif %}
-                    {% include "sub_box_controls.html" %}
                     {% include "sub_box_tags.html" %}
                     {% include "sub_linked.html" %}
 
@@ -62,6 +61,8 @@
                         {% if article.time_modified %}(<abbr title="Дата последнего редактирования">ред.</abbr> {{ article.time_modified }}){% endif %}
                     </small>
                 </div>
+
+                {% include "sub_box_controls.html" %}
 
                 <div class="lead" itemprop="description">{{ article.description|linebreaksbr }}</div>
                 <div class="py_user">{{ article.text|safe }}</div>
