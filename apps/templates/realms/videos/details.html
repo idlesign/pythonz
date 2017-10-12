@@ -21,9 +21,10 @@
     <meta itemprop="uploadDate" content="{{ video.time_published|date:"c" }}" />
     <meta itemprop="thumbnailUrl" content="{% site_url %}{% thumbs_get_thumb_url video.cover 180 236 item.realm %}" />
 
-    <div>
+    <div id="video_box" class="well well-sm">
         {{ video.code|safe }}
     </div>
+
     <div class="marg__b_mid text-muted">
         <small>
             <span class="marg__r_mid">
