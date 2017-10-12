@@ -54,9 +54,10 @@
                 {% include "sub_author_editor.html" %}
             </div>
             {% endblock %}
-            <div class="clearfix"></div>
+
             {% block details_contents_after %}{% endblock %}
             {% block details_share %}{% include "sub_box_share.html" %}{% endblock %}
+            <div class="clearfix"></div>
 
             {% block details_discussions_pre %}{% endblock %}
             {% if item.has_discussions %}
