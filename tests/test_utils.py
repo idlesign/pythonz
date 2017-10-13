@@ -77,6 +77,12 @@ def test_text_compiler():
 
     compile = TextCompiler.compile
 
+    assert (
+        compile('``zip(*[iter(s)] * n)``\nlist(zip(*[iter(seq)] * 2))  # [(1, 2), (3, 4), (5, 6)]') ==
+        '<code>zip(*[iter(s)] * n)</code><br>list(zip(*[iter(seq)] * 2))  # [(1, 2), (3, 4), (5, 6)]')
+
+    assert compile('2 ** 10d') == '2 ** 10d'
+
     assert compile('**some**') == '<b>some</b>'
     assert compile('*some*') == '<i>some</i>'
     assert compile('```\nздесь цитата\n```') == '<blockquote>здесь цитата</blockquote>'
