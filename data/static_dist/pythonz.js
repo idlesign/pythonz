@@ -9,6 +9,7 @@ var pythonz = {
         $(function(){
             pythonz.makeGeopatterns();
             pythonz.markUser();
+            pythonz.toggleTags();
 
             sitecats.bootstrap();
             sitecats.make_cloud('tags_box');
@@ -17,11 +18,21 @@ var pythonz = {
         });
     },
 
+    toggleTags: function () {
+        "use strict";
+        $.each($('.tags_box'), function(idx, el) {
+            var $el = $(el);
+            if ($('.categories_box', $el).length == 0){
+                $el.parent().hide();
+            };
+        });
+    },
+
     makeGeopatterns: function () {
         "use strict";
         $.each($('[data-geopattern]'), function(idx, el) {
-            el = $(el);
-            el.css('background-image', GeoPattern.generate(el.data('geopattern') + 'a').toDataUrl());
+            var $el = $(el);
+            $el.css('background-image', GeoPattern.generate($el.data('geopattern') + 'a').toDataUrl());
         });
     },
 
