@@ -78,6 +78,13 @@ def test_text_compiler():
     compile = TextCompiler.compile
 
     assert (
+        'is <a href="https://some.org">https://some.org</a></td>' in
+        compile('.. table::\n`one / two<https://some.com>`_ - is https://some.org\nanother\n\n\n')
+    )
+
+    assert compile('2 ** 10d') == '2 ** 10d'
+
+    assert (
         compile('``zip(*[iter(s)] * n)``\nlist(zip(*[iter(seq)] * 2))  # [(1, 2), (3, 4), (5, 6)]') ==
         '<code>zip(*[iter(s)] * n)</code><br>list(zip(*[iter(seq)] * 2))  # [(1, 2), (3, 4), (5, 6)]')
 
