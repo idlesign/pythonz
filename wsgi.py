@@ -8,5 +8,5 @@ from raven.contrib.django.raven_compat.middleware.wsgi import Sentry
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 sys.path = [os.path.dirname(PROJECT_PATH), PROJECT_PATH] + sys.path
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.dev')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.settings')
 application = Sentry(get_wsgi_application())
