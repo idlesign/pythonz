@@ -13,8 +13,18 @@
     {% endblock %}
 
     <div class="section">
-        {% block body %}{% endblock %}
+
+        <div class="col-md-9">
+            {% block body %}{% endblock %}
+        </div>
+
+        <div class="col-md-3">
+            {% include "sub_box_ads.html" with area="rightbar" %}
+        </div>
+
     </div>
+
+    <div class="clearfix"></div>
 
     {% block zen %}{% include "sub_zen.html" %}{% endblock %}
 
