@@ -6,4 +6,4 @@
 __pycache__
 /data/media/
 /data/db/
-/settings/prod.py
+/settings/settings_production.py

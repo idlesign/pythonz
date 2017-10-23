@@ -1,6 +1,3 @@
-#
-# Для конфигурирования в ходе разработки используйте dev.py, а не этот файл.
-#
 from os.path import dirname
 
 
@@ -12,7 +9,7 @@ PATH_DATA = '%s/data' % PATH_PROJECT
 SITE_URL = 'http://pythonz.net'
 
 PROJECT_SOURCE_URL = 'https://github.com/idlesign/pythonz'
-DEBUG = True
+DEBUG = False
 
 PATH_CERTIFICATE = None
 CERTIFICATE_SELF_SIGNED = False
@@ -258,13 +255,3 @@ LOGGING = {
     }
 }
 LOGGERS = LOGGING['loggers']
-
-
-if DEBUG:
-    # Обход ошибки импорта - ручное конфигурирование отладочной панели.
-    # https://github.com/django-debug-toolbar/django-debug-toolbar/issues/521.
-    DEBUG_TOOLBAR_PATCH_SETTINGS = False
-    MIDDLEWARE_CLASSES = ('debug_toolbar.middleware.DebugToolbarMiddleware',) + MIDDLEWARE_CLASSES
-    INSTALLED_APPS += ('debug_toolbar',)
-    # INSTALLED_APPS += ('debug_toolbar.apps.DebugToolbarConfig',)
-    INTERNAL_IPS = ['127.0.0.1']
