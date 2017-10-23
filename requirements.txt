@@ -28,3 +28,4 @@ django-siteprefs==0.6.3
 django-sitetree==1.8.0
 django-xross==0.6.0
 envbox==0.2.0
+uwsgiconf[cli]==0.12.0
