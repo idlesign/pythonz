@@ -75,6 +75,8 @@ AGRESSIVE_MODE = False
 
 ####################################################################
 
+CONN_MAX_AGE = None  # Постоянное соединение.
+
 SITEMESSAGE_INIT_BUILTIN_MESSAGE_TYPES = False
 SITEMESSAGE_DEFAULT_SHORTCUT_EMAIL_MESSAGES_TYPE = 'simple'
 ROBOTS_CACHE_TIMEOUT = 24 * 60 * 60
