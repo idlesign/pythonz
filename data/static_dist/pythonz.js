@@ -23,7 +23,7 @@ var pythonz = {
         $.each($('.tags_box'), function(idx, el) {
             var $el = $(el);
             if ($('.categories_box', $el).length == 0){
-                $el.parent().hide();
+                $el.hide();
             };
         });
     },
