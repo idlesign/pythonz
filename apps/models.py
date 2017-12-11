@@ -1259,6 +1259,10 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         return self.type in (self.TYPE_METHOD, self.TYPE_FUNCTION, self.TYPE_CLASS)
 
     @property
+    def is_type_bundle(self):
+        return self.type in (self.TYPE_CHAPTER, self.TYPE_PACKAGE, self.TYPE_MODULE)
+
+    @property
     def is_type_method(self):
         return self.type == self.TYPE_METHOD
 

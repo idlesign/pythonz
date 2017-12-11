@@ -42,7 +42,7 @@
 
     <div id="ref_links">
 
-        {% if children and not reference.is_type_chapter %}
+        {% if children and not reference.is_type_bundle %}
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h5 class="panel-title">{{ reference.title }}</h5>
@@ -135,7 +135,7 @@
     {% endif %}
 
 
-    {% if children and reference.is_type_chapter %}
+    {% if children and reference.is_type_bundle %}
     <h6 class="marg__t_mid">Статьи раздела</h6>
     {% include "realms/references/sub_list.html" with items=children detailed=True %}
     {% endif %}
