@@ -16,14 +16,6 @@
     </li>
     {% endif %}
 
-    {% if not disable_fb %}
-    <li role="presentation">
-        <a href="#comments_fb" aria-controls="comments_fb" role="tab" data-toggle="tab">
-            Комментарии FB
-            <span id="comments_fb_cnt" class="fb-comments-count badge marg__l_min">0</span></a>
-    </li>
-    {% endif %}
-
     {% if not disable_disqus %}
     <li role="presentation">
         <a href="#comments_disqus" aria-controls="comments_disqus" role="tab" data-toggle="tab">
@@ -47,12 +39,6 @@
     {% if not disable_vk %}
     <div role="tabpanel" class="tab-pane active" id="comments_vk">
         {% include "sub_vk_comments.html" %}
-    </div>
-    {% endif %}
-
-    {% if not disable_fb %}
-    <div role="tabpanel" class="tab-pane" id="comments_fb">
-        {% include "sub_fb_comments.html" %}
     </div>
     {% endif %}
 
