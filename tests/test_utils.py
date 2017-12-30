@@ -1,4 +1,4 @@
-from pythonz.apps.utils import url_mangle, BasicTypograph, TextCompiler, PersonName
+from pythonz.apps.utils import url_mangle, BasicTypograph, TextCompiler, PersonName, swap_layout
 
 
 def test_person_name():
@@ -151,3 +151,9 @@ def test_text_compiler():
     assert (
         compile('.. warning:: a warn\n') ==
         '<div class="panel panel-danger"><div class="panel-heading">Внимание</div><div class="panel-body">a warn</div></div>')
+
+
+def test_swap_layout():
+    assert swap_layout('вуа') == 'def'
+    assert not swap_layout('def')
+    assert swap_layout('Ш рфму ыуут ьщку ерфт ьщыею') == 'I have seen more than most.'

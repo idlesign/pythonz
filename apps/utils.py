@@ -500,3 +500,25 @@ def message_error(request, message):
     :return:
     """
     messages.add_message(request, messages.ERROR, message, extra_tags='danger')
+
+
+TRANSLATION_DICT = str.maketrans(
+    "ёЁ!\"№;%:?йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,",
+    "`~!@#$%^&qwertyuiop[]asdfghjkl;'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"|ZXCVBNM<>?"
+)
+
+RE_NON_ASCII = re.compile('[^\x00-\x7F]')
+
+
+def swap_layout(src_text):
+    """Заменяет кириллические символы строки на латинские в соответствии
+    с классической раскладкой клавиатуры, если строка не содержит символов кириллицы,
+    то возвращатся пустая строка, символизируя, что трансляция не производилась.
+
+    :param str src_text:
+    :rtype: str
+    """
+    if not RE_NON_ASCII.match(src_text):
+        return ''
+
+    return src_text.translate(TRANSLATION_DICT)

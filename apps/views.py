@@ -27,8 +27,7 @@ from .integration.telegram import handle_request
 from .exceptions import RedirectRequired
 from .generics.views import DetailsView, RealmView, EditView, ListingView
 from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource, ReferenceMissing
-from .utils import message_warning
-from .signals import sig_search_failed
+from .utils import message_warning, swap_layout, message_info
 
 
 class UserDetailsView(DetailsView):
@@ -270,6 +269,14 @@ def search(request):
 
     results = Reference.find(search_term)
     total_results = len(results)
+
+    if not total_results:
+        # Возможно пользователь не сменил раскладку, пробуем сменить сами.
+        swapped = swap_layout(search_term)
+
+        if swapped:
+            results = Reference.find(swapped)
+            total_results = len(results)
 
     if not total_results:
         # Поиск не дал результатов. Запомним, что искали и сообщим администраторам,
