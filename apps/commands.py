@@ -5,6 +5,7 @@ from django.utils import timezone
 
 from .realms import get_realms
 from .generics.models import RealmBaseModel
+from .models import ReferenceMissing
 
 
 def publish_postponed():
@@ -38,3 +39,12 @@ def publish_postponed():
                 item = items[0]
                 item.mark_published()
                 item.save()
+
+
+def clean_missing_refs(min_hits=4):
+    """Удаляет из БД записи о промахах справочника, получившиеся
+    менее заданного количества обращений.
+
+    :param int min_hits:
+    """
+    ReferenceMissing.objects.filter(hits__lt=min_hits).delete()
