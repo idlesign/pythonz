@@ -1297,7 +1297,8 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         :param str search_term: Строка для поиска.
         :rtype: QuerySet
         """
-        return cls.get_actual().filter(Q(title__icontains=search_term) | Q(search_terms__icontains=search_term))
+        return cls.objects.published().filter(
+            Q(title__icontains=search_term) | Q(search_terms__icontains=search_term)).order_by('time_published')
 
 
 class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
