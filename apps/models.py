@@ -1,31 +1,30 @@
 import json
-from datetime import timedelta
-from itertools import chain
-from functools import partial
 from collections import OrderedDict
+from datetime import timedelta
+from functools import partial
+from itertools import chain
 
-from django.core.exceptions import FieldError
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import FieldError
 from django.db import models, IntegrityError
 from django.db.models import Min, Max, Count, Q, F
 from django.utils import timezone
-from simple_history.models import HistoricalRecords
-from sitecats.models import ModelWithCategory, Category
 from etc.models import InheritedModel
 from etc.toolbox import choices_list, get_choices
+from simple_history.models import HistoricalRecords
+from sitecats.models import ModelWithCategory, Category
 
 from .exceptions import RemoteSourceError
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
-from .utils import format_currency, truncate_chars, UTM, PersonName, sync_many_to_many, get_datetime_from_till
+from .integration.peps import sync as sync_peps
 from .integration.resources import PyDigestResource
 from .integration.summary import SUMMARY_FETCHERS
-from .integration.vacancies import HhVacancyManager
-from .integration.peps import sync as sync_peps
 from .integration.utils import get_json, scrape_page
-
+from .integration.vacancies import HhVacancyManager
+from .utils import format_currency, truncate_chars, UTM, PersonName, sync_many_to_many, get_datetime_from_till
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 
@@ -673,6 +672,32 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         lat, lng = self.place.geo_pos.split(',')
         self.timezone = get_timezone_name(lat, lng)
 
+    def get_drafts(self):
+        """Возвращает словарь с неопубликованными материалами пользователя.
+        Индексирован названиями разделов сайта; значения — списки материалов.
+
+        :rtype: dict
+        """
+        from .realms import get_realms_models
+
+        drafts = OrderedDict()
+        for realm_model in get_realms_models():
+            try:
+                realm_name = realm_model.get_verbose_name_plural()
+
+            except AttributeError:
+                pass
+
+            else:
+                items = realm_model.objects.filter(
+                    status__in=(self.STATUS_DRAFT, self.STATUS_POSTPONED), submitter_id=self.id
+                ).order_by('time_created')
+
+                if items:
+                    drafts[realm_name] = items
+
+        return drafts
+
     def get_stats(self):
         """Возвращает словарь со статистикой пользователя.
         Индексирован названиями разделов сайта; значения — словарь со статистикой:
@@ -681,23 +706,27 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
 
         :rtype: dict
         """
-        from .realms import get_realms
+        from .realms import get_realms_models
+
 
         stats = OrderedDict()
-        for realm_model in (r.model for r in get_realms().values()):
+        for realm_model in get_realms_models():
 
             try:
                 realm_name = realm_model.get_verbose_name_plural()
                 cnt_published = realm_model.objects.published().filter(submitter_id=self.id).count()
                 cnt_postponed = realm_model.objects.postponed().filter(submitter_id=self.id).count()
+
+            except (FieldError, AttributeError):
+                pass
+
+            else:
+
                 if cnt_published or cnt_postponed:
                     stats[realm_name] = {
                         'cnt_published': cnt_published,
                         'cnt_postponed': cnt_postponed,
                     }
-
-            except (FieldError, AttributeError):
-                pass
 
         return stats
 
@@ -708,12 +737,11 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         :rtype: dict
         """
         from siteflags.utils import get_flag_model
-        from .realms import get_realms
+        from .realms import get_realms_models
 
         FLAG_MODEL = get_flag_model()
-        realm_models = [r.model for r in get_realms().values()]
         bookmarks = FLAG_MODEL.get_flags_for_types(
-            realm_models, user=self, status=RealmBaseModel.FLAG_STATUS_BOOKMARK,
+            get_realms_models(), user=self, status=RealmBaseModel.FLAG_STATUS_BOOKMARK,
             allow_empty=False
         )
         for realm_model, flags in bookmarks.items():

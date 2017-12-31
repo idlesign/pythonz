@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from itertools import groupby
+from operator import attrgetter
 from urllib.parse import quote_plus
 
 from django.conf import settings
@@ -16,18 +17,17 @@ from django.views.defaults import (
     permission_denied as dj_permission_denied,
     server_error as dj_server_error
 )
-from operator import attrgetter
 from sitecats.toolbox import get_category_model, get_category_lists, get_category_aliases_under
 from sitegate.decorators import signin_view, signup_view, redirect_signedin
 from sitegate.signup_flows.classic import SimpleClassicWithEmailSignup
 from sitemessage.toolbox import get_user_preferences_for_ui, set_user_preferences_from_request
 from xross.toolbox import xross_view
 
-from .integration.telegram import handle_request
 from .exceptions import RedirectRequired
 from .generics.views import DetailsView, RealmView, EditView, ListingView
+from .integration.telegram import handle_request
 from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource, ReferenceMissing
-from .utils import message_warning, swap_layout, message_info
+from .utils import message_warning, swap_layout
 
 
 class UserDetailsView(DetailsView):
@@ -44,6 +44,9 @@ class UserDetailsView(DetailsView):
         user = context['item']
         context['bookmarks'] = user.get_bookmarks()
         context['stats'] = lambda: user.get_stats()  # Ленивость для кеша в шаблоне
+
+        if user == request.user:
+            context['drafts'] = user.get_drafts()
 
 
 class PersonDetailsView(DetailsView):

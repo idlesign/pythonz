@@ -1,25 +1,23 @@
 from collections import OrderedDict
 from operator import attrgetter
 
-from django.db.models import signals
 from django.conf.urls import url
-from django.core.urlresolvers import reverse, get_resolver
 from django.contrib.sitemaps.views import sitemap
-
-from sitetree.utils import tree, item
+from django.core.urlresolvers import reverse, get_resolver
+from django.db.models import signals
 from sitecats.toolbox import get_tie_model, get_category_model
+from sitetree.utils import tree, item
 
 from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm, \
     ReferenceForm, VersionForm
-from .generics.realms import RealmBase, SYNDICATION_URL_MARKER, SYNDICATION_ITEMS_LIMIT
 from .generics.models import RealmBaseModel
+from .generics.realms import RealmBase, SYNDICATION_URL_MARKER, SYNDICATION_ITEMS_LIMIT
 from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy, Version, \
     PEP, Person
 from .signals import sig_support_changed
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
     ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView, PersonDetailsView
 from .zen import register_zen_siteblock
-
 
 # Регистрируем блок сайта с дзеном
 register_zen_siteblock()
@@ -61,6 +59,14 @@ def register_realms(*classes):
     for cls in classes:
         REALMS_REGISTRY[cls.get_names()[0]] = cls
         cls.init()
+
+
+def get_realms_models():
+    """Возвращает список моделей всех областей сайта.
+
+    :rtype: list
+    """
+    return [r.model for r in get_realms().values()]
 
 
 def get_realms():

@@ -105,6 +105,32 @@
     {% endif %}
 {% endcache %}
 
+    {% if drafts %}
+    <div class="marg__t_max">
+        <hr>
+        <h4><i class="fa fa-fw fa-pause-circle-o"></i> Неопубликованные</h4>
+        <div class=" marg__l_mid marg__t_mid">
+            {% for realm_name, drafts in drafts.items %}
+                <h5>{{ realm_name }} <sup class="text-muted">{{ drafts|length }}</sup></h5>
+                <table class="table small text-muted">
+                {% for draft in drafts %}
+                    <tr>
+                        <td width="1%">
+                            {% if draft.is_draft %}
+                                <i class="text-muted fa fa-fw fa-flask" title="Черновик"></i>
+                            {% else %}
+                                <i class="fa fa-fw fa-hourglass-half" title="К отложенной публикации"></i>
+                            {% endif %}
+                        </td>
+                        <td width="1%" nowrap>{{ draft.time_created|date }}</td>
+                        <td><a href="{{ draft.get_absolute_url }}">{{ draft.title }}</a></td>
+                    </tr>
+                {% endfor %}
+                </table>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 
     {% if bookmarks %}
     <div class="marg__t_max">
