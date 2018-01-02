@@ -600,7 +600,7 @@ class Community(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Mod
 class User(UtmReady, RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
 
-    items_per_page = 1000
+    items_per_page = 24
     details_related = ['last_editor', 'person', 'place']
 
     objects = UserManager()
