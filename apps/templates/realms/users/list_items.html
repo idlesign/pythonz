@@ -1,0 +1,18 @@
+{% load gravatar model_field %}
+
+<ul {% if not nofade %}id="indexed"{% endif %}>
+{% for user in users %}
+    {% if user.is_active %}
+    <li class="marg__b_min">
+        <div class="pull-left">
+            <img src="{% gravatar_get_url user 32 %}" alt="{{ user.title }}">
+        </div>
+        <span class="marg__l_min">
+            <a href="{{ user.get_absolute_url }}">{{ user.title }}</a>
+            <span class=" small text-muted">{{ user.username }}</span>
+        </span>
+        <div class="clearfix"></div>
+    </li>
+    {% endif %}
+{% endfor %}
+</ul>

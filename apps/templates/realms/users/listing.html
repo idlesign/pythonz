@@ -1,32 +1,12 @@
-{% extends "_base.html" %}
-{% load gravatar model_field %}
+{% extends "base_listing.html" %}
 
-
-{% block page_keywords %}{{ realm.view_listing_keywords }}{% endblock %}
-
-
-{% block page_contents %}
-
-    <div class="row">
-        <div class="col-md-12">
-            {% include "sub_title_block.html" %}
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            {% model_field_verbose_name from users.supporters_num as title_support %}
-            {% for user in users %}
-                {% if user.is_active %}
-                <div class="pull-left userlist_item">
-                    <a href="{{ user.get_absolute_url }}" title="{{ user.title }}">
-                        <img src="{% gravatar_get_url user %}" alt="{{ user.title }}">
-                    </a>
-                </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-
-    {% include "sub_paginator.html" with paginator=users %}
-{%  endblock %}
+{% block js_bottom %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}js/jquery.alphaindex.min.js" type="text/javascript"></script>
+    <script>
+        $(function(){
+            var index = $('#indexed').makeAlphaIndex();
+                index.alphaIndexBar.addClass('list-inline');
+        });
+    </script>
+{% endblock %}
