@@ -87,7 +87,7 @@
                         {% csrf_token %}
                         <div class="form-group" role="search">
                             <meta itemprop="target" content="{% site_url %}/search/?text={search_term}"/>
-                            <input type="text" class="form-control" name="text" placeholder="Поиск по справочнику" value="{{ search_term }}" required itemprop="query-input">
+                            <input type="text" class="form-control" autofocus name="text" placeholder="Поиск по справочнику" value="{{ search_term }}" required itemprop="query-input">
                         </div>
                     </form>
 
