@@ -304,7 +304,6 @@ def search(request):
         'search_term': search_term,
         'results': results,
         'results_len': results_len,
-        'ads_slots': range(ceil(results_len / 4) or 1)
     })
 
 

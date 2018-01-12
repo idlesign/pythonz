@@ -23,9 +23,5 @@
 {% block zen %}{% endblock %}
 
 {% block ads %}
-    {% for _ in ads_slots %}
-    <div class="marg__b_max">
-        {% include "sub_box_ads.html" with area="rightbar" %}
-    </div>
-    {% endfor %}
+    {% include "sub_box_ads.html" with area="rightbar" type="search" %}
 {% endblock %}
