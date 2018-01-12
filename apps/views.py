@@ -2,6 +2,7 @@ from collections import OrderedDict
 from itertools import groupby
 from operator import attrgetter
 from urllib.parse import quote_plus
+from math import ceil
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -297,7 +298,14 @@ def search(request):
     elif total_results == 1:
         return redirect(results[0].get_absolute_url())
 
-    return render(request, 'static/search.html', {'search_term': search_term, 'results': results})
+    results_len = len(results)
+
+    return render(request, 'static/search.html', {
+        'search_term': search_term,
+        'results': results,
+        'results_len': results_len,
+        'ads_slots': range(ceil(results_len / 4) or 1)
+    })
 
 
 @redirect_signedin

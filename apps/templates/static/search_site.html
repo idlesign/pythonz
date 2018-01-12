@@ -9,3 +9,14 @@
     </div>
     <div>{% include "sub_box_ads.html" with area="searchbottom" %}</div>
 {%  endblock %}
+
+{% block zen %}{% endblock %}
+
+{% block ads %}
+    <div class="marg__b_max">
+        {% include "sub_box_ads.html" with area="rightbar" %}
+    </div>
+    <div class="marg__b_max">
+        {% include "sub_box_ads.html" with area="rightbar" %}
+    </div>
+{% endblock %}

@@ -19,7 +19,9 @@
         </div>
 
         <div class="col-md-4">
-            {% include "sub_box_ads.html" with area="rightbar" %}
+            {% block ads %}
+                {% include "sub_box_ads.html" with area="rightbar" %}
+            {% endblock %}
         </div>
 
     </div>

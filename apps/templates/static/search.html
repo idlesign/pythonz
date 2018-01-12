@@ -2,9 +2,9 @@
 
 {% block body %}
     <div class="marg__b_mid">{% include "sub_box_ads.html" with area="searchtop" %}</div>
-    <div class="marg__b_mid small">Количество результатов: {{ results|length }}</div>
+    <div class="marg__b_mid small">Количество результатов: {{ results_len }}</div>
     <div class="marg__l_mid marg__b_mid" itemscope itemtype="http://schema.org/SearchResultsPage">
-        {% if results %}
+        {% if results_len %}
             <ol>
             {% for result in results %}
                 <li>
@@ -21,3 +21,11 @@
 {%  endblock %}
 
 {% block zen %}{% endblock %}
+
+{% block ads %}
+    {% for _ in ads_slots %}
+    <div class="marg__b_max">
+        {% include "sub_box_ads.html" with area="rightbar" %}
+    </div>
+    {% endfor %}
+{% endblock %}
