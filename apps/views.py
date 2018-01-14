@@ -266,7 +266,7 @@ def search(request):
     Если найден один результат, перенаправляет на страницу результата.
 
     """
-    search_term = request.GET.get('text', '').strip(' ()')
+    search_term = request.POST.get('text', '').strip(' ()')
 
     if not search_term:
         return redirect('index')
