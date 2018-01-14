@@ -2,7 +2,6 @@ from collections import OrderedDict
 from itertools import groupby
 from operator import attrgetter
 from urllib.parse import quote_plus
-from math import ceil
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -12,7 +11,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.shortcuts import render
 from django.views.decorators.cache import cache_page
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.defaults import (
     page_not_found as dj_page_not_found,
     permission_denied as dj_permission_denied,
@@ -209,6 +208,7 @@ server_error = lambda request: dj_server_error(request, template_name='static/50
 
 
 @cache_page(1800)  # 30 минут
+@csrf_protect
 def index(request):
     """Индексная страница."""
     from .realms import get_realms
