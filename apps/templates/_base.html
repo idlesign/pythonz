@@ -83,7 +83,7 @@
                 <div itemscope itemtype="http://schema.org/WebSite">
                     <meta itemprop="url" content="{% site_url %}"/>
 
-                    <form class="navbar-form navbar-left" action="/search/" method="post" itemprop="potentialAction" itemscope itemtype="http://schema.org/SearchAction">
+                    <form class="navbar-form navbar-left" action="/search/" itemprop="potentialAction" itemscope itemtype="http://schema.org/SearchAction">
                         {% csrf_token %}
                         <div class="form-group" role="search">
                             <meta itemprop="target" content="{% site_url %}/search/?text={search_term}"/>
