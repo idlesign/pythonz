@@ -1087,7 +1087,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         return '%s — %s' % (self.slug, self.title)
 
     autogenerate_slug = True
-    items_per_page = 1000
+    items_per_page = 40
     details_related = None
 
     is_deleted = False
