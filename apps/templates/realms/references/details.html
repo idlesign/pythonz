@@ -3,10 +3,10 @@
 {% get_static_prefix as STATIC_URL %}
 
 
-{% block page_description %}Описание {{ reference.title }} в Python{% endblock %}
+{% block page_description %}Описание {{ reference.title }} в Python. {{ reference.description|truncatechars:"135" }}{% endblock %}
 
 
-{% block page_keywords %}{{ block.super }}, справка по {{ reference.title }}, описание {{ reference.title }}, {{ reference.search_terms }}{% endblock %}
+{% block page_keywords %}{{ block.super }}, {{ reference.title }} in python 3, {{ reference.title }} в питоне, {{ reference.search_terms }}{% endblock %}
 
 
 {% block js_bottom %}
