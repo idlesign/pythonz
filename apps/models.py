@@ -971,7 +971,7 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         ordering = ('-date',)
 
     autogenerate_slug = True
-    items_per_page = 15
+    items_per_page = 10
 
     def __str__(self):
         return 'Python %s' % self.title
