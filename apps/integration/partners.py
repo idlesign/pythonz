@@ -1,14 +1,12 @@
-import re
 from collections import OrderedDict
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 
 from django.conf import settings
-from django.db.models import signals
 from django.core.cache import cache
+from django.db.models import signals
 from django.utils.timezone import now
 
 from .utils import make_soup, get_from_url
-
 
 _PARTNERS_REGISTRY = None
 _CACHE_TIMEOUT = 28800  # 8 часов
@@ -20,8 +18,6 @@ class PartnerBase():
     ident = None
     title = None
     link_mutator = None
-
-    RE_ICON_REL = re.compile('(shortcut )?icon', re.I)
 
     def __init__(self, partner_id):
         self.partner_id = partner_id
@@ -54,7 +50,7 @@ class PartnerBase():
             price += ' руб.'
 
         data = {
-            'icon_url': self.get_icon_url(page_soup, link_url),
+            'icon_url': 'https://favicon.yandex.net/favicon/%s' % self.title,
             'title': title,
             'url': url,
             'price': price,
@@ -74,19 +70,6 @@ class PartnerBase():
     @classmethod
     def get_price(cls, page_soup):
         return ''
-
-    @classmethod
-    def get_icon_url(cls, page_soup, page_url):
-        icon_url = ''
-
-        if page_soup:
-            matches = page_soup.find_all(attrs={'rel': cls.RE_ICON_REL})
-            if matches:
-                href = matches[0].attrs['href']
-                if href:
-                    icon_url = urljoin(page_url, href)
-
-        return icon_url
 
 
 class BooksRu(PartnerBase):
