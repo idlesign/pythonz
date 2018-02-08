@@ -369,11 +369,11 @@ class TextCompiler:
                     # Заголовок таблицы.
                     rows.append(
                         '<thead><tr><th>%s</th></tr></thead>' %
-                        '</th><th>'.join(line.lstrip(' !').split('|')))
+                        '</th><th>'.join(line.lstrip(' !').split(' | ')))
                 else:
                     attrs_row = ''
                     cells = []
-                    for value in map(str.strip, line.split('|')):
+                    for value in map(str.strip, line.split(' | ')):
 
                         attrs_cell = ''
                         # Подсветка. Например, !b:d+ для всего ряда или !b:d ячейки.
