@@ -129,9 +129,9 @@ def test_text_compiler():
         '<pre><code class="html">print("some")</code></pre><br>')
 
     assert (
-        compile('.. table::\n1 | 2|2 | 3 \n4 | 5 | 6\n\n\n') ==
+        compile('.. table::\n``x(?<!y)`` | 2|2 | 3 \n4 | 5 | 6\n\n\n') ==
         '<div class="table-responsive"><table class="table table-striped table-bordered table-hover">'
-        '<tr><td>1</td><td>2|2</td><td>3</td></tr><tr><td>4</td><td>5</td><td>6</td></tr></table></div><br>')
+        '<tr><td><code>x(?&lt;!y)</code></td><td>2|2</td><td>3</td></tr><tr><td>4</td><td>5</td><td>6</td></tr></table></div><br>')
 
     assert (
         compile('.. table::\n! 1 | 2 | 3\n4 | 5 | 6\n\n\n') ==

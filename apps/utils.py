@@ -403,6 +403,9 @@ class TextCompiler:
         text = text.replace('</', '◀/')
         text = text.replace('>`', '▶`')
 
+        text = text.replace('<', '&lt;')
+        text = text.replace('>', '&gt;')
+
         text = clean(text)
 
         text = text.replace('\r\n', '\n')
