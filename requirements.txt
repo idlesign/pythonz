@@ -1,6 +1,6 @@
 attrs==17.4.0
 awesome-slugify==1.6.5
-Django==1.11.10
+Django==1.11.11
 Pillow==5.0.0
 bleach==2.1.2
 beautifulsoup4==4.6.0
