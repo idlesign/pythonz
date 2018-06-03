@@ -12,11 +12,8 @@ ADMINS = (('me', 'me@some.where'),)
 
 TEMPLATES[0]['OPTIONS']['debug'] = True
 
-# Обход ошибки импорта - ручное конфигурирование отладочной панели.
-# https://github.com/django-debug-toolbar/django-debug-toolbar/issues/521.
-DEBUG_TOOLBAR_PATCH_SETTINGS = False
-MIDDLEWARE_CLASSES = ('debug_toolbar.middleware.DebugToolbarMiddleware',) + MIDDLEWARE_CLASSES
-INSTALLED_APPS += ('debug_toolbar',)
+INSTALLED_APPS.append('debug_toolbar')
+MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
 
 LOGGERS.update({

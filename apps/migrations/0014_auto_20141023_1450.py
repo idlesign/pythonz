@@ -26,9 +26,9 @@ class Migration(migrations.Migration):
                 ('status', models.PositiveIntegerField(verbose_name='Статус', default=1, choices=[(1, 'Черновик'), (2, 'Опубликован'), (3, 'Удален')])),
                 ('supporters_num', models.PositiveIntegerField(verbose_name='Поддержка', default=0)),
                 ('object_id', models.PositiveIntegerField(verbose_name='ID объекта', db_index=True)),
-                ('content_type', models.ForeignKey(verbose_name='Тип содержимого', related_name='discussion_opinions', to='contenttypes.ContentType')),
-                ('last_editor', models.ForeignKey(verbose_name='Редактор', help_text='Пользователь, последним отредактировавший объект.', related_name='discussion_editors', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('submitter', models.ForeignKey(verbose_name='Автор', to=settings.AUTH_USER_MODEL)),
+                ('content_type', models.ForeignKey(verbose_name='Тип содержимого', related_name='discussion_opinions', on_delete=models.CASCADE, to='contenttypes.ContentType')),
+                ('last_editor', models.ForeignKey(verbose_name='Редактор', help_text='Пользователь, последним отредактировавший объект.', related_name='discussion_editors', on_delete=models.CASCADE, blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('submitter', models.ForeignKey(verbose_name='Автор', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Мнение',

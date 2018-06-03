@@ -3,10 +3,11 @@ from django.utils import timezone
 from django.contrib.auth.models import AnonymousUser
 
 
-class TimezoneMiddleware:
+def TimezoneMiddleware(get_response):
     """Устанавливает текущую временную зону."""
 
-    def process_request(self, request):
+    def middleware(request):
+
         default_timezone = 'Asia/Novosibirsk'
         current_timezone = default_timezone
 
@@ -19,3 +20,9 @@ class TimezoneMiddleware:
             timezone.activate(current_timezone)
         except UnknownTimeZoneError:
             timezone.activate(default_timezone)
+
+        response = get_response(request)
+
+        return response
+
+    return middleware

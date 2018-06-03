@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='discussion',
             name='content_type',
-            field=models.ForeignKey(related_name='discussion_opinions', null=True, verbose_name='Тип содержимого', blank=True, to='contenttypes.ContentType'),
+            field=models.ForeignKey(related_name='discussion_opinions', on_delete=models.CASCADE, null=True, verbose_name='Тип содержимого', blank=True, to='contenttypes.ContentType'),
         ),
         migrations.AlterField(
             model_name='discussion',
@@ -60,6 +60,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='discussion',
             name='submitter',
-            field=models.ForeignKey(related_name='discussion_submitters', verbose_name='Добавил', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='discussion_submitters', on_delete=models.CASCADE, verbose_name='Добавил', to=settings.AUTH_USER_MODEL),
         ),
     ]

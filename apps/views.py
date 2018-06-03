@@ -6,10 +6,10 @@ from urllib.parse import quote_plus
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.shortcuts import render
+from django.urls import reverse
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.defaults import (
@@ -91,7 +91,7 @@ class PlaceDetailsView(DetailsView):
         :return:
         """
         user = request.user
-        if user.is_authenticated():
+        if user.is_authenticated:
             user.place = xross.attrs['item']
             user.set_timezone_from_place()
             user.save()
@@ -103,7 +103,7 @@ class PlaceDetailsView(DetailsView):
     def update_context(self, context, request):
         place = context['item']
 
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             context['allow_im_here'] = (request.user.place != place)
 
         context['users'] = User.get_actual().filter(place=place)

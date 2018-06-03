@@ -58,7 +58,8 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
 
     object_id = models.PositiveIntegerField(verbose_name='ID объекта', db_index=True, null=True, blank=True)
     content_type = models.ForeignKey(
-        ContentType, verbose_name='Тип содержимого', related_name='%(class)s_discussions', null=True, blank=True)
+        ContentType, verbose_name='Тип содержимого', related_name='%(class)s_discussions', null=True, blank=True,
+        on_delete=models.CASCADE)
 
     linked_object = GenericForeignKey()
 
@@ -260,7 +261,8 @@ class PartnerLink(models.Model):
 
     object_id = models.PositiveIntegerField(verbose_name='ID объекта', db_index=True)
     content_type = models.ForeignKey(
-        ContentType, verbose_name='Тип содержимого', related_name='%(class)s_partner_links')
+        ContentType, verbose_name='Тип содержимого', related_name='%(class)s_partner_links',
+        on_delete=models.CASCADE)
 
     partner_alias = models.CharField('Идентфикатор класса партнёра', max_length=50, db_index=True)
 
@@ -381,7 +383,9 @@ class Vacancy(UtmReady, RealmBaseModel):
 
     employer_name = models.CharField('Работодатель', max_length=255)
 
-    place = models.ForeignKey(Place, verbose_name='Место', related_name='vacancies', null=True, blank=True)
+    place = models.ForeignKey(
+        Place, verbose_name='Место', related_name='vacancies', null=True, blank=True,
+        on_delete=models.CASCADE)
     salary_from = models.PositiveIntegerField('Заработная плата', null=True, blank=True)
     salary_till = models.PositiveIntegerField('З/п до', null=True, blank=True)
     salary_currency = models.CharField('Валюта', max_length=255, null=True, blank=True)
@@ -557,7 +561,8 @@ class Community(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Mod
     place = models.ForeignKey(
         Place, verbose_name='Место', related_name='communities', null=True, blank=True,
         help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>'
-                  'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
+                  'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».',
+        on_delete=models.CASCADE)
 
     contacts = models.CharField(
         'Контактные лица', null=True, blank=True, max_length=255,
@@ -608,7 +613,8 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
     place = models.ForeignKey(
         Place, verbose_name='Место', related_name='users', null=True, blank=True,
         help_text='Место вашего пребывания (страна, город, село).<br>'
-                  'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».')
+                  'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».',
+        on_delete=models.CASCADE)
 
     profile_public = models.BooleanField(
         'Публичный профиль', default=True, db_index=True,
@@ -1224,17 +1230,20 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         'self', related_name='children', verbose_name='Родитель', db_index=True, null=True, blank=True,
         help_text='Укажите родительский раздел. '
                   'Например, для модуля можно указать раздел справки, в которому он относится; '
-                  'для метода &#8212; класс.')
+                  'для метода &#8212; класс.',
+        on_delete=models.CASCADE)
 
     version_added = models.ForeignKey(
         Version, related_name='%(class)s_added', verbose_name='Добавлено в', null=True, blank=True,
         help_text='Версия Python, для которой впервые стала актульна данная статья<br>'
-                  '(версия, где впервые появился модуль, пакет, класс, функция).')
+                  '(версия, где впервые появился модуль, пакет, класс, функция).',
+        on_delete = models.CASCADE)
 
     version_deprecated = models.ForeignKey(
         Version, related_name='%(class)s_deprecated', verbose_name='Устарело в', null=True, blank=True,
         help_text='Версия Python, для которой впервые данная статья перестала быть актуальной<br>'
-        '(версия, где модуль, пакет, класс, функция были объявлены устаревшими).')
+        '(версия, где модуль, пакет, класс, функция были объявлены устаревшими).',
+        on_delete=models.CASCADE)
 
     func_proto = models.CharField(
         'Прототип', max_length=250, null=True, blank=True,
@@ -1470,7 +1479,8 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
     place = models.ForeignKey(
         Place, verbose_name='Место', related_name='events', null=True, blank=True,
         help_text=('Укажите место проведения мероприятия.<br><b>Конкретный адрес следует указывать в описании.</b><br>'
-                   'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».'))
+                   'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».'),
+        on_delete=models.CASCADE)
 
     specialization = models.PositiveIntegerField('Специализация', choices=get_choices(SPECS), default=SPEC_DEDICATED)
     type = models.PositiveIntegerField('Тип', choices=get_choices(TYPES), default=TYPE_MEETING)
@@ -1559,7 +1569,9 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
     paginator_order = 'name'
     items_per_page = 1000
 
-    user = models.OneToOneField(User, verbose_name='Пользователь', related_name='person', null=True, blank=True)
+    user = models.OneToOneField(
+        User, verbose_name='Пользователь', related_name='person', null=True, blank=True,
+        on_delete=models.CASCADE)
     name = models.CharField('Имя', max_length=90, blank=True)
     name_en = models.CharField('Имя англ.', max_length=90, blank=True)
     aka = models.CharField('Другие имена', max_length=255, blank=True)  # Разделены ;

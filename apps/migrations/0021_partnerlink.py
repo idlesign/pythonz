@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('partner_alias', models.CharField(max_length=50, db_index=True, choices=[('booksru', 'books.ru')], verbose_name='Идентфикатор класса партнёра')),
                 ('url', models.URLField(help_text='Ссылка на партнёрскую страницу без указания партнёрских данных (идентификатора).', verbose_name='Базовая ссылка')),
                 ('description', models.CharField(max_length=255, null=True, blank=True, verbose_name='Описание')),
-                ('content_type', models.ForeignKey(related_name='partnerlink_partner_links', to='contenttypes.ContentType', verbose_name='Тип содержимого')),
+                ('content_type', models.ForeignKey(related_name='partnerlink_partner_links', on_delete=models.CASCADE, to='contenttypes.ContentType', verbose_name='Тип содержимого')),
             ],
             options={
                 'verbose_name_plural': 'Партнёрские ссылки',

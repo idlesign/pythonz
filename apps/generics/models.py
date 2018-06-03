@@ -1,20 +1,19 @@
 import os
-from uuid import uuid4
 from contextlib import suppress
+from uuid import uuid4
 
-from slugify import Slugify, CYRILLIC
-from siteflags.models import ModelWithFlag
-from django.core.cache import cache
-from django.core.urlresolvers import reverse
-from django.db import models
 from django.conf import settings
+from django.core.cache import cache
+from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.text import Truncator
+from siteflags.models import ModelWithFlag
+from slugify import Slugify, CYRILLIC
 
-from ..utils import UTM, TextCompiler
 from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
-
+from ..utils import UTM, TextCompiler
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
 SLUGIFIER = Slugify(pretranslate=CYRILLIC, to_lower=True, safe_chars='-._', max_length=200)
@@ -239,10 +238,11 @@ class RealmBaseModel(ModelWithFlag):
     supporters_num = models.PositiveIntegerField('Поддержка', default=0)
 
     submitter = models.ForeignKey(
-        USER_MODEL, verbose_name='Добавил', related_name='%(class)s_submitters', default=settings.ROBOT_USER_ID)
+        USER_MODEL, verbose_name='Добавил', related_name='%(class)s_submitters', default=settings.ROBOT_USER_ID,
+        on_delete=models.CASCADE)
     last_editor = models.ForeignKey(
         USER_MODEL, verbose_name='Редактор', related_name='%(class)s_editors', null=True, blank=True,
-        help_text='Пользователь, последним отредактировавший объект.')
+        help_text='Пользователь, последним отредактировавший объект.', on_delete=models.CASCADE)
 
     class Meta:
         abstract = True

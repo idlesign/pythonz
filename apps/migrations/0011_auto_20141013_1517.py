@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='place',
-            field=models.ForeignKey(verbose_name='Место', to='apps.Place', help_text='Укажите место проведения мероприятия. <b>Конкретный адрес следует указывать в описании.</b><br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».', blank=True, null=True, related_name='events'),
+            field=models.ForeignKey(verbose_name='Место', to='apps.Place', help_text='Укажите место проведения мероприятия. <b>Конкретный адрес следует указывать в описании.</b><br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».', blank=True, null=True, related_name='events', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(

@@ -25,6 +25,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='event',
             name='place',
-            field=models.ForeignKey(help_text='Укажите место проведения мероприятия.<br><b>Конкретный адрес следует указывать в описании.</b><br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».', blank=True, null=True, related_name='events', verbose_name='Место', to='apps.Place'),
+            field=models.ForeignKey(help_text='Укажите место проведения мероприятия.<br><b>Конкретный адрес следует указывать в описании.</b><br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».', blank=True, null=True, related_name='events', on_delete=models.CASCADE, verbose_name='Место', to='apps.Place'),
         ),
     ]

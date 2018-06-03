@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='discussion',
             name='content_type',
-            field=models.ForeignKey(to='contenttypes.ContentType', null=True, blank=True, verbose_name='Тип содержимого', related_name='discussion_discussions'),
+            field=models.ForeignKey(to='contenttypes.ContentType', null=True, blank=True, verbose_name='Тип содержимого', related_name='discussion_discussions', on_delete=models.CASCADE),
         ),
     ]

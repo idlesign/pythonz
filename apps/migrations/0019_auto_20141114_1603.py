@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                 ('history_id', models.AutoField(primary_key=True, serialize=False)),
                 ('history_date', models.DateTimeField()),
                 ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_user', models.ForeignKey(null=True, to=settings.AUTH_USER_MODEL)),
+                ('history_user', models.ForeignKey(null=True, to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('-history_date', '-history_id'),
@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='reference',
             name='parent',
-            field=models.ForeignKey(help_text='Укажите родительский раздел. Например, для модуля можно указать раздел справки, в которому он относится; для метода &#8212; класс.', blank=True, to='apps.Reference', verbose_name='Родитель', null=True, related_name='children'),
+            field=models.ForeignKey(help_text='Укажите родительский раздел. Например, для модуля можно указать раздел справки, в которому он относится; для метода &#8212; класс.', blank=True, to='apps.Reference', verbose_name='Родитель', null=True, related_name='children', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='reference',

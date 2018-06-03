@@ -3,8 +3,8 @@ from operator import attrgetter
 
 from django.conf.urls import url
 from django.contrib.sitemaps.views import sitemap
-from django.core.urlresolvers import reverse, get_resolver
 from django.db.models import signals
+from django.urls import get_resolver, reverse
 from sitecats.toolbox import get_tie_model, get_category_model
 from sitetree.utils import tree, item
 

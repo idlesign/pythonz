@@ -33,10 +33,10 @@ class Migration(migrations.Migration):
                 ('func_proto', models.CharField(null=True, blank=True, max_length=250, help_text='Для функций/методов. Описание интерфейса: my_func(arg, kwarg=None)', verbose_name='Прототип')),
                 ('func_params', models.TextField(null=True, blank=True, help_text='Для функций/методов. Описание параметров функции.', verbose_name='Параметры')),
                 ('func_result', models.CharField(null=True, blank=True, max_length=250, help_text='Для функций/методов. Описание результата.', verbose_name='Результат')),
-                ('last_editor', models.ForeignKey(blank=True, verbose_name='Редактор', null=True, help_text='Пользователь, последним отредактировавший объект.', to=settings.AUTH_USER_MODEL, related_name='reference_editors')),
+                ('last_editor', models.ForeignKey(blank=True, verbose_name='Редактор', null=True, help_text='Пользователь, последним отредактировавший объект.', to=settings.AUTH_USER_MODEL, related_name='reference_editors', on_delete=models.CASCADE)),
                 ('linked', models.ManyToManyField(to='apps.Reference', blank=True, help_text='Выберите объекты, имеющие отношение к данному.', related_name='linked_rel_+', verbose_name='Связанные объекты')),
-                ('parent', models.ForeignKey(blank=True, verbose_name='Родитель', null=True, help_text='Укажите родительский раздел. Например, для модуля можно указать раздел справки, в которому он относится; для метода &#8212; класс.', to='apps.Reference', related_name='reference_parents')),
-                ('submitter', models.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name='Добавил', related_name='reference_submitters')),
+                ('parent', models.ForeignKey(blank=True, verbose_name='Родитель', null=True, help_text='Укажите родительский раздел. Например, для модуля можно указать раздел справки, в которому он относится; для метода &#8212; класс.', to='apps.Reference', related_name='reference_parents', on_delete=models.CASCADE)),
+                ('submitter', models.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name='Добавил', related_name='reference_submitters', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'Статьи справочника',
@@ -60,9 +60,9 @@ class Migration(migrations.Migration):
                 ('status', models.PositiveIntegerField(choices=[(1, 'Черновик'), (2, 'Опубликован'), (3, 'Удален')], default=1, verbose_name='Статус')),
                 ('supporters_num', models.PositiveIntegerField(default=0, verbose_name='Поддержка')),
                 ('current', models.BooleanField(db_index=True, default=False, verbose_name='Текущая')),
-                ('last_editor', models.ForeignKey(blank=True, verbose_name='Редактор', null=True, help_text='Пользователь, последним отредактировавший объект.', to=settings.AUTH_USER_MODEL, related_name='version_editors')),
+                ('last_editor', models.ForeignKey(blank=True, verbose_name='Редактор', null=True, help_text='Пользователь, последним отредактировавший объект.', to=settings.AUTH_USER_MODEL, related_name='version_editors', on_delete=models.CASCADE)),
                 ('linked', models.ManyToManyField(to='apps.Version', blank=True, help_text='Выберите объекты, имеющие отношение к данному.', related_name='linked_rel_+', verbose_name='Связанные объекты')),
-                ('submitter', models.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name='Добавил', related_name='version_submitters')),
+                ('submitter', models.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name='Добавил', related_name='version_submitters', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'Версии Python',
@@ -73,13 +73,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='reference',
             name='version_added',
-            field=models.ForeignKey(blank=True, verbose_name='Добавлено в', null=True, help_text='Версия Python, для которой впервые стала актульна данная статья<br>(версия, где впервые появился модуль, пакет, класс, функция).', to='apps.Version', related_name='reference_added'),
+            field=models.ForeignKey(blank=True, verbose_name='Добавлено в', null=True, help_text='Версия Python, для которой впервые стала актульна данная статья<br>(версия, где впервые появился модуль, пакет, класс, функция).', to='apps.Version', related_name='reference_added', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='reference',
             name='version_deprecated',
-            field=models.ForeignKey(blank=True, verbose_name='Устарело в', null=True, help_text='Версия Python, для которой впервые данная статья перестала быть актуальной<br>(версия, где модуль, пакет, класс, функция были объявлены устаревшими).', to='apps.Version', related_name='reference_deprecated'),
+            field=models.ForeignKey(blank=True, verbose_name='Устарело в', null=True, help_text='Версия Python, для которой впервые данная статья перестала быть актуальной<br>(версия, где модуль, пакет, класс, функция были объявлены устаревшими).', to='apps.Version', related_name='reference_deprecated', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

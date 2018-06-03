@@ -132,12 +132,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='vacancy',
             name='last_editor',
-            field=models.ForeignKey(null=True, verbose_name='Редактор', blank=True, to=settings.AUTH_USER_MODEL, related_name='vacancy_editors', help_text='Пользователь, последним отредактировавший объект.'),
+            field=models.ForeignKey(null=True, verbose_name='Редактор', blank=True, to=settings.AUTH_USER_MODEL, related_name='vacancy_editors', on_delete=models.CASCADE, help_text='Пользователь, последним отредактировавший объект.'),
         ),
         migrations.AddField(
             model_name='vacancy',
             name='place',
-            field=models.ForeignKey(null=True, verbose_name='Место', blank=True, to='apps.Place', related_name='vacancies'),
+            field=models.ForeignKey(null=True, verbose_name='Место', blank=True, to='apps.Place', related_name='vacancies', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='vacancy',

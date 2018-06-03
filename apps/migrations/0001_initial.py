@@ -64,7 +64,7 @@ class Migration(migrations.Migration):
                 ('status', models.PositiveIntegerField(verbose_name='Статус', choices=[(1, 'Черновик'), (2, 'Опубликован'), (3, 'Удален')], default=1)),
                 ('supporters_num', models.PositiveIntegerField(verbose_name='Количество поддержавших', default=0)),
                 ('linked', models.ManyToManyField(verbose_name='Связанные объекты', to='apps.Article', related_name='linked_rel_+', help_text='Выберите объекты, имеющие отношение к данному.', blank=True)),
-                ('submitter', models.ForeignKey(verbose_name='Добавил', to=settings.AUTH_USER_MODEL, related_name='article_submitters')),
+                ('submitter', models.ForeignKey(verbose_name='Добавил', to=settings.AUTH_USER_MODEL, related_name='article_submitters', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Статья',
@@ -90,7 +90,7 @@ class Migration(migrations.Migration):
                 ('isbn', models.CharField(max_length=20, verbose_name='Код ISBN', unique=True, null=True, blank=True)),
                 ('isbn_ebook', models.CharField(max_length=20, verbose_name='Код ISBN эл. книги', unique=True, null=True, blank=True)),
                 ('linked', models.ManyToManyField(verbose_name='Связанные объекты', to='apps.Book', related_name='linked_rel_+', help_text='Выберите объекты, имеющие отношение к данному.', blank=True)),
-                ('submitter', models.ForeignKey(verbose_name='Добавил', to=settings.AUTH_USER_MODEL, related_name='book_submitters')),
+                ('submitter', models.ForeignKey(verbose_name='Добавил', to=settings.AUTH_USER_MODEL, related_name='book_submitters', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Книга',
@@ -146,8 +146,8 @@ class Migration(migrations.Migration):
                 ('status', models.PositiveIntegerField(verbose_name='Статус', choices=[(1, 'Черновик'), (2, 'Опубликован'), (3, 'Удален')], default=1)),
                 ('supporters_num', models.PositiveIntegerField(verbose_name='Количество поддержавших', default=0)),
                 ('object_id', models.PositiveIntegerField(verbose_name='ID объекта', db_index=True)),
-                ('content_type', models.ForeignKey(verbose_name='Тип содержимого', to='contenttypes.ContentType', related_name='opinion_opinions')),
-                ('submitter', models.ForeignKey(verbose_name='Автор', to=settings.AUTH_USER_MODEL)),
+                ('content_type', models.ForeignKey(verbose_name='Тип содержимого', to='contenttypes.ContentType', related_name='opinion_opinions', on_delete=models.CASCADE)),
+                ('submitter', models.ForeignKey(verbose_name='Автор', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Мнение',
@@ -194,7 +194,7 @@ class Migration(migrations.Migration):
                 ('code', models.TextField(verbose_name='Код')),
                 ('url', models.URLField(verbose_name='URL')),
                 ('linked', models.ManyToManyField(verbose_name='Связанные объекты', to='apps.Video', related_name='linked_rel_+', help_text='Выберите объекты, имеющие отношение к данному.', blank=True)),
-                ('submitter', models.ForeignKey(verbose_name='Добавил', to=settings.AUTH_USER_MODEL, related_name='video_submitters')),
+                ('submitter', models.ForeignKey(verbose_name='Добавил', to=settings.AUTH_USER_MODEL, related_name='video_submitters', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Видео',
@@ -209,7 +209,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='eventdetails',
             name='place',
-            field=models.ForeignKey(verbose_name='Место', to='apps.Place', related_name='events'),
+            field=models.ForeignKey(verbose_name='Место', to='apps.Place', related_name='events', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -227,13 +227,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='submitter',
-            field=models.ForeignKey(verbose_name='Добавил', to=settings.AUTH_USER_MODEL, related_name='event_submitters'),
+            field=models.ForeignKey(verbose_name='Добавил', to=settings.AUTH_USER_MODEL, related_name='event_submitters', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='user',
             name='place',
-            field=models.ForeignKey(help_text='Место вашего пребывания (страна, город, село), чтобы pythonz мог фильтровать интересную вам информацию.', blank=True, verbose_name='Место', to='apps.Place', related_name='users', null=True),
+            field=models.ForeignKey(help_text='Место вашего пребывания (страна, город, село), чтобы pythonz мог фильтровать интересную вам информацию.', blank=True, verbose_name='Место', to='apps.Place', related_name='users', on_delete=models.CASCADE, null=True),
             preserve_default=True,
         ),
         migrations.AddField(

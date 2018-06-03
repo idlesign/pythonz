@@ -32,8 +32,8 @@ class Migration(migrations.Migration):
                 ('url', models.URLField(null=True, verbose_name='Страница в сети', blank=True)),
                 ('contacts', models.CharField(verbose_name='Контактное лицо', help_text='Контактные лица, представляющие сообщество, координаторы, основатели.<br><b>[u:<ид>:<имя>]</b> формирует ссылку на профиль пользователя pythonz. Например: [u:1:идле].', max_length=255)),
                 ('linked', models.ManyToManyField(verbose_name='Связанные объекты', help_text='Выберите объекты, имеющие отношение к данному.', to='apps.Community', blank=True, related_name='linked_rel_+')),
-                ('place', models.ForeignKey(to='apps.Place', verbose_name='Место', related_name='communities', null=True, help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».', blank=True)),
-                ('submitter', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='community_submitters', verbose_name='Добавил')),
+                ('place', models.ForeignKey(to='apps.Place', verbose_name='Место', related_name='communities', on_delete=models.CASCADE, null=True, help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».', blank=True)),
+                ('submitter', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='community_submitters', on_delete=models.CASCADE, verbose_name='Добавил')),
             ],
             options={
                 'verbose_name': 'Сообщество',

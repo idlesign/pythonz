@@ -114,17 +114,18 @@ STATICFILES_FINDERS = (
 STATIC_URL_FULL = SITE_URL + STATIC_URL
 
 
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'apps.middleware.TimezoneMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-)
+]
 
 
 TEMPLATES = [
@@ -145,7 +146,7 @@ TEMPLATES = [
 ]
 
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -173,7 +174,7 @@ INSTALLED_APPS = (
     'simple_history',
     'robots',
     'raven.contrib.django.raven_compat',
-)
+]
 
 
 RAVEN_CONFIG = {

@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('url', models.URLField(unique=True, verbose_name='Страница ресурса')),
                 ('title', models.CharField(max_length=255, verbose_name='Название')),
                 ('description', models.TextField(default='', verbose_name='Описание', blank=True)),
-                ('last_editor', models.ForeignKey(help_text='Пользователь, последним отредактировавший объект.', related_name='externalresource_editors', verbose_name='Редактор', to=settings.AUTH_USER_MODEL, blank=True, null=True)),
+                ('last_editor', models.ForeignKey(help_text='Пользователь, последним отредактировавший объект.', related_name='externalresource_editors', on_delete=models.CASCADE, verbose_name='Редактор', to=settings.AUTH_USER_MODEL, blank=True, null=True)),
             ],
             options={
                 'verbose_name_plural': 'Внешние ресурсы',

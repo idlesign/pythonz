@@ -1,12 +1,11 @@
-from sitetree.utils import item
 from django.conf.urls import url
-from django.core.urlresolvers import reverse
 from django.contrib.sitemaps import GenericSitemap
 from django.contrib.syndication.views import Feed
+from django.urls import reverse
+from sitetree.utils import item
 
-from ..utils import get_logger
 from .views import ListingView, DetailsView, AddView, EditView, TagsView
-
+from ..utils import get_logger
 
 LOGGER = get_logger('realms')
 SYNDICATION_URL_MARKER = 'feed'

@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='user',
             name='place',
-            field=models.ForeignKey(blank=True, null=True, to='apps.Place', verbose_name='Место', help_text='Место вашего пребывания (страна, город, село). Например: Россия, Новосибирск.', related_name='users'),
+            field=models.ForeignKey(blank=True, null=True, to='apps.Place', verbose_name='Место', help_text='Место вашего пребывания (страна, город, село). Например: Россия, Новосибирск.', related_name='users', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='user',
