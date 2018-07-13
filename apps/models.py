@@ -596,6 +596,10 @@ class Community(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Mod
         }
         year = 'Год образования'
 
+    @property
+    def turbo_content(self):
+        return self.text
+
     def save(self, *args, **kwargs):
         if not self.pk:
             self.mark_published()
@@ -919,6 +923,10 @@ class Article(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Model
         }
 
     @property
+    def turbo_content(self):
+        return self.text
+
+    @property
     def is_handmade(self):
         """Возвращат флаг, указывающий на то, что статья создана на этом сайте.
 
@@ -981,6 +989,10 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
 
     def __str__(self):
         return 'Python %s' % self.title
+
+    @property
+    def turbo_content(self):
+        return self.text
 
     @classmethod
     def get_paginator_objects(cls):

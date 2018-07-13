@@ -1,8 +1,8 @@
 from django.conf.urls import url
 from django.contrib.sitemaps import GenericSitemap
-from django.contrib.syndication.views import Feed
 from django.urls import reverse
 from sitetree.utils import item
+from yaturbo import YandexTurboFeed
 
 from .views import ListingView, DetailsView, AddView, EditView, TagsView
 from ..utils import get_logger
@@ -110,6 +110,7 @@ class RealmBase:
     @classmethod
     def _get_syndication_feed(cls, title, description, func_link, func_items, cls_name):
         from ..integration.utils import get_thumb_url
+
         type_dict = {
             'title': title,
             'description': 'PYTHONZ. %s' % description,
@@ -124,8 +125,13 @@ class RealmBase:
             'item_link': lambda self, item: item.get_absolute_url(utm_source='rss'),
             'item_guid': lambda self, item: '%s_%s' % (cls.name, item.pk),
             'item_description': lambda self, item: item.description,
+            'item_turbo': lambda self, item: item.turbo_content,
         }
-        return type('%sSyndication' % cls_name, (Feed,), type_dict)()
+
+        feed_cls = type('%sSyndication' % cls_name, (YandexTurboFeed,), type_dict)()  # type: YandexTurboFeed
+        feed_cls.turbo_sanitize = True
+
+        return feed_cls
 
     @classmethod
     def get_syndication_feed(cls):

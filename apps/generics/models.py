@@ -98,6 +98,14 @@ class CommonEntityModel(models.Model):
     allow_linked = True
     """Разрешена ли привязка элементов друг к другу."""
 
+    @property
+    def turbo_content(self):
+        """Содержимое для Турбо-страниц.
+
+        :rtype: str
+        """
+        return self.description
+
     def generate_slug(self):
         """Генерирует краткое имя для URL и заполняет им атрибут slug.
 
