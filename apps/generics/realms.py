@@ -122,7 +122,7 @@ class RealmBase:
             'items': func_items,
             'item_title': lambda self, item: item.title,
             'item_pubdate': lambda self, item: item.time_published,
-            'item_link': lambda self, item: item.get_absolute_url(utm_source='rss'),
+            'item_link': lambda self, item: item.get_absolute_url(),
             'item_guid': lambda self, item: '%s_%s' % (cls.name, item.pk),
             'item_description': lambda self, item: item.description,
             'item_turbo': lambda self, item: item.turbo_content,
