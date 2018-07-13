@@ -43,9 +43,6 @@ class RealmBase:
     ready_for_digest = True
     """Указывает на готовность области попасть в еженедельный сводки."""
 
-    yawidget_code = None
-    """Код Яндекс.виджета."""
-
     syndication_enabled = True
     """Указание на то, доступна ли синдикация."""
     syndication_url = None

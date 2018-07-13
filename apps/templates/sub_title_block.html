@@ -13,12 +13,6 @@
             <i class="fa fa-fw fa-rss"></i>&nbsp;RSS
         </a> &nbsp;
     {% endif %}
-
-    {% if realm.yawidget_code %}
-        <a title="Добавить виджет раздела {% model_meta_verbose_name_plural realm.model %} на главную Яндекса" target="_blank" href="http://www.yandex.ru?add={{ realm.yawidget_code }}&from=promocode">
-            <i class="fa fa-fw fa-newspaper-o"></i>&nbsp;Яндекс.Виджет
-        </a> &nbsp;
-    {% endif %}
     </span>
 {% endif %}
 

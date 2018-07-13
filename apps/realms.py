@@ -194,8 +194,6 @@ class BookRealm(RealmBase):
     form = BookForm
     icon = 'book'
 
-    yawidget_code = 173166
-
 
 class VideoRealm(RealmBase):
     """
@@ -211,8 +209,6 @@ class VideoRealm(RealmBase):
     model = Video
     form = VideoForm
     icon = 'film'
-
-    yawidget_code = 173167
 
 
 class EventRealm(RealmBase):
@@ -249,8 +245,6 @@ class VacancyRealm(RealmBase):
     model = Vacancy
     icon = 'briefcase'
     sitemap_enabled = False
-
-    yawidget_code = 178839
 
 
 class ReferenceRealm(RealmBase):
@@ -321,8 +315,6 @@ class ArticleRealm(RealmBase):
     model = Article
     form = ArticleForm
     icon = 'file-o'
-
-    yawidget_code = 173163
 
 
 class PlaceRealm(RealmBase):
