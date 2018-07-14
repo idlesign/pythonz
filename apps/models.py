@@ -401,10 +401,6 @@ class Vacancy(UtmReady, RealmBaseModel):
     url_attr = 'url_site'
 
     @property
-    def turbo_content(self):
-        return ''
-
-    @property
     def cover(self):
         return self.url_logo
 
