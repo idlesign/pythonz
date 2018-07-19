@@ -231,7 +231,13 @@ def sync(skip_deadend_peps=True, limit=None):
     for pep in peps:  # type: PepInfo
 
         num = pep.num
-        status_id = int(map_statuses[pep.status])
+        status_id = int(map_statuses.get(pep.status))
+
+        if not status_id:
+            # Неизвестный статус. Например, Provisional.
+            LOG.warning('Unknown status %s ...', pep.status)
+            continue
+
         type_id = int(map_types[pep.type])
 
         LOG.info('Working on PEP %s ...', num)
