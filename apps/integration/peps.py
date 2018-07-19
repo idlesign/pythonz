@@ -231,7 +231,7 @@ def sync(skip_deadend_peps=True, limit=None):
     for pep in peps:  # type: PepInfo
 
         num = pep.num
-        status_id = int(map_statuses.get(pep.status))
+        status_id = int(map_statuses.get(pep.status, 0))
 
         if not status_id:
             # Неизвестный статус. Например, Provisional.
