@@ -1,8 +1,9 @@
 from django import forms
-from django.forms.widgets import TextInput
 from django.forms.utils import flatatt
-from django.utils.html import format_html, force_text
+from django.forms.widgets import TextInput
 from django.template import loader
+from django.utils.encoding import force_text
+from django.utils.html import format_html
 
 from ..models import Place
 

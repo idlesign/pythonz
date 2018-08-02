@@ -103,6 +103,7 @@ MEDIA_URL = '/media/'
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'settings'
+LOGOUT_REDIRECT_URL = 'index'
 
 STATIC_ROOT = '%s/static/' % PATH_DATA
 STATIC_URL = '/static/'

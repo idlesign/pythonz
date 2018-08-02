@@ -3,7 +3,7 @@ from sys import argv
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth.views import logout
+from django.contrib.auth.views import LogoutView
 from django.shortcuts import render
 from django.urls import path
 from robots.views import rules_list
@@ -19,7 +19,7 @@ urlpatterns = [
     path('search/', search, name='search'),
     path('login/', login, name='login'),
     path('settings/', user_settings, name='settings'),
-    path('logout/', logout, {'next_page': '/'}, name='logout'),
+    path('logout/', LogoutView.as_view(), {'next_page': '/'}, name='logout'),
     path('promo/', render, {'template_name': 'static/promo.html'}),
     path('about/', render, {'template_name': 'static/about.html'}),
     path('sitemap/', render, {'template_name': 'static/sitemap.html'}),
