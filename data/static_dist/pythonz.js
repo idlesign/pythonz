@@ -12,9 +12,9 @@ var pythonz = {
             pythonz.toggleTags();
 
             sitecats.bootstrap();
-            sitecats.make_cloud('tags_box');
+            sitecats.make_cloud('box-tags');
 
-            $('.mod__has_tooltip').tooltip();
+            $('.tooltipped').tooltip();
         });
     },
 
@@ -22,7 +22,7 @@ var pythonz = {
         "use strict";
         $.each($('.tags_box'), function(idx, el) {
             var $el = $(el);
-            if ($('.categories_box', $el).length == 0){
+            if ($('.categories_box', $el).length === 0){
                 $el.hide();
             };
         });
@@ -53,7 +53,7 @@ var pythonz = {
             $.each(ids, function(idx, tabId){
                 var count = parseInt($('#' + tabId + '_cnt').text());
                 if (count > maxCount) {
-                    $('a[href="#' + tabId + '"]', '#comments_tabs').tab('show');
+                    $('a[href="#' + tabId + '"]', '#tabs-comments').tab('show');
                     maxCount = count;
                 }
             });

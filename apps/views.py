@@ -236,7 +236,7 @@ def index(request):
 
         if realm_locals:
             main = realm_locals[0]
-            additional = list(realm_locals[1:]) + realm_externals
+            additional = list(realm_locals[1:]) + realm_externals[:max_additional]
         else:
             main = {}
             additional = []
@@ -308,8 +308,8 @@ def search(request):
 
 
 @redirect_signedin
-@signin_view(widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label}, template='form_bootstrap3')
-@signup_view(widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label}, template='form_bootstrap3',
+@signin_view(widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label}, template='form_bootstrap4')
+@signup_view(widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label}, template='form_bootstrap4',
              flow=SimpleClassicWithEmailSignup, verify_email=True)
 def login(request):
     """Страница авторизации и регистрации."""

@@ -2,30 +2,30 @@
 
 {% block bar_right %}
 
-    <div class="panel panel-success marg__t_mid">
-        <div class="panel-heading">
-            <h5 class="panel-title">Как добавить вакансию</h5>
+    <div class="card border-info mt-3">
+        <div class="card-header">
+            <h5 class="card-title">Как добавить вакансию</h5>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
         Вы можете опубликовать вакансию на <a href="https://novosibirsk.hh.ru/auth/employer">hh.ru</a>,
             и, если она имеет отношение к Питону, мы покажем её здесь автоматически.
         </div>
     </div>
 
-    <div>
-        <h2>Статистика
-        <sup class="small mod__has_tooltip" title="Собрана по данным вакансий, актуальных на текущий момент">
+    <div class="mt-3">
+        <h3>Статистика
+        <sup class="small tooltipped" title="Собрана по данным вакансий, актуальных на текущий момент">
             <i class="fa fa-question-circle"></i>
         </sup>
-        </h2><hr>
+        </h3><hr>
     </div>
 
-    <div class="marg__b_mid">
+    <div class="mb-3 small">
 
         {% include "realms/vacancies/stats_salary.html" %}
 
         {% if stats_places %}
-            <h4 class="marg__l_min">Места</h4>
+            <h4 class="mt-2 ml-2 text-right">Места</h4>
             <table class="table">
                 <tbody>
                     {% for stat_row in stats_places %}

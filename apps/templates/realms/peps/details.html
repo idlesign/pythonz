@@ -12,12 +12,12 @@
 
 
 {% block details_contents %}
-    <div class="pull-right label label-info">{{ pep.time_published|date }}</div>
+    <div class="pull-right badge badge-info">{{ pep.time_published|date }}</div>
 {% endblock %}
 
 
 {% block details_description %}
-    <div class="marg__b_mid" itemprop="description">
+    <div class="mb-3" itemprop="description">
         <strong>PEP {{ pep.num }}</strong>:
         <a href="{{ pep.get_link_to_pyorg }}" title="Полный текст улучшения на английском языке">{{ item.description }}</a>
     </div>
@@ -26,7 +26,7 @@
 
 {% block details_contents_add %}
 
-    <table class="table table-bordered table-responsive table-striped">
+    <table class="table table-bordered table-striped">
         <tr>
             <th width="20%">{% model_field_verbose_name from pep.type %}</th><td>{{ pep.display_type }}</td>
         </tr>
@@ -60,7 +60,7 @@
 
     {% with pep.superseded.all as superseded %}
         {% if superseded %}
-            <div class="marg__b_mid">
+            <div class="mb-3">
                 <h6>Предложения, пришедшие на смену данному</h6>
                 {% include "realms/peps/list_items.html" with items=superseded %}
             </div>
@@ -69,7 +69,7 @@
 
     {% with pep.replaces.all as replaces %}
         {% if replaces %}
-            <div class="marg__b_mid">
+            <div class="mb-3">
                 <h6>Предложения, которые были заменены данным</h6>
                 {% include "realms/peps/list_items.html" with items=replaces %}
             </div>
@@ -78,7 +78,7 @@
 
     {% with pep.requires.all as requires %}
         {% if requires %}
-            <div class="marg__b_mid">
+            <div class="mb-3">
                 <h6>Данное предложение зависит от следующих</h6>
                 {% include "realms/peps/list_items.html" with items=requires %}
             </div>

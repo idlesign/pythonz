@@ -1,4 +1,4 @@
-<div id="share_box" class="marg__t_max marg__b_mid">
+<div id="box-share" class="mt-4 mb-3">
     {% if item_rating_allowed %}
         {% include "sub_box_rating.html" %}
     {% endif %}
@@ -6,5 +6,7 @@
     {% include "sub_box_bookmark.html" %}
 
     <script src="//yastatic.net/share2/share.js"></script>
-    <div class="ya-share2 marg__l_mid" data-services="vkontakte,facebook,odnoklassniki,moimir,gplus,twitter,telegram,blogger,delicious,digg,reddit,linkedin,lj,viber,whatsapp,skype" data-limit="7" data-counter=""></div>
+    <div class="float-right">
+    <div class="ya-share2 ml-3" data-services="vkontakte,facebook,odnoklassniki,moimir,gplus,twitter,telegram,blogger,delicious,digg,reddit,linkedin,lj,viber,whatsapp,skype" data-limit="7" data-counter=""></div>
+        </div>
 </div>

@@ -6,29 +6,30 @@
     });
 </script>
 
-<ul class="nav nav-tabs" role="tablist" id="comments_tabs">
+<div class="clearfix"></div>
+<ul class="nav nav-tabs" role="tablist" id="tabs-comments">
 
     {% if not disable_vk %}
-    <li role="presentation" class="active">
-        <a href="#comments_vk" aria-controls="comments_vk" role="tab" data-toggle="tab">
+    <li role="presentation" class="nav-item">
+        <a href="#comments_vk" class="nav-link active" aria-controls="comments_vk" role="tab" data-toggle="tab">
             Комментарии ВК
-            <span id="comments_vk_cnt" class="vk-comment-count badge marg__l_min">0</span></a>
+            <span id="comments_vk_cnt" class="vk-comment-count badge ml-2">0</span></a>
     </li>
     {% endif %}
 
     {% if not disable_disqus %}
-    <li role="presentation">
-        <a href="#comments_disqus" aria-controls="comments_disqus" role="tab" data-toggle="tab">
+    <li role="presentation" class="nav-item">
+        <a href="#comments_disqus" class="nav-link" aria-controls="comments_disqus" role="tab" data-toggle="tab">
             Комменатрии Disqus
-            <span id="comments_disqus_cnt" class="disqus-comment-count badge marg__l_min" data-disqus-identifier="{{ entity_name }}_{{ entity_id }}">0</span></a>
+            <span id="comments_disqus_cnt" class="disqus-comment-count badge ml-2" data-disqus-identifier="{{ entity_name }}_{{ entity_id }}">0</span></a>
     </li>
     {% endif %}
 
     {% if not disable_internal %}
-    <li role="presentation">
-        <a href="#comments_internal" aria-controls="comments_internal" role="tab" data-toggle="tab">
+    <li role="presentation" class="nav-item">
+        <a href="#comments_internal" class="nav-link" aria-controls="comments_internal" role="tab" data-toggle="tab">
             Обсуждения
-            <span id="comments_internal_cnt" class="badge marg__l_min">0</span></a>
+            <span id="comments_internal_cnt" class="badge ml-2">0</span></a>
     </li>
     {% endif %}
 

@@ -35,40 +35,38 @@
 
             <div>{% include "sub_box_controls.html" %}</div>
 
-            {% include "sub_title_block.html" with hide_breadcurmbs=1 %}
-
-            {% block details_contents %}{% endblock %}
-            {% block details_description %}<div class="marg__b_mid" itemprop="description">{{ item.description|urlize|linebreaksbr }}</div>{% endblock %}
-            {% block details_contents_add %}{% endblock %}
-
-            {% include "sub_linked.html" %}
-
             {% block details_author %}
-            <div class="marg__t_mid text-muted pull-right">
+            <div class="text-muted small bg-white float-right mt-2 mr-2 p-1 rounded">
                 {% include "sub_author_editor.html" %}
             </div>
             {% endblock %}
 
+            {% include "sub_title_block.html" with hide_breadcurmbs=1 %}
+
+            {% block details_contents %}{% endblock %}
+            {% block details_description %}<div class="mb-3" itemprop="description">{{ item.description|urlize|linebreaksbr }}</div>{% endblock %}
+            {% block details_contents_add %}{% endblock %}
+
             {% block details_contents_after %}{% endblock %}
             {% block details_share %}{% include "sub_box_share.html" %}{% endblock %}
-            <div class="clearfix"></div>
+
+            {% include "sub_linked.html" %}
 
             {% block details_discussions_pre %}{% endblock %}
             {% if item.has_discussions %}
-                <div class="marg__t_max clearfix">
-                    <hr>
+                <div class="mt-4 clearfix">
                     {% include "sub_comments.html" with disable_disqus=1 %}
                 </div>
             {% endif %}
         </div>
 
         {% block column_right%}
-            <div class="col-md-3">
+            <div class="col-3">
                 {% block column_right_contents %}
-                <div class="text-center hidden-xs">
-                    <div class="block marg__b_mid">
+                <div class="text-center d-none d-sm-block">
+                    <div class="block mb-3">
                         {% block cover %}
-                            <div class="cover_img">
+                            <div class="img-cover">
                                 {% thumbs_get_thumb_url item.cover 180 236 item.realm as thumb_url %}
                                 {% if thumb_url %}
                                 <img src="{{ thumb_url }}" class="img-thumbnail" alt="{{ item.title }}">

@@ -1,0 +1,8 @@
+{% extends "base_list_item.html" %}
+
+{% block info %}{% if item.current %}<div class="badge badge-primary">Актуальная</div>{% endif %}{% endblock %}
+
+{% block bottom %}
+    <span>{{ item.date }}</span>
+    <span class="badge badge-success float-right">{{ item.supporters_num }}</span>
+{% endblock %}

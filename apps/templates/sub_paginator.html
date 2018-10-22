@@ -1,19 +1,19 @@
 {% if paginator.paginator.num_pages > 1 %}
 <div class="row">
-    <div class="col-md-12">
-        <ul class="pagination pagination-sm">
+    <div class="col-12">
+        <ul class="pagination pagination-sm justify-content-end">
             {% if paginator.has_previous %}
-                <li><a href="?p=1">&lt;&lt;</a></li>
-                <li><a href="?p={{ paginator.previous_page_number }}">&lt;</a></li>
+                <li class="page-item"><a class="page-link" href="?p=1">&lt;&lt;</a></li>
+                <li class="page-item"><a class="page-link" href="?p={{ paginator.previous_page_number }}">&lt;</a></li>
             {% endif %}
 
-            {% for p in paginator.before_current %}<li><a href="?p={{ p }}">{{ p }}</a></li>{% endfor %}
-            <li class="active"><a href="?p={{ paginator.number }}">{{ paginator.number }}</a></li>
-            {% for p in paginator.after_current %}<li><a href="?p={{ p }}">{{ p }}</a></li>{% endfor %}
+            {% for p in paginator.before_current %}<li><a class="page-link" href="?p={{ p }}">{{ p }}</a></li>{% endfor %}
+            <li class="page-item active"><a class="page-link" href="?p={{ paginator.number }}">{{ paginator.number }}</a></li>
+            {% for p in paginator.after_current %}<li><a class="page-link" href="?p={{ p }}">{{ p }}</a></li>{% endfor %}
 
             {% if paginator.has_next %}
-                <li><a href="?p={{ paginator.next_page_number }}">&gt;</a></li>
-                <li><a href="?p={{ paginator.paginator.num_pages }}">&gt;&gt;</a></li>
+                <li class="page-item"><a class="page-link" href="?p={{ paginator.next_page_number }}">&gt;</a></li>
+                <li class="page-item"><a class="page-link" href="?p={{ paginator.paginator.num_pages }}">&gt;&gt;</a></li>
             {% endif %}
         </ul>
     </div>

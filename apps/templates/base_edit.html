@@ -19,14 +19,13 @@
 
     {% include "sub_title_block.html" %}
 
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <h3 class="panel-title">К сведению</h3>
-        </div>
-        <div class="panel-body">
+    <div class="card border-danger mb-3">
+        <div class="card-header">К сведению</div>
+        <div class="card-body">
             {% block hint %}{% endblock %}
         </div>
     </div>
+
     {% block right_bar %}{% endblock %}
 
     {% block form %}

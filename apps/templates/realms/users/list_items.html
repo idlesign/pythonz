@@ -3,11 +3,11 @@
 <ul {% if not nofade %}id="indexed"{% endif %}>
 {% for user in users %}
     {% if user.is_active %}
-    <li class="marg__b_min">
+    <li class="mb-2">
         <div class="pull-left">
             <img src="{% gravatar_get_url user 32 %}" alt="{{ user.title }}">
         </div>
-        <span class="marg__l_min">
+        <span class="ml-2">
             <a href="{{ user.get_absolute_url }}">{{ user.title }}</a>
             <span class=" small text-muted">{{ user.username }}</span>
         </span>

@@ -1,7 +1,5 @@
 {% if item_edit_allowed %}
-<div id="page_controls" class="btn-group btn-group-sm">
-    <form role="form" action="{% url realm.get_edit_urlname item.id %}" class="marg__l_min">
-        <button type="submit" class="btn btn-default cl__blue" title="Редактировать"><i class="fa fa-pencil"></i></button>
-    </form>
+<div class="btn-group float-right mt-1 mr-1">
+    <a href="{% url realm.get_edit_urlname item.id %}" class="btn btn-sm btn-success" role="button" title="Редактировать"><i class="fa fa-pencil"></i></a>
 </div>
 {% endif %}

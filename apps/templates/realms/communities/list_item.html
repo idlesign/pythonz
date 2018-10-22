@@ -1,0 +1,7 @@
+{% extends "base_list_item.html" %}
+
+{% block info %}<i class="small">{{ item.description }}</i>{% endblock %}
+
+{% block bottom %}
+    <span class="badge badge-success float-right">{{ item.supporters_num }}</span>
+{% endblock %}

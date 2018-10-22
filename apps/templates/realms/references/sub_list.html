@@ -1,7 +1,7 @@
 <table class="text-muted table {% if detailed %}table-bordered{% else %}table-hover small{% endif %}">
 {% for item in items %}
     <tr>
-        <td {% if not detailed %}class="mod__has_tooltip" title="{{ item.description|truncatechars:70 }}" {% endif %}>
+        <td {% if not detailed %}class="tooltipped" title="{{ item.description|truncatechars:70 }}" {% endif %}>
         {% with item.version_deprecated as del %}
             {% if del %}<del title="Устарело">{% endif %}
 

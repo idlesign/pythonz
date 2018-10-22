@@ -1,7 +1,7 @@
-<ul class="nav nav-tabs marg__b_mid" role="tablist" id="realms_tabs">
+<ul class="nav nav-tabs mb-3" role="tablist" id="tabs-realms">
 {% for realm_name, data_tuple in realms_links.items %}
-    <li role="presentation">
-        <a href="#{{ data_tuple.0 }}" aria-controls="{{ data_tuple.0 }}" role="tab" data-toggle="tab">{{ realm_name }}</a>
+    <li role="presentation" class="nav-item">
+        <a href="#{{ data_tuple.0 }}" class="nav-link" aria-controls="{{ data_tuple.0 }}" role="tab" data-toggle="tab">{{ realm_name }}</a>
     </li>
 {% endfor %}
 </ul>
@@ -19,6 +19,6 @@
 
 <script type="text/javascript">
     $(function() {
-        $('#realms_tabs a:first').tab('show');
+        $('#tabs-realms a:first').tab('show');
     });
 </script>

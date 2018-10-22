@@ -1,4 +1,4 @@
-<form method="post" action="{% url "references:add" %}" class="marg__b_min">
+<form method="post" action="{% url "references:add" %}" class="mb-2">
     {% csrf_token %}
     <input type="hidden" name="pythonz_form" value="1" />
     <input type="hidden" name="parent" value="{{ parent }}">

@@ -7,26 +7,26 @@
 {% block page_contents %}
 
     <div class="row">
-
-        <div class="col-md-12">
-            <div class="col-md-6">
-                <h1 class="text-uppercase block">Про Python</h1>
-
-                <ul class="list-inline list-unstyled marg__b_mid small block marg__l_min">
-                    <li><a href="/promo/">Что такое Python</a></li>
-                    <li><a href="/about/">Что это за сайт</a></li>
-                </ul>
-            </div>
-            <div class="col-md-6">
-                <br>
-                {% include "sub_search_bar.html" %}
-            </div>
+        <div class="col">
+            <h1 class="text-uppercase">Про Python</h1>
+        </div>
+        <div class="col text-right">
+            <ul class="list-inline list-unstyled">
+                <li class="list-inline-item"><a href="/promo/">Что такое Python</a></li>
+                <li class="list-inline-item"><a href="/about/">Что это за сайт</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {% include "sub_search_bar.html" %}
         </div>
     </div>
 
-    <div class="col-md-12" id="index_box">
+    <div class="row mt-4 no-gutters justify-content-around" id="box-index">
     {% for realm_data in realms_data %}
         {% include "sub_realm_card.html" %}
     {% endfor %}
     </div>
+
 {%  endblock %}

@@ -1,6 +1,6 @@
 attrs==18.2.0
 awesome-slugify==1.6.5
-Django==2.0.9
+Django==2.0.8
 Pillow==5.1.0
 bleach==2.1.4
 beautifulsoup4==4.6.3
@@ -15,14 +15,14 @@ twitter==1.18.0
 django-admirarchy==0.2.4
 django-datetime-widget==0.9.3
 django-debug-toolbar==1.9.1
-django-etc==0.10.0
+django-etc==0.11.0
 django-simple-history==2.0.0
 git+https://github.com/jazzband/django-robots.git@3.1.0
 django-siteblocks==0.6.1
 django-sitecats==0.7.0
 django-siteflags==0.5.0
 django-sitegate==0.14.0
-django-sitemessage==0.9.1
+django-sitemessage==0.11.0
 django-sitemetrics==0.7.0
 django-siteprefs==0.8.1
 django-sitetree==1.12.0

@@ -24,7 +24,12 @@
 
 
 {% block details_contents %}
-    <div class="marg__b_mid text-muted marg__l_mid">
+    <div class="mt-4 mb-3 text-muted ml-3">
+        {% if person.user %}
+        <div class="mt-3 float-right">
+            <a href="{{ person.user.get_absolute_url  }}" class="btn btn-success btn-sm">Профиль пользователя сайта &hellip;</a>
+        </div>
+        {% endif %}
         <table class="small" width="40%">
             <tr>
                 <td width="45%">{% model_field_verbose_name from person.name %}:</td>
@@ -38,22 +43,13 @@
                 <td>{% model_field_verbose_name from person.aka %}:</td>
                 <td>{{ person.aka }}</td>
             </tr>
-            {% if person.user %}
-            <tr>
-                <td colspan="2">
-                    <div class="marg__t_mid">
-                        <a href="{{ person.user.get_absolute_url  }}" class="btn btn-primary btn-sm">Профиль пользователя сайта &hellip;</a>
-                    </div>
-                </td>
-            </tr>
-            {% endif %}
         </table>
     </div>
-
+    <div class="clearfix"></div>
 
 {% cache 300 person_materials person.pk %}
     {% if materials %}
-    <div class="marg__t_max">
+    <div class="mt-4">
         {% include "sub_realms_links_tabs.html" with realms_links=materials %}
     </div>
     {% endif %}

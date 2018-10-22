@@ -9,7 +9,7 @@
 </thead>
 <tbody>
 {% for pep in items %}
-    <tr class="{{ pep.bg_class }}">
+    <tr class="table-{{ pep.bg_class }}">
         <td width="8%">{{ pep.num }}</td>
         <td><a href="{{ pep.get_absolute_url }}">{{ pep.title }}</a></td>
         <td class="text-center"><code>{{ pep.display_type_letter }}</code></td>

@@ -19,16 +19,16 @@
 
 
 {% block details_contents %}
-    <div class="marg__b_mid">
+    <div class="mb-3">
         <div class="pull-right">
             {% if event.fee %}
-                <span class="label label-danger" title="За участие взымается плата">Платно</span>
+                <span class="badge badge-danger" title="За участие взымается плата">Платно</span>
             {% else %}
-                <span class="label label-success" title="Участие беслатное">Бесплатно</span>
+                <span class="badge badge-success" title="Участие беслатное">Бесплатно</span>
             {% endif %}
         </div>
         {% if event.is_in_past %}
-            <h4 class="marg__b_max"><span class="label label-danger">Событие уже в прошлом</span></h4>
+            <h4 class="mb-4"><span class="badge badge-danger">Событие уже в прошлом</span></h4>
         {% endif %}
         <div>
             {% if event.time_start %}
@@ -55,13 +55,13 @@
     </div>
 
     {% if not event.is_now and not event.is_in_past and event.time_start %}
-        <div class="marg__t_min marg__b_mid">
+        <div class="mt-2 mb-3">
             {% include "sub_ya_forgetmenot.html" %}
         </div>
     {% endif %}
 
-    <div class="marg__b_min">{{ event.get_display_type }} <span class="cl__gray">&#8212; {{ event.get_display_specialization }}</span></div>
-    <div class="text-muted marg__b_mid small">
+    <div class="mb-2">{{ event.get_display_type }} <span class="cl__gray">&#8212; {{ event.get_display_specialization }}</span></div>
+    <div class="text-muted mb-3 small">
         {% if event.url %}<div>{% model_field_verbose_name from event.url %}: <a href="{{ event.get_utm_url }}">{{ event.url }}</a></div>{% endif %}
         {% if event.contacts %}<div class="py_user">{% model_field_verbose_name from event.contacts %}: {{ event.contacts }}</div>{% endif %}
     </div>
@@ -70,10 +70,11 @@
 
 {% block details_description %}
 
-    <blockquote>
-        <p><i itemprop="description">{{ item.description|urlize|linebreaksbr }}</i></p>
-        <p class="py_user">{{ event.text|safe }}</p>
-    </blockquote>
-
+    <div class="card bg-light">
+        <div class="card-body">
+            <p><i itemprop="description">{{ item.description|urlize|linebreaksbr }}</i></p>
+            <p class="py_user">{{ event.text|safe }}</p>
+        </div>
+    </div>
 
 {% endblock %}

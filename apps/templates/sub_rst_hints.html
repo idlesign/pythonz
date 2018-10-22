@@ -1,34 +1,33 @@
-<ul class="nav nav-tabs">
-    <li class="active">
-        <a data-toggle="tab" href="#rst_src"><i class="fa fa-fw fa-pencil-square-o"></i>Редактирование</a>
+<ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item">
+        <a data-toggle="tab" class="nav-link active" href="#rst_src"><i class="fa fa-fw fa-pencil-square-o"></i>Редактирование</a>
     </li>
-    <li>
-        <a data-toggle="tab" href="#rst_preview" id="preview_rst" class="xross"
+    <li class="nav-item">
+        <a data-toggle="tab" href="#rst_preview" id="preview_rst" class="xross nav-link"
            data-xevent="click" data-xmethod="POST" data-xtarget="rst_preview" data-xform="edit_form">
             <i class="fa fa-fw fa-eye"></i>Предпросмотр
         </a>
     </li>
-    <li>
-        <a data-toggle="modal" data-target="#help_dialog"><i class="fa fa-fw fa-question-circle-o"></i>Справка</a>
+    <li class="nav-item">
+        <a data-toggle="modal" class="nav-link" data-target="#help_dialog"><i class="fa fa-fw fa-question-circle-o"></i>Справка</a>
     </li>
 </ul>
 <div class="tab-content">
-    <div id="rst_src" class="marg__t_min tab-pane fade in active">
+    <div id="rst_src" role="tabpanel" class="mt-2 tab-pane fade show active">
         <textarea{0}>{1}</textarea>
     </div>
-    <div id="rst_preview" class="marg__t_min tab-pane fade"></div>
+    <div id="rst_preview" role="tabpanel" class="mt-2 tab-pane fade"></div>
 </div>
 
 <div class="modal fade" id="help_dialog" tabindex="-1" role="dialog" aria-labelledby="help_dialog_label">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="help_dialog_label"><i class="fa fa-fw fa-question-circle-o"></i>Справка по
+                    форматированию</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
                     <span aria-hidden="true">&times;</span>
                 </button>
-
-                <h4 class="modal-title" id="help_dialog_label"><i class="fa fa-fw fa-question-circle-o"></i>Справка по
-                    форматированию</h4>
             </div>
             <div class="modal-body">
 

@@ -25,7 +25,7 @@
 
 {% block details_contents %}
     <h4><i class="fa fa-fw fa-user-circle-o"></i> Общая информация</h4>
-    <div class="marg__b_mid text-muted marg__l_mid">
+    <div class="mb-3 text-muted ml-3">
         <table class="small" width="40%">
             <tr>
                 <td width="45%">{% model_field_verbose_name from user.username %}:</td>
@@ -67,8 +67,8 @@
             {% if user.person %}
             <tr>
                 <td colspan="2">
-                    <div class="marg__t_mid">
-                        <a href="{{ user.person.get_absolute_url  }}" class="btn btn-primary btn-sm">
+                    <div class="mt-3">
+                        <a href="{{ user.person.get_absolute_url  }}" class="btn btn-success btn-sm">
                             {{ user.get_display_name }} в разделе &laquo;Персоны&raquo; &hellip;
                         </a>
                     </div>
@@ -81,12 +81,12 @@
 
 {% cache 300 user_stats user.pk %}
     {% if stats %}
-    <div class="marg__t_max">
+    <div class="mt-4">
         <hr>
         <h4><i class="fa fa-fw fa-share-alt"></i> Вклад в сообщество
-            <sup class="small mod__has_tooltip" title="Статистика по материалам, размещенным пользователем на нашем сайте"><i class="fa fa-info-circle"></i></sup>
+            <sup class="small tooltipped" title="Статистика по материалам, размещенным пользователем на нашем сайте"><i class="fa fa-info-circle"></i></sup>
         </h4>
-        <div class="marg__b_mid text-muted marg__l_mid">
+        <div class="mb-3 text-muted ml-3">
             <table class="small" width="40%">
                 {% for realm_name, stats in stats.items %}
                     <tr>
@@ -94,7 +94,7 @@
                         <td width="10%">{{ stats.cnt_published }}</td>
                         <td>
                             {% if stats.cnt_postponed %}
-                                <span class="mod__has_tooltip cl__green" title="Ожидают публикации">+{{ stats.cnt_postponed }}</span>
+                                <span class="tooltipped cl__green" title="Ожидают публикации">+{{ stats.cnt_postponed }}</span>
                             {% endif %}
                         </td>
                     </tr>
@@ -106,10 +106,10 @@
 {% endcache %}
 
     {% if drafts %}
-    <div class="marg__t_max">
+    <div class="mt-4">
         <hr>
         <h4><i class="fa fa-fw fa-pause-circle-o"></i> Неопубликованные</h4>
-        <div class=" marg__l_mid marg__t_mid">
+        <div class=" ml-3 mt-3">
             {% for realm_name, drafts in drafts.items %}
                 <h5>{{ realm_name }} <sup class="text-muted">{{ drafts|length }}</sup></h5>
                 <table class="table small text-muted">
@@ -133,12 +133,12 @@
     {% endif %}
 
     {% if bookmarks %}
-    <div class="marg__t_max">
+    <div class="mt-4">
         <hr>
         <h4><i class="fa fa-fw fa-bookmark-o"></i> Избранное</h4>
         {% for realm_model, bookmark_list in bookmarks.items %}
             {% if bookmark_list %}
-            <div class="marg__l_mid marg__t_mid">
+            <div class="ml-3 mt-3">
                 <h5>{{ realm_model.get_verbose_name_plural }}</h5>
                 <ul>
                     {% for item in bookmark_list %}

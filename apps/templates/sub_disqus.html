@@ -1,7 +1,7 @@
 {% load sitetree %}
 
 {% if comments_enabled and shortname %}
-<div id="disqus_thread" class="marg__t_max"></div>
+<div id="disqus_thread" class="mt-4"></div>
 
 <script type="text/javascript">
     var disqus_config = function () {
@@ -22,9 +22,9 @@
 <noscript>Включите JavaScript, чтобы увидеть комментарии.</noscript>
 
 {% else %}
-    <div class="well well-sm">
+    <div class="card"><div class="card-body">
         <i>Комментарии отключены.</i>
-    </div>
+    </div></div>
 {% endif %}
 
 

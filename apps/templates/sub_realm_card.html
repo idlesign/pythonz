@@ -1,23 +1,23 @@
 {% load sitetree model_meta %}
 
-<div class="card col-md-6">
+<div class="card col-md-6 mt-3 float-left">
 
     {% model_meta_verbose_name_plural realm_data.cls.model as realm_title%}
 
-    <h2 class="text-uppercase" data-geopattern="{{ realm_title }}">
+    <h4 class="text-uppercase" data-geopattern="{{ realm_title }}">
         <a href="{% url realm_data.cls.get_listing_urlname %}">
             <i class="fa fa-{{ realm_data.cls.icon }} text-left"></i>
             {{ realm_title }}</a>
-    </h2>
+    </h4>
 
     <ul>
-        <li class="marg__b_min">
+        <li class="">
             <a href="{{ realm_data.main.get_absolute_url }}">
                 {{ realm_data.main.title|truncatechars:57 }}</a>
         </li>
     {% if realm_data.additional %}
         {% for item in realm_data.additional %}
-        <li class="marg__b_min">
+        <li class="">
             <a href="{% if item.src_alias %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">
                 {{ item.title|truncatechars:57 }}</a>
         </li>

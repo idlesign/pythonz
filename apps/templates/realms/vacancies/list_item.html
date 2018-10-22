@@ -1,0 +1,27 @@
+<div class="listing-item card mb-3">
+    <div class="card-body">
+        {% include "sub_item_cover.html" with thumb_url=item.cover %}
+        <div class="card-title">
+            <a href="{{ item.get_utm_url }}">{{ item.title }}</a>
+        </div>
+    </div>
+
+    <div class="card-footer small">
+        {% if item.salary_from %}
+            <span class="badge badge-info float-right">{{ item.get_salary_str }}</span>
+        {% endif %}
+
+        <div class="cl__gray mb-2">
+            <strong>{{ item.employer_name }}</strong>
+            <br>
+            {% if item.place %}
+                {% if item.place.is_published %}
+                    <a href="{{ item.place.get_absolute_url }}">{{ item.place.title }}</a>
+                {% else %}
+                    {{ item.place.title }}
+                {% endif %}
+            {% endif %}
+        </div>
+        <span>{{ item.time_created|date:"d E H:i" }}</span>
+    </div>
+</div>

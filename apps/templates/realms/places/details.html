@@ -34,7 +34,7 @@
 {% block details_contents %}
 
     {% if allow_im_here %}
-        <div id="im_here_box" class="marg__b_mid">
+        <div id="im_here_box" class="mb-3">
             <button id="set_im_here" data-xtarget="im_here_box" data-xsuccess="remove" class="xross btn btn-warning" title="Нажмите, если находитесь в этом месте.">Я здесь!</button>
         </div>
     {% endif %}
@@ -45,7 +45,7 @@
 
 {% block column_controls %}
     {% if stats_salary %}
-    <div class="panel panel-default small">
+    <div class="card card-default small">
         {% include "realms/vacancies/stats_salary.html" %}
     </div>
     {% endif %}
@@ -55,22 +55,22 @@
 
 {% block details_contents_after %}
 
-<div class="panel panel-default panel-body">
-    <ul class="nav nav-tabs marg__b_mid" role="tablist" id="realms_tabs">
-        {% if vacancies %}<li role="presentation">
-            <a href="#vacancies" aria-controls="vacancies" role="tab" data-toggle="tab">Вакансии</a>
+<div class="card card-default card-body">
+    <ul class="nav nav-tabs mb-3" role="tablist" id="tabs-realms">
+        {% if vacancies %}<li role="presentation" class="nav-item">
+            <a href="#vacancies" class="nav-link" aria-controls="vacancies" role="tab" data-toggle="tab">Вакансии</a>
         </li>{% endif %}
 
-        {% if events %}<li role="presentation">
-            <a href="#events" aria-controls="events" role="tab" data-toggle="tab">События</a>
+        {% if events %}<li role="presentation" class="nav-item">
+            <a href="#events" class="nav-link" aria-controls="events" role="tab" data-toggle="tab">События</a>
         </li>{% endif %}
 
-        {% if users %}<li role="presentation">
-            <a href="#users" aria-controls="users" role="tab" data-toggle="tab">Пользователи</a>
+        {% if users %}<li role="presentation" class="nav-item">
+            <a href="#users" class="nav-link" aria-controls="users" role="tab" data-toggle="tab">Пользователи</a>
         </li>{% endif %}
 
-        {% if communities %}<li role="presentation">
-            <a href="#communities" aria-controls="communities" role="tab" data-toggle="tab">Сообщества</a>
+        {% if communities %}<li role="presentation" class="nav-item">
+            <a href="#communities" class="nav-link" aria-controls="communities" role="tab" data-toggle="tab">Сообщества</a>
         </li>{% endif %}
 
     </ul>
@@ -88,7 +88,7 @@
 
     <script type="text/javascript">
         $(function() {
-            $('#realms_tabs a:first').tab('show');
+            $('#tabs-realms a:first').tab('show');
         });
     </script>
 

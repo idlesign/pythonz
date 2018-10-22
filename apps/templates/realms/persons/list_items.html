@@ -1,6 +1,6 @@
 <ul {% if not nofade %}id="indexed"{% endif %}>
 {% for person in items %}
-    <li class="marg__b_min">
+    <li class="mb-2">
         <a href="{{ person.get_absolute_url }}">{{ person.name }}</a>
         <small class="text-muted">
             <i>{{ person.name_ru }}</i>

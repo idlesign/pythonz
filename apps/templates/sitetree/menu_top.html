@@ -1,25 +1,26 @@
 {% load sitetree %}
-<ul class="nav navbar-nav">
+<ul class="navbar-nav mr-auto">
 
     {% for item in sitetree_items %}
         {% if item.show_on_top %}
-            <li {% if item.is_current or item.in_current_branch %}class="active"{% endif %}>
-                <a href="{% sitetree_url for item %}">{{ item.title_resolved }}</a>
+            <li class="nav-item {% if item.is_current or item.in_current_branch %}active{% endif %}">
+                <a class="nav-link" href="{% sitetree_url for item %}">{{ item.title_resolved }}</a>
             </li>
         {% endif %}
     {% endfor %}
 
-    <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ещё&hellip; <span class="caret"></span></a>
-        <ul class="dropdown-menu">
+    <li class="nav-item dropdown">
+        <a href="#" class="nav-link {% if item.is_current or item.in_current_branch %}active{% endif %} dropdown-toggle" aria-haspopup="true" id="navitem-{{ item.id }}" data-toggle="dropdown">
+            Ещё&hellip;</a>
+
+        <div class="dropdown-menu" aria-labelledby="navitem-{{ item.id }}">
         {% for item in sitetree_items %}
             {% if not item.show_on_top %}
-                <li {% if item.is_current or item.in_current_branch %}class="active"{% endif %}>
-                    <a href="{% sitetree_url for item %}">{{ item.title_resolved }}</a>
-                </li>
+                <a class="dropdown-item {% if item.is_current or item.in_current_branch %}active{% endif %}" href="{% sitetree_url for item %}">{{ item.title_resolved }}</a>
             {% endif %}
         {% endfor %}
-        </ul>
+        </div>
+
     </li>
 
 </ul>

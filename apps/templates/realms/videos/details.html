@@ -21,16 +21,16 @@
     <meta itemprop="uploadDate" content="{{ video.time_published|date:"c" }}" />
     <meta itemprop="thumbnailUrl" content="{% site_url %}{% thumbs_get_thumb_url video.cover 180 236 item.realm %}" />
 
-    <div id="video_box" class="well well-sm">
+    <div class="embed-responsive embed-responsive-16by9">
         {{ video.code|safe }}
     </div>
 
-    <div class="marg__b_mid text-muted">
+    <div class="mt-2 mb-3 text-muted">
         <small>
-            <span class="marg__r_mid">
+            <span class="mr-3">{% model_field_verbose_name from video.year %}: {{ video.year }}</span>
+            <span class="mr-3">
                 {% model_field_verbose_name from video.author %}: {% include "sub_persons_links.html" with persons=video.authors.all %}
             </span>
-            <span class="marg__r_mid">{% model_field_verbose_name from video.year %}: {{ video.year }}</span>
             {%  if video.translator %}
                 <span class="py_user">{% model_field_verbose_name from video.translator %}: {{ video.translator }}</span>
             {% endif %}

@@ -1,7 +1,7 @@
 {% if items %}
     <ul>
     {% for item in items %}
-        <li class="marg__t_min">
+        <li class="mt-2">
             <a href="{{ item.get_absolute_url }}">{{ item.title }}</a><br>
             <small class="cl__gray">{{ item.description }}</small>
         </li>

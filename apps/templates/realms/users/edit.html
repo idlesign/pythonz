@@ -16,9 +16,9 @@
         {% csrf_token %}
         {% sitemessage_prefs_table from subscr_prefs template "sitemessage/user_prefs_table-bootstrap.html" %}
 
-        <input type="submit" class="btn btn-default btn-block btn-primary" value="Применить" />
+        <input type="submit" class="btn btn-default btn-block btn-success" value="Применить" />
     </form>
-    <div class="marg__t_max">
+    <div class="mt-4">
     {{ block.super }}
     </div>
 {% endblock %}

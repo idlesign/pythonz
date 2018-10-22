@@ -1,8 +1,9 @@
 {% with linked=item.get_linked %}
     {% if linked.count %}
-    <div class="linked panel panel-default">
-        <div class="panel-heading">Связанные материалы</div>
-        <div class="panel-body small">
+    <div class="clearfix"></div>
+    <div class="card bg-light border-info mb-3">
+        <div class="card-body">
+            <div class="card-title">Связанные материалы:</div>
             <ul>
                 {% for linked_item in item.get_linked %}
                     <li><a href="{{ linked_item.get_absolute_url }}">{{ linked_item.title }}</a></li>

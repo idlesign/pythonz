@@ -12,13 +12,13 @@
     </div>
     {% endblock %}
 
-    <div class="section">
+    <div class="row mb-4">
 
-        <div class="col-md-8">
+        <div class="col-8">
             {% block body %}{% endblock %}
         </div>
 
-        <div class="col-md-4">
+        <div class="col">
             {% block ads %}
                 {% include "sub_box_ads.html" with area="rightbar" %}
             {% endblock %}

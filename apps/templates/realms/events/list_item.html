@@ -1,0 +1,15 @@
+{% extends "base_list_item.html" %}
+
+{% block bottom %}
+    <div class="float-right">
+    {% if item.is_in_past %}
+        <div class="badge badge-secondary">В прошлом</div>
+    {% else %}
+        {% if item.time_start %}
+            <div>{{ item.time_start|date:"d M H:i" }} {% if item.time_finish %}&#8212; {{ item.time_finish|date:"d M H:i" }}{% endif %}</div>
+        {% endif %}
+    {% endif %}
+    </div>
+    <div class="mt-2">{{ item.get_display_type }}</div>
+    <span>{{ item.get_display_specialization }}</span>
+{% endblock %}

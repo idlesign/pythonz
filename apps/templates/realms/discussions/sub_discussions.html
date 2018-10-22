@@ -2,7 +2,7 @@
 
 {% if show_form_for %}
     {% if request.user.is_authenticated %}
-        <div class="pull-right marg__t_mid">
+        <div class="pull-right mt-3">
             <form method="post" action="{% url "discussions:add" %}">
                 {% csrf_token %}
                 <input type="hidden" name="pythonz_form" value="1" />
@@ -17,7 +17,7 @@
     {% endif %}
 {% endif %}
 
-<div class="marg__t_mid">
+<div class="mt-3">
     {% if items %}
 
         <script type="text/javascript">
@@ -30,24 +30,23 @@
         <ul class="discussions media-list">
             {% for discussion in items %}
                 <li class="discussion media">
-                    <div class="media-left">
-                        <img src="{% gravatar_get_url discussion.submitter 32 %}" class="img-thumbnail media-object" alt="{{ discussion.submitter.title }}">
-                    </div>
+                    <img src="{% gravatar_get_url discussion.submitter 32 %}" class="img-thumbnail align-self-center mr-3" alt="{{ discussion.submitter.title }}">
+
                     <div class="media-body">
                         <small class="cl__gray">{{ discussion.time_created|date:"d E H:i" }}</small>
                         {% if request.user.id == discussion.submitter_id %}
-                            <small class="pull-right"><span class="label label-success">моё</span></small>
+                            <small class="pull-right"><span class="badge badge-success">моё</span></small>
                         {% endif %}
                         <br>
 
-                        <a href="{% url "discussions:details" discussion.id %}" class="item marg__t_min" title="Страница обсуждения">
+                        <a href="{% url "discussions:details" discussion.id %}" class="item mt-2" title="Страница обсуждения">
                             {% if show_texts %}<i class="fa fa-comments"></i> &nbsp;{% endif %}{{ discussion.title }}
                         </a>
 
                         {% if show_texts %}
-                            <div class="well well-sm marg__t_min">
+                            <div class="card mt-2"><div class="card-body">
                                 {{ discussion.get_description|safe }}
-                            </div>
+                            </div></div>
                         {% endif %}
                     </div>
 

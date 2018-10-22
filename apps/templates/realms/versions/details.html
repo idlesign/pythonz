@@ -11,16 +11,16 @@
 
 
 {% block details_contents %}
-    <div class="pull-right label label-info">Дата выпуска: {{ version.date }}</div>
+    <div class="pull-right badge badge-info">Дата выпуска: {{ version.date }}</div>
 {% endblock %}
 
 
 {% block details_contents_add %}
 
-    <div class="marg__b_mid">{{ version.text|safe }}</div>
+    <div class="mb-3">{{ version.text|safe }}</div>
 
     {% if added %}
-        <div class="marg__b_mid">
+        <div class="mb-3">
             <h6>Добавлены</h6>
             <ul>
                 {% for one in added %}
@@ -31,7 +31,7 @@
     {% endif %}
 
     {% if deprecated %}
-        <div class="marg__b_mid">
+        <div class="mb-3">
             <h6>Устарели</h6>
             <ul>
                 {% for one in deprecated %}
@@ -42,7 +42,7 @@
     {% endif %}
 
     {% if peps %}
-        <div class="marg__b_mid">
+        <div class="mb-3">
             <h6>Предложения по улучшению (PEP)</h6>
             {% include "realms/peps/list_items.html" with items=peps %}
         </div>

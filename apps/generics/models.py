@@ -26,7 +26,7 @@ class ModelWithAuthorAndTranslator(models.Model):
 
     author = models.CharField(
         'Автор', max_length=255,
-    help_text='Предпочтительно имя и фамилия. Можно указать несколько, разделяя запятыми.')
+        help_text='Предпочтительно имя и фамилия. Можно указать несколько, разделяя запятыми.')
 
     translator = models.CharField(
         'Перевод', max_length=255, blank=True, null=True,

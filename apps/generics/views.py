@@ -92,7 +92,7 @@ class RealmView(View):
 
     @classmethod
     def get_template_path(cls, name=None):
-        """Возвращает путь к шаблону страницы.
+        """Возвращает путь к шаблону страницы представления для данной области.
 
         :return:
         """
@@ -111,7 +111,7 @@ class RealmView(View):
             'realm': self.realm,
             'view': self
         })
-        return render(request, self.get_template_path(), data_dict)
+        return render(request, 'view_%s.html' % self.__class__.name, data_dict)
 
     def post(self, request, *args, **kwargs):
         """Запросы POST перенаправляются на обработчик GET.
@@ -233,10 +233,6 @@ class ListingView(RealmView):
         self.update_context(context, request)
 
         return self.render(request, context)
-
-    @cached_property
-    def template_list_items(self):
-        return self.get_template_path('list_items')
 
 
 class DetailsView(RealmView):
@@ -487,7 +483,3 @@ class EditView(RealmView):
 
 class AddView(EditView):
     """Добавление объекта."""
-
-    @classmethod
-    def get_template_path(cls, name=None):
-        return super().get_template_path('edit')

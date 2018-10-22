@@ -1,0 +1,22 @@
+<div class="listing-item card mb-3">
+    <div class="card-body">
+        <a href="{{ item.get_absolute_url }}">{% include "sub_item_cover.html" %}</a>
+        <div class="card-title">
+            <a href="{{ item.get_absolute_url }}" title="{{ item.title }}">{{ item.title|truncatechars:58 }}</a>
+        </div>
+        {% block info %}{% endblock %}
+    </div>
+    <div class="card-footer small">
+        {% block bottom %}
+        {{ item.time_created|date:"j E Y" }} / <strong>{{ item.year|default:'' }}</strong>
+        <span class="py_user">
+            {% if item.author %}
+                {{ item.author }}
+            {% else %}
+                {{ item.submitter }}
+            {% endif %}
+        </span>
+        <span class="badge badge-success float-right">{{ item.supporters_num }}</span>
+        {% endblock %}
+    </div>
+</div>
