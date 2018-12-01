@@ -15,7 +15,7 @@ twitter==1.18.0
 django-admirarchy==0.2.4
 django-datetime-widget==0.9.3
 django-debug-toolbar==1.9.1
-django-etc==0.11.0
+django-etc==0.11.1
 django-simple-history==2.0.0
 git+https://github.com/jazzband/django-robots.git@3.1.0
 django-siteblocks==0.6.1
