@@ -28,8 +28,6 @@
                 <p class="mb-4">
                     Проект разрабатывается открыто: вы можете посетить <a href="https://github.com/idlesign/pythonz/">страницу проекта на GitHub</a>,
                     ознакомится с кодом и поучаствовать в развитии &#8212; поделиться идеей, задать вопрос, расширить функциональность, исправить ошибку.<br>
-                    Вопросы, связанные с разработкой обсуждаются на <a href="https://gitter.im/idlesign/pythonz">канале в Gitter</a>.<br>
-                    <button id="chat_toggler" class="js-gitter-toggle-chat-button btn btn-default mt-3">Показать обсуждение</button>
                 </p>
 
                 <h4>Безопасность</h4>
@@ -47,13 +45,3 @@
 
 
 {% block zen %}{% endblock %}
-
-
-{% block js_bottom %}
-<script type="text/javascript">
-((window.gitter = {}).chat = {}).options = {
-    room: 'idlesign/pythonz',
-    activationElement: '.my-special-button'
-};
-</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js" async defer type="text/javascript"></script>
-{% endblock %}
