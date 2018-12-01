@@ -3,7 +3,7 @@ import os
 import sys
 
 
-if __name__ == '__main__':
+def manage():
     # Для правильного импорта модулей добавим пару путей в список поиска:
     PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
     sys.path = [os.path.dirname(PROJECT_PATH), PROJECT_PATH] + sys.path
@@ -11,3 +11,7 @@ if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.settings')
     from django.core.management import execute_from_command_line
     execute_from_command_line(sys.argv)
+
+
+if __name__ == '__main__':
+    manage()
