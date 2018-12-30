@@ -167,11 +167,11 @@ var pythonz = {
 
         RULE_PYVERSION_ADDED: [
             /\+py([\w\.]+)/g,
-            '<small><div class="label label-info" title="Актуально с версии"><a href="/versions/named/$1/">$1</a></div></small>'],
+            '<small><div class="badge badge-info" title="Актуально с версии"><a href="/versions/named/$1/">$1</a></div></small>'],
 
         RULE_PYVERSION_REMOVED: [
             /-py([\w\.]+)/g,
-            '<small><div class="label label-danger" title="Устрело в версии"><a href="/versions/named/$1/">$1</a></div></small>'],
+            '<small><div class="badge badge-danger" title="Устрело в версии"><a href="/versions/named/$1/">$1</a></div></small>'],
 
         RULE_LITERAL: [/'([^']+)'/g, '<strong class="cl__green">$1</strong>'],
         RULE_UNDERMETHOD: [/(__[^\s]+__)/g, '<i>$1</i>'],
@@ -181,7 +181,7 @@ var pythonz = {
         ],
         RULE_EXCEPTIONS: [
             /([^\w])(AttributeError|AssertionError|ImportError|IndexError|KeyError|NotImplementedError|RuntimeError|StopIteration|SyntaxError|SystemError|TypeError|UnboundLocalError|ValueError|OSError)([^\w])/g,
-            '$1<small><div class="label label-warning">$2</div></small>$3'
+            '$1<small><div class="badge badge-warning">$2</div></small>$3'
         ],
         RULE_EMDASH: [/\s+-\s+/g, ' &#8212; '],
 

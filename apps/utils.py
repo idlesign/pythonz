@@ -426,11 +426,11 @@ class TextCompiler:
         text = re.sub(cls.RE_TITLE, '<h4 data-geopattern="\g<1>" class="subtitle">\g<1></h4>', text)
 
         text = re.sub(
-            cls.RE_NOTE, '<div class="panel panel-primary"><div class="panel-heading">На заметку</div>'
-                         '<div class="panel-body">\g<1></div></div>', text)
+            cls.RE_NOTE, '<div class="card mb-3"><div class="card-header text-white bg-success">На заметку</div>'
+                         '<div class="card-body">\g<1></div></div>', text)
         text = re.sub(
-            cls.RE_WARNIGN, '<div class="panel panel-danger"><div class="panel-heading">Внимание</div>'
-                            '<div class="panel-body">\g<1></div></div>', text)
+            cls.RE_WARNIGN, '<div class="card mb-3"><div class="card-header text-white bg-danger">Внимание</div>'
+                            '<div class="card-body">\g<1></div></div>', text)
 
         text = re.sub(
             cls.RE_PODSTER,
