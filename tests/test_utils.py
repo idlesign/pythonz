@@ -146,11 +146,11 @@ def test_text_compiler():
 
     assert (
         compile('.. note:: a note\n') ==
-        '<div class="panel panel-primary"><div class="panel-heading">На заметку</div><div class="panel-body">a note</div></div>')
+        '<div class="card mb-3"><div class="card-header text-white bg-success">На заметку</div><div class="card-body">a note</div></div>')
 
     assert (
         compile('.. warning:: a warn\n') ==
-        '<div class="panel panel-danger"><div class="panel-heading">Внимание</div><div class="panel-body">a warn</div></div>')
+        '<div class="card mb-3"><div class="card-header text-white bg-danger">Внимание</div><div class="card-body">a warn</div></div>')
 
 
 def test_swap_layout():
