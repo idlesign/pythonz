@@ -331,7 +331,7 @@ class TextCompiler:
     RE_IMAGE = re.compile('\.{2}\s*image::\s*([^\n]+)[/]*\n', re.S)
     RE_ACCENT = re.compile('`{2}([^`\n]+)`{2}')
     RE_QUOTE = re.compile('`{3}\n+([^`]+)\n+`{3}')
-    RE_BOLD = re.compile('\*{2}([^\s]{1}[^*\n]+[^\s]{1})\*{2}')
+    RE_BOLD = re.compile('\*{2}([^\s]{1}[^*\n]+([^\s]{1})?)\*{2}')
     RE_ITALIC = re.compile('\*([^\s]{1}[^*\n]+[^\s]{1})\*')
     RE_URL = re.compile('(?<!["])(http[s]?:[^\s\)\<]+)')
     RE_URL_WITH_TITLE = re.compile('`([^\◀]+)\n*\◀([^\▶]+)\▶`_', re.U)

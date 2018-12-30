@@ -92,6 +92,7 @@ def test_text_compiler():
 
     assert compile('**some**') == '<b>some</b>'
     assert compile('*some*') == '<i>some</i>'
+    assert compile('**1.** пункт') == '<b>1.</b> пункт'
     assert compile('```\nздесь цитата\n```') == '<blockquote>здесь цитата</blockquote>'
 
     assert compile('``some``') == '<code>some</code>'
