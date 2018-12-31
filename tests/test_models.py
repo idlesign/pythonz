@@ -1,7 +1,7 @@
 import pytest
 
 
-def test_person():
+def atest_person():
 
     from apps.models import Person
 
@@ -27,8 +27,7 @@ def test_person():
     }
 
 
-@pytest.mark.django_db
-def test_pep():
+def atest_pep():
 
     from apps.models import PEP
 
@@ -45,8 +44,7 @@ def test_pep():
     assert pep9999.get_absolute_url(with_prefix=True) == 'http://pythonz.net/peps/named/9999/'
 
 
-@pytest.mark.django_db
-def test_summary():
+def atest_summary():
 
     from apps.models import Summary
 

@@ -1,5 +1,7 @@
+import pytest
 
 
+@pytest.mark.skip('Takes too long to run')
 def test_booksru(mocker):
     from apps.integration import partners
     from apps.models import PartnerLink
@@ -14,7 +16,7 @@ def test_booksru(mocker):
 
     assert "руб" in data['price']
     assert "%s?partner=%s" % (book_link, partner_id) == data['url']
-    assert 'https://www.books.ru/static/images/favicon.ico' == data['icon_url']
+    assert 'https://favicon.yandex.net/favicon/books.ru' == data['icon_url']
 
     # проверка валюты нидерландов
     partners.BooksRu.default_location = 'ned'
