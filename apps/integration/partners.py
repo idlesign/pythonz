@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db.models import signals
 from django.utils.timezone import now
+from requests.exceptions import ConnectionError
 
 from .utils import make_soup, get_from_url
 
@@ -45,6 +46,9 @@ class PartnerBase():
 
         page_soup = self.get_page_soup(link_url)
 
+        if not page_soup:
+            return
+
         price = self.get_price(page_soup).lower().strip(' .').replace('руб', 'руб.')
         if price.isdigit():
             price += ' руб.'
@@ -64,7 +68,12 @@ class PartnerBase():
 
     @classmethod
     def get_page_soup(cls, url):
-        page = cls.get_page(url)
+        try:
+            page = cls.get_page(url)
+
+        except ConnectionError:
+            return
+
         return make_soup(page.text)
 
     @classmethod
@@ -276,11 +285,15 @@ def get_partner_links(realm, item):
     if links_data is None:
         links_data = []
         links = item.partner_links.order_by('partner_alias', 'description').all()
+
         for link in links:
             partner = _PARTNERS_REGISTRY.get(link.partner_alias)
 
             if partner:
-                links_data.append(partner.get_link_data(realm, link))
+                data = partner.get_link_data(realm, link)
+
+                if data:
+                    links_data.append(data)
 
         cache.set(cache_key, links_data, _CACHE_TIMEOUT)
 
