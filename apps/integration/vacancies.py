@@ -51,7 +51,7 @@ class HhVacancyManager:
                 salary_currency = salary['currency']
 
             employer = item['employer']
-            url_logo = employer['logo_urls']
+            url_logo = employer.get('logo_urls')
             if url_logo:
                 url_logo = url_logo.get('90')
 
