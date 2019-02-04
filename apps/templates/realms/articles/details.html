@@ -22,74 +22,39 @@
 {% endblock %}
 
 
-{% block page_contents %}
-<div itemscope itemtype="http://schema.org/Article">
-    <div class="row">
-        <div class="col-md-12">
-            {% include "sub_title_block.html" %}
+{% block schema_type %}Article{% endblock %}
+
+{% block details_contents %}
+    <meta itemprop="headline" content="{{ article.title }}" />
+    <meta itemprop="datePublished" content="{{ article.time_published|date:"c" }}" />
+    <meta itemprop="image" content="{{ STATIC_URL }}img/realm_logos/pythonz_articles.png" />
+{% endblock %}
+
+{% block details_description %}<div class="mb-3 lead" itemprop="description">{{ item.description|linebreaksbr }}</div>{% endblock %}
+
+{% block details_contents_add %}
+    <div class="py_user">{{ article.text|safe }}</div>
+
+    {% if not article.is_handmade and article.url %}
+        <div class="mt-3">
+            <i class="cl__gray fa fa-copyright"></i>
+            <i>С полным текстом статьи можно ознакомиться здесь: <a href="{{ article.get_utm_url }}">{{ article.title }}</a></i>
         </div>
-    </div>
-    <div class="row">
-        <meta itemprop="headline" content="{{ article.title }}" />
-        <meta itemprop="datePublished" content="{{ article.time_published|date:"c" }}" />
-        <meta itemprop="image" content="{{ STATIC_URL }}img/realm_logos/pythonz_articles.png" />
+    {% endif %}
+{% endblock %}
 
-        <div class="col-md-12">
-            <div id="article-content">
-                <div class="pull-right ml-3 mb-3 panel-float">
-                    {% if article.published_by_author %}
-                    <div class="card mb-3 text-center"><div class="card-body">
-                        {% with article.submitter.get_absolute_url as submitter_url %}
-                        <a href="{{ submitter_url }}">{% gravatar_get_img article.submitter 64 %}</a><br>
-                        <small><a href="{{ submitter_url }}">{{ article.submitter.get_display_name }}</a></small>
-                        {% endwith %}
-                    </div></div>
-                    {% endif %}
-                    {% include "sub_box_tags.html" %}
+{% block cover %}
+    {% if article.published_by_author %}
 
-                    {% block ad_rightbar %}
-                    <div class="col-md-12 mb-3">
-                        {% include "sub_box_ads.html" with area="rightbar" type="details" %}
-                    </div>
-                    <div class="clearfix"></div>
-                    {% endblock %}
-                </div>
-                <div class="mb-3 text-muted">
-                    <small>
-                        {{ article.time_created }}
-                        {% if article.time_modified %}(<abbr title="Дата последнего редактирования">ред.</abbr> {{ article.time_modified }}){% endif %}
-                    </small>
-                </div>
+    <div class="card text-center"><div class="card-body">
+        {% with article.submitter.get_absolute_url as submitter_url %}
+        <a href="{{ submitter_url }}">{% gravatar_get_img article.submitter 64 %}</a><br>
+        <small><a href="{{ submitter_url }}">{{ article.submitter.get_display_name }}</a></small>
+        {% endwith %}
+    </div></div>
 
-                {% include "sub_box_controls.html" %}
+    {% else %}
+        {{ block.super }}
+    {% endif %}
 
-                <div class="lead" itemprop="description">{{ article.description|linebreaksbr }}</div>
-                <div class="py_user">{{ article.text|safe }}</div>
-
-                {% if not article.is_handmade and article.url %}
-                    <div class="mt-3">
-                        <i class="cl__gray fa fa-copyright"></i>
-                        <i>С полным текстом статьи можно ознакомиться здесь: <a href="{{ article.get_utm_url }}">{{ article.title }}</a></i>
-                    </div>
-                {% endif %}
-
-                {% if not article.published_by_author %}
-                <div class="mt-3 text-muted pull-right">
-                    {% include "sub_author_editor.html" %}
-                </div>
-                <div class="clearfix"></div>
-                {% endif %}
-
-                {% include "sub_box_share.html" %}
-
-                {% include "sub_linked.html" %}
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            {% include "sub_comments.html" with disable_internal=1 author=article.submitter entity_name='article' entity_id=article.id personalized=article.published_by_author %}
-        </div>
-    </div>
-</div>
-{%  endblock %}
+{% endblock %}
