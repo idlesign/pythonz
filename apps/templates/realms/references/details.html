@@ -28,8 +28,8 @@
 {% block column_right_contents %}
 
     {% if request.user.is_authenticated %}
-    <div class="card"><div class="card-body">
-        <div class="mb-2">Дополнить справочник:</div>
+    <div class="card mb-4"><div class="card-body">
+        <div>Дополнить справочник:</div>
         <div>
             {% include "realms/references/quick_add_form.html" with parent=reference.parent_id title='Добавить по соседству' %}
             {% include "realms/references/quick_add_form.html" with parent=reference.id title='Добавить вложенно' %}
@@ -43,7 +43,7 @@
     <div id="ref_links">
 
         {% if children and not reference.is_type_bundle %}
-        <div class="card card-info">
+        <div class="card card-info mb-3">
             <div class="card-header">
                 <h5 class="card-title">{{ reference.title }}</h5>
             </div>
@@ -53,7 +53,7 @@
 
         {% if reference.parent %}
             {% if siblings %}
-            <div class="card card-default">
+            <div class="card card-default mb-3">
                 <div class="card-header">
                     <h5 class="card-title">
                         <a href="{% url "references:details_slug" reference.parent.slug %}">{{ reference.parent.title }}</a>
