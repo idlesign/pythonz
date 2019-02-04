@@ -1,9 +1,9 @@
-
 {% if area == "rightbar" %}
 
     {% if type == "details" %}<!-- Yandex.RTB R-A-247489-2 -->
 
-        <div id="yandex_rtb_R-A-247489-2"></div>
+        <div class="sticky">
+        <div id="yandex_rtb_R-A-247489-2">{% include "sub_box_ads_stub.html" %}</div>
         <script type="text/javascript">
             yaAd({
                 blockId: "R-A-247489-2",
@@ -11,10 +11,11 @@
                 async: true
             })
         </script>
+        </div>
 
     {% elif type == "search" %}<!-- Yandex.RTB R-A-247489-3 -->
 
-        <div id="yandex_rtb_R-A-247489-3"></div>
+        <div id="yandex_rtb_R-A-247489-3">{% include "sub_box_ads_stub.html" %}</div>
         <script type="text/javascript">
             yaAd({
                 blockId: "R-A-247489-3",
@@ -25,7 +26,7 @@
 
     {% else %}<!-- Yandex.RTB R-A-247489-1 -->
 
-        <div id="yandex_rtb_R-A-247489-1"></div>
+        <div id="yandex_rtb_R-A-247489-1">{% include "sub_box_ads_stub.html" %}</div>
         <script type="text/javascript">
             yaAd({
                 blockId: "R-A-247489-1",
@@ -38,7 +39,7 @@
 
 {% elif area == "searchtop" %}<!-- Yandex.Premium P-A-247488-1 -->
 
-<div id="yandex_direct_P-A-247488-1"></div>
+<div id="yandex_direct_P-A-247488-1">{% include "sub_box_ads_stub.html" %}</div>
 <script type="text/javascript">
     yaAd({
         blockId: "P-A-247488-1",
@@ -50,7 +51,7 @@
 
 {% elif area == "searchbottom" %}<!-- Yandex.Direct D-A-247488-2 -->
 
-<div id="yandex_direct_D-A-247488-2"></div>
+<div id="yandex_direct_D-A-247488-2">{% include "sub_box_ads_stub.html" %}</div>
 <script type="text/javascript">
     yaAd({
         blockId: "D-A-247488-2",
