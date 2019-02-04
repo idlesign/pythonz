@@ -14,6 +14,10 @@ var pythonz = {
             sitecats.bootstrap();
             sitecats.make_cloud('box-tags');
 
+            $('.sticky').sticky({
+                topSpacing: 80
+            });
+
             $('.tooltipped').tooltip();
         });
     },
