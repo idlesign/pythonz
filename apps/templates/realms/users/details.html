@@ -156,12 +156,8 @@
 {% block details_share %}{% endblock %}
 
 {% block column_controls %}
-    {% with hide_hint=1 %}
-        {{ block.super }}
-    {% endwith %}
-
     {% if user.twitter %}
-        <div>
+        <div class="sticky">
             {% include "sub_twitter_timeline.html" with username=user.twitter %}
         </div>
     {% endif %}
