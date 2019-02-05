@@ -54,7 +54,7 @@
 
             {% block details_discussions_pre %}{% endblock %}
             {% if item.has_discussions %}
-                <div class="mt-4 clearfix">
+                <div class="mt-4 p-2 clearfix border rounded">
                     {% include "sub_comments.html" with disable_disqus=1 %}
                 </div>
             {% endif %}
