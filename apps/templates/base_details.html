@@ -27,7 +27,7 @@
 
 {% block page_contents %}
     <div class="row">
-        <div class="{% block details_main_col %}col-md-9{% endblock %}" itemscope itemtype="http://schema.org/{% block schema_type %}WebPage{% endblock %}">
+        <div class="col-12 col-md-9" itemscope itemtype="http://schema.org/{% block schema_type %}WebPage{% endblock %}">
 
             {% block breadcrumbs %}
             {% sitetree_breadcrumbs from "main" template "sitetree/crumbs.html" %}
@@ -61,7 +61,7 @@
         </div>
 
         {% block column_right%}
-            <div class="col-3">
+            <div class="col-12 col-md-3">
                 {% block column_right_contents %}
                 <div class="text-center d-none d-sm-block">
                     <div class="block mb-3">
