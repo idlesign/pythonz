@@ -1,8 +1,8 @@
 {% load siteblocks %}
 
-<div class="jumbotron zen mt-5">
+<div class="jumbotron zen mt-5 p-3">
     {% siteblock "zen" as zen %}
-    <h2>{{ zen.1|safe }}</h2>
     <div class="eng">{{ zen.0|safe }}</div>
-    <div class="small">Тим Питерс. &laquo;Дзен Питона&raquo; import this</div>
+    <h2 class="mb-3 mt-3">{{ zen.1|safe }}</h2>
+    <div class="small">Тим Питерс. &laquo;Дзен Питона&raquo;<br>import this</div>
 </div>
