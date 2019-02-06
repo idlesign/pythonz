@@ -101,7 +101,8 @@
   }
   border-bottom: none;
   h1 {
-    padding: @gap__mid;
+    word-break: break-word;
+    font-size: 1.8em;
     text-transform: uppercase;
     .gepattern-mixin;
   }
@@ -424,8 +425,7 @@ nav .submenu {
 
 .gepattern-mixin() {
   color: @cl__white;
-  background-color: #333;
-  background-blend-mode:  screen;
+  background-color: #888;
   letter-spacing: 2px;
   padding: @gap__min;
 }
@@ -433,6 +433,7 @@ nav .submenu {
 .subtitle {
   .gepattern-mixin;
   display: inline-block;
+  font-size: 1.2em;
 }
 
 
