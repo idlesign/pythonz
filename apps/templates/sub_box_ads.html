@@ -1,8 +1,8 @@
 {% if area == "rightbar" %}
 
+    <div class="sticky">
     {% if type == "details" %}<!-- Yandex.RTB R-A-247489-2 -->
 
-        <div class="sticky">
         <div id="yandex_rtb_R-A-247489-2">{% include "sub_box_ads_stub.html" %}</div>
         <script type="text/javascript">
             yaAd({
@@ -11,7 +11,6 @@
                 async: true
             })
         </script>
-        </div>
 
     {% elif type == "search" %}<!-- Yandex.RTB R-A-247489-3 -->
 
@@ -36,6 +35,7 @@
         </script>
 
     {% endif %}
+    </div>
 
 {% elif area == "searchtop" %}<!-- Yandex.Premium P-A-247488-1 -->
 
