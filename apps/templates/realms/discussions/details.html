@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+{% extends "base_details.html" %}
 {% load gravatar model_meta sitetree %}
 
 
@@ -13,57 +13,32 @@
     {% include "sub_vk_head.html" %}
 {% endblock %}
 
+{% block schema_type %}Comment{% endblock %}
 
-{% block page_contents %}
-<div itemscope itemtype="http://schema.org/Comment">
-    <div class="row">
-        <div class="col-md-12">
-            {% include "sub_title_block.html" %}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div>
-                <meta itemprop="about" content="{{ discussion.title }}" />
+{% block details_contents %}
+    <meta itemprop="about" content="{{ discussion.title }}" />
+{% endblock %}
 
-                <div class="pull-right ml-3 mb-3 panel-float">
-                    <div class="card mb-3 text-center"><div class="card-body">
-                        {% with discussion.submitter.get_absolute_url as submitter_url %}
-                        <a href="{{ submitter_url }}">{% gravatar_get_img discussion.submitter 64 %}</a><br>
-                        <small><a href="{{ submitter_url }}">{{ discussion.submitter.get_display_name }}</a></small>
-                        {% endwith %}
-                    </div></div>
-                    {% include "sub_box_tags.html" %}
+{% block details_contents_add %}
 
-                    {% block ad_rightbar %}
-                    <div class="col-md-12 mb-3">
-                        {% include "sub_box_ads.html" with area="rightbar" type="details" %}
-                    </div>
-                    <div class="clearfix"></div>
-                    {% endblock %}
-                </div>
-                <div class="mb-2 ">
-                    {% include "sub_box_controls.html" %}
-                    <small class="text-muted">
-                        {{ discussion.time_created }}
-                        {% if discussion.time_modified %}(<abbr title="Дата последнего редактирования">ред.</abbr> {{ discussion.time_modified }}){% endif %}
-                        <div>
-                            {% if discussion.linked_object %}
-                                Навеяно объектом
-                                <a href="{{ discussion.linked_object.get_absolute_url }}">{% model_meta_verbose_name discussion.linked_object %} «{{ discussion.linked_object.title }}»</a>
-                            {% endif %}
-                        </div>
-                    </small>
-                </div>
-                <div class="py_user" itemprop="text">{{ discussion.text|safe }}</div>
-            </div>
-            {% include "sub_box_share.html" %}
+    {% if discussion.linked_object %}
+        <div class="card card-default card-body mb-3">
+            Связано с: <a href="{{ discussion.linked_object.get_absolute_url }}">{% model_meta_verbose_name discussion.linked_object %} «{{ discussion.linked_object.title }}»</a>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            {% include "sub_comments.html" with disable_internal=1 author=discussion.submitter entity_name='discussion' entity_id=discussion.id personalized=1 %}
-        </div>
-    </div>
-</div>
+    {% endif %}
+    <div class="py_user" itemprop="text">{{ discussion.text|safe }}</div>
+
 {%  endblock %}
+
+{% block cover %}
+    {% with discussion.submitter.get_absolute_url as submitter_url %}
+    <a href="{{ submitter_url }}">{% gravatar_get_img discussion.submitter 64 %}</a><br>
+    <small><a href="{{ submitter_url }}">{{ discussion.submitter.get_display_name }}</a></small>
+    {% endwith %}
+{% endblock %}
+
+{% block discussions %}
+    <div class="mt-4 p-2 clearfix border rounded">
+        {% include "sub_comments.html" with disable_internal=1 author=discussion.submitter entity_name='discussion' entity_id=discussion.id personalized=1 %}
+    </div>
+{% endblock %}
