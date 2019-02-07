@@ -7,7 +7,7 @@
 </ul>
 <div class="tab-content">
 {% for realm_name, data_tuple in realms_links.items %}
-    <div role="tabpanel" class="tab-pane active" id="{{ data_tuple.0 }}">
+    <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}" id="{{ data_tuple.0 }}">
         <ul>
         {% for item in data_tuple.1 %}
             <li><a href="{{ item.get_absolute_url }}">{{ item.get_display_name }}</a></li>
