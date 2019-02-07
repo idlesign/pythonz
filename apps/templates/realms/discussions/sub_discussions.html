@@ -54,10 +54,14 @@
             {% endfor %}
         </ul>
     {% else %}
-        <small class="text-muted">
+        <small class="text-muted p-3">
             Нет обсуждений для отображения.
             {% if not request.user.is_authenticated %}
-            <br>Если у вас есть, что сказать, можете <a href="{% url "login" %}">представиться</a> и исправить ситуацию.
+                <div class="card bg-light m-2">
+                    <div class="card-body">
+                        <p class="card-text">Если у вас есть, что сказать, можете <a href="{% url "login" %}">представиться</a> и исправить ситуацию.</p>
+                    </div>
+                </div>
             {% endif %}
         </small>
     {% endif %}
