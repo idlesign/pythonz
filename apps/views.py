@@ -17,7 +17,7 @@ from django.views.defaults import (
     permission_denied as dj_permission_denied,
     server_error as dj_server_error
 )
-from sitecats.toolbox import get_category_model, get_category_lists, get_category_aliases_under
+from sitecats.toolbox import get_category_lists, get_category_aliases_under
 from sitegate.decorators import signin_view, signup_view, redirect_signedin
 from sitegate.signup_flows.classic import SimpleClassicWithEmailSignup
 from sitemessage.toolbox import get_user_preferences_for_ui, set_user_preferences_from_request
@@ -26,7 +26,8 @@ from xross.toolbox import xross_view
 from .exceptions import RedirectRequired
 from .generics.views import DetailsView, RealmView, EditView, ListingView
 from .integration.telegram import handle_request
-from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource, ReferenceMissing
+from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource, ReferenceMissing, \
+    Category
 from .utils import message_warning, swap_layout
 
 
@@ -167,8 +168,7 @@ class CategoryListingView(RealmView):
             return self.render(request, {'item': item, 'realms': realms})
 
         # Выводим список материалов (разбитых по областям сайта) для конкретной категории.
-        category_model = get_category_model()
-        category = get_object_or_404(category_model.objects.select_related('parent'), pk=obj_id)
+        category = get_object_or_404(Category.objects.select_related('parent'), pk=obj_id)
 
         realms_links = OrderedDict()
         for realm in realms:

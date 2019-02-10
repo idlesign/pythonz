@@ -4,16 +4,15 @@ from django.core.paginator import Paginator, EmptyPage
 from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.utils.decorators import method_decorator
-from django.utils.functional import cached_property
 from django.views.decorators.http import condition
 from django.views.generic.base import View
-from sitecats.utils import get_category_model
 from xross.toolbox import xross_view, xross_listener
 
 from .models import ModelWithCompiledText
-from ..integration.partners import get_partner_links
 from ..exceptions import RedirectRequired, PythonzException
-from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event, Reference
+from ..integration.partners import get_partner_links
+from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event, Reference, \
+    Category
 from ..utils import message_info, message_warning, message_success, message_error
 
 
@@ -222,7 +221,7 @@ class ListingView(RealmView):
 
         category = None
         if category_id is not None:
-            category = get_category_model().objects.get(pk=category_id)
+            category = Category.objects.get(pk=category_id)
 
         context = {
             self.realm.name_plural: page_items,

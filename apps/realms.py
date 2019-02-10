@@ -5,7 +5,7 @@ from django.conf.urls import url
 from django.contrib.sitemaps.views import sitemap
 from django.db.models import signals
 from django.urls import get_resolver, reverse
-from sitecats.toolbox import get_tie_model, get_category_model
+from sitecats.toolbox import get_tie_model
 from sitetree.utils import tree, item
 
 from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm, \
@@ -13,7 +13,7 @@ from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleF
 from .generics.models import RealmBaseModel
 from .generics.realms import RealmBase, SYNDICATION_URL_MARKER, SYNDICATION_ITEMS_LIMIT
 from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy, Version, \
-    PEP, Person
+    PEP, Person, Category
 from .signals import sig_support_changed
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
     ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView, PersonDetailsView
@@ -393,7 +393,7 @@ class CategoryRealm(RealmBase):
     view_listing_description = 'Карта категорий материалов по языку программирования Python доступных на сайте.'
     view_listing_keywords = 'материалы по питону, python по категориям'
 
-    model = get_category_model()
+    model = Category
     icon = 'tag'
     name = 'category'
     name_plural = 'categories'
