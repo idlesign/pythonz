@@ -3,6 +3,7 @@ from itertools import groupby
 from operator import attrgetter
 from urllib.parse import quote_plus
 
+from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -271,16 +272,19 @@ def search(request):
     if not search_term:
         return redirect('index')
 
-    results = Reference.find(search_term)
-    total_results = len(results)
+    swapped = swap_layout(search_term)
 
-    if not total_results:
-        # Возможно пользователь не сменил раскладку, пробуем сменить сами.
-        swapped = swap_layout(search_term)
+    search_in = [
+        Category,
+        Reference,
+    ]
 
-        if swapped:
-            results = Reference.find(swapped)
-            total_results = len(results)
+    results = []
+    total_results = 0
+
+    for model_cls in search_in:
+        results.extend(model_cls.find(search_term, swapped))
+        total_results += len(results)
 
     if not total_results:
         # Поиск не дал результатов. Запомним, что искали и сообщим администраторам,
@@ -288,7 +292,9 @@ def search(request):
 
         ReferenceMissing.add(search_term)
 
-        message_warning(request, 'Поиск по справочнику не дал результатов, и мы переключились на поиск по всему сайту.')
+        message_warning(
+            request, 'Поиск по справочнику и категориям не дал результатов, '
+                     'и мы переключились на поиск по всему сайту.')
 
         # Перенаправляем на поиск по всему сайту.
         redirect_response = redirect('search_site')

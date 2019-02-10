@@ -11,11 +11,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import FieldError
 from django.db import models, IntegrityError
 from django.db.models import Min, Max, Count, Q, F
+from django.urls import reverse
 from django.utils import timezone
 from etc.models import InheritedModel
 from etc.toolbox import choices_list, get_choices
 from simple_history.models import HistoricalRecords
-from sitecats.models import ModelWithCategory, Category
+from sitecats.models import ModelWithCategory, Category as Category_
 
 from .exceptions import RemoteSourceError
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
@@ -49,6 +50,36 @@ class UtmReady:
         :rtype: str
         """
         return UTM.add_to_external_url(getattr(self, self.url_attr))
+
+
+class Category(Category_):
+    """Посредник для мимикрии под области."""
+
+    class Meta:
+        proxy = True
+
+    @classmethod
+    def find(cls, *search_terms):
+        """Ищет указанный текст в категориях. Возвращает QuerySet.
+
+        :param list[str] search_terms: Строки для поиска.
+        :rtype: QuerySet
+        """
+        q = Q()
+
+        for term in search_terms:
+            if term:
+                q |= Q(title__icontains=term) | Q(note__icontains=term)
+
+        return Category.objects.filter(q).order_by('time_created')
+
+    @property
+    def description(self):
+        return self.note
+
+    def get_absolute_url(self):
+        # Сокращённая реализация из RealmBaseModel.
+        return reverse(self.realm.get_details_urlname(), args=[self.id])
 
 
 class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCategory, ModelWithCompiledText):
@@ -1340,14 +1371,19 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         return qs.order_by('-time_published').all()
 
     @classmethod
-    def find(cls, search_term):
+    def find(cls, *search_terms):
         """Ищет указанный текст в справочнике. Возвращает QuerySet.
 
-        :param str search_term: Строка для поиска.
+        :param str search_terms: Строка для поиска.
         :rtype: QuerySet
         """
-        return cls.objects.published().filter(
-            Q(title__icontains=search_term) | Q(search_terms__icontains=search_term)).order_by('time_published')
+        q = Q()
+
+        for term in search_terms:
+            if term:
+                q |= Q(title__icontains=term) | Q(search_terms__icontains=term)
+
+        return cls.objects.published().filter(q).order_by('time_published')
 
 
 class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
