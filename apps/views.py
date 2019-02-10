@@ -3,7 +3,6 @@ from itertools import groupby
 from operator import attrgetter
 from urllib.parse import quote_plus
 
-from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -28,7 +27,7 @@ from .exceptions import RedirectRequired
 from .generics.views import DetailsView, RealmView, EditView, ListingView
 from .integration.telegram import handle_request
 from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource, ReferenceMissing, \
-    Category
+    Category, Person
 from .utils import message_warning, swap_layout
 
 
@@ -276,6 +275,7 @@ def search(request):
 
     search_in = [
         Category,
+        Person,
         Reference,
     ]
 
