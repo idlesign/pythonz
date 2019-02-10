@@ -62,8 +62,8 @@ class Category(Category_):
     def find(cls, *search_terms):
         """Ищет указанный текст в категориях. Возвращает QuerySet.
 
-        :param list[str] search_terms: Строки для поиска.
-        :rtype: QuerySet
+        :param str search_terms: Строки для поиска.
+        :rtype: models.QuerySet
         """
         q = Q()
 
@@ -1199,16 +1199,19 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         return self.TYPES[self.type][0]
 
     @classmethod
-    def find(cls, search_term):
+    def find(cls, *search_terms):
         """Ищет указанный текст в справочнике. Возвращает QuerySet.
 
-        :param str search_term: Строка для поиска.
-        :rtype: QuerySet
+        :param str search_terms: Строка для поиска.
+        :rtype: models.QuerySet
         """
-        return cls.get_actual().filter(
-            Q(slug__icontains=search_term) |
-            Q(title__icontains=search_term) |
-            Q(description__icontains=search_term))
+        q = Q()
+
+        for term in search_terms:
+            if term:
+                q |= Q(slug__icontains=term) | Q(title__icontains=term) | Q(description__icontains=term)
+
+        return cls.get_actual().filter(q)
 
 
 class ReferenceMissing(models.Model):
@@ -1375,7 +1378,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         """Ищет указанный текст в справочнике. Возвращает QuerySet.
 
         :param str search_terms: Строка для поиска.
-        :rtype: QuerySet
+        :rtype: models.QuerySet
         """
         q = Q()
 
@@ -1680,17 +1683,19 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
             add_name(aka_chunk)
 
     @classmethod
-    def find(cls, name):
-        """Ищет персону по указанному имени.
+    def find(cls, *search_terms):
+        """Ищет персону по указанному имени. Возвращает QuerySet.
 
-        :param str name: Имя для поиска.
+        :param str search_terms: Строка для поиска.
         :rtype: models.QuerySet
         """
-        return cls.get_actual().filter(
-            Q(name__icontains=name) |
-            Q(name_en__icontains=name) |
-            Q(aka__icontains=name)
-        )
+        q = Q()
+
+        for term in search_terms:
+            if term:
+                q |= Q(name__icontains=term) | Q(name_en__icontains=term) | Q(aka__icontains=term)
+
+        return cls.get_actual().filter(q)
 
     @classmethod
     def create(cls, name, save=False, publish=True):

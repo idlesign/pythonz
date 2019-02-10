@@ -343,6 +343,15 @@ class RealmBaseModel(ModelWithFlag):
             notify_published and sig_entity_published.send(self.__class__, entity=self)
 
     @classmethod
+    def find(cls, *search_terms):
+        """Ищет указанный текст в данных модели. Возвращает QuerySet.
+
+        :param str search_terms: Строки для поиска.
+        :rtype: QuerySet
+        """
+        raise NotImplementedError
+
+    @classmethod
     def get_actual(cls):
         """Возвращает выборку актуальных объектов.
 
