@@ -115,6 +115,12 @@ STATICFILES_FINDERS = (
 STATIC_URL_FULL = SITE_URL + STATIC_URL
 
 
+SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
