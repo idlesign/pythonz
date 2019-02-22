@@ -166,7 +166,7 @@ INSTALLED_APPS = [
     'siteblocks',
     'sitegate',
     'sitemetrics',
-    # 'siteprefs',
+    'siteprefs',
     'sitemessage',
     'xross',
     'etc',
