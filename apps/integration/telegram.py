@@ -143,7 +143,7 @@ def get_inline_reference(term, items_limit=25):
     :param int items_limit: Максимальное кол-во элементов для получения.
     :rtype: list
     """
-    return compose_entities_inline_result(Reference.find(term)[:items_limit])
+    return compose_entities_inline_result(Reference.find(term[:200])[:items_limit])
 
 
 @lru_cache(maxsize=20)
@@ -154,7 +154,7 @@ def get_inline_pep(term, items_limit=10):
     :param int items_limit: Максимальное кол-во элементов для получения.
     :rtype: list
     """
-    return compose_entities_inline_result(PEP.find(term)[:items_limit])
+    return compose_entities_inline_result(PEP.find(term[:200])[:items_limit])
 
 
 @lru_cache(maxsize=2)
