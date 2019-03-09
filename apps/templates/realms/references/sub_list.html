@@ -1,16 +1,32 @@
-<table class="text-muted table {% if detailed %}table-bordered{% else %}table-hover small{% endif %}">
+{% if detailed %}
+
+    <table class="text-muted table table-bordered">
+    {% for item in items %}
+        <tr>
+            <td>
+            {% with item.version_deprecated as del %}
+                {% if del %}<del title="Устарело">{% endif %}
+
+                <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+
+                {% if del %}</del>{% endif %}
+            {% endwith %}
+            </td>
+            <td>{{ item.description|truncatechars:70 }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+{% else %}
+
 {% for item in items %}
-    <tr>
-        <td {% if not detailed %}class="tooltipped" title="{{ item.description|truncatechars:70 }}" {% endif %}>
-        {% with item.version_deprecated as del %}
-            {% if del %}<del title="Устарело">{% endif %}
-
-            <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
-
-            {% if del %}</del>{% endif %}
-        {% endwith %}
-        </td>
-        {% if detailed %}<td>{{ item.description|truncatechars:70 }}</td>{% endif %}
-    </tr>
+    <span>
+    {% with item.version_deprecated as del %}
+        {% if del %}<del title="Устарело">{% endif %}
+        <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+        {% if del %}</del>{% endif %}
+    {% endwith %}
+    </span>
 {% endfor %}
-</table>
+
+{% endif %}

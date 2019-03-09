@@ -40,32 +40,6 @@
 
     {% include "sub_column_controls.html" with hide_hint=1 %}
 
-    <div id="ref_links">
-
-        {% if children and not reference.is_type_bundle %}
-        <div class="card card-info mb-3">
-            <div class="card-header">
-                <h5 class="card-title">{{ reference.title }}</h5>
-            </div>
-            {% include "realms/references/sub_list.html" with items=children %}
-        </div>
-        {% endif %}
-
-        {% if reference.parent %}
-            {% if siblings %}
-            <div class="card card-default mb-3">
-                <div class="card-header">
-                    <h5 class="card-title">
-                        <a href="{% url "references:details_slug" reference.parent.slug %}">{{ reference.parent.title }}</a>
-                    </h5>
-                </div>
-                {% include "realms/references/sub_list.html" with items=siblings %}
-            </div>
-            {% endif %}
-        {% endif %}
-
-    </div>
-
 {% endblock %}
 
 
@@ -142,6 +116,21 @@
 
 {% endblock %}
 
+{% block details_discussions_pre %}
+    <div class="card bg-light border-light mb-3 small">
+        <div class="card-body">
+            {% if children and not reference.is_type_bundle %}
+                <div>Ещё в этом разделе:
+                    {% include "realms/references/sub_list.html" with items=children %}</div>
+            {% endif %}
+            {% if reference.parent and siblings %}
+                <div>Ещё в разделе «{{ reference.parent.title }}»:
+                    {% include "realms/references/sub_list.html" with items=siblings %}</div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
 
 
 {% block cover %}{% endblock %}
