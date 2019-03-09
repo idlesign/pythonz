@@ -8,6 +8,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.utils.html import urlize
 from django.utils.text import Truncator
 from siteflags.models import ModelWithFlag
 from slugify import Slugify, CYRILLIC
@@ -276,6 +277,15 @@ class RealmBaseModel(ModelWithFlag):
     при обращении странице с детальной информацией по объекту.
 
     """
+
+    @classmethod
+    def make_html(self, text):
+        """Применяет базовую html-разметку к указанному тексту.
+
+        :param str text:
+        :rtype: str
+        """
+        return urlize(text.replace('\n', '<br />'), nofollow=True, autoescape=True)
 
     def mark_published(self):
         """Помечает материал опубликованным."""

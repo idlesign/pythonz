@@ -354,7 +354,7 @@ class Place(RealmBaseModel, ModelWithDiscussions):
 
     @property
     def turbo_content(self):
-        return self.description
+        return self.make_html(self.description)
 
     def get_pos(self):
         """Возвращает координаты объекта в виде кортежа: (широта, долгота).
@@ -907,7 +907,7 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussio
 
     @property
     def turbo_content(self):
-        return self.description
+        return self.make_html(self.description)
 
 
 class Article(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
@@ -1446,7 +1446,7 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
 
     @property
     def turbo_content(self):
-        return self.description
+        return self.make_html(self.description)
 
     @classmethod
     def get_supported_hostings(cls):
