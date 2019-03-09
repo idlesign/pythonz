@@ -352,6 +352,10 @@ class Place(RealmBaseModel, ModelWithDiscussions):
     def __str__(self):
         return self.geo_title
 
+    @property
+    def turbo_content(self):
+        return self.description
+
     def get_pos(self):
         """Возвращает координаты объекта в виде кортежа: (широта, долгота).
 
@@ -901,6 +905,10 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussio
         }
         year = 'Год издания'
 
+    @property
+    def turbo_content(self):
+        return self.description
+
 
 class Article(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
               ModelWithCompiledText):
@@ -1149,6 +1157,10 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     Здесь у понятия "черновик" своё значение.
 
     """
+
+    @property
+    def turbo_content(self):
+        return self.title
 
     @classmethod
     def get_actual(cls):
@@ -1431,6 +1443,10 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         'Vimeo': ('vimeo.com', 'vimeo'),
         'YouTube': ('youtu', 'youtube'),
     }.items(), key=lambda k: k[0]))
+
+    @property
+    def turbo_content(self):
+        return self.description
 
     @classmethod
     def get_supported_hostings(cls):

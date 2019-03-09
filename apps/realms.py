@@ -536,8 +536,6 @@ class VersionRealm(RealmBase):
     form = VersionForm
     icon = 'code-fork'
 
-    syndication_enabled = False
-
     show_on_top = False
 
 
