@@ -253,7 +253,6 @@ class ReferenceRealm(RealmBase):
     """
 
     allowed_views = ('listing', 'details', 'add', 'edit')
-    syndication_enabled = False
 
     txt_form_add = 'Дополнить справочник'
     txt_form_edit = 'Редактировать статью'

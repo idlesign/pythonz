@@ -1338,6 +1338,10 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     details_related = ['parent', 'submitter']
 
     @property
+    def turbo_content(self):
+        return self.description
+
+    @property
     def is_type_callable(self):
         return self.type in (self.TYPE_METHOD, self.TYPE_FUNCTION, self.TYPE_CLASS)
 
