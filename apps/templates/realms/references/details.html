@@ -120,11 +120,11 @@
     <div class="card bg-light border-light mb-3 small">
         <div class="card-body">
             {% if children and not reference.is_type_bundle %}
-                <div>Ещё в этом разделе:
+                <div class="mb-2"><i class="fa fa-circle-thin" aria-hidden="true"></i> В этом разделе:
                     {% include "realms/references/sub_list.html" with items=children %}</div>
             {% endif %}
             {% if reference.parent and siblings %}
-                <div>Ещё в разделе «{{ reference.parent.title }}»:
+                <div><i class="fa fa-circle-thin" aria-hidden="true"></i> В разделе «{{ reference.parent.title }}»:
                     {% include "realms/references/sub_list.html" with items=siblings %}</div>
             {% endif %}
         </div>

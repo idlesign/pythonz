@@ -19,14 +19,15 @@
 
 {% else %}
 
-{% for item in items %}
-    <span>
-    {% with item.version_deprecated as del %}
-        {% if del %}<del title="Устарело">{% endif %}
-        <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
-        {% if del %}</del>{% endif %}
-    {% endwith %}
-    </span>
-{% endfor %}
-
+<span class="ref-linked">
+    {% for item in items %}
+        <span>
+        {% with item.version_deprecated as del %}
+            {% if del %}<del title="Устарело">{% endif %}
+            <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+            {% if del %}</del>{% endif %}
+        {% endwith %}
+        </span>
+    {% endfor %}
+</span>
 {% endif %}
