@@ -285,7 +285,7 @@ class RealmBaseModel(ModelWithFlag):
         :param str text:
         :rtype: str
         """
-        return urlize(text.replace('\n', '<br />'), nofollow=True, autoescape=True)
+        return urlize(text.replace('\n', '<br />'), nofollow=True)
 
     def mark_published(self):
         """Помечает материал опубликованным."""
