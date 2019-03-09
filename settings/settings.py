@@ -9,4 +9,6 @@ from envbox import import_by_environment, get_environment
 
 current_env = import_by_environment(get_environment(detectors_opts={'file': {'source': '../conf/environment'}}))
 
+IN_PRODUCTION = current_env == 'production'
+
 print('Environment type: %s' % current_env)
