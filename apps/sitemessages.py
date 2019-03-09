@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from collections import OrderedDict
 from functools import partial
 
+from sitemessage.exceptions import UnknownMessengerError
 from sitemessage.utils import register_messenger_objects, register_message_types, override_message_type_for_app
 from sitemessage.messages.email import EmailHtmlMessage
 from sitemessage.messages.plain import PlainTextMessage
@@ -100,10 +101,17 @@ def connect_signals():
         if not entity.notify_on_publish:
             return False
 
-        PythonzTwitterMessage.create_published(entity)
-        PythonzTelegramMessage.create_published(entity)
-        PythonzFacebookMessage.create_published(entity)
-        PythonzVkontakteMessage.create_published(entity)
+        try:
+            PythonzTwitterMessage.create_published(entity)
+            PythonzTelegramMessage.create_published(entity)
+            PythonzFacebookMessage.create_published(entity)
+            PythonzVkontakteMessage.create_published(entity)
+
+        except UnknownMessengerError:
+            # В режиме разработки рассльные могут быть не сконфигурированы.
+
+            if settings.IN_PRODUCTION:
+                raise
 
     sig_entity_published.connect(notify_published, dispatch_uid='cfg_entity_published', weak=False)
 
