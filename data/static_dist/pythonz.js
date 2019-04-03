@@ -15,7 +15,8 @@ var pythonz = {
             sitecats.make_cloud('box-tags');
 
             $('.sticky').sticky({
-                topSpacing: 80
+                topSpacing: 80,
+                zIndex: 1
             });
 
             $('.tooltipped').tooltip();
@@ -28,7 +29,7 @@ var pythonz = {
             var $el = $(el);
             if ($('.categories_box', $el).length === 0){
                 $el.hide();
-            };
+            }
         });
     },
 
