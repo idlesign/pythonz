@@ -153,6 +153,10 @@ def test_text_compiler():
         compile('.. warning:: a warn\n') ==
         '<div class="card mb-3"><div class="card-header text-white bg-danger">Внимание</div><div class="card-body">a warn</div></div>')
 
+    compiled = compile('.. poll:: absdefgh\n\n\n')
+    assert 'absdefgh' in compiled
+    assert 'yastatic' in compiled
+
 
 def test_swap_layout():
     assert swap_layout('вуа') == 'def'

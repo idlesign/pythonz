@@ -420,7 +420,15 @@ class TextCompiler:
         text = re.sub(cls.RE_CODE, replace_code, text)
         text = re.sub(cls.RE_URL_WITH_TITLE, '<a href="\g<2>">\g<1></a>', text)
         text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\g<1>.js"></script>', text)
-        text = re.sub(cls.RE_POLL, '<script src="http://static.polldaddy.com/p/\g<1>.js"></script>', text)
+
+        text = re.sub(
+            cls.RE_POLL,
+            '<div class="card bg-light p-2 m-2"><div class="card-body">'
+            '<script src="https://yastatic.net/q/forms-frontend-ext/_/embed.js"></script>'
+            '<iframe src="https://forms.yandex.ru/u/\g<1>/?iframe=1" frameborder="0" width="100%" name="ya-form-\g<1>">'
+            '</iframe></div></div>',
+            text)
+
         text = re.sub(cls.RE_TABLE, replace_table, text)
 
         text = re.sub(cls.RE_TITLE, '<h4 data-geopattern="\g<1>" class="subtitle">\g<1></h4>', text)
