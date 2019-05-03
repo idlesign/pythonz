@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from .fetchers import MailarchAnnounce, MailarchConferences, MailarchDev, MailarchIdeas, \
-    Stackoverflow, StackoverflowRu, GithubTrending
+    Stackoverflow, StackoverflowRu, GithubTrending, Lwn
 
 
 SUMMARY_FETCHERS = OrderedDict([(fetcher.alias, fetcher) for fetcher in [
@@ -12,5 +12,6 @@ SUMMARY_FETCHERS = OrderedDict([(fetcher.alias, fetcher) for fetcher in [
     Stackoverflow,
     StackoverflowRu,
     GithubTrending,
+    Lwn,
 ]])
 """Сборщики сводок, индексированные псевдонимами."""

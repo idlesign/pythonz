@@ -1,8 +1,21 @@
-import pytest
-
 from datetime import datetime
 
-from pythonz.apps.integration.summary import MailarchConferences, GithubTrending, Stackoverflow
+import pytest
+
+from pythonz.apps.integration.summary import MailarchConferences, GithubTrending, Stackoverflow, Lwn
+
+
+def test_lwn():
+    results, latest = Lwn(None, None).run()
+
+    assert isinstance(results, list)
+    assert isinstance(latest, dict)
+    assert results
+
+    results, latest = Lwn(latest, None).run()
+    assert isinstance(results, list)
+    assert isinstance(latest, dict)
+    assert not results
 
 
 @pytest.mark.skip('Takes too long to run')
