@@ -96,7 +96,7 @@
                         <a href="#" class="nav-link dropdown-toggle" aria-haspopup="true" id="navitem-profile" data-toggle="dropdown">
                             {{ request.user.get_full_name|default:request.user.username }}
                         </a>
-                        {% sitetree_menu from "main" include "personal" template "sitetree/menu_bootstrap4_dropdown.html" %}
+                        {% sitetree_menu from "main" include "personal" template "sitetree/menu_dropdown.html" %}
                     </li>
                 {% else %}
                     <li class="nav-item"><a href="{% url "login" %}" class="nav-link"><i class="fa fa-fw fa-sign-in"></i>&nbsp;Вход</a></li>
