@@ -37,7 +37,7 @@ EMAIL_USE_TLS = True
 PARTNER_IDS = {}
 
 
-ROBOT_USER_ID = 111
+ROBOT_USER_ID = 1
 """Идентификатор пользователя-робота."""
 
 GOOGLE_API_KEY = 'not_a_secret'
