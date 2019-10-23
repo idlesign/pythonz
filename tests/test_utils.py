@@ -111,6 +111,13 @@ def test_text_compiler():
         compile('.. gist:: someuser/gisthashhere\n') ==
         '<script src="https://gist.github.com/someuser/gisthashhere.js"></script>')
 
+
+    assert (
+        compile('.. video:: https://youtu.be/ZE7WsnmGZ3U\n') ==
+        '<div class="embed-responsive embed-responsive-16by9">'
+        '<iframe src="//www.youtube.com/embed/ZE7WsnmGZ3U?rel=0" '
+        'width="560" height="315" frameborder="0" allowfullscreen></iframe></div>')
+
     assert (
         compile('.. podster:: http://mtpod.podster.fm/0\n') ==
         '<iframe width="100%" height="85" src="http://mtpod.podster.fm/0/embed/13?link=1" '

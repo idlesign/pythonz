@@ -9,6 +9,8 @@ from bleach import clean
 from django.contrib import messages
 from django.utils import timezone
 from django.utils.text import Truncator
+from .integration.videos import VideoBroker
+from .exceptions import RemoteSourceError
 
 
 def get_logger(name):
@@ -327,6 +329,7 @@ class TextCompiler:
     RE_WARNIGN = re.compile('\.{2}\s*warning::\s*([^\n]+)\n', re.S)
     RE_GIST = re.compile('\.{2}\s*gist::\s*([^\n]+)\n', re.S)
     RE_POLL = re.compile('\.{2}\s*poll::\s*([^\n]+)\n', re.S)
+    RE_VIDEO = re.compile('\.{2}\s*video::\s*([^\n]+)\n', re.S)
     RE_PODSTER = re.compile('\.{2}\s*podster::\s*([^\n]+)[/]*\n', re.S)
     RE_IMAGE = re.compile('\.{2}\s*image::\s*([^\n]+)[/]*\n', re.S)
     RE_ACCENT = re.compile('`{2}([^`\n]+)`{2}')
@@ -351,6 +354,16 @@ class TextCompiler:
             lang = match.group(1)
             code = match.group(2)
             return '<pre><code class="%s">%s</code></pre>\n' % ((lang or 'python').strip(), code)
+
+        def replace_video(match):
+
+            try:
+                code, _ = VideoBroker.get_code_and_cover(match.group(1), wrap_responsive=True)
+
+            except RemoteSourceError:
+                code = '<b>Ошибка встраивания видео: неподдерживаемый сервис.</b>'
+
+            return code
 
         def replace_table(match):
             opt = match.group(1)  # Зарезервированная опция.
@@ -428,6 +441,8 @@ class TextCompiler:
             '<iframe src="https://forms.yandex.ru/u/\g<1>/?iframe=1" frameborder="0" width="100%" name="ya-form-\g<1>">'
             '</iframe></div></div>',
             text)
+
+        text = re.sub(cls.RE_VIDEO, replace_video, text)
 
         text = re.sub(cls.RE_TABLE, replace_table, text)
 
