@@ -23,7 +23,8 @@ from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWith
 from .integration.peps import sync as sync_peps
 from .integration.resources import PyDigestResource
 from .integration.summary import SUMMARY_FETCHERS
-from .integration.utils import get_json, scrape_page
+from .integration.utils import scrape_page
+from .integration.videos import VideoBroker
 from .integration.vacancies import HhVacancyManager
 from .utils import format_currency, truncate_chars, UTM, PersonName, sync_many_to_many, get_datetime_from_till
 
@@ -1409,8 +1410,6 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
             ModelWithAuthorAndTranslator, PersonsLinked):
     """Модель сущности `Видео`."""
 
-    EMBED_WIDTH = 560
-    EMBED_HEIGHT = 315
     COVER_UPLOAD_TO = 'videos'
 
     code = models.TextField('Код')
@@ -1439,74 +1438,16 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         }
         year = 'Год съёмок'
 
-    _supported_hostings = OrderedDict(sorted({
-        'Vimeo': ('vimeo.com', 'vimeo'),
-        'YouTube': ('youtu', 'youtube'),
-    }.items(), key=lambda k: k[0]))
-
     @property
     def turbo_content(self):
         return self.make_html(self.description)
 
     @classmethod
     def get_supported_hostings(cls):
-        return cls._supported_hostings.keys()
-
-    @classmethod
-    def get_data_from_vimeo(cls, url):
-        if 'vimeo.com' in url:  # http://vimeo.com/{id}
-            video_id = url.rsplit('/', 1)[-1]
-        else:
-            raise RemoteSourceError('Не удалось обнаружить ID видео в URL `%s`' % url)
-
-        embed_code = (
-            '<iframe src="//player.vimeo.com/video/%s?byline=0&amp;portrait=0&amp;color=ffffff" '
-            'width="%s" height="%s" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>'
-            '</iframe>' % (video_id, cls.EMBED_WIDTH, cls.EMBED_HEIGHT))
-
-        json = get_json('http://vimeo.com/api/v2/video/%s.json' % video_id)
-        cover_url = json[0]['thumbnail_small']
-
-        return embed_code, cover_url
-
-    @classmethod
-    def get_data_from_youtube(cls, url):
-        if 'youtu.be' in url:  # http://youtu.be/{id}
-            video_id = url.rsplit('/', 1)[-1]
-        elif 'watch?v=' in url:  # http://www.youtube.com/watch?v={id}
-            video_id = url.rsplit('v=', 1)[-1]
-        else:
-            raise RemoteSourceError('Не удалось обнаружить ID видео в URL `%s`' % url)
-
-        embed_code = (
-            '<iframe src="//www.youtube.com/embed/%s?rel=0" '
-            'width="%s" height="%s" frameborder="0" allowfullscreen>'
-            '</iframe>' % (video_id, cls.EMBED_WIDTH, cls.EMBED_HEIGHT))
-        cover_url = 'http://img.youtube.com/vi/%s/default.jpg' % video_id
-        return embed_code, cover_url
-
-    @classmethod
-    def get_hosting_for_url(cls, url):
-        hosting = None
-        for title, data in cls._supported_hostings.items():
-            search_str, hid = data
-            if search_str in url:
-                hosting = hid
-                break
-        return hosting
+        return VideoBroker.hostings.keys()
 
     def update_code_and_cover(self, url):
-        url = url.rstrip('/')
-        hid = self.get_hosting_for_url(url)
-        if hid is None:
-            raise RemoteSourceError('Не удалось обнаружить обработчик для указанного URL `%s`' % url)
-
-        method_name = 'get_data_from_%s' % hid
-        method = getattr(self, method_name, None)
-        if method is None:
-            raise RemoteSourceError('Не удалось обнаружить метод обработчика URL `%s`' % method_name)
-
-        embed_code, cover_url = method(url)
+        embed_code, cover_url = VideoBroker.get_code_and_cover(url)
 
         self.code = embed_code
         self.update_cover_from_url(cover_url)
