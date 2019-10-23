@@ -46,8 +46,16 @@ class VideoBroker:
         else:
             raise RemoteSourceError('Не удалось обнаружить ID видео в URL `%s`' % url)
 
+        if '?' in video_id:
+            video_id += '&'
+
+        else:
+            video_id += '?'
+
+        video_id = video_id.replace('t=', 'start=') + 'rel=0'
+
         embed_code = (
-            '<iframe src="//www.youtube.com/embed/%s?rel=0" '
+            '<iframe src="//www.youtube.com/embed/%s" '
             'width="%s" height="%s" frameborder="0" allowfullscreen>'
             '</iframe>' % (video_id, cls.EMBED_WIDTH, cls.EMBED_HEIGHT))
 

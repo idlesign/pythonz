@@ -111,11 +111,10 @@ def test_text_compiler():
         compile('.. gist:: someuser/gisthashhere\n') ==
         '<script src="https://gist.github.com/someuser/gisthashhere.js"></script>')
 
-
     assert (
-        compile('.. video:: https://youtu.be/ZE7WsnmGZ3U\n') ==
+        compile('.. video:: https://youtu.be/ZE7WsnmGZ3U?t=10\n') ==
         '<div class="embed-responsive embed-responsive-16by9">'
-        '<iframe src="//www.youtube.com/embed/ZE7WsnmGZ3U?rel=0" '
+        '<iframe src="//www.youtube.com/embed/ZE7WsnmGZ3U?start=10&rel=0" '
         'width="560" height="315" frameborder="0" allowfullscreen></iframe></div>')
 
     assert (
