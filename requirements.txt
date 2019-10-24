@@ -26,7 +26,7 @@ django-sitemessage==1.0.0
 django-sitemetrics==1.0.0
 django-siteprefs==1.0.0
 django-sitetree==1.12.0
-django-yaturbo==0.2.1
+django-yaturbo==0.3.0
 django-xross==0.6.0
 envbox==1.0.0
 uwsgiconf[cli]==0.15.1
