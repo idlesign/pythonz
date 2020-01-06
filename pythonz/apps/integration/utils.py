@@ -8,12 +8,8 @@ from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.utils import timezone
 
-from .. import VERSION
 from ..signals import sig_integration_failed
 from ..utils import truncate_words, truncate_chars
-
-
-USER_AGENT = 'pythonz.net/%s (press@pythonz.net)' % '.'.join(map(str, VERSION))
 
 
 def get_from_url(url, method='get', **kwargs):
@@ -27,7 +23,7 @@ def get_from_url(url, method='get', **kwargs):
     """
     r_kwargs = {
         'allow_redirects': True,
-        'headers': {'User-agent': USER_AGENT},
+        'headers': {'User-agent': settings.USER_AGENT},
     }
     r_kwargs.update(kwargs)
 
