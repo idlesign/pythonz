@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import etc.models
-import apps.generics.models
+from ..generics.models import get_upload_to
 from django.conf import settings
 
 
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('text_src', models.TextField(help_text='Подробное описание. Здесь же следует располагать примеры кода.', verbose_name='Исходный текст')),
                 ('title', models.CharField(help_text='Здесь следует указать название раздела справки или пакета, модуля, класса, метода, функции и т.п.', verbose_name='Название', max_length=255, unique=True)),
                 ('description', models.TextField(help_text='Краткое описание для раздела или пакета, модуля, класса, функции и т.п.', verbose_name='Описание')),
-                ('cover', models.ImageField(null=True, blank=True, max_length=255, upload_to=apps.generics.models.get_upload_to, verbose_name='Обложка')),
+                ('cover', models.ImageField(null=True, blank=True, max_length=255, upload_to=get_upload_to, verbose_name='Обложка')),
                 ('year', models.CharField(null=True, blank=True, max_length=10, verbose_name='Год')),
                 ('time_created', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
                 ('time_published', models.DateTimeField(null=True, editable=False, verbose_name='Дата публикации')),
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
                 ('text_src', models.TextField(help_text='Обзорное, более полное описание нововведений и изменений, произошедших в версии. <strong>Без обозначения личного отношения. Личное отношение можно выразить во Мнениях.</strong>', verbose_name='Исходный текст')),
                 ('title', models.CharField(verbose_name='Название', max_length=255, unique=True)),
                 ('description', models.TextField(help_text='Краткое описание основных изменений в версии.', verbose_name='Описание')),
-                ('cover', models.ImageField(null=True, blank=True, max_length=255, upload_to=apps.generics.models.get_upload_to, verbose_name='Обложка')),
+                ('cover', models.ImageField(null=True, blank=True, max_length=255, upload_to=get_upload_to, verbose_name='Обложка')),
                 ('year', models.CharField(null=True, blank=True, max_length=10, verbose_name='Год')),
                 ('time_created', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
                 ('time_published', models.DateTimeField(null=True, editable=False, verbose_name='Дата публикации')),

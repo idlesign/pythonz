@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import apps.generics.models
+from ..generics.models import get_upload_to
 from django.conf import settings
 
 
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='discussion',
             name='cover',
-            field=models.ImageField(verbose_name='Обложка', blank=True, null=True, upload_to=apps.generics.models.get_upload_to, max_length=255),
+            field=models.ImageField(verbose_name='Обложка', blank=True, null=True, upload_to=get_upload_to, max_length=255),
             preserve_default=True,
         ),
         migrations.AddField(

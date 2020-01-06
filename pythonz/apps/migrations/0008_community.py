@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import apps.generics.models
+from ..generics.models import get_upload_to
 from django.conf import settings
 import etc.models
 
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('text_src', models.TextField(verbose_name='Исходный текст')),
                 ('title', models.CharField(verbose_name='Название', max_length=255, unique=True)),
                 ('description', models.TextField(verbose_name='Описание', help_text='Пара-тройка предложений, описывающих, о чём пойдёт речь в статье.')),
-                ('cover', models.ImageField(null=True, verbose_name='Обложка', upload_to=apps.generics.models.get_upload_to, max_length=255, blank=True)),
+                ('cover', models.ImageField(null=True, verbose_name='Обложка', upload_to=get_upload_to, max_length=255, blank=True)),
                 ('year', models.CharField(null=True, verbose_name='Год', max_length=10, blank=True)),
                 ('time_created', models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)),
                 ('time_published', models.DateTimeField(null=True, verbose_name='Дата публикации', editable=False)),

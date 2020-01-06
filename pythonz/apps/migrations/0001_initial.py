@@ -5,7 +5,7 @@ from django.db import models, migrations
 from django.conf import settings
 import django.utils.timezone
 import etc.models
-import apps.generics.models
+from ..generics.models import get_upload_to
 import django.core.validators
 
 
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                 ('text_src', models.TextField(verbose_name='Исходный текст')),
                 ('title', models.CharField(max_length=255, verbose_name='Название', unique=True)),
                 ('description', models.TextField(verbose_name='Описание', help_text='Пара-тройка предложений, описывающих, о чём пойдёт речь в статье.')),
-                ('cover', models.ImageField(max_length=255, verbose_name='Обложка', upload_to=apps.generics.models.get_upload_to, null=True, blank=True)),
+                ('cover', models.ImageField(max_length=255, verbose_name='Обложка', upload_to=get_upload_to, null=True, blank=True)),
                 ('year', models.CharField(max_length=10, verbose_name='Год', null=True, blank=True)),
                 ('time_created', models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)),
                 ('time_published', models.DateTimeField(verbose_name='Дата публикации', null=True, editable=False)),
@@ -80,7 +80,7 @@ class Migration(migrations.Migration):
                 ('translator', models.CharField(max_length=255, verbose_name='Перевод', help_text='Укажите переводчиков, если материал переведён на русский с другого языка. Если переводчик неизвестен, можно указать главного редактора.<br><b>[u:<ид>:<имя>]</b> формирует ссылку на профиль пользователя pythonz. Например: [u:1:идле].', null=True, blank=True)),
                 ('title', models.CharField(max_length=255, verbose_name='Название', unique=True)),
                 ('description', models.TextField(verbose_name='Описание', help_text='Аннотация к книге, или другое краткое описание. Без обозначения личного отношения.')),
-                ('cover', models.ImageField(max_length=255, verbose_name='Обложка', upload_to=apps.generics.models.get_upload_to, null=True, blank=True)),
+                ('cover', models.ImageField(max_length=255, verbose_name='Обложка', upload_to=get_upload_to, null=True, blank=True)),
                 ('year', models.CharField(max_length=10, verbose_name='Год', null=True, blank=True)),
                 ('time_created', models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)),
                 ('time_published', models.DateTimeField(verbose_name='Дата публикации', null=True, editable=False)),
@@ -106,7 +106,7 @@ class Migration(migrations.Migration):
                 ('text_src', models.TextField(verbose_name='Исходный текст')),
                 ('title', models.CharField(max_length=255, verbose_name='Название', unique=True)),
                 ('description', models.TextField(verbose_name='Описание')),
-                ('cover', models.ImageField(max_length=255, verbose_name='Обложка', upload_to=apps.generics.models.get_upload_to, null=True, blank=True)),
+                ('cover', models.ImageField(max_length=255, verbose_name='Обложка', upload_to=get_upload_to, null=True, blank=True)),
                 ('year', models.CharField(max_length=10, verbose_name='Год', null=True, blank=True)),
                 ('time_created', models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)),
                 ('time_published', models.DateTimeField(verbose_name='Дата публикации', null=True, editable=False)),
@@ -184,7 +184,7 @@ class Migration(migrations.Migration):
                 ('translator', models.CharField(max_length=255, verbose_name='Перевод', help_text='Укажите переводчиков, если материал переведён на русский с другого языка. Если переводчик неизвестен, можно указать главного редактора.<br><b>[u:<ид>:<имя>]</b> формирует ссылку на профиль пользователя pythonz. Например: [u:1:идле].', null=True, blank=True)),
                 ('title', models.CharField(max_length=255, verbose_name='Название', unique=True)),
                 ('description', models.TextField(verbose_name='Описание', help_text='Краткое описание того, о чём это видео. Без обозначения личного отношения.')),
-                ('cover', models.ImageField(max_length=255, verbose_name='Обложка', upload_to=apps.generics.models.get_upload_to, null=True, blank=True)),
+                ('cover', models.ImageField(max_length=255, verbose_name='Обложка', upload_to=get_upload_to, null=True, blank=True)),
                 ('year', models.CharField(max_length=10, verbose_name='Год', null=True, blank=True)),
                 ('time_created', models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)),
                 ('time_published', models.DateTimeField(verbose_name='Дата публикации', null=True, editable=False)),
