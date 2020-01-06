@@ -1,0 +1,50 @@
+# Place into:   /etc/systemd/system/pythonz.service
+# Setup:        sudo systemctl enable $PWD/pythonz.service
+# Start:        sudo systemctl start pythonz.service
+# Stop:         sudo systemctl stop pythonz.service
+# Restart:      sudo systemctl restart pythonz.service
+# Status:       systemctl status pythonz.service
+# Journal:      journalctl -fu pythonz.service
+
+[Unit]
+Description=pythonz webscaff service
+Wants=network-online.target
+After=network-online.target
+
+
+[Service]
+ExecStart=/usr/bin/pythonz uwsgi_run
+Restart=on-failure
+KillSignal=SIGTERM
+Type=notify
+NotifyAccess=all
+# Bind to priviledged ports.
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+CPUAccounting=yes
+MemoryAccounting=yes
+IOAccounting=yes
+IPAccounting=yes
+PrivateTmp=yes
+RemoveIPC=yes
+TasksAccounting=yes
+
+ProtectSystem=strict
+ProtectHome=read-only
+
+User=pythonz
+Group=pythonz
+
+# /run/
+RuntimeDirectory=pythonz
+# /var/lib/
+StateDirectory=pythonz
+# /var/log/
+LogsDirectory=pythonz
+# /var/cache/
+CacheDirectory=pythonz
+
+
+[Install]
+WantedBy=multi-user.target
+

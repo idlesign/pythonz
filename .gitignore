@@ -1,9 +1,9 @@
-.project
-.pydevproject
 .idea
-.tox
 .cache
 __pycache__
-/data/media/
-/data/db/
-/settings/settings_production.py
+wscaff.yml
+state/*
+conf/django.py
+pythonz/data/media/
+pythonz/data/db/
+pythonz/settings/settings_production.py
