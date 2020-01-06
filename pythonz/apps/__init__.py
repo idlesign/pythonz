@@ -1,7 +1,5 @@
-VERSION = (0, 30, 0)
 
-# Конфигурация лежит здесь:
-default_app_config = 'apps.config.PythonzAppsConfig'
+default_app_config = 'pythonz.apps.config.PythonzAppsConfig'
 
 
 from json import JSONEncoder

@@ -10,8 +10,8 @@ from robots.views import rules_list
 from sitegate.toolbox import get_sitegate_urls
 from sitemessage.toolbox import get_sitemessage_urls
 
-from apps.realms import bootstrap_realms  # Здесь относительный импорт работать не будет.
-from apps.views import page_not_found, permission_denied, server_error, index, search, login, telebot, user_settings
+from .apps.realms import bootstrap_realms  # Здесь относительный импорт работать не будет.
+from .apps.views import page_not_found, permission_denied, server_error, index, search, login, telebot, user_settings
 
 urlpatterns = [
     path('', index, name='index'),

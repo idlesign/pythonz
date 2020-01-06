@@ -3,8 +3,8 @@ import pytest
 
 @pytest.mark.skip('Takes too long to run')
 def test_booksru(mocker):
-    from apps.integration import partners
-    from apps.models import PartnerLink
+    from pythonz.apps.integration import partners
+    from pythonz.apps.models import PartnerLink
 
     book_link = 'https://www.books.ru/books/nosql-novaya-metodologiya-razrabotki-nerelyatsionnykh-baz-dannykh-3195898'
     partner_id = '12345'

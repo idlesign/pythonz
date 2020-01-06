@@ -1,9 +1,9 @@
 import pytest
 
 
-def atest_person():
+def test_person():
 
-    from apps.models import Person
+    from pythonz.apps.models import Person
 
     known = {}
     person = Person(
@@ -27,9 +27,9 @@ def atest_person():
     }
 
 
-def atest_pep():
+def test_pep():
 
-    from apps.models import PEP
+    from pythonz.apps.models import PEP
 
     pep1 = PEP(num=1)
     pep1.save()
@@ -44,8 +44,8 @@ def atest_pep():
     assert pep9999.get_absolute_url(with_prefix=True) == 'http://pythonz.net/peps/named/9999/'
 
 
-def atest_summary():
+def test_summary():
 
-    from apps.models import Summary
+    from pythonz.apps.models import Summary
 
     Summary.create_article()

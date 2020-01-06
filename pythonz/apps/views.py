@@ -155,7 +155,7 @@ class CategoryListingView(RealmView):
     """Выводит список известных категорий, либо список сущностей для конкретной категории."""
 
     def get(self, request, obj_id=None):
-        from apps.realms import get_realms
+        from .realms import get_realms
         realms = get_realms().values()
 
         if obj_id is None:  # Запрошен список всех известных категорий.
