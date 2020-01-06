@@ -7,8 +7,11 @@
 from envbox import import_by_environment, get_environment
 
 
-current_env = import_by_environment(get_environment(detectors_opts={'file': {'source': '../conf/environment'}}))
+current_env = import_by_environment(
+    # For production one can place `/var/lib/pythonz/environ` file with `production` as it contents.
+    get_environment(detectors_opts={'file': {'source': '/var/lib/pythonz/environ'}}))
+
 
 IN_PRODUCTION = current_env == 'production'
 
-print('Environment type: %s' % current_env)
+print('# Environment type: %s' % current_env)
