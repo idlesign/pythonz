@@ -20,7 +20,7 @@ setup(
 
     tests_require=[
         'pytest',
-        'pytest-djangoapp>=0.11.0'
+        'pytest-djangoapp>=0.13.0'
     ],
     test_suite='tests',
     setup_requires=[] + PYTEST_RUNNER,
