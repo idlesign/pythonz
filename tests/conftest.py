@@ -1,11 +1,19 @@
+import os
 import sys
-from os.path import dirname, abspath
+from pathlib import Path
 
 from pytest_djangoapp import configure_djangoapp_plugin
 
-PROJECT_PATH = dirname(dirname(abspath(__file__)))
+# Имспользуем имитатор вместо uwsgi.
+os.environ['UWSGICONF_FORCE_STUB'] = '1'
 
-sys.path = [dirname(PROJECT_PATH), PROJECT_PATH] + sys.path
+
+PROJECT_PATH = Path(__file__).absolute().parent.parent
+
+sys.path = [
+    f'{PROJECT_PATH.parent}',
+    f'{PROJECT_PATH}',
+] + sys.path
 
 
 def hook(settings):
@@ -15,7 +23,8 @@ def hook(settings):
 
     if settings_path:
         settings_module = import_module(settings_path)
-        settings.update(settings_module.__dict__)
+        settings_dict = {k: v for k, v in settings_module.__dict__.items() if k.upper() == k}
+        settings.update(settings_dict)
         return settings
 
     return {}
