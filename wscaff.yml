@@ -1,0 +1,8 @@
+
+remotes: 0.0.0.0
+
+project:
+    name: pythonz
+    repo: git@github.com:idlesign/pythonz.git
+    domain: pythonz.net
+    email: idlesign@yandex.ru
