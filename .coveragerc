@@ -1,0 +1,4 @@
+[run]
+source = pythonz/
+omit = pythonz/apps/migrations/*
+
