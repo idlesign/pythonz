@@ -3,6 +3,7 @@
 __pycache__
 wscaff.yml
 state/*
+venv/*
 conf/django.py
 pythonz/data/media/
 pythonz/data/db/
