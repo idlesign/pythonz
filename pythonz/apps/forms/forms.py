@@ -1,7 +1,7 @@
 from django.conf import settings
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from datetimewidget.widgets import DateTimeWidget, DateWidget
+# from datetimewidget.widgets import DateTimeWidget, DateWidget
 
 from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference, Version
 from ..generics.forms import RealmEditBaseForm
@@ -91,7 +91,7 @@ class VersionForm(RealmEditBaseForm):
         )
         widgets = {
             'text_src': RstEditWidget(attrs={'rows': 25}),
-            'date': DateWidget(usel10n=True, bootstrap_version=3),
+            # 'date': DateWidget(usel10n=True, bootstrap_version=3),
         }
 
 
@@ -236,8 +236,8 @@ class EventForm(RealmEditBaseForm):
         )
         widgets = {
             'place': PlaceWidget(),
-            'time_start': DateTimeWidget(**CALENDAR_OPTIONS),
-            'time_finish': DateTimeWidget(**CALENDAR_OPTIONS),
+            # 'time_start': DateTimeWidget(**CALENDAR_OPTIONS),
+            # 'time_finish': DateTimeWidget(**CALENDAR_OPTIONS),
         }
 
 
