@@ -28,7 +28,6 @@ DATABASES = {
     }
 }
 
-CONN_MAX_AGE = None  # Постоянное соединение.
 
 SITE_ID = 1
 
@@ -115,7 +114,5 @@ TEMPLATES = [
     },
 ]
 
-
-UWSGIFY_MODULE_INIT = 'tasks'
 
 ROBOTS_CACHE_TIMEOUT = 24 * 60 * 60
