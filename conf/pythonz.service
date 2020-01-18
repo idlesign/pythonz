@@ -13,7 +13,7 @@ After=network-online.target
 
 
 [Service]
-ExecStart=/usr/bin/pythonz uwsgi_run
+ExecStart=/usr/bin/pythonz uwsgi_run --noruntimes
 Restart=on-failure
 KillSignal=SIGTERM
 Type=notify
