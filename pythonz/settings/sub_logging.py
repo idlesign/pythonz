@@ -1,4 +1,5 @@
-PATH_DEBUG_LOG = '/tmp/pythonz_debug.log'
+from .sub_paths import PROJECT_DIR_LOG
+
 
 RAVEN_DSN = ''
 
@@ -45,7 +46,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': PATH_DEBUG_LOG,
+            'filename': str(PROJECT_DIR_LOG / 'debug.log'),
             'formatter': 'verbose'
         },
     },
