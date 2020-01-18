@@ -1,4 +1,4 @@
-from .sub_paths import PROJECT_DIR_LOG
+from .sub_paths import PROJECT_DIR_STATE
 
 
 RAVEN_DSN = ''
@@ -46,7 +46,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': str(PROJECT_DIR_LOG / 'debug.log'),
+            'filename': str(PROJECT_DIR_STATE / 'debug.log'),
             'formatter': 'verbose'
         },
     },
