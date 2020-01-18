@@ -4,7 +4,7 @@ from pathlib import Path
 
 from pytest_djangoapp import configure_djangoapp_plugin
 
-# Имспользуем имитатор вместо uwsgi.
+# Используем имитатор вместо uwsgi.
 os.environ['UWSGICONF_FORCE_STUB'] = '1'
 
 

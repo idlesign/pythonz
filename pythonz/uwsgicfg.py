@@ -32,6 +32,7 @@ def get_configurations():
     section.set_runtime_dir(f'{settings.PROJECT_DIR_RUN}')
 
     section.main_process.change_dir(f'{dir_state}')
+    section.workers.set_reload_params(max_requests=10000)
 
     section.spooler.add(f"{dir_state / 'spool'}")
 
