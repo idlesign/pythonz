@@ -17,7 +17,7 @@ class ReadOnlyWidget(forms.Widget):
     def render(self, name, value, attrs=None, renderer=None):
         if hasattr(self, 'initial'):
             value = self.initial
-        return '%s' % (value or '')
+        return f"{value or ''}"
 
 
 class PlaceWidget(TextInput):

@@ -32,7 +32,7 @@ class ModelWithAuthorAndTranslator(models.Model):
     translator = models.CharField(
         'Перевод', max_length=255, blank=True, null=True,
         help_text=('Укажите переводчиков, если материал переведён на русский с другого языка. '
-                   'Если переводчик неизвестен, можно указать главного редактора.%s' % _hint_userlink))
+                   f'Если переводчик неизвестен, можно указать главного редактора.{_hint_userlink}'))
 
     class Meta:
         abstract = True
@@ -69,7 +69,7 @@ def get_upload_to(instance, filename):
     :return:
     """
     category = getattr(instance, 'COVER_UPLOAD_TO')
-    return os.path.join('img', category, 'orig', '%s%s' % (uuid4(), os.path.splitext(filename)[-1]))
+    return os.path.join('img', category, 'orig', f'{uuid4()}{os.path.splitext(filename)[-1]}')
 
 
 class CommonEntityModel(models.Model):
@@ -392,7 +392,7 @@ class RealmBaseModel(ModelWithFlag):
         """
         if class_name is None:
             class_name = cls.__name__
-        return 'most_voted|%s|%s' % (class_name, category)
+        return f'most_voted|{class_name}|{category}'
 
     @classmethod
     def get_most_voted_objects(cls, category=None, base_query=None):
@@ -597,7 +597,7 @@ class RealmBaseModel(ModelWithFlag):
         url = reverse(details_urlname, args=[str(id_attr)])
 
         if with_prefix:
-            url = '%s%s' % (settings.SITE_URL, url)
+            url = f'{settings.SITE_URL}{url}'
 
         if utm_source is not None:
             url = UTM.add_to_internal_url(url, utm_source)
@@ -615,7 +615,7 @@ class RealmBaseModel(ModelWithFlag):
         :return:
         """
         tmp, realm_name_plural = self.realm.get_names()
-        return reverse('%s:tags' % realm_name_plural, args=[str(category.id)])
+        return reverse(f'{realm_name_plural}:tags', args=[str(category.id)])
 
     def get_display_name(self):
         """Имя для отображения в интерфейсе.

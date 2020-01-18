@@ -74,7 +74,7 @@ class ItemsFetcherBase:
         """
         fetcher_name = self.__class__.__name__
 
-        LOG.debug('Summary fetcher `%s` started ...', fetcher_name)
+        LOG.debug(f'Summary fetcher `{fetcher_name}` started ...')
 
         try:
             fetched = self.fetch()
@@ -86,9 +86,9 @@ class ItemsFetcherBase:
         except Exception as e:
             sig_integration_failed.send(
                 None,
-                description='Summary fetcher `%s` error: %s %s' % (fetcher_name, e, format_exc()))
+                description=f'Summary fetcher `{fetcher_name}` error: {e} {format_exc()}')
 
-            LOG.exception('Summary fetcher `%s` failed', fetcher_name)
+            LOG.exception(f'Summary fetcher `{fetcher_name}` failed')
 
         return None
 
@@ -104,7 +104,7 @@ class ItemsFetcherBase:
 
         :rtype: tuple[list, list]
         """
-        raise NotImplementedError('`%s` must implement .fetch()' % self.__class__.__name__)  # pragma: nocover
+        raise NotImplementedError(f'`{self.__class__.__name__}` must implement .fetch()')  # pragma: nocover
 
     def _filter(self, items):
         """
@@ -123,8 +123,8 @@ class ItemsFetcherBase:
             if mode_cumulative:
                 if len(previous_result) > 1:
                     raise LogicError(
-                        '`%s`fetcher uses `mode_cumulative` but `previous_result` contains more than one item.' %
-                        self.__class__)
+                        f'`{self.__class__}`fetcher uses `mode_cumulative` '
+                        'but `previous_result` contains more than one item.')
 
                 previous_result = previous_result[0]
                 try:
@@ -161,7 +161,7 @@ class PipermailBase(ItemsFetcherBase):
     mode_cumulative = True
 
     def get_url(self):
-        return 'https://mail.python.org/pipermail/%s/' % self.alias
+        return f'https://mail.python.org/pipermail/{self.alias}/'
 
     def __init__(self, previous_result, previous_dt, year_month=None, **kwargs):
         self.year_month = year_month
@@ -178,7 +178,7 @@ class PipermailBase(ItemsFetcherBase):
             match = re.search('="((\d{4}-[^/]+)%s)"' % details_page_file, page.text)
 
             if not match:
-                sig_integration_failed.send(None, description='Subject page link not found at %s' % url)
+                sig_integration_failed.send(None, description=f'Subject page link not found at {url}')
                 return
 
             year_month = match.group(2)
@@ -233,7 +233,7 @@ class StackdataBase(ItemsFetcherBase):
         return url
 
     def get_item_url(self, item_id):
-        return 'https://%s/questions/%s/' % (self.domain, item_id)
+        return f'https://{self.domain}/questions/{item_id}/'
 
     def fetch(self):
         url = self.get_url()

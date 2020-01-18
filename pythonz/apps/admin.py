@@ -21,7 +21,7 @@ def get_inline(model, field_name):
     :param str field_name:
     :rtype: class
     """
-    inline_cls = type('%sInline' % model.__name__.capitalize, (admin.TabularInline,), {
+    inline_cls = type(f'{model.__name__.capitalize()}Inline', (admin.TabularInline,), {
         'model': getattr(model, field_name).through,
         'extra': 0,
     })

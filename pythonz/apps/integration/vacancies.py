@@ -35,7 +35,7 @@ class HhVacancyManager:
                 'field': 'name',  # description
         })
 
-        response = get_json('%s?%s' % (base_url, query))
+        response = get_json(f'{base_url}?{query}')
 
         if 'items' not in response:
             return None

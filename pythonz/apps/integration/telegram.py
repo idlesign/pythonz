@@ -19,7 +19,7 @@ bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN, threaded=False)
 
 def get_webhook_url():
     """Возвращает webhook URL."""
-    return '%s/%s/' % (settings.SITE_URL.replace('http', 'https'), settings.TELEGRAM_BOT_URL)
+    return f"{settings.SITE_URL.replace('http', 'https')}/{settings.TELEGRAM_BOT_URL}/"
 
 
 def set_webhook():
@@ -63,7 +63,7 @@ def on_start(message):
     """
     LOGGER.debug('Got /start command.')
     bot.reply_to(
-        message, 'Рад знакомству, %s.\nЧтобы получить справку, наберите команду /help.' % message.from_user.first_name)
+        message, f'Рад знакомству, {message.from_user.first_name}.\nЧтобы получить справку, наберите команду /help.')
 
 
 @bot.message_handler(commands=['chat_id'])
@@ -73,7 +73,7 @@ def on_chat_id(message):
     :param telebot.types.Message message:
     """
     LOGGER.debug('Got /chat_id command.')
-    bot.reply_to(message, 'Идентификатор этого чата: %s' % message.chat.id)
+    bot.reply_to(message, f'Идентификатор этого чата: {message.chat.id}')
 
 
 @bot.message_handler(commands=['help'])
@@ -103,9 +103,9 @@ def get_inline_zen():
         zen_ru = clean(zen_ru, tags=[], strip=True)
         results.append(
             telebot.types.InlineQueryResultArticle(
-                'zen%s' % idx,
-                '%s. %s' % (idx, zen_ru),
-                telebot.types.InputTextMessageContent('%s. %s — %s' % (idx, zen_en, zen_ru)),
+                f'zen{idx}',
+                f'{idx}. {zen_ru}',
+                telebot.types.InputTextMessageContent(f'{idx}. {zen_en} — {zen_ru}'),
                 description=zen_en
             ))
 
@@ -129,7 +129,7 @@ def compose_entities_inline_result(entities):
             telebot.types.InlineQueryResultArticle(
                 str(entity.id),
                 title,
-                telebot.types.InputTextMessageContent('%s — %s' % (title, entity.get_absolute_url(True))),
+                telebot.types.InputTextMessageContent(f'{title} — {entity.get_absolute_url(with_prefix=True)}'),
                 description=description
             ))
     return results
@@ -218,4 +218,4 @@ def echo_message(message):
     :param telebot.types.Message message:
     """
     LOGGER.debug('Got unhandled message.')
-    bot.reply_to(message, '%s? Не знаю, что вам на это ответить.' % message.text)
+    bot.reply_to(message, f'{message.text}? Не знаю, что вам на это ответить.')

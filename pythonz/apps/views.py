@@ -298,7 +298,7 @@ def search(request):
 
         # Перенаправляем на поиск по всему сайту.
         redirect_response = redirect('search_site')
-        redirect_response['Location'] += '?searchid=%s&text=%s' % (settings.YANDEX_SEARCH_ID, quote_plus(search_term))
+        redirect_response['Location'] += f'?searchid={settings.YANDEX_SEARCH_ID}&text={quote_plus(search_term)}'
         return redirect_response
 
     elif total_results == 1:

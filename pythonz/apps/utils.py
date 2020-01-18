@@ -19,7 +19,7 @@ def get_logger(name):
     :param name:
     :rtype: logging.Logger
     """
-    return logging.getLogger('pythonz.%s' % name)
+    return logging.getLogger(f'pythonz.{name}')
 
 
 LOG = get_logger(__name__)
@@ -76,7 +76,7 @@ class PersonName(object):
 
         :rtype: str
         """
-        return ('%s %s' % (self._name[-1], self._name[0])).strip()
+        return f'{self._name[-1]} {self._name[0]}'.strip()
 
     @property
     def first_last(self):
@@ -84,7 +84,7 @@ class PersonName(object):
 
         :rtype: str
         """
-        return ('%s %s' % (self._name[0], self._name[-1])).strip()
+        return f'{self._name[0]} {self._name[-1]}'.strip()
 
     @property
     def first(self):
@@ -121,7 +121,7 @@ class PersonName(object):
             return ''
 
         name = self._name
-        short = '%s. %s' % (name[0][0], ' '.join(name[1:]))
+        short = f"{name[0][0]}. {' '.join(name[1:])}"
         return short
 
 
@@ -205,7 +205,7 @@ def sync_many_to_many(src_obj, model, m2m_attr, related_attr, known_items, unkno
             val = known_items.get(item, None)  # Модель или список моделей.
 
             if val is None:
-                LOG.debug('Handling unknown item in sync_many_to_many(): %s', item)
+                LOG.debug(f'Handling unknown item in sync_many_to_many(): {item}')
                 val = unknown_handler(item, known_items)
                 if val is None:
                     unknown.append(item)
@@ -311,7 +311,7 @@ class BasicTypograph:
 
     @classmethod
     def apply_to(cls, input_str):
-        input_str = ' %s ' % input_str.strip()
+        input_str = f' {input_str.strip()} '
 
         for name, (regexp, replacement) in cls.rules.items():
             input_str = re.sub(regexp, replacement, input_str)
@@ -348,12 +348,12 @@ class TextCompiler:
         :return:
         """
         def replace_href(match):
-            return '<a href="%s">%s</a>' % (match.group(1), url_mangle(match.group(1)))
+            return f'<a href="{match.group(1)}">{url_mangle(match.group(1))}</a>'
 
         def replace_code(match):
-            lang = match.group(1)
+            lang = (match.group(1) or 'python').strip()
             code = match.group(2)
-            return '<pre><code class="%s">%s</code></pre>\n' % ((lang or 'python').strip(), code)
+            return f'<pre><code class="{lang}">{code}</code></pre>\n'
 
         def replace_video(match):
 
@@ -381,8 +381,7 @@ class TextCompiler:
                 if line.startswith('! '):
                     # Заголовок таблицы.
                     rows.append(
-                        '<thead><tr><th>%s</th></tr></thead>' %
-                        '</th><th>'.join(line.lstrip(' !').split(' | ')))
+                        f"<thead><tr><th>{'</th><th>'.join(line.lstrip(' !').split(' | '))}</th></tr></thead>")
                 else:
                     attrs_row = ''
                     cells = []
@@ -396,20 +395,22 @@ class TextCompiler:
 
                             bg_class = bg_map.get(bg_letter, '')
                             if bg_class:
-                                attr = ' class="%s"' % bg_class
+                                attr = f' class="{bg_class}"'
 
                                 if row_sign == '+':
                                     attrs_row = attr
                                 else:
                                     attrs_cell = attr
 
-                        cells.append('<td%s>%s</td>' % (attrs_cell, value))
+                        cells.append(f'<td{attrs_cell}>{value}</td>')
 
-                    rows.append('<tr%s>%s</tr>' % (attrs_row, ''.join(cells)))
+                    rows.append(f"<tr{attrs_row}>{''.join(cells)}</tr>")
+
+            rows = ''.join(rows)
 
             return (
-                '<div class="table-responsive">'
-                '<table class="table table-striped table-bordered table-hover">%s</table></div>\n' % ''.join(rows))
+                '<div class="table-responsive"><table class="table table-striped table-bordered table-hover">'
+                f'{rows}</table></div>\n')
 
         # Заменяем некоторые символы для правила RE_URL_WITH_TITLE, чтобы их не устранил bleach.
         text = text.replace('<ht', '◀ht')
@@ -483,7 +484,7 @@ def url_mangle(url):
     splitted[qs] = ''
     splitted[frag] = ''
     if splitted[path].strip('/'):
-        splitted[path] = '<...>%s' % splitted[path].split('/')[-1]  # Последний кусок пути.
+        splitted[path] = f"<...>{splitted[path].split('/')[-1]}"  # Последний кусок пути.
     mangled = urlunsplit(splitted)
     return mangled
 

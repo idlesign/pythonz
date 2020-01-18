@@ -20,16 +20,16 @@ class VideoBroker:
         from ..integration.utils import get_json
 
         if 'vimeo.com' not in url:  # http://vimeo.com/{id}
-            raise RemoteSourceError('Не удалось обнаружить ID видео в URL `%s`' % url)
+            raise RemoteSourceError(f'Не удалось обнаружить ID видео в URL `{url}`')
 
         video_id = url.rsplit('/', 1)[-1]
 
         embed_code = (
-            '<iframe src="//player.vimeo.com/video/%s?byline=0&amp;portrait=0&amp;color=ffffff" '
-            'width="%s" height="%s" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>'
-            '</iframe>' % (video_id, cls.EMBED_WIDTH, cls.EMBED_HEIGHT))
+            f'<iframe src="//player.vimeo.com/video/{video_id}?byline=0&amp;portrait=0&amp;color=ffffff" '
+            f'width="{cls.EMBED_WIDTH}" height="{cls.EMBED_HEIGHT}" frameborder="0" '
+            'webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>')
 
-        json = get_json('http://vimeo.com/api/v2/video/%s.json' % video_id)
+        json = get_json(f'http://vimeo.com/api/v2/video/{video_id}.json')
         cover_url = json[0]['thumbnail_small']
 
         return embed_code, cover_url
@@ -44,7 +44,7 @@ class VideoBroker:
             video_id = url.rsplit('v=', 1)[-1]
 
         else:
-            raise RemoteSourceError('Не удалось обнаружить ID видео в URL `%s`' % url)
+            raise RemoteSourceError(f'Не удалось обнаружить ID видео в URL `{url}`')
 
         if '?' in video_id:
             video_id += '&'
@@ -55,11 +55,11 @@ class VideoBroker:
         video_id = video_id.replace('t=', 'start=') + 'rel=0'
 
         embed_code = (
-            '<iframe src="//www.youtube.com/embed/%s" '
-            'width="%s" height="%s" frameborder="0" allowfullscreen>'
-            '</iframe>' % (video_id, cls.EMBED_WIDTH, cls.EMBED_HEIGHT))
+            f'<iframe src="//www.youtube.com/embed/{video_id}" '
+            f'width="{cls.EMBED_WIDTH}" height="{cls.EMBED_HEIGHT}" frameborder="0" allowfullscreen>'
+            '</iframe>')
 
-        cover_url = 'http://img.youtube.com/vi/%s/default.jpg' % video_id
+        cover_url = f'http://img.youtube.com/vi/{video_id}/default.jpg'
 
         return embed_code, cover_url
 
@@ -82,12 +82,12 @@ class VideoBroker:
         url = url.rstrip('/')
         hid = cls.get_hosting_for_url(url)
 
-        msg = 'Не удалось обнаружить обработчик для указанного URL `%s`' % url
+        msg = f'Не удалось обнаружить обработчик для указанного URL `{url}`'
 
         if hid is None:
             raise RemoteSourceError(msg)
 
-        method_name = 'get_data_from_%s' % hid
+        method_name = f'get_data_from_{hid}'
         method = getattr(cls, method_name, None)
 
         if method is None:
@@ -96,6 +96,6 @@ class VideoBroker:
         embed_code, cover_url = method(url)
 
         if wrap_responsive:
-            embed_code = '<div class="embed-responsive embed-responsive-16by9">%s</div>' % embed_code
+            embed_code = f'<div class="embed-responsive embed-responsive-16by9">{embed_code}</div>'
 
         return embed_code, cover_url

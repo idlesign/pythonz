@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
     def handle(self, stale_person_id, target_person_id, **options):
 
-        LOG.info('Merging person %s into %s ...', stale_person_id, target_person_id)
+        LOG.info(f'Merging person {stale_person_id} into {target_person_id} ...')
 
         # Person exists sanity check
         Person.objects.get(pk=target_person_id)

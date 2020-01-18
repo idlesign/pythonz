@@ -173,15 +173,15 @@ class PythonzTwitterMessage(PythonzBaseMessage):
         MAX_LEN = 139  # Максимальная длина твита. Для верности меньше.
         URL_SHORTENED_LEN = 30  # Максимальная длина сокращённого URL
 
-        prefix = '%s «' % entity.get_verbose_name()
+        prefix = f'{entity.get_verbose_name()} «'
         postfix = '»'
         if settings.AGRESSIVE_MODE:
-            postfix = '%s #python' % postfix
+            postfix = f'{postfix} #python'
 
         title = Truncator(str(entity)).chars(MAX_LEN - URL_SHORTENED_LEN - len(prefix) - len(postfix))
 
         url = entity.get_absolute_url(with_prefix=True, utm_source='twee')
-        message = '%s%s%s %s' % (prefix, title, postfix, url)
+        message = f'{prefix}{title}{postfix} {url}'
 
         cls.create(message)
 
@@ -198,9 +198,7 @@ class PythonzTelegramMessage(PythonzBaseMessage):
 
     @classmethod
     def create_published(cls, entity):
-        message = 'Новое: %s «%s» %s' % (
-            entity.get_verbose_name(), str(entity), entity.get_absolute_url(with_prefix=True))
-
+        message = f'Новое: {entity.get_verbose_name()} «{entity}» {entity.get_absolute_url(with_prefix=True)}'
         cls.create(message)
 
     @classmethod
@@ -233,7 +231,7 @@ class PythonzEmailMessage(EmailHtmlMessage):
         :param subject:
         :return:
         """
-        return 'pythonz.net: %s' % subject
+        return f'pythonz.net: {subject}'
 
     @classmethod
     def get_admins_emails(cls):
@@ -281,7 +279,7 @@ class PythonzEmailNewEntity(PythonzEmailMessage):
         if not entity.notify_on_publish:
             return False
 
-        subject = cls.get_full_subject('Новое - %s' % entity)
+        subject = cls.get_full_subject(f'Новое - {entity}')
         context = {
             'entity_title': str(entity),
             'entity_url': entity.get_absolute_url()
@@ -309,7 +307,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
         format_date = lambda d: d.date().strftime('%d.%m.%Y')
         date_from, date_till = get_datetime_from_till(7)
 
-        subject = cls.get_full_subject('Подборка материалов %s-%s' % (format_date(date_from), format_date(date_till)))
+        subject = cls.get_full_subject(f'Подборка материалов {format_date(date_from)}-{format_date(date_till)}')
         context = {
             'date_from': date_from.timestamp(),
             'date_till': date_till.timestamp()
