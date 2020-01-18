@@ -20,7 +20,7 @@ def get_configurations():
         wsgi_module=f'{project}.wsgi',
         process_prefix=f'[{project}] ',
 
-        workers=2,
+        workers=3,
         threads=3,
 
         log_dedicated=True,
