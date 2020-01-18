@@ -49,6 +49,9 @@ LOGGING = {
             'filename': str(PROJECT_DIR_STATE / 'debug.log'),
             'formatter': 'verbose'
         },
+        'null': {
+            'class': 'logging.NullHandler',
+        },
     },
     'loggers': {
         'root': {
@@ -59,6 +62,10 @@ LOGGING = {
         'django.db.backends': {
             'level': 'ERROR',
             'handlers': ['console'],
+            'propagate': False,
+        },
+        'django.security.DisallowedHost': {
+            'handlers': ['null'],
             'propagate': False,
         },
         'pythonz': {
