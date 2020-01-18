@@ -78,7 +78,7 @@ class Category(Category_):
     def description(self):
         return self.note
 
-    def get_absolute_url(self):
+    def get_absolute_url(self, **kwargs):
         # Сокращённая реализация из RealmBaseModel.
         return reverse(self.realm.get_details_urlname(), args=[self.id])
 
@@ -190,7 +190,7 @@ class Summary(RealmBaseModel):
         ordering = ('-time_created',)
 
     def __str__(self):
-        return '%s' % self.time_created
+        return str(self.time_created)
 
     @classmethod
     def make_text(cls, fetched):
@@ -205,14 +205,14 @@ class Summary(RealmBaseModel):
             if not items:
                 continue
 
-            summary_text.append('.. title:: %s' % SUMMARY_FETCHERS[fetcher_alias].title)
+            summary_text.append(f'.. title:: {SUMMARY_FETCHERS[fetcher_alias].title}')
             summary_text.append('.. table::')
 
             for item in items:  # type: SummaryItem
-                line = '`%s<%s>`_' % (item.title, item.url)
+                line = f'`{item.title}<{item.url}>`_'
 
                 if item.description:
-                    line += ' — %s' % item.description
+                    line += f' — {item.description}'
 
                 summary_text.append(line)
 
@@ -240,7 +240,7 @@ class Summary(RealmBaseModel):
         robot_id = settings.ROBOT_USER_ID
 
         article = Article(
-            title='Сводка %s — %s' % (format_date(date_from), format_date(date_till)),
+            title=f'Сводка {format_date(date_from)} — {format_date(date_till)}',
             description='А теперь о том, что происходило в последнее время на других ресурсах.',
             submitter_id=robot_id,
             text_src=summary_text,
@@ -310,7 +310,7 @@ class PartnerLink(models.Model):
         verbose_name_plural = 'Партнёрские ссылки'
 
     def __str__(self):
-        return 'Ссылка %s для %s %s' % (self.id, self.content_type, self.object_id)
+        return f'Ссылка {self.id} для {self.content_type} {self.object_id}'
 
 
 class ModelWithPartnerLinks(models.Model):
@@ -602,8 +602,9 @@ class Community(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Mod
 
     contacts = models.CharField(
         'Контактные лица', null=True, blank=True, max_length=255,
-        help_text=('Контактные лица через запятую, представляющие сообщество, координаторы, основатели.%s' %
-                   ModelWithAuthorAndTranslator._hint_userlink))
+        help_text=(
+            'Контактные лица через запятую, представляющие сообщество, координаторы, основатели.'
+            f'{ModelWithAuthorAndTranslator._hint_userlink}'))
 
     url = models.URLField('Страница в сети', null=True, blank=True)
 
@@ -619,12 +620,12 @@ class Community(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Mod
         description = {
             'verbose_name': 'Кратко',
             'help_text': (
-                'Сжатая предварительная информация о сообществе (например, направление деятельности). %s' %
-                HINT_IMPERSONAL_REQUIRED)
+                'Сжатая предварительная информация о сообществе (например, направление деятельности). '
+                f'{HINT_IMPERSONAL_REQUIRED}')
         }
         text_src = {
             'verbose_name': 'Описание, принципы работы, правила, контактная информация',
-            'help_text': '%s' % HINT_IMPERSONAL_REQUIRED,
+            'help_text': HINT_IMPERSONAL_REQUIRED,
         }
         linked = {
             'verbose_name': 'Связанные сообщества',
@@ -897,7 +898,7 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussio
         title = 'Название книги'
         description = {
             'verbose_name': 'Аннотация',
-            'help_text': 'Аннотация к книге, или другое краткое описание. %s' % HINT_IMPERSONAL_REQUIRED,
+            'help_text': f'Аннотация к книге, или другое краткое описание. {HINT_IMPERSONAL_REQUIRED}',
         }
         linked = {
             'verbose_name': 'Связанные книги',
@@ -1015,8 +1016,8 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         text_src = {
             'verbose_name': 'Описание',
             'help_text': (
-                'Обзорное, более полное описание нововведений и изменений, произошедших в версии. %s' %
-                HINT_IMPERSONAL_REQUIRED),
+                'Обзорное, более полное описание нововведений и изменений, произошедших в версии. '
+                f'{HINT_IMPERSONAL_REQUIRED}'),
         }
 
     class Meta:
@@ -1028,7 +1029,7 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
     items_per_page = 10
 
     def __str__(self):
-        return 'Python %s' % self.title
+        return f'Python {self.title}'
 
     @property
     def turbo_content(self):
@@ -1050,7 +1051,7 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         """
         stub = cls(
             title=version_number,
-            description='Python версии %s' % version_number,
+            description=f'Python версии {version_number}',
             text_src='Описание версии ещё не сформировано.',
             submitter_id=settings.ROBOT_USER_ID,
             date=timezone.now().date()
@@ -1142,7 +1143,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         verbose_name_plural = 'PEP'
 
     def __str__(self):
-        return '%s — %s' % (self.slug, self.title)
+        return f'{self.slug} — {self.title}'
 
     autogenerate_slug = True
     items_per_page = 40
@@ -1429,7 +1430,7 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         title = 'Название видео'
         translator = 'Перевод/озвучание'
         description = {
-            'help_text': 'Краткое описание того, о чём это видео. %s' % HINT_IMPERSONAL_REQUIRED,
+            'help_text': f'Краткое описание того, о чём это видео. {HINT_IMPERSONAL_REQUIRED}',
         }
         linked = {
             'verbose_name': 'Связанные видео',
@@ -1485,8 +1486,9 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
 
     contacts = models.CharField(
         'Контактные лица', null=True, blank=True, max_length=255,
-        help_text=('Контактные лица через запятую, координирующие/устраивающие событие.%s' %
-                   ModelWithAuthorAndTranslator._hint_userlink))
+        help_text=(
+            'Контактные лица через запятую, координирующие/устраивающие событие.'
+            f'{ModelWithAuthorAndTranslator._hint_userlink}'))
 
     place = models.ForeignKey(
         Place, verbose_name='Место', related_name='events', null=True, blank=True,
@@ -1511,11 +1513,11 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
     class Fields:
         description = {
             'verbose_name': 'Краткое описание',
-            'help_text': 'Краткое описание события. %s' % HINT_IMPERSONAL_REQUIRED,
+            'help_text': f'Краткое описание события. {HINT_IMPERSONAL_REQUIRED}',
         }
         text_src = {
             'verbose_name': 'Описание, контактная информация',
-            'help_text': '%s' % HINT_IMPERSONAL_REQUIRED,
+            'help_text': HINT_IMPERSONAL_REQUIRED,
         }
         cover = 'Логотип'
 

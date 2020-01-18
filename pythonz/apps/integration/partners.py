@@ -37,12 +37,12 @@ class PartnerBase():
         if '?' in link_url and link_mutator.startswith('?'):
             link_mutator = link_mutator.replace('?', '&')
 
-        url = '%s%s' % (link_url, link_mutator)
+        url = f'{link_url}{link_mutator}'
 
-        title = '%s на %s' % (realm.model.get_verbose_name(), self.title)
+        title = f'{realm.model.get_verbose_name()} на {self.title}'
         description = link.description
         if description:
-            title = '%s — %s' % (title, description)
+            title = f'{title} — {description}'
 
         page_soup = self.get_page_soup(link_url)
 
@@ -54,7 +54,7 @@ class PartnerBase():
             price += ' руб.'
 
         data = {
-            'icon_url': 'https://favicon.yandex.net/favicon/%s' % self.title,
+            'icon_url': f'https://favicon.yandex.net/favicon/{self.title}',
             'title': title,
             'url': url,
             'price': price,
@@ -215,7 +215,7 @@ def get_cache_key(instance):
     :param instance:
     :return:
     """
-    return 'partner_links|%s|%s' % (instance.__class__.__name__, instance.pk)
+    return f'partner_links|{instance.__class__.__name__}|{instance.pk}'
 
 
 def init_partners_module():

@@ -97,7 +97,7 @@ class RealmView(View):
         """
         if name is None:
             name = cls.name
-        return 'realms/%s/%s.html' % (cls.realm.name_plural, name)
+        return f'realms/{cls.realm.name_plural}/{name}.html'
 
     def render(self, request, data_dict):
         """Компилирует страницу представления.
@@ -110,7 +110,7 @@ class RealmView(View):
             'realm': self.realm,
             'view': self
         })
-        return render(request, 'view_%s.html' % self.__class__.name, data_dict)
+        return render(request, f'view_{self.__class__.name}.html', data_dict)
 
     def post(self, request, *args, **kwargs):
         """Запросы POST перенаправляются на обработчик GET.

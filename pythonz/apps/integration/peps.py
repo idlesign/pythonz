@@ -69,7 +69,7 @@ def normalize_date(value):
             except ValueError:
                 continue
         else:
-            raise Exception('Unknown date format `%s` in `%s`' % (created, value))
+            raise Exception(f'Unknown date format `{created}` in `{value}`')
 
     return created
 
@@ -108,7 +108,7 @@ def get_peps(exclude_peps=None, limit=None):
         make_list(pep, 'requires')
 
     def get_pep_info(download_url):
-        LOG.debug('Getting PEP info from %s ...', download_url)
+        LOG.debug(f'Getting PEP info from {download_url} ...')
 
         response = requests.get(download_url).text
 
@@ -235,12 +235,12 @@ def sync(skip_deadend_peps=True, limit=None):
 
         if not status_id:
             # Неизвестный статус. Например, Provisional.
-            LOG.warning('Unknown status %s ...', pep.status)
+            LOG.warning(f'Unknown status {pep.status} ...')
             continue
 
         type_id = int(map_types[pep.type])
 
-        LOG.info('Working on PEP %s ...', num)
+        LOG.info(f'Working on PEP {num} ...')
 
         if num in known_peps:
             pep_model = known_peps[num]  # type: PEP
@@ -257,7 +257,7 @@ def sync(skip_deadend_peps=True, limit=None):
                 sig_send_generic_telegram.send(None, text=msg)
 
         else:
-            LOG.debug('PEP %s is new. Creating ...', num)
+            LOG.debug(f'PEP {num} is new. Creating ...')
 
             pep_model = PEP(
                 num=num,

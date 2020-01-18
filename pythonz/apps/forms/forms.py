@@ -2,7 +2,7 @@ from django.conf import settings
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 # from datetimewidget.widgets import DateTimeWidget, DateWidget
-
+from ..integration.videos import VideoBroker
 from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference, Version
 from ..generics.forms import RealmEditBaseForm
 from .widgets import RstEditWidget, ReadOnlyWidget, PlaceWidget
@@ -69,7 +69,7 @@ class DiscussionForm(RealmEditBaseForm):
                     data['object_id'] = item_id
                     data['content_type'] = ContentType.objects.get_for_model(item).id
 
-                    data['title'] = '%s про «%s»' % (kwargs['user'].get_display_name(), item.title)
+                    data['title'] = f"{kwargs['user'].get_display_name()} про «{item.title}»"
 
                     args = list(args)
                     args[0] = data
@@ -199,15 +199,15 @@ class VideoForm(RealmEditBaseForm):
             'year',
         )
         help_texts = {
-            'url': 'URL страницы с видео. Умеем работать с %s' % ', '.join(Video.get_supported_hostings()),
+            'url': f"URL страницы с видео. Умеем работать с {', '.join(Video.get_supported_hostings())}",
         }
 
     def clean_url(self):
         url = self.cleaned_data['url']
-        if not Video.get_hosting_for_url(url):
+        if not VideoBroker.get_hosting_for_url(url):
             raise forms.ValidationError(
                 'К сожалению, мы не умеем работать с этим видео-хостингом. '
-                'Если знаете, как это исправить, приходите <a href="%s">сюда</a>.' % settings.PROJECT_SOURCE_URL
+                f'Если знаете, как это исправить, приходите <a href="{settings.PROJECT_SOURCE_URL}">сюда</a>.'
             )
         return url
 

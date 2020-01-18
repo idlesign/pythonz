@@ -110,7 +110,7 @@ class RealmBase:
 
         type_dict = {
             'title': title,
-            'description': 'PYTHONZ. %s' % description,
+            'description': f'PYTHONZ. {description}',
             'item_enclosure_mime_type': 'image/png',
             'item_enclosure_length': 50000,
             'item_enclosure_url': lambda self, item: (
@@ -120,12 +120,12 @@ class RealmBase:
             'item_title': lambda self, item: item.title,
             'item_pubdate': lambda self, item: item.time_published,
             'item_link': lambda self, item: item.get_absolute_url(),
-            'item_guid': lambda self, item: '%s_%s' % (cls.name, item.pk),
+            'item_guid': lambda self, item: f'{cls.name}_{item.pk}',
             'item_description': lambda self, item: item.description,
             'item_turbo': lambda self, item: item.turbo_content,
         }
 
-        feed_cls = type('%sSyndication' % cls_name, (YandexTurboFeed,), type_dict)()  # type: YandexTurboFeed
+        feed_cls = type(f'{cls_name}Syndication', (YandexTurboFeed,), type_dict)()  # type: YandexTurboFeed
         feed_cls.turbo_sanitize = True
 
         return feed_cls
@@ -150,7 +150,7 @@ class RealmBase:
             title = cls.model._meta.verbose_name_plural
             cls.syndication_feed = cls._get_syndication_feed(
                 title=title,
-                description='Материалы в разделе «%s»' % title,
+                description=f'Материалы в разделе «{title}»',
                 func_link=lambda self: reverse(cls.get_listing_urlname()),
                 func_items=get_items,
                 cls_name=cls.name
@@ -178,7 +178,7 @@ class RealmBase:
         :return:
         """
         _tmp, realm_name_plural = cls.get_names()
-        return '%s:listing' % realm_name_plural
+        return f'{realm_name_plural}:listing'
 
     @classmethod
     def get_details_urlname(cls, slugged=False):
@@ -190,7 +190,7 @@ class RealmBase:
 
         """
         _tmp, realm_name_plural = cls.get_names()
-        name = '%s:details' % realm_name_plural
+        name = f'{realm_name_plural}:details'
         if slugged:
             name += '_slug'
         return name
@@ -212,7 +212,7 @@ class RealmBase:
         def get_item(urlname, id_attr='id'):
             return item(
                 '{{ %s }}' % realm_name,
-                '%s %s.%s' % (urlname, realm_name, id_attr),  # Например books:details book.id
+                f'{urlname} {realm_name}.{id_attr}',  # Например books:details book.id
                 children=children,
                 in_menu=False,
                 in_sitetree=False
@@ -231,7 +231,7 @@ class RealmBase:
         :return:
         """
         _tmp, realm_name_plural = cls.get_names()
-        return '%s:edit' % realm_name_plural
+        return f'{realm_name_plural}:edit'
 
     @classmethod
     def get_sitetree_edit_item(cls):
@@ -240,7 +240,7 @@ class RealmBase:
         :return:
         """
         realm_name, _tmp = cls.get_names()
-        return item(cls.txt_form_edit, '%s %s.id' % (cls.get_edit_urlname(), realm_name),
+        return item(cls.txt_form_edit, f'{cls.get_edit_urlname()} {realm_name}.id',
                     in_menu=False, in_sitetree=False, access_loggedin=True)
 
     @classmethod
@@ -250,7 +250,7 @@ class RealmBase:
         :return:
         """
         _tmp, realm_name_plural = cls.get_names()
-        return '%s:add' % realm_name_plural
+        return f'{realm_name_plural}:add'
 
     @classmethod
     def get_sitetree_add_item(cls):
@@ -271,7 +271,7 @@ class RealmBase:
         :return:
         """
         _tmp, realm_name_plural = cls.get_names()
-        return '%s:tags' % realm_name_plural
+        return f'{realm_name_plural}:tags'
 
     @classmethod
     def get_sitetree_tags_item(cls):
@@ -279,7 +279,7 @@ class RealmBase:
 
         :return:
         """
-        return item('Категория «{{ category.title }}»', '%s category.id' % cls.get_tags_urlname(),
+        return item('Категория «{{ category.title }}»', f'{cls.get_tags_urlname()} category.id',
                     in_menu=False, in_sitetree=False)
 
     @classmethod
@@ -292,7 +292,7 @@ class RealmBase:
             children = []
             for view_name in cls.allowed_views:
                 if view_name not in ('listing', 'edit'):
-                    items = getattr(cls, 'get_sitetree_%s_item' % view_name)()
+                    items = getattr(cls, f'get_sitetree_{view_name}_item')()
                     if not isinstance(items, list):
                         items = [items]
                     children.extend(items)
@@ -318,7 +318,7 @@ class RealmBase:
             cls.name = cls.__name__.lower().replace('realm', '')
 
         if cls.name_plural is None:
-            cls.name_plural = '%ss' % cls.name
+            cls.name_plural = f'{cls.name}s'
 
         return cls.name, cls.name_plural
 
@@ -329,16 +329,16 @@ class RealmBase:
         :param name:
         :return:
         """
-        view_attr_name = 'view_%s' % name
+        view_attr_name = f'view_{name}'
         view = getattr(cls, view_attr_name)
         if view is None:
             realm_name, _ = cls.get_names()
-            base_view_class = getattr(cls, 'view_%s_base_class' % name)
+            base_view_class = getattr(cls, f'view_{name}_base_class')
             class_dict = {
                 'realm': cls,
                 'name': name
             }
-            view = type('%s%sView' % (realm_name.capitalize(), name.capitalize()), (base_view_class,), class_dict)
+            view = type(f'{realm_name.capitalize()}{name.capitalize()}View', (base_view_class,), class_dict)
             setattr(cls, view_attr_name, view)
         return view
 
@@ -349,7 +349,7 @@ class RealmBase:
         :return:
         """
         if cls.syndication_url is None:
-            cls.syndication_url = reverse('%s:syndication' % cls.name_plural)
+            cls.syndication_url = reverse(f'{cls.name_plural}:syndication')
         return cls.syndication_url
 
     @classmethod
@@ -366,7 +366,7 @@ class RealmBase:
                 url_name = view_name
 
             views.append(
-                url(getattr(cls, 'view_%s_url' % url_name), cls.get_view(view_name).as_view(), name=url_name)
+                url(getattr(cls, f'view_{url_name}_url'), cls.get_view(view_name).as_view(), name=url_name)
             )
 
         for view_name in cls.allowed_views:
@@ -376,7 +376,7 @@ class RealmBase:
                 add_view(view_name, 'details_slug')
 
         if cls.syndication_enabled:
-            views.append(url(r'^%s/$' % SYNDICATION_URL_MARKER, cls.get_syndication_feed(), name='syndication'))
+            views.append(url(fr'^{SYNDICATION_URL_MARKER}/$', cls.get_syndication_feed(), name='syndication'))
 
         _, realm_name_plural = cls.get_names()
-        return [url(r'^%s/' % realm_name_plural, (views, realm_name_plural, realm_name_plural))]
+        return [url(fr'^{realm_name_plural}/', (views, realm_name_plural, realm_name_plural))]

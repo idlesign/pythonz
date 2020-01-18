@@ -50,13 +50,13 @@ class PyDigestResource:
                 entries_max = 3
 
             for alias in aliases:
-                url = '%s%s/' % (base_url, alias)
+                url = f'{base_url}{alias}/'
 
                 try:
                     parsed = feedparser.parse(url)
 
                 except Exception as e:
-                    sig_integration_failed.send(None, description='URL %s. Error: %s' % (url, e))
+                    sig_integration_failed.send(None, description=f'URL {url}. Error: {e}')
 
                 else:
                     for entry in reversed(parsed.entries[:entries_max]):

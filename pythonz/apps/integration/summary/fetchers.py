@@ -115,7 +115,7 @@ class Lwn(ItemsFetcherBase):
 
                 if is_relevant or is_related:
                     url = url_base + paragraph.select('a')[0].attrs['href']
-                    by_category[category].append(SummaryItem(url=url, title='%s: %s' % (category, title)))
+                    by_category[category].append(SummaryItem(url=url, title=f'{category}: {title}'))
 
         return self._filter(by_category)
 

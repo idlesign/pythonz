@@ -55,7 +55,7 @@ def get_json(url, return_none_statuses=None):
 
         elif status != 503:
             # Temporary Unavailable. В следующий раз получится.
-            sig_integration_failed.send(None, description='URL %s. Error: %s' % (url, e))
+            sig_integration_failed.send(None, description=f'URL {url}. Error: {e}')
 
     else:
         try:
@@ -125,13 +125,13 @@ def get_thumb_url(realm, image, width, height, absolute_url=False):
     :param absolute_url:
     :return:
     """
-    base_path = os.path.join('img', realm.name_plural, 'thumbs', '%sx%s' % (width, height))
+    base_path = os.path.join('img', realm.name_plural, 'thumbs', f'{width}x{height}')
     try:
         thumb_file_base = os.path.join(base_path, os.path.basename(image.path))
     except (ValueError, AttributeError):
         return ''
 
-    cache_key = 'thumbs|%s|%s' % (thumb_file_base, absolute_url)
+    cache_key = f'thumbs|{thumb_file_base}|{absolute_url}'
 
     url = cache.get(cache_key)
 
@@ -152,7 +152,7 @@ def get_thumb_url(realm, image, width, height, absolute_url=False):
 
         url = os.path.join(settings.MEDIA_URL, thumb_file_base)
         if absolute_url:
-            url = '%s%s' % (settings.SITE_URL, url)
+            url = f'{settings.SITE_URL}{url}'
 
         cache.set(cache_key, url, 86400)
 
@@ -195,7 +195,7 @@ def get_location_data(location_name):
     :return:
     """
 
-    url = 'http://geocode-maps.yandex.ru/1.x/?results=1&format=json&geocode=%s' % location_name
+    url = f'http://geocode-maps.yandex.ru/1.x/?results=1&format=json&geocode={location_name}'
     try:
         result = requests.get(url)
         doc = result.json()
@@ -217,7 +217,7 @@ def get_location_data(location_name):
         'name': object_metadata_dict['text'],
         'country': object_metadata_dict['AddressDetails']['Country']['CountryName'],
         'pos': ','.join(reversed(object_dict['Point']['pos'].split(' '))),
-        'bounds': '%s|%s' % (object_bounds_dict['lowerCorner'], object_bounds_dict['upperCorner']),
+        'bounds': f"{object_bounds_dict['lowerCorner']}|{object_bounds_dict['upperCorner']}",
     }
 
     return location_data

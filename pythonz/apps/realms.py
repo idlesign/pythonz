@@ -437,7 +437,7 @@ class CategoryRealm(RealmBase):
     def update_syndication_urls(cls, **kwargs):
         """Обновляет url-шаблоны синдикации, заменяя старые новыми."""
         target_namespace = cls.SYNDICATION_NAMESPACE
-        linked_category_id_str = 'category_%s' % kwargs['instance'].category_id
+        linked_category_id_str = f"category_{kwargs['instance'].category_id}"
         pattern_idx = -1
 
         resolver = get_resolver(None)
@@ -480,19 +480,19 @@ class CategoryRealm(RealmBase):
             category_id = category.id
             feed = RealmBase._get_syndication_feed(
                 title=title,
-                description='Материалы в категории «%s». %s' % (title, category.note),
+                description=f'Материалы в категории «{title}». {category.note}',
                 func_link=lambda self: reverse(CategoryRealm.get_details_urlname(), args=[self.category_id]),
                 func_items=lambda self: get_in_category(self.category_id),
-                cls_name='Category%s' % category_id
+                cls_name=f'Category{category_id}'
             )
             feed.category_id = category_id
 
             feeds.append(
-                url(r'^%s/%s/$' % (category_id, SYNDICATION_URL_MARKER), feed, name='category_%s' % category_id))
+                url(fr'^{category_id}/{SYNDICATION_URL_MARKER}/$', feed, name=f'category_{category_id}'))
 
         _, realm_name_plural = CategoryRealm.get_names()
 
-        return [url(r'^%s/' % realm_name_plural, (feeds, realm_name_plural, cls.SYNDICATION_NAMESPACE))]
+        return [url(fr'^{realm_name_plural}/', (feeds, realm_name_plural, cls.SYNDICATION_NAMESPACE))]
 
 
 class CommunityRealm(RealmBase):

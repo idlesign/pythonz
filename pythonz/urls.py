@@ -24,8 +24,8 @@ urlpatterns = [
     path('about/', render, {'template_name': 'static/about.html'}),
     path('sitemap/', render, {'template_name': 'static/sitemap.html'}),
     path('robots.txt', rules_list, name='robots_rule_list'),
-    path('%s/' % settings.TELEGRAM_BOT_URL, telebot),
-    path('%s/' % settings.ADMIN_URL, admin.site.urls),
+    path(f'{settings.TELEGRAM_BOT_URL}/', telebot),
+    path(f'{settings.ADMIN_URL}/', admin.site.urls),
 ]
 
 urlpatterns += get_sitegate_urls()  # Цепляем URLы от sitegate,
