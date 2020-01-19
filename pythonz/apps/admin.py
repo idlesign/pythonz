@@ -1,3 +1,5 @@
+from typing import Type
+
 from admirarchy.toolbox import HierarchicalModelAdmin
 from django import forms
 from django.contrib import admin
@@ -5,6 +7,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.contenttypes.admin import GenericTabularInline
+from django.db.models import Model
 from simple_history.admin import SimpleHistoryAdmin
 
 from .integration.partners import get_partners_choices
@@ -13,13 +16,13 @@ from .models import Book, Video, Event, User, Article, Place, Community, Discuss
     Vacancy, ReferenceMissing, PEP, Person, ExternalResource, Summary
 
 
-def get_inline(model, field_name):
+def get_inline(model: Type[Model], field_name: str) -> Type:
     """Возвращает класс встраиваемого редактора для использования
     в inlines в случаях полей многие-ко-многим.
 
     :param model:
-    :param str field_name:
-    :rtype: class
+    :param field_name:
+
     """
     inline_cls = type(f'{model.__name__.capitalize()}Inline', (admin.TabularInline,), {
         'model': getattr(model, field_name).through,
