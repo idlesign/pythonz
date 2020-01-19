@@ -1,33 +1,48 @@
+from datetime import datetime
+from typing import Callable, Optional
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.core.paginator import Paginator, EmptyPage
-from django.http import Http404
+from django.core.paginator import Paginator, EmptyPage, Page
+from django.db.models import QuerySet
+from django.http import Http404, HttpRequest
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition
 from django.views.generic.base import View
 from xross.toolbox import xross_view, xross_listener
+from xross.utils import XrossHandlerBase
 
-from .models import ModelWithCompiledText
+from .models import ModelWithCompiledText, RealmBaseModel
 from ..exceptions import RedirectRequired, PythonzException
 from ..integration.partners import get_partner_links
 from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event, Reference, \
-    Category
+    Category, User
 from ..utils import message_info, message_warning, message_success, message_error
+
+
+if False:  # pragma: nocover
+    from .realms import RealmBase
+
+
+class HttpRequest(HttpRequest):
+
+    user: User
+    user_id: int
 
 
 class RealmView(View):
     """Базовое представление для представлений областей (сущностей)."""
 
-    realm = None  # Во время исполнения будет содержать ссылку на объект области Realm
-    name = None  # Во время исполнения будет содержать алиас этого представления (н.п. edit).
+    realm: 'RealmBase' = None  # Во время исполнения будет содержать ссылку на объект области Realm
+    name: str = None  # Во время исполнения будет содержать алиас этого представления (н.п. edit).
 
-    func_etag = None
+    func_etag: Callable = None
     """Может указывать на метод, реализующий возвращение ETag."""
-    func_last_mod = None
+    func_last_mod: Callable = None
     """Может указывать на метод, возвращающий дату Last-Modified."""
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
 
         @condition(self.func_etag, self.func_last_mod)
         def conditional_dispatch(request, *args, **kwargs):
@@ -39,13 +54,13 @@ class RealmView(View):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def check_view_permissions(self, request, item):
+    def check_view_permissions(self, request: HttpRequest, item: RealmBaseModel):
         """Производит провердку возможности доступа к просмотру страницы.
         Возбуждает исключения, в случае ошибкидоступа.
 
-        :param Request request:
-        :param Model item:
-        :return:
+        :param request:
+        :param item:
+
         """
         if not request.user.is_superuser:
             if item.is_deleted:
@@ -56,12 +71,12 @@ class RealmView(View):
                 # Закрываем доступ к чужим черновикам.
                 raise PermissionDenied()
 
-    def check_edit_permissions(self, request, item):
+    def check_edit_permissions(self, request: HttpRequest, item: RealmBaseModel):
         """Производит проверку прав пользователя для доступа к редактированию объекта.
 
-        :param Request request:
-        :param Model item:
-        :return:
+        :param request:
+        :param item:
+
         """
         if not self.realm.is_allowed_edit():  # Область не поддерживает редактирования.
             raise PermissionDenied()
@@ -90,21 +105,18 @@ class RealmView(View):
                     raise PermissionDenied()
 
     @classmethod
-    def get_template_path(cls, name=None):
-        """Возвращает путь к шаблону страницы представления для данной области.
-
-        :return:
-        """
+    def get_template_path(cls, name: str = None) -> str:
+        """Возвращает путь к шаблону страницы представления для данной области."""
         if name is None:
             name = cls.name
         return f'realms/{cls.realm.name_plural}/{name}.html'
 
-    def render(self, request, data_dict):
+    def render(self, request: HttpRequest, data_dict: dict) -> HttpResponse:
         """Компилирует страницу представления.
 
         :param request:
         :param data_dict:
-        :return:
+
         """
         data_dict.update({
             'realm': self.realm,
@@ -112,49 +124,49 @@ class RealmView(View):
         })
         return render(request, f'view_{self.__class__.name}.html', data_dict)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """Запросы POST перенаправляются на обработчик GET.
 
         :param request:
         :param args:
         :param kwargs:
-        :return:
+
         """
         return self.get(request, *args, **kwargs)
 
-    def update_context(self, context, request):
+    def update_context(self, context: dict, request: HttpRequest):
         """Используется для дополнения контекста шаблона данными.
 
-        :param dict context:
-        :param Request request:
-        :return:
+        :param context:
+        :param request:
+
         """
 
-    def get_object_or_404(self, obj_id):
+    def get_object_or_404(self, obj_id: int) -> RealmBaseModel:
         """Реализует механизм обнаружения объекта нужного типа для области,
         к которой привязано это представление.
 
         :param obj_id:
-        :return:
+
         """
         model = self.realm.model
 
         q = model.objects
 
-        related = getattr(model, 'details_related', None)
+        related = getattr(model, 'details_related', [])
         if related:
             q = q.select_related(*related)
 
         if 'named/' in self.request.path:
             return get_object_or_404(q, slug=obj_id)
-        else:
-            return get_object_or_404(q, pk=obj_id)
+
+        return get_object_or_404(q, pk=obj_id)
 
 
 class ListingView(RealmView):
     """Список объектов."""
 
-    def get_last_modified(self, *args, **kwargs):
+    def get_last_modified(self, *args, **kwargs) -> Optional[datetime]:
         """Возвращает Last-Modified для списка сущностей."""
         field = 'time_published'
         objects = self.get_paginator_objects()
@@ -169,26 +181,20 @@ class ListingView(RealmView):
 
     func_last_mod = get_last_modified
 
-    def get_paginator_objects(self):
-        """Возвращает объекты для страницы при постраницчной навигации.
-
-        :return:
-        """
+    def get_paginator_objects(self) -> QuerySet:
+        """Возвращает объекты для страницы при постраницчной навигации."""
         return self.realm.model.get_paginator_objects()
 
-    def get_most_voted_objects(self):
-        """Возвращает объекты, за которые было отдано больше всего голосов.
-
-        :return:
-        """
+    def get_most_voted_objects(self) -> QuerySet:
+        """Возвращает объекты, за которые было отдано больше всего голосов."""
         return self.realm.model.get_most_voted_objects()
 
     @classmethod
-    def extend_paginator(cls, page_items):
+    def extend_paginator(cls, page_items: Page):
         """Дополняет объект постраничной навигации.
 
         :param page_items:
-        :return:
+
         """
         max_pages_before_after = 10
         page = page_items.number
@@ -204,7 +210,7 @@ class ListingView(RealmView):
         page_items.before_current = reversed(range(page-1, min_page_before, -1))
         page_items.after_current = range(page+1, max_page_after+1)
 
-    def get(self, request, category_id=None):
+    def get(self, request: HttpRequest, category_id: int = None) -> HttpResponse:
         try:
             page = int(request.GET.get('p'))
         except (TypeError, ValueError):
@@ -237,41 +243,41 @@ class ListingView(RealmView):
 class DetailsView(RealmView):
     """Детальная информация об объекте."""
 
-    def _attach_support_data(self, item, request):
+    def _attach_support_data(self, item: RealmBaseModel, request: HttpRequest):
         """Цепляет к объекту данные о поданном за него голосе пользователя.
 
         :param item:
         :param request:
-        :return:
+
         """
         item.my_support = item.is_supported_by(request.user)
 
-    def _attach_bookmark_data(self, item, request):
+    def _attach_bookmark_data(self, item: RealmBaseModel, request: HttpRequest):
         """Цепляет к объекту данные о его занесении его пользователем в избранное.
 
         :param item:
         :param request:
-        :return:
+
         """
         item.is_bookmarked = item.is_bookmarked_by(request.user)
 
-    def _attach_data(self, item, request):
+    def _attach_data(self, item: RealmBaseModel, request: HttpRequest):
         """Цепляет базовый набор данный к объекту.
 
         :param item:
         :param request:
-        :return:
+
         """
         self._attach_bookmark_data(item, request)
         self._attach_support_data(item, request)
 
-    def toggle_bookmark(self, request, action, xross=None):
+    def toggle_bookmark(self, request: HttpRequest, action: int, xross: XrossHandlerBase = None) -> HttpResponse:
         """Используется xross. Реализует занесение/изъятие объекта в/из избранного..
 
         :param request:
         :param action:
         :param xross:
-        :return:
+
         """
         item = xross.attrs['item']
         if action == 1:
@@ -281,13 +287,13 @@ class DetailsView(RealmView):
         self._attach_bookmark_data(item, self.request)
         return render(self.request, 'sub_box_bookmark.html', {'item': item})
 
-    def set_rate(self, request, action, xross=None):
+    def set_rate(self, request: HttpRequest, action: int, xross: XrossHandlerBase = None) -> HttpResponse:
         """Используется xross. Реализует оценку самого объекта.
 
         :param request:
         :param action:
         :param xross:
-        :return:
+
         """
         item = xross.attrs['item']
         if self._is_rating_allowed(request, item):
@@ -299,29 +305,29 @@ class DetailsView(RealmView):
         return render(self.request, 'sub_box_rating.html', {'item': item})
 
     @classmethod
-    def _is_rating_allowed(cls, request, item):
+    def _is_rating_allowed(cls, request: HttpRequest, item: RealmBaseModel) -> bool:
         """Возвращает флаг, указывающий на то, можно
         ли рекомендовать данную сущность (материал).
 
         :param request:
         :param item:
-        :return:
+
         """
         return request.user != item  # Пользователи не могут рекомендовать себя %)
 
-    def list_partner_links(self, request, xross=None):
+    def list_partner_links(self, request: HttpRequest, xross: XrossHandlerBase = None) -> HttpResponse:
         """Используется xross. Реализует получение блока с партнёрскими ссылками.
 
         :param request:
         :param action:
         :param xross:
-        :return:
+
         """
         item = xross.attrs['item']
         return render(request, self.get_template_path('partner_links'), get_partner_links(self.realm, item))
 
     @xross_view(set_rate, toggle_bookmark, list_partner_links)
-    def get(self, request, obj_id):
+    def get(self, request: HttpRequest, obj_id: int) -> HttpResponse:
 
         item = self.get_object_or_404(obj_id)
 
@@ -366,10 +372,10 @@ class DetailsView(RealmView):
 class TagsView(ListingView):
     """Список меток (категорий) для объекта."""
 
-    def get_paginator_objects(self):
+    def get_paginator_objects(self) -> QuerySet:
         return self.realm.model.get_objects_in_category(self.kwargs['category_id'])
 
-    def get_most_voted_objects(self):
+    def get_most_voted_objects(self) -> QuerySet:
         return self.realm.model.get_most_voted_objects_in_category(self.kwargs['category_id'])
 
 
@@ -377,31 +383,23 @@ class EditView(RealmView):
     """Редактирование (и добавление) объекта."""
 
     @method_decorator(login_required)  # На страницах редактирования требуется атворизация.
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         return super().dispatch(request, *args, **kwargs)
 
-    def preview_rst(self, request, text_src, xross=None):
+    def preview_rst(self, request: HttpRequest, text_src: str, xross: XrossHandlerBase = None) -> HttpResponse:
         """Используется xross. Обрабатывает запрос на предварительный просмотр текста в формате rst.
 
         :param request:
         :param text_src:
         :param xross:
-        :return:
+
         """
         item = xross.attrs['item']
         if item is None or isinstance(item, ModelWithCompiledText):
             return HttpResponse(ModelWithCompiledText.compile_text(text_src))
 
-    def update_context(self, context, request):
-        """Используется для дополнения контекста шаблона данными.
-
-        :param dict context:
-        :param Request request:
-        :return:
-        """
-
     @xross_view(preview_rst)
-    def get(self, request, obj_id=None):
+    def get(self, request: HttpRequest, obj_id: Optional[int] = None) -> HttpResponse:
         item = None
 
         if obj_id is not None:

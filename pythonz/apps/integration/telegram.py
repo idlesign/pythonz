@@ -1,15 +1,17 @@
 from functools import lru_cache
+from typing import List, Union
 
 import telebot
-from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from bleach import clean
 from django.conf import settings
+from django.http import HttpRequest
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, InlineQuery
 
-from ..utils import truncate_chars
+from ..generics.models import RealmBaseModel, CommonEntityModel
 from ..models import Reference, PEP
-from ..zen import ZEN
 from ..utils import get_logger
-
+from ..utils import truncate_chars
+from ..zen import ZEN
 
 LOGGER = get_logger('telebot')
 
@@ -17,12 +19,12 @@ LOGGER = get_logger('telebot')
 bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN, threaded=False)
 
 
-def get_webhook_url():
+def get_webhook_url() -> str:
     """Возвращает webhook URL."""
     return f"{settings.SITE_URL.replace('http', 'https')}/{settings.TELEGRAM_BOT_URL}/"
 
 
-def set_webhook():
+def set_webhook() -> dict:
     """Конфигурирует механизм webhook."""
     certificate = None
     if settings.PATH_CERTIFICATE and settings.CERTIFICATE_SELF_SIGNED:
@@ -32,10 +34,11 @@ def set_webhook():
     return bot.set_webhook(get_webhook_url(), certificate)
 
 
-def handle_request(request):
+def handle_request(request: HttpRequest):
     """Обрабатывает обращения к URL для Webhook.
 
-    :param Request request:
+    :param request:
+
     """
     if not request.body:
         LOGGER.debug('No data supplied.')
@@ -56,10 +59,11 @@ def handle_request(request):
 
 
 @bot.message_handler(commands=['start'])
-def on_start(message):
+def on_start(message: Message):
     """Ответ на команду /start.
 
-    :param telebot.types.Message message:
+    :param message:
+
     """
     LOGGER.debug('Got /start command.')
     bot.reply_to(
@@ -67,20 +71,22 @@ def on_start(message):
 
 
 @bot.message_handler(commands=['chat_id'])
-def on_chat_id(message):
+def on_chat_id(message: Message):
     """Ответ на команду /chat_id.
 
-    :param telebot.types.Message message:
+    :param message:
+
     """
     LOGGER.debug('Got /chat_id command.')
     bot.reply_to(message, f'Идентификатор этого чата: {message.chat.id}')
 
 
 @bot.message_handler(commands=['help'])
-def on_help(message):
+def on_help(message: Message):
     """Ответ на команду /help.
 
-    :param telebot.types.Message message:
+    :param message:
+
     """
     LOGGER.debug('Got /help command.')
     bot.reply_to(
@@ -91,11 +97,8 @@ def on_help(message):
 
 
 @lru_cache(maxsize=2)
-def get_inline_zen():
-    """Возвращает список цитат из дзена питона.
-
-    :rtype: list
-    """
+def get_inline_zen() -> List:
+    """Возвращает список цитат из дзена питона."""
     results = []
 
     for idx, (zen_en, zen_ru) in enumerate(ZEN, 1):
@@ -112,11 +115,11 @@ def get_inline_zen():
     return results
 
 
-def compose_entities_inline_result(entities):
+def compose_entities_inline_result(entities: List[Union['RealmBaseModel', 'CommonEntityModel']]) -> List:
     """Возвращает список сущностей для вывода в качестве встрочных результатов поиска ботом.
 
     :param entities:
-    :rtype: list
+
     """
     results = []
 
@@ -136,33 +139,30 @@ def compose_entities_inline_result(entities):
 
 
 @lru_cache(maxsize=64)
-def get_inline_reference(term, items_limit=25):
+def get_inline_reference(term: str, items_limit: int = 25) -> List:
     """Возвращает статьи справочника.
 
-    :param str term: Текст запроса
-    :param int items_limit: Максимальное кол-во элементов для получения.
-    :rtype: list
+    :param term: Текст запроса
+    :param items_limit: Максимальное кол-во элементов для получения.
+
     """
     return compose_entities_inline_result(Reference.find(term[:200])[:items_limit])
 
 
 @lru_cache(maxsize=20)
-def get_inline_pep(term, items_limit=10):
+def get_inline_pep(term: str, items_limit: int = 10) -> List:
     """Возвращает ссылки на PEP.
 
-    :param str term: Текст запроса
-    :param int items_limit: Максимальное кол-во элементов для получения.
-    :rtype: list
+    :param term: Текст запроса
+    :param items_limit: Максимальное кол-во элементов для получения.
+
     """
     return compose_entities_inline_result(PEP.find(term[:200])[:items_limit])
 
 
 @lru_cache(maxsize=2)
-def get_inline_no_query():
-    """Возвращает ответ на пустую строку запроса.
-
-    :rtype: list
-    """
+def get_inline_no_query() -> List:
+    """Возвращает ответ на пустую строку запроса."""
     markup = InlineKeyboardMarkup()
     markup.row(InlineKeyboardButton('Бота в другой чат', switch_inline_query=''))
     markup.row(
@@ -187,10 +187,11 @@ def get_inline_no_query():
 
 
 @bot.inline_handler(lambda query: True)
-def query_text(inline_query):
+def query_text(inline_query: InlineQuery):
     """Ответ на запрос при вызове бота из чатов.
 
-    :param telebot.types.InlineQuery inline_query:
+    :param inline_query:
+
     """
     term = inline_query.query.strip()
 
@@ -212,10 +213,11 @@ def query_text(inline_query):
 
 
 #@bot.message_handler(func=lambda message: True)
-def echo_message(message):
+def echo_message(message: Message):
     """Ответ на неподдерживаемое сообщение.
 
-    :param telebot.types.Message message:
+    :param message:
+
     """
     LOGGER.debug('Got unhandled message.')
     bot.reply_to(message, f'{message.text}? Не знаю, что вам на это ответить.')

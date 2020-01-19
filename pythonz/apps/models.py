@@ -1,8 +1,9 @@
 import json
 from collections import OrderedDict
-from datetime import timedelta
+from datetime import timedelta, datetime
 from functools import partial
 from itertools import chain
+from typing import Dict, List, Tuple, Optional
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
@@ -10,7 +11,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import FieldError
 from django.db import models, IntegrityError
-from django.db.models import Min, Max, Count, Q, F
+from django.db.models import Min, Max, Count, Q, F, QuerySet
 from django.urls import reverse
 from django.utils import timezone
 from etc.models import InheritedModel
@@ -43,13 +44,10 @@ class UtmReady:
 
     """
 
-    url_attr = 'url'
+    url_attr: str = 'url'
 
-    def get_utm_url(self):
-        """Возвращает URL с UTM-метками.
-
-        :rtype: str
-        """
+    def get_utm_url(self) -> str:
+        """Возвращает URL с UTM-метками."""
         return UTM.add_to_external_url(getattr(self, self.url_attr))
 
 
@@ -60,11 +58,11 @@ class Category(Category_):
         proxy = True
 
     @classmethod
-    def find(cls, *search_terms):
+    def find(cls, *search_terms: str) -> QuerySet:
         """Ищет указанный текст в категориях. Возвращает QuerySet.
 
-        :param str search_terms: Строки для поиска.
-        :rtype: models.QuerySet
+        :param search_terms: Строки для поиска.
+
         """
         q = Q()
 
@@ -75,10 +73,10 @@ class Category(Category_):
         return Category.objects.filter(q).order_by('time_created')
 
     @property
-    def description(self):
+    def description(self) -> str:
         return self.note
 
-    def get_absolute_url(self, **kwargs):
+    def get_absolute_url(self, **kwargs) -> str:
         # Сокращённая реализация из RealmBaseModel.
         return reverse(self.realm.get_details_urlname(), args=[self.id])
 
@@ -109,7 +107,7 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
             self.mark_published()
         super().save(*args, **kwargs)
 
-    def get_description(self):
+    def get_description(self) -> str:
         return truncate_chars(self.text, 360, html=True)
 
 
@@ -125,7 +123,7 @@ class ModelWithDiscussions(models.Model):
 class ExternalResource(UtmReady, RealmBaseModel):
     """Внешние ресурсы. Представляют из себя ссылки на страницы вне сайта."""
 
-    SRC_ALIAS_PYDIGEST = 'pydigest'
+    SRC_ALIAS_PYDIGEST: str = 'pydigest'
 
     SRC_ALIASES = (
         (SRC_ALIAS_PYDIGEST, 'pythondigest.ru'),
@@ -149,10 +147,8 @@ class ExternalResource(UtmReady, RealmBaseModel):
 
     @classmethod
     def fetch_new(cls):
-        """Добывает данные из источников и складирует их.
+        """Добывает данные из источников и складирует их."""
 
-        :return:
-        """
         for resource_alias, resource_cls in cls.RESOURCES.items():
             entries = resource_cls.fetch_entries()
             if not entries:
@@ -179,7 +175,7 @@ class ExternalResource(UtmReady, RealmBaseModel):
 class Summary(RealmBaseModel):
     """Cводки. Ссылки на материалы, собранные с внешних ресурсов."""
 
-    SUMMARY_CATEGORY_ID = 164
+    SUMMARY_CATEGORY_ID: int = 164
 
     data_items = models.TextField('Элементы сводки')
     data_result = models.TextField('Результат компоновки сводки')
@@ -193,11 +189,11 @@ class Summary(RealmBaseModel):
         return str(self.time_created)
 
     @classmethod
-    def make_text(cls, fetched):
+    def make_text(cls, fetched: Dict[str, List['SummaryItem']]) -> str:
         """Компонует текст из полученных извне данных.
 
-        :param dict fetched:
-        :rtype: str
+        :param fetched:
+
         """
         summary_text = []
 
@@ -208,7 +204,7 @@ class Summary(RealmBaseModel):
             summary_text.append(f'.. title:: {SUMMARY_FETCHERS[fetcher_alias].title}')
             summary_text.append('.. table::')
 
-            for item in items:  # type: SummaryItem
+            for item in items:
                 line = f'`{item.title}<{item.url}>`_'
 
                 if item.description:
@@ -226,12 +222,8 @@ class Summary(RealmBaseModel):
         return summary_text
 
     @classmethod
-    def create_article(cls):
-        """Создаёт сводку, используя данные, полученные извне.
-
-        :rtype: Summary|None
-
-        """
+    def create_article(cls) -> 'Article':
+        """Создаёт сводку, используя данные, полученные извне."""
         summary_text = cls.make_text(cls.fetch())
 
         format_date = lambda d: d.date().strftime('%d.%m.%Y')
@@ -255,7 +247,7 @@ class Summary(RealmBaseModel):
         return article
 
     @classmethod
-    def fetch(cls):
+    def fetch(cls) -> Dict[str, List['SummaryItem']]:
         """Добывает данные из источников, складирует их и возвращает в виде словаря."""
         latest = cls.objects.order_by('-pk').first()
 
@@ -267,7 +259,7 @@ class Summary(RealmBaseModel):
 
         for fetcher_alias, fetcher_cls in SUMMARY_FETCHERS.items():
             prev_result = prev_results.get(fetcher_alias) or []
-            fetcher = fetcher_cls(previous_result=prev_result, previous_dt=prev_dt)  # type: ItemsFetcherBase
+            fetcher: ItemsFetcherBase = fetcher_cls(previous_result=prev_result, previous_dt=prev_dt)
             result = fetcher.run()
 
             if result is None:
@@ -325,7 +317,7 @@ class ModelWithPartnerLinks(models.Model):
 class Place(RealmBaseModel, ModelWithDiscussions):
     """Географическое место. Для людей, событий и пр."""
 
-    details_related = ['last_editor']
+    details_related: List[str] = ['last_editor']
 
     TYPE_COUNTRY = 'country'
     TYPE_LOCALITY = 'locality'
@@ -354,30 +346,27 @@ class Place(RealmBaseModel, ModelWithDiscussions):
         return self.geo_title
 
     @property
-    def turbo_content(self):
+    def turbo_content(self) -> str:
         return self.make_html(self.description)
 
-    def get_pos(self):
-        """Возвращает координаты объекта в виде кортежа: (широта, долгота).
-
-        :return:
-        """
+    def get_pos(self) -> Tuple[str, str]:
+        """Возвращает координаты объекта в виде кортежа: (широта, долгота)."""
         lat, lng = self.geo_pos.split('|')
         return lat, lng
 
-    def get_description(self):
+    def get_description(self) -> str:
         return self.description
 
     @classmethod
-    def create_place_from_name(cls, name):
+    def create_place_from_name(cls, name: str) -> Optional['Place']:
         """Создаёт место по его имени.
 
         :param name:
-        :return:
+
         """
         from .integration.utils import get_location_data
         loc_data = get_location_data(name)
-        if loc_data is None:
+        if not loc_data:
             return None
 
         full_title = loc_data['name']
@@ -431,21 +420,21 @@ class Vacancy(UtmReady, RealmBaseModel):
         verbose_name_plural = 'Работа'
         unique_together = ('src_alias', 'src_id')
 
-    paginator_related = ['place']
-    items_per_page = 15
-    notify_on_publish = False
-    url_attr = 'url_site'
+    paginator_related: List[str] = ['place']
+    items_per_page: int = 15
+    notify_on_publish: bool = False
+    url_attr: str = 'url_site'
 
     @property
-    def cover(self):
+    def cover(self) -> str:
         return self.url_logo
 
     @property
-    def description(self):
+    def description(self) -> str:
         # todo Убрать после перевода всего на get_description.
         return self.get_description()
 
-    def get_description(self):
+    def get_description(self) -> str:
         """Возвращает вычисляемое описание объекта.
         Обычно должен использоваться вместо обращения к атрибуту description,
         которого может не сущестовать у модели.
@@ -458,11 +447,9 @@ class Vacancy(UtmReady, RealmBaseModel):
         return ', '.join(chunks)
 
     @classmethod
-    def get_places_stats(cls):
-        """Возвращает статистику по количеству вакансий на местах.
+    def get_places_stats(cls) -> List[Place]:
+        """Возвращает статистику по количеству вакансий на местах."""
 
-        :return:
-        """
         stats = list(Place.objects.filter(
             id__in=cls.objects.published().filter(place__isnull=False).distinct().values_list('place_id', flat=True),
             vacancies__status=cls.STATUS_PUBLISHED
@@ -473,11 +460,11 @@ class Vacancy(UtmReady, RealmBaseModel):
         return stats
 
     @classmethod
-    def get_salary_stats(cls, place=None):
+    def get_salary_stats(cls, place: Optional[Place] = None) -> List[dict]:
         """Возвращает статистику по зарплатам.
 
-        :param Place|None place: Место, для которого следует получить статистику.
-        :return:
+        :param place: Место, для которого следует получить статистику.
+
         """
         filter_kwargs = {
             'salary_currency__isnull': False,
@@ -506,11 +493,9 @@ class Vacancy(UtmReady, RealmBaseModel):
 
         return stats
 
-    def get_salary_str(self):
-        """Возвращает данные о зарплате в виде строки.
+    def get_salary_str(self) -> str:
+        """Возвращает данные о зарплате в виде строки."""
 
-        :return:
-        """
         chunks = []
         if self.salary_from:
             chunks.append(format_currency(self.salary_from))
@@ -523,14 +508,11 @@ class Vacancy(UtmReady, RealmBaseModel):
 
         return ' '.join(map(str, chunks)).strip()
 
-    def get_absolute_url(self, with_prefix=False, utm_source=None):
+    def get_absolute_url(self, with_prefix: bool = False, utm_source: str = None) -> str:
         return self.get_utm_url()
 
     def link_to_place(self):
-        """Связывает запись с местом Place, заполняя атрибут place_id.
-
-        :return:
-        """
+        """Связывает запись с местом Place, заполняя атрибут place_id."""
 
         # Попробуем найти ранее связанные записи.
         match = self.__class__.objects.filter(
@@ -547,10 +529,8 @@ class Vacancy(UtmReady, RealmBaseModel):
 
     @classmethod
     def update_statuses(cls):
-        """Обновляет состояния записей по данным внешнего ресурса.
+        """Обновляет состояния записей по данным внешнего ресурса."""
 
-        :return:
-        """
         for vacancy in cls.objects.published():
             manager = cls.MANAGERS.get(vacancy.src_alias)
             if manager:
@@ -566,10 +546,8 @@ class Vacancy(UtmReady, RealmBaseModel):
 
     @classmethod
     def fetch_new(cls):
-        """Добывает данные из источника и складирует их.
+        """Добывает данные из источника и складирует их."""
 
-        :return:
-        """
         for manager_alias, manager in cls.MANAGERS.items():
             vacancies = manager.fetch_list()
             if not vacancies:
@@ -590,8 +568,9 @@ class Vacancy(UtmReady, RealmBaseModel):
                     pass
 
 
-class Community(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
-                ModelWithCompiledText):
+class Community(
+    UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+    ModelWithCompiledText):
     """Модель сообществ. Формально объединяет некоторую группу людей."""
 
     place = models.ForeignKey(
@@ -634,7 +613,7 @@ class Community(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Mod
         year = 'Год образования'
 
     @property
-    def turbo_content(self):
+    def turbo_content(self) -> str:
         return self.text
 
     def save(self, *args, **kwargs):
@@ -646,8 +625,8 @@ class Community(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Mod
 class User(UtmReady, RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
 
-    items_per_page = 14
-    details_related = ['last_editor', 'person', 'place']
+    items_per_page: int = 14
+    details_related: List[str] = ['last_editor', 'person', 'place']
 
     objects = UserManager()
 
@@ -698,19 +677,17 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         return self.get_full_name() or self.get_username_partial()
 
     @property
-    def title(self):
+    def title(self) -> str:
         return self.get_display_name()
 
     @property
-    def is_draft(self):
+    def is_draft(self) -> bool:
         # Не считаем черновиком, считаем опубликованным.
         return False
 
     def set_timezone_from_place(self):
-        """Устанавливает временную зону, исходя из места расположения.
+        """Устанавливает временную зону, исходя из места расположения."""
 
-        :return:
-        """
         if self.place is None:
             self.timezone = None
             return True
@@ -719,11 +696,10 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         lat, lng = self.place.geo_pos.split(',')
         self.timezone = get_timezone_name(lat, lng)
 
-    def get_drafts(self):
+    def get_drafts(self) -> Dict[str, QuerySet]:
         """Возвращает словарь с неопубликованными материалами пользователя.
         Индексирован названиями разделов сайта; значения — списки материалов.
 
-        :rtype: dict
         """
         from .realms import get_realms_models
 
@@ -745,16 +721,15 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
 
         return drafts
 
-    def get_stats(self):
+    def get_stats(self) -> Dict[str, Dict]:
         """Возвращает словарь со статистикой пользователя.
+
         Индексирован названиями разделов сайта; значения — словарь со статистикой:
             cnt_published - кол-во опубликованных материалов
             cnt_postponed - кол-во материалов, назначенных к отложенной публикации
 
-        :rtype: dict
         """
         from .realms import get_realms_models
-
 
         stats = OrderedDict()
         for realm_model in get_realms_models():
@@ -777,11 +752,10 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
 
         return stats
 
-    def get_bookmarks(self):
+    def get_bookmarks(self) -> Dict[str, QuerySet]:
         """Возвращает словарь с избранными пользователем элементами (закладками).
         Словарь индексирован классами моделей различных сущностей, в значениях - списки с самими сущностями.
 
-        :rtype: dict
         """
         from siteflags.utils import get_flag_model
         from .realms import get_realms_models
@@ -798,27 +772,27 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         return bookmarks
 
     @property
-    def is_deleted(self):
+    def is_deleted(self) -> bool:
         return not self.is_active
 
     @classmethod
-    def get_actual(cls):
+    def get_actual(cls) -> QuerySet:
         return cls.objects.filter(is_active=True, profile_public=True).order_by('-date_joined').all()
 
     @classmethod
-    def get_paginator_objects(cls):
+    def get_paginator_objects(cls) -> QuerySet:
         return cls.get_actual()
 
     @classmethod
-    def get_most_voted_objects(cls, category=None, base_query=None):
+    def get_most_voted_objects(cls, category: Category = None, base_query: QuerySet = None) -> QuerySet:
         query = cls.objects.filter(supporters_num__gt=0)
         query = query.select_related('submitter').order_by('-supporters_num')
         return query.all()[:5]
 
-    def get_username_partial(self):
+    def get_username_partial(self) -> str:
         return self.username.split('@')[0]
 
-    def get_description(self):
+    def get_description(self) -> str:
         """Возвращает вычисляемое описание объекта.
         Обычно должен использоваться вместо обращения к атрибуту description,
         которого может не сущестовать у модели.
@@ -830,7 +804,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
 class PersonsLinked(models.Model):
     """Примесь для моделей, имеющих поля многие-ко-многим, ссылающиеся на Person."""
 
-    persons_fields = []
+    persons_fields: List[str] = []
 
     class Meta:
         abstract = True
@@ -839,7 +813,7 @@ class PersonsLinked(models.Model):
         super().save(*args, **kwargs)
         self.sync_persons_fields()
 
-    def sync_persons_fields(self, known_persons=None):
+    def sync_persons_fields(self, known_persons: Dict[str, List['Person']] = None):
         if not self.persons_fields:
             return
 
@@ -850,7 +824,13 @@ class PersonsLinked(models.Model):
             src_field = field.rstrip('s')  # authors - > author
             self._sync_persons(getattr(self, src_field), field, known_persons)
 
-    def _sync_persons(self, names_str, persons_field, known_persons, related_attr='name'):
+    def _sync_persons(
+        self,
+        names_str: str,
+        persons_field: str,
+        known_persons: Dict[str, List['Person']],
+        related_attr: str = 'name'
+    ):
         names_list = []
         for name in names_str.split(','):
             # Убираем разметку типа [u:1:идле]
@@ -862,24 +842,30 @@ class PersonsLinked(models.Model):
             unknown_handler=partial(self.create_person, publish=False))
 
     @classmethod
-    def create_person(cls, person_name, known_persons, publish=True):
+    def create_person(
+        cls,
+        person_name: str,
+        known_persons: Dict[str, List['Person']],
+        publish: bool = True
+    ) -> 'Person':
         """Создаёт персону и добавляет её в словарь известных персон.
 
-        :param str person_name:
-        :param dict known_persons:
-        :param bool publish:
-        :rtype: Person
+        :param person_name:
+        :param known_persons:
+        :param publish:
+
         """
         person = Person.create(person_name, save=True, publish=publish)
         Person.contribute_to_known_persons(person, known_persons)
         return person
 
 
-class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
-           ModelWithAuthorAndTranslator, ModelWithPartnerLinks, PersonsLinked):
+class Book(
+    InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+    ModelWithAuthorAndTranslator, ModelWithPartnerLinks, PersonsLinked):
     """Модель сущности `Книга`."""
 
-    COVER_UPLOAD_TO = 'books'
+    COVER_UPLOAD_TO: str = 'books'
 
     isbn = models.CharField('ISBN', max_length=20, unique=True, null=True, blank=True)
     isbn_ebook = models.CharField('ISBN эл. книги', max_length=20, unique=True, null=True, blank=True)
@@ -888,7 +874,7 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussio
 
     history = HistoricalRecords()
 
-    persons_fields = ['authors']
+    persons_fields: List[str] = ['authors']
 
     class Meta:
         verbose_name = 'Книга'
@@ -908,12 +894,13 @@ class Book(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussio
         year = 'Год издания'
 
     @property
-    def turbo_content(self):
+    def turbo_content(self) -> str:
         return self.make_html(self.description)
 
 
-class Article(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
-              ModelWithCompiledText):
+class Article(
+    UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+    ModelWithCompiledText):
     """Модель сущности `Статья`."""
 
     LOCATION_INTERNAL = 1
@@ -964,15 +951,12 @@ class Article(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Model
         }
 
     @property
-    def turbo_content(self):
+    def turbo_content(self) -> str:
         return self.text
 
     @property
-    def is_handmade(self):
-        """Возвращат флаг, указывающий на то, что статья создана на этом сайте.
-
-        :return:
-        """
+    def is_handmade(self) -> bool:
+        """Возвращат флаг, указывающий на то, что статья создана на этом сайте."""
         return self.source == self.SOURCE_HANDMADE
 
     def save(self, *args, **kwargs):
@@ -983,14 +967,14 @@ class Article(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, Model
 
         super().save(*args, **kwargs)
 
-    def update_data_from_url(self, url):
+    def update_data_from_url(self, url: str):
         """Обновляет данные статьи, собирая информация, доступную по указанному URL.
 
         :param url:
-        :return:
+
         """
         result = scrape_page(url)
-        if result is None:
+        if not result:
             raise RemoteSourceError('Не удалось получить данные статьи. Проверьте доступность указанного URL.')
 
         self.title = result['title']
@@ -1025,29 +1009,29 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         verbose_name_plural = 'Версии Python'
         ordering = ('-date',)
 
-    autogenerate_slug = True
-    items_per_page = 10
+    autogenerate_slug: bool = True
+    items_per_page: int = 10
 
     def __str__(self):
         return f'Python {self.title}'
 
     @property
-    def turbo_content(self):
+    def turbo_content(self) -> str:
         return self.text
 
     @classmethod
-    def get_paginator_objects(cls):
+    def get_paginator_objects(cls) -> QuerySet:
         qs = super().get_paginator_objects()
         qs = qs.order_by('-date')
         return qs
 
     @classmethod
-    def create_stub(cls, version_number):
+    def create_stub(cls, version_number: str) -> 'Version':
         """Создаёт запись о версии, основываясь только на номере.
         Использует для автоматического создания версий, например, из PEP.
 
-        :param str version_number:
-        :rtype: Version
+        :param version_number:
+
         """
         stub = cls(
             title=version_number,
@@ -1066,7 +1050,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     Заполняются автоматически из репозитория https://github.com/python/peps
 
     """
-    TPL_URL_PYORG = 'https://www.python.org/dev/peps/pep-%s/'
+    TPL_URL_PYORG: str = 'https://www.python.org/dev/peps/pep-%s/'
 
     STATUS_DRAFT = 1
     STATUS_ACTIVE = 2
@@ -1145,42 +1129,42 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     def __str__(self):
         return f'{self.slug} — {self.title}'
 
-    autogenerate_slug = True
-    items_per_page = 40
-    details_related = None
+    autogenerate_slug: bool = True
+    items_per_page: int = 40
+    details_related: List[str] = []
 
-    is_deleted = False
+    is_deleted: bool = False
     """Отключаем общую логику работы с удалёнными.
     Здесь у понятия "отозван" своё значение.
 
     """
-    is_draft = False
+    is_draft: bool = False
     """Отключаем общую логику работы с черновиками.
     Здесь у понятия "черновик" своё значение.
 
     """
 
     @property
-    def turbo_content(self):
+    def turbo_content(self) -> str:
         return self.title
 
     @classmethod
-    def get_actual(cls):
+    def get_actual(cls) -> QuerySet:
         return cls.objects.order_by('-time_published').all()
 
-    def get_link_to_pyorg(self):
+    def get_link_to_pyorg(self) -> str:
         # Получает ссылку на pep в python.org
         return self.TPL_URL_PYORG % self.slug
 
-    def generate_slug(self):
+    def generate_slug(self) -> str:
         # Дополняется нулями слева до четырёх знаков.
         return str(self.num).zfill(4)
 
     @classmethod
-    def get_paginator_objects(cls):
+    def get_paginator_objects(cls) -> QuerySet:
         return cls.objects.order_by('num')
 
-    def get_description(self):
+    def get_description(self) -> str:
         # Русское наименование для показа в рассылке и подобном.
         return self.title
 
@@ -1193,31 +1177,31 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         sync_peps()
 
     @property
-    def bg_class(self):
+    def bg_class(self) -> str:
         return self.MAP_STATUSES[self.status][1]
 
     @property
-    def display_status(self):
+    def display_status(self) -> str:
         return self.STATUSES[self.status]
 
     @property
-    def display_type(self):
+    def display_type(self) -> str:
         return self.TYPES[self.type]
 
     @property
-    def display_status_letter(self):
+    def display_status_letter(self) -> str:
         return self.MAP_STATUSES[self.status][0]
 
     @property
-    def display_type_letter(self):
+    def display_type_letter(self) -> str:
         return self.TYPES[self.type][0]
 
     @classmethod
-    def find(cls, *search_terms):
+    def find(cls, *search_terms: str) -> QuerySet:
         """Ищет указанный текст в справочнике. Возвращает QuerySet.
 
-        :param str search_terms: Строка для поиска.
-        :rtype: models.QuerySet
+        :param search_terms: Строка для поиска.
+
         """
         q = Q()
 
@@ -1243,12 +1227,12 @@ class ReferenceMissing(models.Model):
         return self.term
 
     @classmethod
-    def add(cls, search_term):
+    def add(cls, search_term: str) -> bool:
         """Добавляет данные по указанному термину в реестр промахов.
         Возвращает True, если была добавлена новая запись.
 
-        :param str search_term: Термин для поиска.
-        :rtype: bool
+        :param search_term: Термин для поиска.
+
         """
         obj = cls.objects.filter(Q(term__icontains=search_term) | Q(synonyms__icontains=search_term)).first()
 
@@ -1347,40 +1331,40 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
             'help_text': 'Подробное описание. Здесь же следует располагать примеры кода.',
         }
 
-    autogenerate_slug = True
-    allow_linked = False
-    details_related = ['parent', 'submitter']
+    autogenerate_slug: bool = True
+    allow_linked: bool = False
+    details_related: List[str] = ['parent', 'submitter']
 
     @property
-    def turbo_content(self):
+    def turbo_content(self) -> str:
         return self.description
 
     @property
-    def is_type_callable(self):
+    def is_type_callable(self) -> bool:
         return self.type in (self.TYPE_METHOD, self.TYPE_FUNCTION, self.TYPE_CLASS)
 
     @property
-    def is_type_bundle(self):
+    def is_type_bundle(self) -> bool:
         return self.type in (self.TYPE_CHAPTER, self.TYPE_PACKAGE, self.TYPE_MODULE)
 
     @property
-    def is_type_method(self):
+    def is_type_method(self) -> bool:
         return self.type == self.TYPE_METHOD
 
     @property
-    def is_type_module(self):
+    def is_type_module(self) -> bool:
         return self.type == self.TYPE_MODULE
 
     @property
-    def is_type_class(self):
+    def is_type_class(self) -> bool:
         return self.type == self.TYPE_CLASS
 
     @property
-    def is_type_chapter(self):
+    def is_type_chapter(self) -> bool:
         return self.type == self.TYPE_CHAPTER
 
     @classmethod
-    def get_actual(cls, parent=None, exclude_id=None):
+    def get_actual(cls, parent: 'Reference' = None, exclude_id: int = None) -> QuerySet:
         qs = cls.objects.published()
 
         if parent is not None:
@@ -1392,11 +1376,11 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         return qs.order_by('-time_published').all()
 
     @classmethod
-    def find(cls, *search_terms):
+    def find(cls, *search_terms: str) -> QuerySet:
         """Ищет указанный текст в справочнике. Возвращает QuerySet.
 
-        :param str search_terms: Строка для поиска.
-        :rtype: models.QuerySet
+        :param search_terms: Строка для поиска.
+
         """
         q = Q()
 
@@ -1407,11 +1391,12 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         return cls.objects.published().filter(q).order_by('time_published')
 
 
-class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
-            ModelWithAuthorAndTranslator, PersonsLinked):
+class Video(
+    InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+    ModelWithAuthorAndTranslator, PersonsLinked):
     """Модель сущности `Видео`."""
 
-    COVER_UPLOAD_TO = 'videos'
+    COVER_UPLOAD_TO: str = 'videos'
 
     code = models.TextField('Код')
     url = models.URLField('URL')
@@ -1420,7 +1405,7 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
 
     history = HistoricalRecords()
 
-    persons_fields = ['authors']
+    persons_fields: List[str] = ['authors']
 
     class Meta:
         verbose_name = 'Видео'
@@ -1440,22 +1425,23 @@ class Video(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussi
         year = 'Год съёмок'
 
     @property
-    def turbo_content(self):
+    def turbo_content(self) -> str:
         return self.make_html(self.description)
 
     @classmethod
-    def get_supported_hostings(cls):
-        return VideoBroker.hostings.keys()
+    def get_supported_hostings(cls) -> List[str]:
+        return list(VideoBroker.hostings.keys())
 
-    def update_code_and_cover(self, url):
+    def update_code_and_cover(self, url: str):
         embed_code, cover_url = VideoBroker.get_code_and_cover(url)
 
         self.code = embed_code
         self.update_cover_from_url(cover_url)
 
 
-class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
-            ModelWithCompiledText):
+class Event(
+    UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+    ModelWithCompiledText):
     """Модель сущности `Событие`."""
 
     SPEC_DEDICATED = 1
@@ -1526,32 +1512,32 @@ class Event(UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWi
             self.mark_published()
         super().save(*args, **kwargs)
 
-    def get_display_type(self):
+    def get_display_type(self) -> str:
         return self.TYPES[self.type]
 
-    def get_display_specialization(self):
+    def get_display_specialization(self) -> str:
         return self.SPECS[self.specialization]
 
     @property
-    def is_in_past(self):
+    def is_in_past(self) -> Optional[bool]:
         field = self.time_finish or self.time_start
         if field is None:
             return None
         return field < timezone.now()
 
     @property
-    def is_now(self):
+    def is_now(self) -> bool:
         if not all([self.time_start, self.time_finish]):
             return False
         return self.time_start <= timezone.now() <= self.time_finish
 
     @property
-    def time_forgetmenot(self):
+    def time_forgetmenot(self) -> datetime:
         """Дата напоминания о предстоящем событии (на сутки ранее начала события)."""
         return self.time_start - timedelta(days=1)
 
     @classmethod
-    def get_paginator_objects(cls):
+    def get_paginator_objects(cls) -> QuerySet:
         now = timezone.now()
 
         # Сначала грядущие в порядке приближения, потом прошедшие в порядке отдалённости.
@@ -1578,10 +1564,10 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
     Персона не обязана являться пользователем сайта, но между этими сущностями может быть связь.
 
     """
-    details_related = ['submitter', 'last_editor', 'user']
-    paginator_related = []
-    paginator_order = 'name'
-    items_per_page = 1000
+    details_related: List[str] = ['submitter', 'last_editor', 'user']
+    paginator_related: List[str] = []
+    paginator_order: str = 'name'
+    items_per_page: int = 1000
 
     user = models.OneToOneField(
         User, verbose_name='Пользователь', related_name='person', null=True, blank=True,
@@ -1602,18 +1588,17 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         return self.name
 
     @property
-    def title(self):
+    def title(self) -> str:
         return self.get_display_name()
 
     @classmethod
-    def get_known_persons(cls):
+    def get_known_persons(cls) -> Dict[str, List['Person']]:
         """Возвращает словарь, индексированный именами персон.
 
         Где значения являются списками с объектами моделей персон.
         Если в списке больше одной модели, значит этому имени соответствует
         несколько разных моделей персон.
 
-        :rtype: dict
         """
         known = {}
         for person in cls.objects.exclude(status=cls.STATUS_DELETED):
@@ -1621,20 +1606,22 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         return known
 
     @classmethod
-    def contribute_to_known_persons(cls, person, known_persons):
+    def contribute_to_known_persons(cls, person: 'Person', known_persons: Dict[str, List['Person']]):
         """Добавляет объект указанной персоны в словарь с известными персонами.
 
-        :param Person person:
-        :param dict known_persons:
+        :param person:
+        :param known_persons: Объект изменяется в ходе выполнения метода.
+
         """
-        def add_name(name):
+        def add_name(name: str):
             """Заносит имя в разных вариантах в реестр известных имён.
 
-            :param str name:
+            :param name:
+
             """
             name = PersonName(name)
 
-            for variant in name.get_variants():
+            for variant in name.get_variants:
                 persons_for_variant = known_persons.setdefault(variant, [])
                 if person not in persons_for_variant:  # Дубли не нужны.
                     persons_for_variant.append(person)
@@ -1646,11 +1633,11 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
             add_name(aka_chunk)
 
     @classmethod
-    def find(cls, *search_terms):
+    def find(cls, *search_terms: str) -> QuerySet:
         """Ищет персону по указанному имени. Возвращает QuerySet.
 
-        :param str search_terms: Строка для поиска.
-        :rtype: models.QuerySet
+        :param search_terms: Строка для поиска.
+
         """
         q = Q()
 
@@ -1661,13 +1648,13 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         return cls.get_actual().filter(q)
 
     @classmethod
-    def create(cls, name, save=False, publish=True):
+    def create(cls, name: str, save: bool = False, publish: bool = True) -> 'Person':
         """Создаёт объект персоны по имени.
 
-        :param str name:
-        :param bool save: Следует ли сохранить объект в БД.
-        :param bool publish: Следует ли пометить объект опубликованным.
-        :rtype: Person
+        :param name:
+        :param save: Следует ли сохранить объект в БД.
+        :param publish: Следует ли пометить объект опубликованным.
+
         """
         person = cls(
             name=name,
@@ -1682,7 +1669,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         return person
 
     @classmethod
-    def get_paginator_objects(cls):
+    def get_paginator_objects(cls) -> List:
         persons = super().get_paginator_objects()
 
         def sort_by_surname(person):
@@ -1694,12 +1681,11 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         result = sorted(persons, key=sort_by_surname)
         return result
 
-    def get_materials(self):
+    def get_materials(self) -> Dict[str, Tuple[str, QuerySet]]:
         """Возвращает словарь с матералами, созданными персоной.
 
         Индексирован названиями разделов сайта; значения — список моделей материалов.
 
-        :rtype: dict
         """
         from .realms import get_realm
 

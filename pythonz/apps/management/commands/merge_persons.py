@@ -16,7 +16,7 @@ class Command(BaseCommand):
         parser.add_argument('stale_person_id')
         parser.add_argument('target_person_id')
 
-    def handle(self, stale_person_id, target_person_id, **options):
+    def handle(self, stale_person_id: int, target_person_id: int, **options):
 
         LOG.info(f'Merging person {stale_person_id} into {target_person_id} ...')
 

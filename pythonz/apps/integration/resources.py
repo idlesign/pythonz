@@ -1,20 +1,21 @@
+from typing import Dict, Type, Tuple, List
+
 import feedparser
 
 from ..signals import sig_integration_failed
+
+if False:  # pragma: nocover
+    from ..generics.realms import RealmBase
 
 
 class PyDigestResource:
     """Инструменты для получения данных со внешнего ресурса pythondigest.ru."""
 
-    mapping = None
+    mapping: Dict[Type['RealmBase'], Tuple[str, ...]] = None
 
     @classmethod
-    def get_mapping(cls):
-        """Возвращает словарь соотношений классов областей псевдонимам
-        разделов.
-
-        :return:
-        """
+    def get_mapping(cls) -> Dict[Type['RealmBase'], Tuple[str, ...]]:
+        """Возвращает словарь соотношений классов областей псевдонимам разделов."""
         if cls.mapping is None:
             from ..realms import ArticleRealm, VideoRealm, EventRealm
 
@@ -28,12 +29,8 @@ class PyDigestResource:
         return cls.mapping
 
     @classmethod
-    def fetch_entries(cls):
-        """Собирает данные (записи) со внешнего ресурса, соотнося их
-        с разделами pythonz.
-
-        :rtype: list
-        """
+    def fetch_entries(cls) -> List[dict]:
+        """Собирает данные (записи) со внешнего ресурса, соотнося их с разделами pythonz."""
         base_url = 'http://pythondigest.ru/rss/'
 
         mapping = cls.get_mapping()

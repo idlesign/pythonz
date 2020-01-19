@@ -1,16 +1,17 @@
 from datetime import datetime
+from typing import Optional
 
 from django import forms
 from django.forms.widgets import CheckboxInput
 
-from ..models import Article
 from ..forms.widgets import RstEditWidget
+from ..models import Article, User
 
 
 class CommonEntityForm(forms.ModelForm):
     """Базовый класс для форм создания/редактирования сущностей."""
 
-    def clean_year(self):
+    def clean_year(self) -> str:
         year = self.cleaned_data['year'] or ''
         year = year.strip()
         if year:
@@ -22,7 +23,7 @@ class CommonEntityForm(forms.ModelForm):
 class RealmEditBaseForm(CommonEntityForm):
     """Базовый класс для форм создания/редактирования сущностей, принадлежащим областям."""
 
-    def __init__(self, *args, user=None, **kwargs):
+    def __init__(self, *args, user: Optional[User] = None, **kwargs):
         super().__init__(*args, **kwargs)
 
         if self._meta.model is not Article:  # Запрещаем управлять статусом везде, кроме Статей.

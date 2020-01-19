@@ -1,36 +1,43 @@
 from collections import OrderedDict
+from typing import Optional, List, Tuple, Union
 from urllib.parse import urlparse
 
+from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import signals
 from django.utils.timezone import now
+from requests import Response
 from requests.exceptions import ConnectionError
 
 from .utils import make_soup, get_from_url
 
-_PARTNERS_REGISTRY = None
-_CACHE_TIMEOUT = 28800  # 8 часов
+if False:  # pragma: nocover
+    from ..generics.realms import RealmBase
+    from ..generics.models import RealmBaseModel
+    from ..models import PartnerLink, ModelWithPartnerLinks
+
+_PARTNERS_REGISTRY: Optional[dict] = None
+_CACHE_TIMEOUT: int = 28800  # 8 часов
 
 
-class PartnerBase():
+class PartnerBase:
     """Базовый класс для работы с партнёрскими сайтами."""
 
-    ident = None
-    title = None
-    link_mutator = None
+    ident: str = None
+    title: str = None
+    link_mutator: str = None
 
-    def __init__(self, partner_id):
+    def __init__(self, partner_id: str):
         self.partner_id = partner_id
 
-    def get_link_data(self, realm, link):
+    def get_link_data(self, realm: 'RealmBase', link: 'PartnerLink') -> dict:
         """Возвращает словарь с данными партнёрской ссылки.
 
-        :param RealmBase realm:
-        :param PartnerLink link:
-        :return:
-        """
+        :param realm:
+        :param link:
 
+        """
         link_url = link.url
 
         link_mutator = self.link_mutator.replace('{partner_id}', self.partner_id)
@@ -47,7 +54,7 @@ class PartnerBase():
         page_soup = self.get_page_soup(link_url)
 
         if not page_soup:
-            return
+            return {}
 
         price = self.get_price(page_soup).lower().strip(' .').replace('руб', 'руб.')
         if price.isdigit():
@@ -63,11 +70,11 @@ class PartnerBase():
         return data
 
     @classmethod
-    def get_page(cls, url):
+    def get_page(cls, url: str) -> Response:
         return get_from_url(url)
 
     @classmethod
-    def get_page_soup(cls, url):
+    def get_page_soup(cls, url: str) -> Optional[BeautifulSoup]:
         try:
             page = cls.get_page(url)
 
@@ -77,27 +84,27 @@ class PartnerBase():
         return make_soup(page.text)
 
     @classmethod
-    def get_price(cls, page_soup):
+    def get_price(cls, page_soup: BeautifulSoup) -> str:
         return ''
 
 
 class BooksRu(PartnerBase):
     """Класс реализует работу по партнёрской программе сайта books.ru."""
 
-    ident = 'booksru'
-    title = 'books.ru'
-    link_mutator = '?partner={partner_id}'
+    ident: str = 'booksru'
+    title: str = 'books.ru'
+    link_mutator: str = '?partner={partner_id}'
 
-    change_location_url = "https://www.books.ru/change_region.php"
-    locations = {
+    change_location_url: str = "https://www.books.ru/change_region.php"
+    locations: dict = {
         'nsk': {'mainregion_other': 1, 'subregion_other': 277},
         'msk': {'mainregion_other': 1, 'subregion_other': 271},
         'ned': {'mainregion_other': 0, 'subregion_other': 157}
     }
-    default_location = 'nsk'
+    default_location: str = 'nsk'
 
     @classmethod
-    def get_price(cls, page_soup):
+    def get_price(cls, page_soup: BeautifulSoup) -> str:
 
         price = ''
 
@@ -109,7 +116,7 @@ class BooksRu(PartnerBase):
         return price
 
     @classmethod
-    def get_page(cls, url):
+    def get_page(cls, url: str) -> Response:
         resp = get_from_url(
             cls.change_location_url,
             data=cls.locations[cls.default_location],
@@ -122,12 +129,12 @@ class BooksRu(PartnerBase):
 class LitRes(PartnerBase):
     """Класс реализует работу по партнёрской программе сайта litres.ru."""
 
-    ident = 'litres'
-    title = 'litres.ru'
-    link_mutator = '?lfrom={partner_id}'
+    ident: str = 'litres'
+    title: str = 'litres.ru'
+    link_mutator: str = '?lfrom={partner_id}'
 
     @classmethod
-    def get_price(cls, page_soup):
+    def get_price(cls, page_soup: BeautifulSoup) -> str:
 
         price = ''
 
@@ -142,12 +149,12 @@ class LitRes(PartnerBase):
 class Ozon(PartnerBase):
     """Класс реализует работу по партнёрской программе сайта ozon.ru."""
 
-    ident = 'ozon'
-    title = 'ozon.ru'
-    link_mutator = '?partner={partner_id}'
+    ident: str = 'ozon'
+    title: str = 'ozon.ru'
+    link_mutator: str = '?partner={partner_id}'
 
     @classmethod
-    def get_price(cls, page_soup):
+    def get_price(cls, page_soup: BeautifulSoup) -> str:
 
         price = ''
 
@@ -163,12 +170,12 @@ class Ozon(PartnerBase):
 class ReadRu(PartnerBase):
     """Класс реализует работу по партнёрской программе сайта ozon.ru."""
 
-    ident = 'readru'
-    title = 'read.ru'
-    link_mutator = '?pp={partner_id}'
+    ident: str = 'readru'
+    title: str = 'read.ru'
+    link_mutator: str = '?pp={partner_id}'
 
     @classmethod
-    def get_price(cls, page_soup):
+    def get_price(cls, page_soup: BeautifulSoup) -> str:
 
         price = ''
 
@@ -192,12 +199,12 @@ class ReadRu(PartnerBase):
 class LabirintRu(PartnerBase):
     """Класс реализует работу по партнёрской программе сайта labirint.ru."""
 
-    ident = 'labirint'
-    title = 'labirint.ru'
-    link_mutator = '?p={partner_id}'
+    ident: str = 'labirint'
+    title: str = 'labirint.ru'
+    link_mutator: str = '?p={partner_id}'
 
     @classmethod
-    def get_price(cls, page_soup):
+    def get_price(cls, page_soup: BeautifulSoup) -> str:
 
         price = ''
 
@@ -209,20 +216,18 @@ class LabirintRu(PartnerBase):
         return price
 
 
-def get_cache_key(instance):
+def get_cache_key(instance: 'RealmBaseModel') -> str:
     """Возвращает ключ записи кэша для указанного экземпляра сущности.
 
     :param instance:
-    :return:
+
     """
     return f'partner_links|{instance.__class__.__name__}|{instance.pk}'
 
 
 def init_partners_module():
-    """Инициализирует объекты известных партнёров и заносит их в реестр.
+    """Инициализирует объекты известных партнёров и заносит их в реестр."""
 
-    :return:
-    """
     global _PARTNERS_REGISTRY
 
     if _PARTNERS_REGISTRY is not None:
@@ -243,11 +248,8 @@ def init_partners_module():
 
     def partner_links_cache_invalidate(*args, **kwargs):
         """Сбрасывает кеш партнёрских ссылок при изменении данных
-         моделей сыылок или их удалении.
+         моделей ссылок или их удалении.
 
-        :param args:
-        :param kwargs:
-        :return:
         """
         cache_key = get_cache_key(kwargs.get('instance').linked_object)
         cache.delete(cache_key)
@@ -255,14 +257,12 @@ def init_partners_module():
     signals.post_save.connect(partner_links_cache_invalidate, sender=PartnerLink, weak=False)
     signals.post_delete.connect(partner_links_cache_invalidate, sender=PartnerLink, weak=False)
 
+
 init_partners_module()
 
 
-def get_partners_choices():
-    """Возвращает варианты выбора известных партнёров для раскрывающихся списков.
-
-    :return:
-    """
+def get_partners_choices() -> List[Tuple[str, str]]:
+    """Возвращает варианты выбора известных партнёров для раскрывающихся списков."""
     choices = []
     for partner in _PARTNERS_REGISTRY.values():
         choices.append((partner.ident, partner.title))
@@ -270,15 +270,14 @@ def get_partners_choices():
     return choices
 
 
-def get_partner_links(realm, item):
+def get_partner_links(realm: 'RealmBase', item: Union['RealmBaseModel', 'ModelWithPartnerLinks']) -> dict:
     """Возвращает словарь с данными по партнёрским ссылкам,
     готовый для передачи в шаблон.
 
-    :param RealmBase realm:
-    :param RealmBaseModel|ModelWithPartnerLinks item:
-    :return:
-    """
+    :param  realm:
+    :param item:
 
+    """
     cache_key = get_cache_key(item)
     links_data = cache.get(cache_key)
 

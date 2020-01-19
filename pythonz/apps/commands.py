@@ -41,10 +41,11 @@ def publish_postponed():
                 item.save()
 
 
-def clean_missing_refs(min_hits=4):
+def clean_missing_refs(min_hits: int = 4):
     """Удаляет из БД записи о промахах справочника, получившиеся
     менее заданного количества обращений.
 
-    :param int min_hits:
+    :param min_hits:
+
     """
     ReferenceMissing.objects.filter(hits__lt=min_hits).delete()

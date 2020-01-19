@@ -5,6 +5,7 @@ from io import StringIO
 from datetime import datetime
 from collections import OrderedDict
 from traceback import format_exc
+from typing import List, Tuple, Optional, Union, Dict
 
 import attr
 
@@ -25,41 +26,41 @@ class SummaryItem:
     title = attr.ib()
     description = attr.ib(default='')
 
-    def to_json(self):
-        """Представляет объект в виде json.
-
-        :rtype: str
-        """
+    def to_json(self) -> str:
+        """Представляет объект в виде json."""
         return json.dumps(attr.asdict(self))
+
+
+FetcherResult = Optional[Tuple[List[SummaryItem], Union[List, Dict]]]
 
 
 class ItemsFetcherBase:
     """Базовый класс для сборщиков данных из внешних ресурсов."""
 
-    title = None
+    title: str = None
     """Название сводки."""
 
-    alias = None
+    alias: str = None
     """Псевдоним сводки. Однажды установленный не должен оставаться неизменным."""
 
-    mode_cumulative = False
+    mode_cumulative: bool = False
     """Режим для работы с ресурсами, данные которых кумулятивны 
     (дополняются новые к имеющимся старым). В этом режиме все старые 
     данные будут отсеяны.
 
     """
 
-    mode_remove_unchanged = False
+    mode_remove_unchanged: bool = False
     """Режим, при котором элементы из старого забора исключаются из нового даже если
     присутствуют в нём.
 
     """
 
-    def __init__(self, previous_result, previous_dt, **kwargs):
+    def __init__(self, previous_result: List, previous_dt: datetime, **kwargs):
         """
 
-        :param list previous_result: Результат предыдущего забора данных.
-        :param datetime previous_dt: Дата и время предыдущего забора данных.
+        :param previous_result: Результат предыдущего забора данных.
+        :param previous_dt: Дата и время предыдущего забора данных.
 
         :param kwargs:
 
@@ -67,11 +68,8 @@ class ItemsFetcherBase:
         self.previous_result = previous_result or []
         self.previous_dt = previous_dt or get_datetime_from_till(7)[0]
 
-    def run(self):
-        """Основной рабочий метод. Запускает сбор данных
-
-        :rtype: tuple[list, list]
-        """
+    def run(self) -> FetcherResult:
+        """Основной рабочий метод. Запускает сбор данных."""
         fetcher_name = self.__class__.__name__
 
         LOG.debug(f'Summary fetcher `{fetcher_name}` started ...')
@@ -92,25 +90,23 @@ class ItemsFetcherBase:
 
         return None
 
-    def fetch(self):
+    def fetch(self) -> FetcherResult:
         """Забирает данные для последующей сборки в сводку.
 
         Должен реализовываться наследниками.
 
-        :return: Кортеж вида:
+        Возвращает кортеж вида:
             (список_SummaryItem, список_результов)
 
             Результат будет передан в previous_result при следующем заборе данных.
 
-        :rtype: tuple[list, list]
         """
         raise NotImplementedError(f'`{self.__class__.__name__}` must implement .fetch()')  # pragma: nocover
 
-    def _filter(self, items):
+    def _filter(self, items: dict) -> Tuple[List[SummaryItem], Union[List, Dict]]:
         """
+        :param items:
 
-        :param OrderedDict items:
-        :rtype: tuple[list, list]
         """
         previous_result = self.previous_result
         mode_cumulative = self.mode_cumulative
@@ -135,7 +131,8 @@ class ItemsFetcherBase:
 
         new_result = []
         by_title = OrderedDict()
-        for idx_current, (key, summary_item) in enumerate(items.items()):  # type: SummaryItem
+        for idx_current, (key, summary_item) in enumerate(items.items()):
+            summary_item: SummaryItem
 
             if mode_cumulative:
                 if idx_current <= idx_prev:
@@ -158,16 +155,16 @@ class ItemsFetcherBase:
 class PipermailBase(ItemsFetcherBase):
     """Базовый сборщик данных из архивов почтовых рассылок pipermail с mail.python.org"""
 
-    mode_cumulative = True
+    mode_cumulative: bool = True
 
-    def get_url(self):
+    def get_url(self) -> str:
         return f'https://mail.python.org/pipermail/{self.alias}/'
 
-    def __init__(self, previous_result, previous_dt, year_month=None, **kwargs):
+    def __init__(self, previous_result: List, previous_dt: datetime, year_month: str = None, **kwargs):
         self.year_month = year_month
         super().__init__(previous_result, previous_dt, **kwargs)
 
-    def fetch(self):
+    def fetch(self) -> FetcherResult:
         url = self.get_url()
         year_month = self.year_month
 
@@ -175,7 +172,7 @@ class PipermailBase(ItemsFetcherBase):
         if not year_month:
             page = get_from_url(url)
 
-            match = re.search('="((\d{4}-[^/]+)%s)"' % details_page_file, page.text)
+            match = re.search(r'="((\d{4}-[^/]+)%s)"' % details_page_file, page.text)
 
             if not match:
                 sig_integration_failed.send(None, description=f'Subject page link not found at {url}')
@@ -188,7 +185,7 @@ class PipermailBase(ItemsFetcherBase):
 
         items = OrderedDict()
 
-        prefix_re = re.compile('\[[^]]+\]\s*')
+        prefix_re = re.compile(r'\[[^]]+\]\s*')
 
         list_items = soup.select('ul')[1].select('li')
         for list_item in list_items:
@@ -212,15 +209,15 @@ class StackdataBase(ItemsFetcherBase):
 
     """
 
-    site = None
-    domain = None
-    query_revision_id = None
+    site: str = None
+    domain: str = None
+    query_revision_id: int = None
 
-    def __init__(self, previous_result, previous_dt, top_count=10, **kwargs):
+    def __init__(self, previous_result: List, previous_dt: datetime, top_count: int = 10, **kwargs):
         self.top_count = top_count
         super().__init__(previous_result, previous_dt, **kwargs)
 
-    def get_url(self):
+    def get_url(self) -> str:
         since = self.previous_dt.strftime('%Y%m%d')
         url = (
             'http://data.stackexchange.com/%(site)s/csv/%(revision_id)s?top=%(top)s&since=%(since)s' % {
@@ -232,10 +229,10 @@ class StackdataBase(ItemsFetcherBase):
         )
         return url
 
-    def get_item_url(self, item_id):
+    def get_item_url(self, item_id: int) -> str:
         return f'https://{self.domain}/questions/{item_id}/'
 
-    def fetch(self):
+    def fetch(self) -> FetcherResult:
         url = self.get_url()
         response = get_from_url(url)
 

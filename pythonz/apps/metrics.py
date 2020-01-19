@@ -1,3 +1,5 @@
+from typing import Dict
+
 from sitemetrics.providers import Yandex
 
 
@@ -6,7 +8,7 @@ class MyYandex(Yandex):
     Подключаем некоторые плюшки из тех, что умеет счётчик.
     """
 
-    params = {
+    params: Dict[str, bool] = {
         'webvisor': True,
         'clickmap': True,
         'track_links': True,

@@ -1,12 +1,13 @@
-from pytz import UnknownTimeZoneError
-from django.utils import timezone
 from django.contrib.auth.models import AnonymousUser
+from django.http import HttpRequest, HttpResponse
+from django.utils import timezone
+from pytz import UnknownTimeZoneError
 
 
 def TimezoneMiddleware(get_response):
     """Устанавливает текущую временную зону."""
 
-    def middleware(request):
+    def middleware(request: HttpRequest) -> HttpResponse:
 
         default_timezone = 'Asia/Novosibirsk'
         current_timezone = default_timezone

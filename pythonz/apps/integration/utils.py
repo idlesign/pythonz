@@ -1,4 +1,5 @@
 import os
+from typing import List, Optional
 
 import requests
 from PIL import Image
@@ -7,19 +8,23 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.utils import timezone
+from requests import Response
 
 from ..signals import sig_integration_failed
 from ..utils import truncate_words, truncate_chars
 
+if False:  # pragma: nocover
+    from ..generics.realms import RealmBase
 
-def get_from_url(url, method='get', **kwargs):
+
+def get_from_url(url: str, method: str = 'get', **kwargs) -> Response:
     """Возвращает объект ответа requests с указанного URL.
     
     По умолчанию запрос производится методом GET.
     
-    :param str url:
-    :param str method: get, post
-    :rtype: requests.Response
+    :param url:
+    :param method: get, post
+
     """
     r_kwargs = {
         'allow_redirects': True,
@@ -31,13 +36,13 @@ def get_from_url(url, method='get', **kwargs):
     return method(url, **r_kwargs)
 
 
-def get_json(url, return_none_statuses=None):
+def get_json(url: str, return_none_statuses: List[int] = None) -> dict:
     """Возвращает словарь, созданный из JSON документа, полученного
     с указанного URL.
 
-    :param str url:
+    :param url:
     :param list return_none_statuses: Коды статусов, для которых требуется вернуть None.
-    :rtype dict|None: Note в случае возникновения ошибок из перечня return_none_statuses.
+
     """
     return_none_statuses = return_none_statuses or []
     result = {}
@@ -51,7 +56,7 @@ def get_json(url, return_none_statuses=None):
         status = getattr(e.response, 'status_code', 0)
 
         if status in return_none_statuses:
-            return None
+            return {}
 
         elif status != 503:
             # Temporary Unavailable. В следующий раз получится.
@@ -66,31 +71,30 @@ def get_json(url, return_none_statuses=None):
     return result
 
 
-def get_image_from_url(url):
+def get_image_from_url(url: str) -> ContentFile:
     """Забирает изображение с указанного URL.
 
     :param url:
-    :return:
+
     """
     return ContentFile(requests.get(url).content, url.rsplit('/', 1)[-1])
 
 
-def scrape_page(url):
+def scrape_page(url: str) -> dict:
     """Возвращает словарь с данными о странице, либо None в случае ошибок.
 
     Словарь вида:
         {'title': '...', 'content_more': '...', 'content_less': '...', ...}
 
     :param url:
-    :return:
-    """
 
+    """
     # Функция использовала ныне недоступный Rich Content API от Яндекса для получения данных о странице.
     # Если функциональность будет востребована, нужно будет перевести на использование догого механизма.
     result = {}
 
     if 'content' not in result:
-        return None
+        return {}
 
     content = result['content']
     result['content_less'] = truncate_words(content, 30)
@@ -99,23 +103,16 @@ def scrape_page(url):
     return result
 
 
-def make_soup(page):
+def make_soup(page: str) -> BeautifulSoup:
     """Возвращает объект BeautifulSoup, либо None для указанного URL.
 
-    :param str url:
-    :return: object
-    :rtype: BeautifulSoup|None
+    :param page:
+
     """
-    result = None
-    try:
-        result = BeautifulSoup(page, 'lxml')
-    except requests.exceptions.RequestException:
-        pass
-
-    return result
+    return BeautifulSoup(page, 'lxml')
 
 
-def get_thumb_url(realm, image, width, height, absolute_url=False):
+def get_thumb_url(realm: 'RealmBase', image: Image, width: int, height: int, absolute_url: bool = False) -> str:
     """Создаёт на лету уменьшенную копию указанного изображения.
 
     :param realm:
@@ -123,7 +120,7 @@ def get_thumb_url(realm, image, width, height, absolute_url=False):
     :param width:
     :param height:
     :param absolute_url:
-    :return:
+
     """
     base_path = os.path.join('img', realm.name_plural, 'thumbs', f'{width}x{height}')
     try:
@@ -159,13 +156,13 @@ def get_thumb_url(realm, image, width, height, absolute_url=False):
     return url
 
 
-def get_timezone_name(lat, lng):
+def get_timezone_name(lat: str, lng: str) -> Optional[str]:
     """Возвращает имя часового пояса по геокоординатам, либо None.
     Использует Сервис Google Time Zone API.
 
     :param lat: широта
     :param lng: долгота
-    :return:
+
     """
     url = (
         'https://maps.googleapis.com/maps/api/timezone/json?'
@@ -187,25 +184,24 @@ def get_timezone_name(lat, lng):
     return tz_name
 
 
-def get_location_data(location_name):
+def get_location_data(location_name: str) -> dict:
     """Возвращает геоданные об объекте по его имени, либо None.
     Использует API Яндекс.Карт.
 
     :param location_name:
-    :return:
-    """
 
+    """
     url = f'http://geocode-maps.yandex.ru/1.x/?results=1&format=json&geocode={location_name}'
     try:
         result = requests.get(url)
         doc = result.json()
 
     except Exception:
-        return None
+        return {}
 
     found = doc['response']['GeoObjectCollection']['metaDataProperty']['GeocoderResponseMetaData']['found']
     if not int(found):
-        return None
+        return {}
 
     object_dict = doc['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
     object_bounds_dict = object_dict['boundedBy']['Envelope']

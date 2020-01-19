@@ -1,3 +1,5 @@
+from typing import List
+
 from django.utils.dateparse import parse_datetime
 
 from .utils import get_json
@@ -7,11 +9,11 @@ class HhVacancyManager:
     """Объединяет инструменты для работы с вакансиями с hh.ru."""
 
     @classmethod
-    def get_status(cls, url):
+    def get_status(cls, url: str) -> dict:
         """Возвращает состояние вакансии по указанному URL.
 
         :param url:
-        :return:
+
         """
         response = get_json(url, return_none_statuses=[404])
         if not response:
@@ -20,11 +22,10 @@ class HhVacancyManager:
         return response['archived']
 
     @classmethod
-    def fetch_list(cls):
+    def fetch_list(cls) -> List[dict]:
         """Возвращает словарь с данными вакансий, полученный из внешнего
         источника.
 
-        :return:
         """
         base_url = 'https://api.hh.ru/vacancies/'
         query = (
@@ -38,7 +39,7 @@ class HhVacancyManager:
         response = get_json(f'{base_url}?{query}')
 
         if 'items' not in response:
-            return None
+            return []
 
         results = []
         for item in response['items']:

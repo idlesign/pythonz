@@ -8,11 +8,11 @@ from .models import Summary, PEP, ExternalResource, Vacancy
 from .sitemessages import PythonzEmailDigest
 
 
-def _nsk(hour):
+def _nsk(hour: int) -> int:
     """Транслирует новосибирский час в час по времени страны хостинга.
 
-    :param int hour:
-    :rtype: int
+    :param hour:
+
     """
     return hour - 6
 

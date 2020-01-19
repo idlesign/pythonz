@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from itertools import groupby
 from operator import attrgetter
+from typing import List
 from urllib.parse import quote_plus
 
 from django.conf import settings
@@ -22,9 +23,10 @@ from sitegate.decorators import signin_view, signup_view, redirect_signedin
 from sitegate.signup_flows.classic import SimpleClassicWithEmailSignup
 from sitemessage.toolbox import get_user_preferences_for_ui, set_user_preferences_from_request
 from xross.toolbox import xross_view
+from xross.utils import XrossHandlerBase
 
 from .exceptions import RedirectRequired
-from .generics.views import DetailsView, RealmView, EditView, ListingView
+from .generics.views import DetailsView, RealmView, EditView, ListingView, HttpRequest
 from .integration.telegram import handle_request
 from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource, ReferenceMissing, \
     Category, Person
@@ -34,14 +36,14 @@ from .utils import message_warning, swap_layout
 class UserDetailsView(DetailsView):
     """Представление с детальной информацией о пользователе."""
 
-    def check_view_permissions(self, request, item):
+    def check_view_permissions(self, request: HttpRequest, item: User):
         super().check_view_permissions(request, item)
 
         if not item.profile_public and item != request.user:
             # Закрываем доступ к непубличным профилям.
             raise PermissionDenied()
 
-    def update_context(self, context, request):
+    def update_context(self, context: dict, request: HttpRequest):
         user = context['item']
         context['bookmarks'] = user.get_bookmarks()
         context['stats'] = lambda: user.get_stats()  # Ленивость для кеша в шаблоне
@@ -53,7 +55,7 @@ class UserDetailsView(DetailsView):
 class PersonDetailsView(DetailsView):
     """Представление с детальной информацией о персоне."""
 
-    def update_context(self, context, request):
+    def update_context(self, context: dict, request: HttpRequest):
         user = context['item']
         context['materials'] = lambda: user.get_materials()  # Ленивость для кеша в шаблоне
 
@@ -61,12 +63,12 @@ class PersonDetailsView(DetailsView):
 class UserEditView(EditView):
     """Представление редактирования пользователя."""
 
-    def check_edit_permissions(self, request, item):
+    def check_edit_permissions(self, request: HttpRequest, item: User):
         # Пользователи не могут редактировать других пользователей.
         if item != request.user:
             raise PermissionDenied()
 
-    def update_context(self, context, request):
+    def update_context(self, context: dict, request: HttpRequest):
 
         if request.POST:
             prefs_were_set = set_user_preferences_from_request(request)
@@ -84,12 +86,12 @@ class UserEditView(EditView):
 class PlaceDetailsView(DetailsView):
     """Представление с детальной информацией о месте."""
 
-    def set_im_here(self, request, xross=None):
+    def set_im_here(self, request: HttpRequest, xross: XrossHandlerBase = None):
         """Используется xross. Прописывает место и часовой пояс в профиль пользователя.
 
         :param request:
         :param xross:
-        :return:
+
         """
         user = request.user
         if user.is_authenticated:
@@ -98,10 +100,10 @@ class PlaceDetailsView(DetailsView):
             user.save()
 
     @xross_view(set_im_here)  # Метод перекрыт для добавления AJAX-обработчика.
-    def get(self, request, obj_id):
+    def get(self, request: HttpRequest, obj_id: int) -> HttpResponse:
         return super().get(request, obj_id)
 
-    def update_context(self, context, request):
+    def update_context(self, context: dict, request: HttpRequest):
         place = context['item']
 
         if request.user.is_authenticated:
@@ -117,7 +119,7 @@ class PlaceDetailsView(DetailsView):
 class PlaceListingView(RealmView):
     """Представление с картой и списком всех известных мест."""
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         places = Place.get_actual().order_by('-supporters_num', 'title')
         return self.render(request, {self.realm.name_plural: places})
 
@@ -125,18 +127,18 @@ class PlaceListingView(RealmView):
 class VacancyListingView(ListingView):
     """Представление со списком вакансий."""
 
-    def update_context(self, context, request):
+    def update_context(self, context: dict, request: HttpRequest):
         context['stats_salary'] = Vacancy.get_salary_stats()
         context['stats_places'] = Vacancy.get_places_stats()
 
-    def get_most_voted_objects(self):
+    def get_most_voted_objects(self) -> List:
         return []
 
 
 class ReferenceListingView(RealmView):
     """Представление со списком справочников."""
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         # Справочник один, поэтому перенаправляем сразу на него.
         return redirect(self.realm.get_details_urlname(slugged=True), 'python', permanent=True)
 
@@ -144,17 +146,17 @@ class ReferenceListingView(RealmView):
 class ReferenceDetailsView(DetailsView):
     """Представление статьи справочника."""
 
-    def update_context(self, context, request):
+    def update_context(self, context: dict, request: HttpRequest):
         reference = context['item']
-        context['children'] = reference.get_actual(reference).order_by('title')
+        context['children'] = reference.get_actual(parent=reference).order_by('title')
         if reference.parent is not None:
-            context['siblings'] = reference.get_actual(reference.parent, exclude_id=reference.id).order_by('title')
+            context['siblings'] = reference.get_actual(parent=reference.parent, exclude_id=reference.id).order_by('title')
 
 
 class CategoryListingView(RealmView):
     """Выводит список известных категорий, либо список сущностей для конкретной категории."""
 
-    def get(self, request, obj_id=None):
+    def get(self, request: HttpRequest, obj_id: int = None):
         from .realms import get_realms
         realms = get_realms().values()
 
@@ -194,7 +196,7 @@ class CategoryListingView(RealmView):
 class VersionDetailsView(DetailsView):
     """Представление с детальной информацией о версии Питона."""
 
-    def update_context(self, context, request):
+    def update_context(self, context: dict, request: HttpRequest):
         version = context['item']
         context['added'] = version.reference_added.order_by('title')
         context['deprecated'] = version.reference_deprecated.order_by('title')
@@ -202,14 +204,21 @@ class VersionDetailsView(DetailsView):
 
 
 # Наши страницы ошибок.
-permission_denied = lambda request, exception: dj_permission_denied(request, exception, template_name='static/403.html')
-page_not_found = lambda request, exception: dj_page_not_found(request, exception, template_name='static/404.html')
-server_error = lambda request: dj_server_error(request, template_name='static/500.html')
+def permission_denied(request: HttpRequest, exception: Exception) -> HttpResponse:
+    return dj_permission_denied(request, exception, template_name='static/403.html')
+
+
+def page_not_found(request: HttpRequest, exception: Exception) -> HttpResponse:
+    return dj_page_not_found(request, exception, template_name='static/404.html')
+
+
+def server_error(request: HttpRequest):
+    return dj_server_error(request, template_name='static/500.html')
 
 
 @cache_page(1800)  # 30 минут
 @csrf_protect
-def index(request):
+def index(request: HttpRequest) -> HttpResponse:
     """Индексная страница."""
     from .realms import get_realms
 
@@ -251,17 +260,17 @@ def index(request):
 
 
 @csrf_exempt
-def telebot(request):
+def telebot(request: HttpRequest) -> HttpResponse:
     """Обрабатывает запросы от Telegram.
 
     :param request:
-    :rtype: HttpResponse
+
     """
     handle_request(request)
     return HttpResponse()
 
 
-def search(request):
+def search(request: HttpRequest) -> HttpResponse:
     """Страница с результатами поиска по справочнику.
     Если найден один результат, перенаправляет на страницу результата.
 
@@ -314,15 +323,17 @@ def search(request):
 
 
 @redirect_signedin
-@signin_view(widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label}, template='form_bootstrap4')
-@signup_view(widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label}, template='form_bootstrap4',
-             flow=SimpleClassicWithEmailSignup, verify_email=True)
-def login(request):
+@signin_view(
+    widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label}, template='form_bootstrap4')
+@signup_view(
+    widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label}, template='form_bootstrap4',
+    flow=SimpleClassicWithEmailSignup, verify_email=True)
+def login(request: HttpRequest) -> HttpResponse:
     """Страница авторизации и регистрации."""
     return render(request, 'static/login.html')
 
 
 @login_required
-def user_settings(request):
+def user_settings(request: HttpRequest) -> HttpResponse:
     """Перенаправляет на страницу настроек текущего пользователя."""
     return redirect('users:edit', request.user.pk)

@@ -1,10 +1,13 @@
 import os
 from contextlib import suppress
+from datetime import datetime
+from typing import List, Union
 from uuid import uuid4
 
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
+from django.db.models import Model, QuerySet
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -16,14 +19,21 @@ from slugify import Slugify, CYRILLIC
 from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
 from ..utils import UTM, TextCompiler
 
-USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
+USER_MODEL: str = getattr(settings, 'AUTH_USER_MODEL')
 SLUGIFIER = Slugify(pretranslate=CYRILLIC, to_lower=True, safe_chars='-._', max_length=200)
+
+
+if False:  # pragma: nocover
+    from .forms import CommonEntityForm
+    from .realms import RealmBase
+    from ..models import Category, User
 
 
 class ModelWithAuthorAndTranslator(models.Model):
     """Класс-примесь для моделей, требующих поля с автором и переводчиком."""
 
-    _hint_userlink = '<br><b>[u:<ид>:<имя>]</b> формирует ссылку на профиль пользователя pythonz. Например: [u:1:идле].'
+    _hint_userlink: str = (
+        '<br><b>[u:<ид>:<имя>]</b> формирует ссылку на профиль пользователя pythonz. Например: [u:1:идле].')
 
     author = models.CharField(
         'Автор', max_length=255,
@@ -48,11 +58,11 @@ class ModelWithCompiledText(models.Model):
         abstract = True
 
     @classmethod
-    def compile_text(cls, text):
+    def compile_text(cls, text: str) -> str:
         """Преобразует rst-подобное форматирование в html.
 
         :param text:
-        :return:
+
         """
         return TextCompiler.compile(text)
 
@@ -61,12 +71,12 @@ class ModelWithCompiledText(models.Model):
         super().save(*args, **kwargs)
 
 
-def get_upload_to(instance, filename):
+def get_upload_to(instance: Model, filename: str) -> str:
     """Вычисляет директорию, в которую будет загружена обложка сущности.
 
     :param instance:
     :param filename:
-    :return:
+
     """
     category = getattr(instance, 'COVER_UPLOAD_TO')
     return os.path.join('img', category, 'orig', f'{uuid4()}{os.path.splitext(filename)[-1]}')
@@ -89,24 +99,21 @@ class CommonEntityModel(models.Model):
     class Meta:
         abstract = True
 
-    autogenerate_slug = False
+    autogenerate_slug: bool = False
     """Следует ли автоматически генерировать краткое имя в транслите для URL.
     Предполагается, что эта опция также включает машинерию, позволяющую адресовать
     объект по его краткому имени.
 
     """
 
-    allow_linked = True
+    allow_linked: bool = True
     """Разрешена ли привязка элементов друг к другу."""
 
-    def generate_slug(self):
-        """Генерирует краткое имя для URL и заполняет им атрибут slug.
-
-        :return:
-        """
+    def generate_slug(self) -> str:
+        """Генерирует краткое имя для URL и заполняет им атрибут slug."""
         return SLUGIFIER(self.title)
 
-    def validate_unique(self, exclude=None):
+    def validate_unique(self, exclude: List = None):
 
         # Перекрываем для правильной обработки спарки unique=True и null=True
         # в поле краткого имени URL.
@@ -124,7 +131,7 @@ class CommonEntityModel(models.Model):
 
         :param args:
         :param kwargs:
-        :return:
+
         """
         from ..utils import BasicTypograph
 
@@ -140,7 +147,7 @@ class CommonEntityModel(models.Model):
 
         super().save(*args, **kwargs)
 
-    def get_description(self):
+    def get_description(self) -> str:
         """Возвращает вычисляемое описание объекта.
         Обычно должен использоваться вместо обращения к атрибуту description,
         которого может не сущестовать у модели.
@@ -148,62 +155,50 @@ class CommonEntityModel(models.Model):
         """
         return self.description
 
-    def update_cover_from_url(self, url):
+    def update_cover_from_url(self, url: str):
         """Забирает обложку с указанного URL.
 
         :param url:
-        :return:
+
         """
         from ..integration.utils import get_image_from_url
         img = get_image_from_url(url)
         self.cover.save(img.name, img, save=False)
 
-    def get_linked(self):
-        """Возвращает связанные объекты.
+    def get_linked(self) -> Union[List, QuerySet]:
+        """Возвращает связанные объекты."""
 
-        :return:
-        """
         if self.allow_linked:
             return self.linked.all()
 
         return []
 
     @classmethod
-    def get_paginator_objects(cls):
+    def get_paginator_objects(cls) -> QuerySet:
         """Возвращает выборку объектов для постраничной навигации.
         Должен быть реализован наследниками.
 
-        :return:
         """
-        raise NotImplementedError()
+        raise NotImplementedError  # pragma: nocover
 
     @cached_property
-    def get_short_description(self):
-        """Возвращает усечённое описание сущности.
-
-        :return:
-        """
+    def get_short_description(self) -> str:
+        """Возвращает усечённое описание сущности."""
         return Truncator(self.description).words(25)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title
 
 
 class RealmFilteredQuerySet(models.QuerySet):
     """Реализует поддержку запросов с фильтрами для обсластей."""
 
-    def published(self):
-        """Возвращает только опубликованные сущности.
-
-        :return:
-        """
+    def published(self) -> QuerySet:
+        """Возвращает только опубликованные сущности."""
         return self.filter(status=RealmBaseModel.STATUS_PUBLISHED)
 
-    def postponed(self):
-        """Возвращает только сущности, назначенные к отложенной публикации.
-
-        :return:
-        """
+    def postponed(self) -> QuerySet:
+        """Возвращает только сущности, назначенные к отложенной публикации."""
         return self.filter(status=RealmBaseModel.STATUS_POSTPONED)
 
 
@@ -248,42 +243,42 @@ class RealmBaseModel(ModelWithFlag):
     class Meta:
         abstract = True
 
-    realm = None
+    realm: 'RealmBase' = None
     """Во время исполнения здесь будет объект области (Realm)."""
 
-    edit_form = None
+    edit_form: 'CommonEntityForm' = None
     """Во время исполнения здесь будет форма редактирования."""
 
-    items_per_page = 10
+    items_per_page: int = 10
     """Количество объектов для вывода на страницах списков."""
 
-    notify_on_publish = True
+    notify_on_publish: bool = True
     """Следует ли оповещать внешние системы о публикации сущности."""
 
-    paginator_order = '-time_created'
+    paginator_order: str = '-time_created'
     """Поле, по которому следует сортировать объекты
     при обращении к постраничному списку.
 
     """
 
-    paginator_related = ['submitter']
+    paginator_related: List[str] = ['submitter']
     """Поле, из которого следует тянуть данные одним запросом
     при обращении к постраничному списку объектов.
 
     """
 
-    details_related = ['submitter', 'last_editor']
+    details_related: List[str] = ['submitter', 'last_editor']
     """Поле, из которого следует тянуть данные одним запросом
     при обращении странице с детальной информацией по объекту.
 
     """
 
     @classmethod
-    def make_html(self, text):
+    def make_html(cls, text: str) -> str:
         """Применяет базовую html-разметку к указанному тексту.
 
-        :param str text:
-        :rtype: str
+        :param text:
+
         """
         return urlize(text.replace('\n', '<br />'), nofollow=True)
 
@@ -295,12 +290,11 @@ class RealmBaseModel(ModelWithFlag):
         """Используется для того, чтобы при следующем вызове save()
         объекта он не считался изменённым.
 
-        :return:
         """
         self._consider_modified = False
 
     @property
-    def turbo_content(self):
+    def turbo_content(self) -> str:
         return ''
 
     def __init__(self, *args, **kwargs):
@@ -353,28 +347,22 @@ class RealmBaseModel(ModelWithFlag):
             notify_published and sig_entity_published.send(self.__class__, entity=self)
 
     @classmethod
-    def find(cls, *search_terms):
+    def find(cls, *search_terms: str) -> QuerySet:
         """Ищет указанный текст в данных модели. Возвращает QuerySet.
 
-        :param str search_terms: Строки для поиска.
-        :rtype: QuerySet
+        :param search_terms: Строки для поиска.
+
         """
         raise NotImplementedError
 
     @classmethod
-    def get_actual(cls):
-        """Возвращает выборку актуальных объектов.
-
-        :return:
-        """
+    def get_actual(cls, **kwargs) -> QuerySet:
+        """Возвращает выборку актуальных объектов."""
         return cls.objects.published().order_by('-time_published').all()
 
     @classmethod
-    def get_paginator_objects(cls):
-        """Возвращает выборку для постраничной навигации.
-
-        :return:
-        """
+    def get_paginator_objects(cls) -> QuerySet:
+        """Возвращает выборку для постраничной навигации."""
         qs = cls.objects.published()
         if cls.paginator_related:
             qs = qs.select_related(*cls.paginator_related)
@@ -383,24 +371,24 @@ class RealmBaseModel(ModelWithFlag):
         return qs
 
     @classmethod
-    def cache_get_key_most_voted_objects(cls, category=None, class_name=None):
+    def cache_get_key_most_voted_objects(cls, category: 'Category' = None, class_name: str = None) -> str:
         """Возвращает ключ кеша, содержащего наиболее популярные материалы раздела.
 
         :param category:
         :param class_name:
-        :return:
+
         """
         if class_name is None:
             class_name = cls.__name__
         return f'most_voted|{class_name}|{category}'
 
     @classmethod
-    def get_most_voted_objects(cls, category=None, base_query=None):
+    def get_most_voted_objects(cls, category: 'Category' = None, base_query: QuerySet = None) -> QuerySet:
         """Возвращает наиболее популярные материалы раздела (и, опционально, категории в нём).
 
         :param category:
         :param base_query:
-        :return:
+
         """
         cache_key = cls.cache_get_key_most_voted_objects(category=category)
         objects = cache.get(cache_key)
@@ -425,77 +413,70 @@ class RealmBaseModel(ModelWithFlag):
     @classmethod
     def cache_delete_most_voted_objects(cls, **kwargs):
         """Очищает кеш наиболее популярных материлов раздела.
+
         :param kwargs:
-        :return:
+
         """
         # TODO Не инвалидирует кеш в категориях раздела. При случае решить, а нужно ли вообще.
         cache.delete(cls.cache_get_key_most_voted_objects(class_name=kwargs['sender']))
 
     @property
-    def is_draft(self):
-        """Возвращает булево указывающее на то, является ли сущность черновиком.
-
-        :return:
-        """
+    def is_draft(self) -> bool:
+        """Возвращает булево указывающее на то, является ли сущность черновиком."""
         return self.status == self.STATUS_DRAFT
 
     @property
-    def is_deleted(self):
-        """Возвращает булево указывающее на то, помечена ли сущность удаленной.
-
-        :return:
-        """
+    def is_deleted(self) -> bool:
+        """Возвращает булево указывающее на то, помечена ли сущность удаленной."""
         return self.status == self.STATUS_DRAFT
 
     @property
-    def is_published(self):
-        """Возвращает булево указывающее на то, опубликована ли сущность.
-
-        :return:
-        """
+    def is_published(self) -> bool:
+        """Возвращает булево указывающее на то, опубликована ли сущность."""
         return self.status == self.STATUS_PUBLISHED
 
-    def is_supported_by(self, user):
+    def is_supported_by(self, user: 'User') -> bool:
         """Возвращает указание на то, поддерживает ли данный пользователь данную сущность.
 
         :param user:
-        :return:
+
         """
         return self.is_flagged(user, status=self.FLAG_STATUS_SUPPORT)
 
     @classmethod
-    def get_category_objects_base_query(cls, category):
+    def get_category_objects_base_query(cls, category: 'Category') -> QuerySet:
         """Возвращает базовый QuerySet выборки объектов в указанной категории.
 
         :param category:
-        :return:
+
         """
-        return cls.get_from_category_qs(category).filter(status=RealmBaseModel.STATUS_PUBLISHED).select_related(
-            'submitter')
+        return cls.get_from_category_qs(  # ModelWithCategory
+            category
+        ).filter(status=RealmBaseModel.STATUS_PUBLISHED).select_related('submitter')
 
     @classmethod
-    def get_most_voted_objects_in_category(cls, category):
+    def get_most_voted_objects_in_category(cls, category: 'Category') -> QuerySet:
         """Возвращает наиболее популярные объекты из указанной категории.
 
         :param category:
-        :return:
+
         """
         return cls.get_most_voted_objects(category=category, base_query=cls.get_category_objects_base_query(category))
 
     @classmethod
-    def get_objects_in_category(cls, category):
+    def get_objects_in_category(cls, category: 'Category') -> QuerySet:
         """Возвращает объекты из указанной категории.
 
         :param category:
-        :return:
+
         """
         return cls.get_category_objects_base_query(category).order_by('-time_published')
 
-    def set_support(self, user):
+    def set_support(self, user: 'User'):
         """Устанавливает флаг поддержки данным пользователем данной сущности.
 
         :param user:
-        :return:
+
         """
         self.supporters_num += 1
         self.set_flag(user, status=self.FLAG_STATUS_SUPPORT)
@@ -504,11 +485,11 @@ class RealmBaseModel(ModelWithFlag):
 
         sig_support_changed.send(self.__class__.__name__)
 
-    def remove_support(self, user):
+    def remove_support(self, user: 'User'):
         """Убирает флаг поддержки данным пользователем данной сущности.
 
         :param user:
-        :return:
+
         """
         self.supporters_num -= 1
         self.remove_flag(user, status=self.FLAG_STATUS_SUPPORT)
@@ -517,73 +498,68 @@ class RealmBaseModel(ModelWithFlag):
 
         sig_support_changed.send(self.__class__.__name__)
 
-    def get_suppport_for_objects(self, objects_list, user):
+    def get_suppport_for_objects(self, objects_list: QuerySet, user: 'User') -> dict:
         """Возвращает данные о поддержке пользователем(ями) указанного набора сущностей.
 
         :param objects_list:
         :param user:
-        :return:
+
         """
         return self.get_flags_for_objects(objects_list, user=user)
 
-    def is_bookmarked_by(self, user):
+    def is_bookmarked_by(self, user: 'User') -> bool:
         """Возвращает указание на то, добавил ли данный пользователь данную сущность в избранное.
 
         :param user:
-        :return:
+
         """
         return self.is_flagged(user, status=self.FLAG_STATUS_BOOKMARK)
 
-    def set_bookmark(self, user):
+    def set_bookmark(self, user: 'User'):
         """Добавляет данную сущность в избранные для данного пользователя.
 
         :param user:
-        :return:
+
         """
         self.set_flag(user, status=self.FLAG_STATUS_BOOKMARK)
 
-    def remove_bookmark(self, user):
+    def remove_bookmark(self, user: 'User'):
         """Убирает данную сущность из избранного данного пользователя.
 
         :param user:
-        :return:
+
         """
         self.remove_flag(user, status=self.FLAG_STATUS_BOOKMARK)
 
     @classmethod
-    def get_verbose_name(cls):
-        """Возвращает человекоудобное название типа объекта в ед. числе.
-
-        :return:
-        """
+    def get_verbose_name(cls) -> str:
+        """Возвращает человекоудобное название типа объекта в ед. числе."""
         return cls._meta.verbose_name
 
     @classmethod
-    def get_verbose_name_plural(cls):
-        """Возвращает человекоудобное название типа объекта во мн. числе.
-
-        :return:
-        """
+    def get_verbose_name_plural(cls) -> str:
+        """Возвращает человекоудобное название типа объекта во мн. числе."""
         return cls._meta.verbose_name_plural
 
-    def was_edited(self):
+    def was_edited(self) -> bool:
         """Возвращает флаг, указывающий на то, был ли объект отредактирован
         (различаются ли даты создания и редактирования).
 
-        :return:
         """
-        format_date = lambda date: date.strftime('%Y%m%d%H%i')
+
+        def format_date(date: datetime):
+            return date.strftime('%Y%m%d%H%i')
+
         return self.time_modified and format_date(self.time_modified) != format_date(self.time_created)
 
-    def get_absolute_url(self, with_prefix=False, utm_source=None):
+    def get_absolute_url(self, with_prefix: bool = False, utm_source: str = None) -> str:
         """Возвращает URL страницы с детальной информацией об объекте.
 
-        :param bool with_prefix: Флаг. Следует ли добавлять название хоста к URL.
+        :param with_prefix: Флаг. Следует ли добавлять название хоста к URL.
 
-        :param None|str utm_source: Строка для создания UTM-метки (Urchin Tracking Module).
+        :param utm_source: Строка для создания UTM-метки (Urchin Tracking Module).
             Используются для обозначения источников переходов по URL при сборе статистики посещений.
 
-        :rtype: str
         """
         details_urlname = self.realm.get_details_urlname()
 
@@ -605,21 +581,18 @@ class RealmBaseModel(ModelWithFlag):
         return url
 
     @property
-    def absolute_url_prefixed(self):
+    def absolute_url_prefixed(self) -> str:
         return self.get_absolute_url(with_prefix=True)
 
-    def get_category_absolute_url(self, category):
+    def get_category_absolute_url(self, category: 'Category') -> str:
         """Возвращает URL страницы с разбивкой по данной категории.
 
         :param category:
-        :return:
+
         """
         tmp, realm_name_plural = self.realm.get_names()
         return reverse(f'{realm_name_plural}:tags', args=[str(category.id)])
 
-    def get_display_name(self):
-        """Имя для отображения в интерфейсе.
-
-        :rtype: str
-        """
+    def get_display_name(self) -> str:
+        """Имя для отображения в интерфейсе."""
         return self.__str__()
