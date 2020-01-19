@@ -1,8 +1,9 @@
+from typing import Union
+
 from django.core.management.base import BaseCommand
 
 from ...models import Video, Book, Person
 from ...utils import get_logger
-
 
 LOG = get_logger(__name__)
 
@@ -18,7 +19,8 @@ class Command(BaseCommand):
         known_persons = Person.get_known_persons()
 
         for model_cls in (Video, Book):
-            for item in model_cls.objects.all():  # type: Video
+            for item in model_cls.objects.all():
+                item: Union[Video, Book]
                 item.sync_persons_fields(known_persons)
 
         LOG.info('Linking to persons done')

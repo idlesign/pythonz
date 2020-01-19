@@ -2,8 +2,8 @@
 class PythonzException(Exception):
     """Базовое исключение проекта. Остальные должны наследоваться от него."""
 
-    def __init__(self, message=None, **kwargs):
-        super().__init__(message, **kwargs)
+    def __init__(self, message: str = None, **kwargs):
+        super().__init__(message)
         self.message = message
 
 

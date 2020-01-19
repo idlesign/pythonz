@@ -1,7 +1,11 @@
+from typing import Optional, List
+
 from django.conf import settings
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 # from datetimewidget.widgets import DateTimeWidget, DateWidget
+from ..generics.models import RealmBaseModel
+from ..generics.realms import RealmBase
 from ..integration.videos import VideoBroker
 from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference, Version
 from ..generics.forms import RealmEditBaseForm
@@ -35,12 +39,12 @@ class DiscussionForm(RealmEditBaseForm):
         }
 
     @classmethod
-    def _get_realm_item(cls, realm, item_id):
-        """Вернёт объект из указанной области по иднетификтаору, либо None.
+    def _get_realm_item(cls, realm: RealmBase, item_id: int) -> Optional[RealmBaseModel]:
+        """Вернёт объект из указанной области по идентификтаору, либо None.
 
-        :param RealmBase realm:
-        :param int item_id:
-        :return:
+        :param realm:
+        :param item_id:
+
         """
         item = None
         try:
@@ -114,7 +118,7 @@ class ArticleForm(RealmEditBaseForm):
             'text_src': RstEditWidget(attrs={'rows': 25}),
         }
 
-    def set_fields_required(self, fields, required=True):
+    def set_fields_required(self, fields: List[str], required: bool = True):
 
         for field in fields:
             self.fields[field].required = required
@@ -137,17 +141,17 @@ class ArticleForm(RealmEditBaseForm):
 
         return super().full_clean()
 
-    def clean_url(self):
+    def clean_url(self) -> Optional[str]:
         url = self.cleaned_data['url']
         if not url:
             url = None
         return url
 
-    def save(self, commit=True):
+    def save(self, *args, **kwargs):
         url = self.cleaned_data.get('url')
         if url:
             self.instance.update_data_from_url(url)
-        return super().save(commit)
+        return super().save(*args, **kwargs)
 
 
 class BookForm(RealmEditBaseForm):
@@ -167,7 +171,7 @@ class BookForm(RealmEditBaseForm):
         )
 
     @staticmethod
-    def clean_isbn_(isbn):
+    def clean_isbn_(isbn) -> Optional[str]:
         isbn = isbn or ''
         isbn = isbn.replace('-', '').strip()
         length = len(isbn)
@@ -178,10 +182,10 @@ class BookForm(RealmEditBaseForm):
             isbn = None
         return isbn
 
-    def clean_isbn(self):
+    def clean_isbn(self) -> Optional[str]:
         return self.clean_isbn_(self.cleaned_data['isbn'])
 
-    def clean_isbn_ebook(self):
+    def clean_isbn_ebook(self) -> Optional[str]:
         return self.clean_isbn_(self.cleaned_data['isbn_ebook'])
 
 
@@ -202,7 +206,7 @@ class VideoForm(RealmEditBaseForm):
             'url': f"URL страницы с видео. Умеем работать с {', '.join(Video.get_supported_hostings())}",
         }
 
-    def clean_url(self):
+    def clean_url(self) -> str:
         url = self.cleaned_data['url']
         if not VideoBroker.get_hosting_for_url(url):
             raise forms.ValidationError(
@@ -263,10 +267,10 @@ class UserForm(RealmEditBaseForm):
             'timezone': ReadOnlyWidget(),
         }
 
-    def save(self, commit=True):
+    def save(self, *args, **kwargs):
         if 'place' in self.changed_data:
             self.instance.set_timezone_from_place()
-        super().save(commit=commit)
+        super().save(*args, **kwargs)
 
 
 class CommunityForm(RealmEditBaseForm):

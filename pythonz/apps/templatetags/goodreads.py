@@ -7,11 +7,11 @@ register = template.Library()
 
 
 @register.simple_tag
-def goodreads_get_search_tag(query):
+def goodreads_get_search_tag(query: str):
     """Возврщает тег ссылки на поиск ISBN по сайту Goodreads.
 
     :param query:
-    :return:
+
     """
     url = f"https://www.goodreads.com/search/?{urlencode({'query': query})}"
     return safe(f'<a href="{url}" title="ISBN на goodreads.com">{query}</a>')

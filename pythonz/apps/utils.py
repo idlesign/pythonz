@@ -1,23 +1,27 @@
-import re
 import logging
-from datetime import timedelta
+import re
 from collections import OrderedDict
+from datetime import timedelta, datetime
 from textwrap import wrap
+from typing import Tuple, List, Dict, Callable, Any, Union
 from urllib.parse import urlsplit, urlunsplit, parse_qs, urlparse, urlencode, urlunparse
 
 from bleach import clean
 from django.contrib import messages
+from django.db.models import Model
+from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.text import Truncator
-from .integration.videos import VideoBroker
+
 from .exceptions import RemoteSourceError
+from .integration.videos import VideoBroker
 
 
-def get_logger(name):
+def get_logger(name: str) -> logging.Logger:
     """Возвращает объект-журналёр для использования в модулях.
 
     :param name:
-    :rtype: logging.Logger
+
     """
     return logging.getLogger(f'pythonz.{name}')
 
@@ -25,42 +29,37 @@ def get_logger(name):
 LOG = get_logger(__name__)
 
 
-def get_datetime_from_till(days_gap):
+def get_datetime_from_till(days_gap: int) -> Tuple[datetime, datetime]:
     """Возвращает даты "с" и "по", где "по" - текущая дата,
     а "с" отстоит от неё в прошлое на указанное количество дней.
 
     :param int days_gap:
-    :rtype: tuple
+
     """
     date_till = timezone.now()
     date_from = date_till - timedelta(days=days_gap)
     return date_from, date_till
 
 
-class PersonName(object):
+class PersonName:
     """Предоставляет инструменты для представления имени персоны в разном виде."""
 
     __slots__ = ['_name', 'is_valid']
 
-    def __init__(self, name):
-        name = re.sub('\s+', ' ', name).strip()
+    def __init__(self, name: str):
+        name = re.sub(r'\s+', ' ', name).strip()
 
-        self._name = name.split(' ')
+        self._name: List[str] = name.split(' ')
 
-        self.is_valid = len(self._name) > 1
-        """Флаг, указывающие на то, что имя состоит хотя бы из двух частей (имя и фамилия).
-
-        :type: bool
-        """
+        self.is_valid: bool = len(self._name) > 1
+        """Флаг, указывающие на то, что имя состоит хотя бы из двух частей (имя и фамилия)."""
 
         if not self.is_valid:
             self._name = ['', '']
 
-    def get_variants(self):
-        """Возвращает наиболее часто встречающиеся варианты представления имени.
-
-        :rtype: str
-        """
+    @property
+    def get_variants(self) -> List[str]:
+        """Возвращает наиболее часто встречающиеся варианты представления имени."""
         variants = []
         other = [self.full, self.short, self.first_last, self.last_first]
 
@@ -71,81 +70,69 @@ class PersonName(object):
         return variants
 
     @property
-    def last_first(self):
-        """Фамилия и имя (отчество/второе имя исключаются).
-
-        :rtype: str
-        """
+    def last_first(self) -> str:
+        """Фамилия и имя (отчество/второе имя исключаются)."""
         return f'{self._name[-1]} {self._name[0]}'.strip()
 
     @property
-    def first_last(self):
-        """Имя и фамилия (отчество/второе имя исключаются).
-
-        :rtype: str
-        """
+    def first_last(self) -> str:
+        """Имя и фамилия (отчество/второе имя исключаются)."""
         return f'{self._name[0]} {self._name[-1]}'.strip()
 
     @property
-    def first(self):
-        """Имя.
-
-        :rtype: str
-        """
+    def first(self) -> str:
+        """Имя."""
         return self._name[0].strip()
 
     @property
-    def last(self):
-        """Фамилия.
-
-        :rtype: str
-        """
+    def last(self) -> str:
+        """Фамилия."""
         return self._name[-1].strip()
 
     @property
-    def full(self):
-        """Имя, отчество, фамилия.
-
-        :rtype: str
-        """
+    def full(self) -> str:
+        """Имя, отчество, фамилия."""
         return ' '.join(self._name).strip()
 
     @property
-    def short(self):
-        """Возвращает инициал имени и фамилию.
+    def short(self) -> str:
+        """Возвращает инициал имени и фамилию."""
 
-        :param str name:
-        :rtype: str
-        """
         if not self.is_valid:
             return ''
 
         name = self._name
-        short = f"{name[0][0]}. {' '.join(name[1:])}"
-        return short
+        return f"{name[0][0]}. {' '.join(name[1:])}"
 
 
-def truncate_chars(text, to, html=False):
+def truncate_chars(text: str, to: int, html: bool = False) -> str:
     """Укорачивает поданный на вход текст до опционально указанного количества символов."""
     return Truncator(text).chars(to, html=html)
 
 
-def truncate_words(text, to, html=False):
+def truncate_words(text: str, to: int, html: bool = False) -> str:
     """Укорачивает поданный на вход текст до опционально указанного количества слов."""
     return Truncator(text).words(to, html=html)
 
 
-def format_currency(val):
+def format_currency(val: str) -> str:
     """Форматирует значение валюты, разбивая его кратно
     тысяче для облегчения восприятия.
 
     :param val:
-    :return:
+
     """
     return ' '.join(wrap(str(int(val))[::-1], 3))[::-1]
 
 
-def sync_many_to_many(src_obj, model, m2m_attr, related_attr, known_items, unknown_handler=None):
+def sync_many_to_many(
+    src_obj: Any,
+    model: Model,
+    m2m_attr: str,
+    related_attr: str,
+    known_items: Dict[str, Union[Model, List[Model]]],
+    unknown_handler: Callable = None
+) -> List[str]:
     """Синхронизирует (при необходимости) список из указанного атрибута
     объекта-источника в поле многие-ко-многим указанной модели.
 
@@ -154,26 +141,25 @@ def sync_many_to_many(src_obj, model, m2m_attr, related_attr, known_items, unkno
 
     Внимание: для правильной работы необходимо, чтобы в БД уже был и объект model и объекты из known_items.
 
-    :param object src_obj: Объект-источник, в котором есть src_obj.m2m_attr, содержащий
+    :param src_obj: Объект-источник, в котором есть src_obj.m2m_attr, содержащий
         список (например строк), которым будут сопоставлены объекты из known_items.
         Либо может быть указан список напрямую.
 
-    :param Model model: Модель, поле которой требуется обновить при необходимости.
+    :param model: Модель, поле которой требуется обновить при необходимости.
 
-    :param str m2m_attr: Имя атрибута модели, являющегося полем многие-ко-многим.
+    :param m2m_attr: Имя атрибута модели, являющегося полем многие-ко-многим.
 
-    :param str related_attr: Имя атрибута, в объектах многие-ко-многим, считающееся ключевым.
+    :param related_attr: Имя атрибута, в объектах многие-ко-многим, считающееся ключевым.
         Значения из этого атрибута ожидаются в списке из src_obj.m2m_attr.
 
-    :param dict known_items: Ключи - это значения из src_obj.m2m_attr,
+    :param known_items: Ключи - это значения из src_obj.m2m_attr,
         а значения - это модель из отношения многие-ко-многим, либо список моделей.
 
-    :param callable unknown_handler: Функция-обработчик для неизвестных элементов,
+    :param unknown_handler: Функция-обработчик для неизвестных элементов,
         создающая объект налету. Должна принимать элемент списка src_obj.m2m_attr,
         по которому будет создан объект, а также словарь known_items, который следует
         дополнить созданным объектом.
 
-    :rtype: list
     """
     if isinstance(src_obj, list):
         new_list = src_obj
@@ -181,7 +167,7 @@ def sync_many_to_many(src_obj, model, m2m_attr, related_attr, known_items, unkno
         new_list = getattr(src_obj, m2m_attr)
 
     if not new_list:
-        return
+        return []
 
     m2m_model_attr = getattr(model, m2m_attr)
     old_many = {m2m_model_attr.values_list(related_attr, flat=True)}
@@ -222,14 +208,14 @@ def sync_many_to_many(src_obj, model, m2m_attr, related_attr, known_items, unkno
     return unknown
 
 
-def update_url_qs(url, new_qs_params):
+def update_url_qs(url: str, new_qs_params: dict) -> str:
     """Дополняет указанный URL указанными параметрами запроса,
     при этом заменяя значения уже имеющихся одноимённых параметров, если
     таковые были в URL изначально
 
-    :param str url:
-    :param dict new_qs_params:
-    :rtype: str
+    :param url:
+    :param new_qs_params:
+
     """
     parsed = list(urlparse(url))
     parsed_qs = parse_qs(parsed[4])
@@ -242,7 +228,7 @@ class UTM:
     """Утилиты для работы с UTM (Urchin Tracking Module) метками."""
 
     @classmethod
-    def add_to_url(cls, url, source, medium, campaign):
+    def add_to_url(cls, url: str, source: str, medium: str, campaign: str) -> str:
         """Добавляет UTM метки в указаный URL.
 
         :param url:
@@ -256,7 +242,6 @@ class UTM:
         :param campaign: Ключевое слово (название компании).
             Например слоган продукта, промокод.
 
-        :rtype: str
         """
         params = {
             'utm_source': source,
@@ -266,21 +251,21 @@ class UTM:
         return update_url_qs(url, params)
 
     @classmethod
-    def add_to_external_url(cls, url):
+    def add_to_external_url(cls, url: str) -> str:
         """Добавляет UTM метки в указанный внешний URL.
 
-        :param str url:
-        :rtype: str
+        :param url:
+
         """
         return cls.add_to_url(url, 'pythonz', 'referral', 'item')
 
     @classmethod
-    def add_to_internal_url(cls, url, source):
+    def add_to_internal_url(cls, url: str, source: str) -> str:
         """Добавляет UTM метки в указанный внутренний URL.
 
-        :param str url:
-        :param str source:
-        :rtype: str
+        :param url:
+        :param source:
+
         """
         return cls.add_to_url(url, source, 'link', 'promo')
 
@@ -290,7 +275,6 @@ class BasicTypograph:
     Позволяет применить эти правила к строке.
 
     """
-
     rules = OrderedDict((
         ('QUOTES_REPLACE', (re.compile('(„|“|”|(\'\'))'), '"')),
         ('DASH_REPLACE', (re.compile('(-|­|–|—|―|−|--)'), '-')),
@@ -310,7 +294,7 @@ class BasicTypograph:
     ))
 
     @classmethod
-    def apply_to(cls, input_str):
+    def apply_to(cls, input_str: str) -> str:
         input_str = f' {input_str.strip()} '
 
         for name, (regexp, replacement) in cls.rules.items():
@@ -341,11 +325,11 @@ class TextCompiler:
     RE_UL = re.compile('^\*\s+([^\n]+)\n', re.M)
 
     @classmethod
-    def compile(cls, text):
+    def compile(cls, text: str) -> str:
         """Преобразует rst-подобное форматичрование в html.
 
         :param text:
-        :return:
+
         """
         def replace_href(match):
             return f'<a href="{match.group(1)}">{url_mangle(match.group(1))}</a>'
@@ -470,12 +454,12 @@ class TextCompiler:
         return text
 
 
-def url_mangle(url):
+def url_mangle(url: str) -> str:
     """Усекает длинные URL практически до неузноваемости, делая нефункциональным, но коротким.
     Всё ради уменьшения длины строки.
 
     :param url:
-    :return:
+
     """
     if len(url) <= 45:
         return url
@@ -489,42 +473,42 @@ def url_mangle(url):
     return mangled
 
 
-def message_info(request, message):
+def message_info(request: HttpRequest, message: str):
     """Регистрирует сообщение информирующего типа для вывода пользователю на странице.
 
-    :param Request request:
-    :param str message:
-    :return:
+    :param request:
+    :param message:
+
     """
     messages.add_message(request, messages.INFO, message, extra_tags='info')
 
 
-def message_warning(request, message):
+def message_warning(request: HttpRequest, message: str):
     """Регистрирует предупреждающее сообщение для вывода пользователю на странице.
 
-    :param Request request:
-    :param str message:
-    :return:
+    :param request:
+    :param message:
+
     """
     messages.add_message(request, messages.WARNING, message, extra_tags='warning')
 
 
-def message_success(request, message):
+def message_success(request: HttpRequest, message: str):
     """Регистрирует ободряющее сообщение для вывода пользователю на странице.
 
-    :param Request request:
-    :param str message:
-    :return:
+    :param request:
+    :param message:
+
     """
     messages.add_message(request, messages.SUCCESS, message, extra_tags='success')
 
 
-def message_error(request, message):
+def message_error(request: HttpRequest, message: str):
     """Регистрирует сообщение об ошибке для вывода пользователю на странице.
 
-    :param Request request:
-    :param str message:
-    :return:
+    :param request:
+    :param message:
+
     """
     messages.add_message(request, messages.ERROR, message, extra_tags='danger')
 
@@ -537,13 +521,13 @@ TRANSLATION_DICT = str.maketrans(
 RE_NON_ASCII = re.compile('[^\x00-\x7F]')
 
 
-def swap_layout(src_text):
+def swap_layout(src_text: str) -> str:
     """Заменяет кириллические символы строки на латинские в соответствии
     с классической раскладкой клавиатуры, если строка не содержит символов кириллицы,
     то возвращатся пустая строка, символизируя, что трансляция не производилась.
 
-    :param str src_text:
-    :rtype: str
+    :param src_text:
+
     """
     if not RE_NON_ASCII.match(src_text):
         return ''

@@ -1,68 +1,64 @@
 from collections import OrderedDict, defaultdict
+from typing import Tuple, List, Dict, Union, Optional
 
-from .base import PipermailBase, StackdataBase, ItemsFetcherBase, SummaryItem
+from .base import PipermailBase, StackdataBase, ItemsFetcherBase, SummaryItem, FetcherResult
 from ..utils import get_from_url, make_soup
 
 
 class MailarchAnnounce(PipermailBase):
 
-    title = 'Анонсы'
-    alias = 'python-announce-list'
+    title: str = 'Анонсы'
+    alias: str = 'python-announce-list'
 
 
 class MailarchDev(PipermailBase):
 
-    title = 'Разработка языка'
-    alias = 'python-dev'
+    title: str = 'Разработка языка'
+    alias: str = 'python-dev'
 
 
 class MailarchConferences(PipermailBase):
 
-    title = 'Мероприятия'
-    alias = 'conferences'
+    title: str = 'Мероприятия'
+    alias: str = 'conferences'
 
 
 class MailarchIdeas(PipermailBase):
 
-    title = 'Идеи'
-    alias = 'python-ideas'
+    title: str = 'Идеи'
+    alias: str = 'python-ideas'
 
 
 class Stackoverflow(StackdataBase):
 
-    title = 'StackOverflow'
-    alias = 'stack-en'
-    site = 'stackoverflow'
-    domain = 'stackoverflow.com'
-    query_revision_id = 851710
+    title: str = 'StackOverflow'
+    alias: str = 'stack-en'
+    site: str = 'stackoverflow'
+    domain: str = 'stackoverflow.com'
+    query_revision_id: int = 851710
 
 
 class StackoverflowRu(StackdataBase):
 
-    title = 'StackOverflow на русском'
-    alias = 'stack-ru'
-    site = 'ru'
-    domain = 'ru.stackoverflow.com'
-    query_revision_id = 851710
+    title: str = 'StackOverflow на русском'
+    alias: str = 'stack-ru'
+    site: str = 'ru'
+    domain: str = 'ru.stackoverflow.com'
+    query_revision_id: int = 851710
 
 
 class Lwn(ItemsFetcherBase):
 
-    title = 'Материалы от LWN'
-    alias = 'lwn'
+    title: str = 'Материалы от LWN'
+    alias: str = 'lwn'
 
-    relevant_cats = {
+    relevant_cats: dict = {
         'EuroPython',
         'PyCon',
         'Python Language Summit',
     }
 
-    def _filter(self, items):
-        """
-        :param dict items:
-        :rtype: tuple[list, dict]
-
-        """
+    def _filter(self, items: dict) -> Tuple[List[SummaryItem], Union[List, Dict]]:
         previous_result = self.previous_result or {}
         latest_result = {}
         result = []
@@ -84,7 +80,7 @@ class Lwn(ItemsFetcherBase):
 
         return result, latest_result
 
-    def fetch(self):
+    def fetch(self) -> FetcherResult:
         url_base = 'https://lwn.net'
 
         page = get_from_url(url_base + '/Archives/ConferenceIndex/')
@@ -123,24 +119,23 @@ class Lwn(ItemsFetcherBase):
 class GithubTrending(ItemsFetcherBase):
     """Сборщик данных о наиболее популярных репозиториях на GitHub."""
 
-    title = 'Популярное на GitHub'
-    alias = 'github_trending'
+    title: str = 'Популярное на GitHub'
+    alias: str = 'github_trending'
 
-    mode_remove_unchanged = True
+    mode_remove_unchanged: bool = True
 
-    def __init__(self, previous_result, previous_dt, period=None,**kwargs):
+    def __init__(self, previous_result, previous_dt, period=None, **kwargs):
         """
 
         :param previous_result:
         :param period: weekly, daily, monthly
         :param kwargs:
 
-        :rtype: tuple
         """
         self.period = period or 'weekly'
         super().__init__(previous_result, previous_dt, **kwargs)
 
-    def fetch(self):
+    def fetch(self) -> FetcherResult:
         period = self.period
         url_base = 'https://github.com'
         url = url_base + '/trending/python?since=' + period

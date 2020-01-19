@@ -8,7 +8,7 @@ class Command(BaseCommand):
     help = 'Generates slugs for given realm model'
     args = '[realm_name realm_name ...]'
 
-    def handle(self, *realm_names, **options):
+    def handle(self, *realm_names: str, **options):
 
         self.stdout.write('Starting slugs generation ...\n')
 

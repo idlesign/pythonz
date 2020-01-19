@@ -11,7 +11,7 @@ def test_person_name():
     assert name.first == 'Иван'
     assert name.last == 'Иванов'
     assert name.is_valid
-    assert len(name.get_variants()) == 3
+    assert len(name.get_variants) == 3
 
     name = PersonName('Guido van Rossum')
 
@@ -22,7 +22,7 @@ def test_person_name():
     assert name.first == 'Guido'
     assert name.last == 'Rossum'
     assert name.is_valid
-    assert len(name.get_variants()) == 4
+    assert len(name.get_variants) == 4
 
     name = PersonName('Натаниэль Дж. Смит')
 
@@ -33,7 +33,7 @@ def test_person_name():
     assert name.first == 'Натаниэль'
     assert name.last == 'Смит'
     assert name.is_valid
-    assert len(name.get_variants()) == 4
+    assert len(name.get_variants) == 4
 
     name = PersonName('Петров')
 
@@ -44,7 +44,7 @@ def test_person_name():
     assert name.first == ''
     assert name.last == ''
     assert not name.is_valid
-    assert name.get_variants() == []
+    assert name.get_variants == []
 
 
 def test_url_mangle():

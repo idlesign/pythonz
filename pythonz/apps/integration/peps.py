@@ -3,6 +3,7 @@ from functools import partial
 from collections import namedtuple
 from os.path import splitext
 from datetime import datetime
+from typing import List
 
 import requests
 from django.conf import settings
@@ -14,9 +15,9 @@ from ..signals import sig_send_generic_telegram
 
 LOG = get_logger(__name__)
 
-KEYS_REQUIRED = ['pep', 'title', 'status', 'type', 'author', 'created']
-KEYS_OPTIONAL = ['python-version', 'superseded-by', 'replaces', 'requires']
-KEYS_ALL = KEYS_REQUIRED + KEYS_OPTIONAL
+KEYS_REQUIRED: List[str] = ['pep', 'title', 'status', 'type', 'author', 'created']
+KEYS_OPTIONAL: List[str] = ['python-version', 'superseded-by', 'replaces', 'requires']
+KEYS_ALL: List[str] = KEYS_REQUIRED + KEYS_OPTIONAL
 
 RE_VERSION = re.compile('(\d{1,2}.\d{1,2}(.\d{1,2})?)')
 RE_MAIL_TYPE1 = re.compile('([^<]+)<[^>]+>')
@@ -29,7 +30,7 @@ PepInfo = namedtuple('PEPInfo', (
 ))
 
 
-def strip_mail(value):
+def strip_mail(value: str) -> List[str]:
     """Удаляет адреса эл. почты из строки author."""
     names = []
 
@@ -51,7 +52,7 @@ def strip_mail(value):
     return names
 
 
-def normalize_date(value):
+def normalize_date(value: str) -> datetime:
     """Нормализует дату (в форматах, используемых в PEP), приводя к datetime."""
     created = value.strip()
 
@@ -74,20 +75,20 @@ def normalize_date(value):
     return created
 
 
-def get_peps(exclude_peps=None, limit=None):
+def get_peps(exclude_peps: List[str] = None, limit: int = None) -> List[PepInfo]:
     """Проходит по репозиторию PEPов и возвращает данные о них в виде
     списка PEPInfo.
 
-    :param list exclude_peps: Номера PEP (с ведущиеми нулями), которые можно пропустить.
-    :param int limit: Максимальное количесто PEP, которые следует обработать.
-    :rtype: listPepInfo]
+    :param exclude_peps: Номера PEP (с ведущиеми нулями), которые можно пропустить.
+    :param limit: Максимальное количесто PEP, которые следует обработать.
+
     """
     LOG.debug('Getting PEPs ...')
 
-    def make_list(pep, key):
+    def make_list(pep: dict, key: str):
         pep[key] = [int(chunk.strip()) for chunk in pep.get(key, '').split(',') if chunk.strip()] or []
 
-    def normalize_pep_info(pep):
+    def normalize_pep_info(pep: dict):
 
         pep['pep'] = int(pep['pep'])
         pep['author'] = strip_mail(pep['author'])
@@ -107,7 +108,7 @@ def get_peps(exclude_peps=None, limit=None):
         make_list(pep, 'replaces')
         make_list(pep, 'requires')
 
-    def get_pep_info(download_url):
+    def get_pep_info(download_url: str) -> PepInfo:
         LOG.debug(f'Getting PEP info from {download_url} ...')
 
         response = requests.get(download_url).text
@@ -189,11 +190,12 @@ def get_peps(exclude_peps=None, limit=None):
     return peps
 
 
-def sync(skip_deadend_peps=True, limit=None):
+def sync(skip_deadend_peps: bool = True, limit: int = None):
     """Синхронизирует данные БД сайта с данными PEP из репозитория.
 
-    :param bool skip_deadend_peps: Следует ли пропустить ПУПы, состояние которых уже не измениться.
-    :param int limit: Максимальное количесто PEP, которые следует обработать.
+    :param skip_deadend_peps: Следует ли пропустить ПУПы, состояние которых уже не измениться.
+    :param limit: Максимальное количесто PEP, которые следует обработать.
+
     """
     from ..models import Version, PEP, Person, PersonsLinked
 
@@ -228,7 +230,8 @@ def sync(skip_deadend_peps=True, limit=None):
 
     submitter_id = settings.ROBOT_USER_ID
 
-    for pep in peps:  # type: PepInfo
+    for pep in peps:
+        pep: PepInfo
 
         num = pep.num
         status_id = int(map_statuses.get(pep.status, 0))
@@ -243,7 +246,7 @@ def sync(skip_deadend_peps=True, limit=None):
         LOG.info(f'Working on PEP {num} ...')
 
         if num in known_peps:
-            pep_model = known_peps[num]  # type: PEP
+            pep_model: PEP = known_peps[num]
 
             if pep_model.status != status_id:
                 pep_model.status = status_id
@@ -284,7 +287,7 @@ def sync(skip_deadend_peps=True, limit=None):
 
     create_person = PersonsLinked.create_person
 
-    for pep in peps:  # type: PepInfo
+    for pep in peps:
         # Для правильного связывания необходимо, чтобы в БД уже были все известные PEP.
         # В этом повторном проходе мы производим связывание.
         pep_model = known_peps[pep.num]

@@ -1,3 +1,5 @@
+from typing import Union
+
 from django import forms
 from django.forms.utils import flatatt
 from django.forms.widgets import TextInput
@@ -5,39 +7,47 @@ from django.template import loader
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 
+from ..generics.models import RealmBaseModel
 from ..models import Place
 
 
-class ReadOnlyWidget(forms.Widget):
+class RealmWidget:
+
+    # См. RealmEditBaseForm
+    model: RealmBaseModel
+    field_name: str
+
+
+class ReadOnlyWidget(forms.Widget, RealmWidget):
     """Представляет поле только для чтения."""
 
     def value_from_datadict(self, data, files, name):
         return getattr(self.model, self.field_name)  # Чтобы поле не считалось изменённым.
 
-    def render(self, name, value, attrs=None, renderer=None):
+    def render(self, name, value, attrs=None, renderer=None) -> str:
         if hasattr(self, 'initial'):
             value = self.initial
         return f"{value or ''}"
 
 
-class PlaceWidget(TextInput):
+class PlaceWidget(TextInput, RealmWidget):
     """Представляет поле для редактирования места."""
 
-    _place_cached = False
-    _place_cache = None
+    _place_cached: bool = False
+    _place_cache: Place = None
 
-    def render(self, name, value, attrs=None, renderer=None):
+    def render(self, name, value, attrs=None, renderer=None) -> str:
         if value and self.model:
             value = self.model.place.geo_title  # Выводим полное название места.
         return super().render(name, value, attrs=attrs)
 
-    def value_from_datadict(self, data, files, name):
+    def value_from_datadict(self, data, files, name) -> Union[str, int]:
         """Здесь получаем из строки наименования места объект места.
 
         :param data:
         :param files:
         :param name:
-        :return:
+
         """
         place_name = data.get(name, None)
         if not place_name:
@@ -61,7 +71,7 @@ class RstEditWidget(forms.Widget):
             default_attrs.update(attrs)
         super().__init__(default_attrs)
 
-    def render(self, name, value, attrs=None, renderer=None):
+    def render(self, name, value, attrs=None, renderer=None) -> str:
 
         if value is None:
             value = ''

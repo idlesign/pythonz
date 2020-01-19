@@ -2,7 +2,7 @@ from uwsgiconf.config import configure_uwsgi
 from uwsgiconf.presets.nice import PythonSection
 
 
-def get_configurations():
+def get_configurations() -> PythonSection:
 
     from django.conf import settings
 
