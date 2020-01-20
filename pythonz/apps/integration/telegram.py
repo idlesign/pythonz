@@ -16,6 +16,12 @@ from ..zen import ZEN
 LOGGER = get_logger('telebot')
 
 
+socks_proxy = settings.SOCKS5_PROXY
+
+if socks_proxy:
+    telebot.apihelper.proxy = {'https': f'socks5://{socks_proxy}'}
+
+
 bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN, threaded=False)
 
 
