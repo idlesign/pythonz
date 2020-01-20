@@ -22,8 +22,7 @@ from .generics.models import CommonEntityModel, RealmBaseModel
 from .generics.realms import RealmBase
 from .utils import get_datetime_from_till
 from .realms import get_realms, get_realm
-from .signals import sig_entity_published, sig_entity_new, sig_search_failed, sig_integration_failed, \
-    sig_send_generic_telegram
+from .signals import sig_entity_published, sig_entity_new, sig_integration_failed, sig_send_generic_telegram
 
 
 Entity = Union[CommonEntityModel, RealmBaseModel]
@@ -81,11 +80,6 @@ def connect_signals():
     # Новый материал.
     notify_handler = lambda sender, **kwargs: PythonzEmailNewEntity.create(kwargs['entity'])
     sig_entity_new.connect(notify_handler, dispatch_uid='cfg_new_entity', weak=False)
-
-    # Поиск без результатов.
-    notify_handler = (
-        lambda sender, **kwargs: PythonzEmailOneliner.create('Поиск без результатов', kwargs['search_term']))
-    sig_search_failed.connect(notify_handler, dispatch_uid='cfg_search_failed', weak=False)
 
     # Ошибка интеграции со сторонними сервисами.
     notify_handler = (
