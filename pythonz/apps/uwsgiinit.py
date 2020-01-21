@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sitemessage.toolbox import send_scheduled_messages
+from sitemessage.toolbox import send_scheduled_messages, cleanup_sent_messages, check_undelivered
 from uwsgiconf.runtime.scheduling import register_timer, register_cron
 
 from .commands import publish_postponed, clean_missing_refs
@@ -91,3 +91,19 @@ def task_clean_missing_refs(sig_num):
 
     """
     clean_missing_refs()
+
+
+@register_cron(weekday=0, hour=_nsk(7), minute=15)
+def task_clean_sent_msg(sig_num):
+    """Очистка от отправленных сообщений.
+    Воскресенье 7:15 Нск (3:15 Мск).
+
+    """
+    cleanup_sent_messages()
+
+
+@register_cron(hour=-14, minute=10)
+def task_notify_undelivered(sig_num):
+    """Оповещение о недоставленных сообщениях."""
+    check_undelivered()
+
