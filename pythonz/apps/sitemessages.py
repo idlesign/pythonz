@@ -32,6 +32,8 @@ def register_messengers():
     """Регистрирует средства отсылки сообщений."""
 
     SETTINGS = settings.SITEMESSAGES_SETTINGS
+    SOCKS5_PROXY = settings.SOCKS5_PROXY
+
     SETTINGS_TWITTER = SETTINGS['twitter']
     SETTINGS_SMTP = SETTINGS['smtp']
     SETTINGS_TELEGRAM = SETTINGS['telegram']
@@ -49,7 +51,7 @@ def register_messengers():
 
     if SETTINGS_TELEGRAM:
         from sitemessage.messengers.telegram import TelegramMessenger
-        messengers.append(TelegramMessenger(*SETTINGS_TELEGRAM))
+        messengers.append(TelegramMessenger(*SETTINGS_TELEGRAM, proxy=SOCKS5_PROXY or None))
 
     if SETTINGS_FB:
         from sitemessage.messengers.facebook import FacebookMessenger
