@@ -22,7 +22,7 @@ django-siteblocks==1.1.0
 django-sitecats==1.1.0
 django-siteflags==1.1.0
 django-sitegate==1.1.0
-django-sitemessage==1.2.0
+django-sitemessage==1.2.1
 django-sitemetrics==1.1.0
 django-siteprefs==1.1.0
 django-sitetree==1.14.0
