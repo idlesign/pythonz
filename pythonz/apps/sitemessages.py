@@ -51,7 +51,10 @@ def register_messengers():
 
     if SETTINGS_TELEGRAM:
         from sitemessage.messengers.telegram import TelegramMessenger
-        messengers.append(TelegramMessenger(*SETTINGS_TELEGRAM, proxy=SOCKS5_PROXY or None))
+        messengers.append(TelegramMessenger(
+            *SETTINGS_TELEGRAM,
+            proxy={'https': f'socks5://{SOCKS5_PROXY}'} if SOCKS5_PROXY else None
+        ))
 
     if SETTINGS_FB:
         from sitemessage.messengers.facebook import FacebookMessenger
