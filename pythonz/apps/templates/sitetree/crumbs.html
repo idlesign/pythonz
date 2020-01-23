@@ -6,12 +6,13 @@
         {% for item in sitetree_items %}
             {% if not forloop.last %}
                 <li class="breadcrumb-item" property="itemListElement" typeof="ListItem">
-                    <a property="item" typeof="WebPage" href="{% sitetree_url for item %}">{{ item.title_resolved }}</a>
+                    <a property="item" typeof="WebPage" href="{% sitetree_url for item %}">
+                        <span property="name">{{ item.title_resolved }}</span></a>
                     <meta property="position" content="{{ forloop.counter }}">
                 </li>
             {% else %}
                 <li class="breadcrumb-item active" aria-current="page" property="itemListElement" typeof="ListItem">
-                    {{ item.title_resolved }}
+                    <span property="name">{{ item.title_resolved }}</span>
                     <meta property="position" content="{{ forloop.counter }}">
                 </li>
             {% endif %}
