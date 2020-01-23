@@ -3,7 +3,7 @@
 {% block body %}
     <div class="mb-3">{% include "sub_box_ads.html" with area="searchtop" %}</div>
     <div class="mb-3 small">Количество результатов: {{ results_len }}</div>
-    <div class="ml-3 mb-3" itemscope itemtype="http://schema.org/SearchResultsPage">
+    <div class="ml-3 mb-3" itemscope itemtype="https://schema.org/SearchResultsPage">
         {% if results_len %}
             <ol>
             {% for result in results %}

@@ -2,8 +2,8 @@
 {% get_static_prefix as STATIC_URL %}
 
 <!DOCTYPE html>
-<html lang="ru" prefix="og: http://ogp.me/ns#">
-<head itemscope itemtype="http://schema.org/WebSite">
+<html lang="ru" prefix="og: https://ogp.me/ns#">
+<head itemscope itemtype="https://schema.org/WebSite">
     <meta charset="UTF-8">
     <meta name="language" content="ru" />
     <meta name="description" content="{% block page_description %}{% sitetree_page_description from "main" %}{% endblock %}">
@@ -49,7 +49,7 @@
 </head>
 <body>
     {% block body_start %}{% endblock %}
-    <nav class="header navbar navbar-expand-md sticky-top navbar-light bg-light" itemscope itemtype="http://schema.org/SiteNavigationElement">
+    <nav class="header navbar navbar-expand-md sticky-top navbar-light bg-light" itemscope itemtype="https://schema.org/SiteNavigationElement">
 
             <div class="navbar-header">
 
@@ -77,10 +77,10 @@
                     </div>
                 {% endwith %}
 
-                <div itemscope itemtype="http://schema.org/WebSite">
+                <div itemscope itemtype="https://schema.org/WebSite">
                     <meta itemprop="url" content="{% site_url %}"/>
 
-                    <form class="form-inline" action="/search/" method="post" itemprop="potentialAction" itemscope itemtype="http://schema.org/SearchAction">
+                    <form class="form-inline" action="/search/" method="post" itemprop="potentialAction" itemscope itemtype="https://schema.org/SearchAction">
                         {% csrf_token %}
                         <div role="search" class="mr-2">
                             <meta itemprop="target" content="{% site_url %}/search/?text={search_term}"/>
@@ -122,7 +122,7 @@
     </div>
 
     {% cache 21600 nav_bottom %}
-    <nav class="footer navbar navbar-dark bg-dark" itemscope itemtype="http://schema.org/SiteNavigationElement">
+    <nav class="footer navbar navbar-dark bg-dark" itemscope itemtype="https://schema.org/SiteNavigationElement">
         <div class="col-3 d-none d-md-block">
             {% sitetree_menu from "about" include "trunk" template "sitetree/menu_footer.html"  %}
         </div>
@@ -135,7 +135,7 @@
                 <a href="https://github.com/idlesign/pythonz/" title="На GitHub"><i class="fa fa-fw fa-2x fa-github"></i></a>
                 <a href="https://www.youtube.com/user/idlesign" title="На YouTube"><i class="fa fa-fw fa-2x fa-youtube"></i></a>
                 <a href="https://twitter.com/pythonz_net" title="В Твиттере"><i class="fa fa-fw fa-2x fa-twitter"></i></a>
-                <a href="http://vk.com/pythonz" title="Во ВКонтакте"><i class="fa fa-fw fa-2x fa-vk"></i></a>
+                <a href="https://vk.com/pythonz" title="Во ВКонтакте"><i class="fa fa-fw fa-2x fa-vk"></i></a>
                 <a href="https://www.facebook.com/pythonznet/" title="В Facebook"><i class="fa fa-fw fa-2x fa-facebook"></i></a>
                 <a href="https://telegram.me/pythonz" title="В Telegram"><i class="fa fa-fw fa-2x fa-paper-plane"></i></a>
             </address>

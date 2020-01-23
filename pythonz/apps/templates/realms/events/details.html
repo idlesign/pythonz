@@ -46,8 +46,7 @@
 
             {% if event.place %}
                 <div class="small">
-                    <meta itemprop="location" content="{{ event.place.title }}" />
-                    <a href="{{ event.place.get_absolute_url }}">{{ event.place.title }}</a>
+                    <a href="{{ event.place.get_absolute_url }}"><span itemprop="location">{{ event.place.title }}</span></a>
                 </div>
             {% endif %}
 

@@ -2,7 +2,7 @@
 {% if sitetree_items|length_is:"1" %}
 {% else %}
 <nav aria-label="breadcrumb" class="breadcrumbs small">
-    <ol class="breadcrumb bg-light" vocab="http://schema.org/" typeof="BreadcrumbList">
+    <ol class="breadcrumb bg-light" vocab="https://schema.org/" typeof="BreadcrumbList">
         {% for item in sitetree_items %}
             {% if not forloop.last %}
                 <li class="breadcrumb-item" property="itemListElement" typeof="ListItem">

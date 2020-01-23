@@ -6,7 +6,7 @@ from .sub_security import *
 
 from pythonz import VERSION_STR
 
-SITE_URL = 'http://pythonz.net'
+SITE_URL = 'https://pythonz.net'
 PROJECT_SOURCE_URL = 'https://github.com/idlesign/pythonz'
 USER_AGENT = f'pythonz.net/{VERSION_STR} (press@pythonz.net)'
 
