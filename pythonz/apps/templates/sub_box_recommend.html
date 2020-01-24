@@ -1,0 +1,8 @@
+<script async src="https://yastatic.net/pcode-native/loaders/loader.js"></script>
+<script>
+    (yaads = window.yaads || []).push({
+        id: '{{ block_id }}',
+        render: '#{{ block_id }}'
+    });
+</script>
+<div id="{{ block_id }}" class="mt-2 mb-2">{% include "sub_box_ads_stub.html" %}</div>

@@ -53,7 +53,9 @@
 
             {% include "sub_linked.html" %}
 
-            {% block details_discussions_pre %}{% endblock %}
+            {% block details_discussions_pre %}
+                {% include "sub_box_recommend.html" with block_id="247489-6" %}
+            {% endblock %}
             {% block discussions %}
                 {% if item.has_discussions %}
                     <div class="mt-4 p-2 clearfix border rounded">
