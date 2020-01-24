@@ -1,11 +1,11 @@
 import pytest
+from pythonz.apps.models import PEP, Summary, Person, Category
 
 
 def test_person():
 
-    from pythonz.apps.models import Person
-
     known = {}
+
     person = Person(
         name='Натаниэль Смит',
         name_en='Nathaniel Smith',
@@ -27,9 +27,7 @@ def test_person():
     }
 
 
-def test_pep():
-
-    from pythonz.apps.models import PEP
+def test_pep(user):
 
     pep1 = PEP(num=1)
     pep1.save()
@@ -40,12 +38,11 @@ def test_pep():
     assert pep1.get_link_to_pyorg() == 'https://www.python.org/dev/peps/pep-0001/'
     assert pep9999.get_link_to_pyorg() == 'https://www.python.org/dev/peps/pep-9999/'
 
-    assert pep1.get_absolute_url(with_prefix=True) == 'http://pythonz.net/peps/named/0001/'
-    assert pep9999.get_absolute_url(with_prefix=True) == 'http://pythonz.net/peps/named/9999/'
+    assert pep1.get_absolute_url(with_prefix=True) == 'https://pythonz.net/peps/named/0001/'
+    assert pep9999.get_absolute_url(with_prefix=True) == 'https://pythonz.net/peps/named/9999/'
 
 
-def test_summary():
-
-    from pythonz.apps.models import Summary
-
+@pytest.mark.skip('Долгий')
+def test_summary(user):
+    Category(creator=user).save()
     Summary.create_article()
