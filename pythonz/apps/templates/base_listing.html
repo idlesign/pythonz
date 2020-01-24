@@ -2,6 +2,12 @@
 {% load cache etc_misc %}
 
 
+{% block head %}
+    {{ block.super }}
+    <meta property="yandex_recommendations_kill" content="1"/>
+{% endblock %}
+
+
 {% block page_keywords %}{{ realm.view_listing_keywords }}{% if category %}, {{ category.title }}{% endif %}{% endblock %}
 
 
