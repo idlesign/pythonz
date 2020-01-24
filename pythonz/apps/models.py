@@ -185,8 +185,6 @@ class ExternalResource(UtmReady, RealmBaseModel):
 class Summary(RealmBaseModel):
     """Cводки. Ссылки на материалы, собранные с внешних ресурсов."""
 
-    SUMMARY_CATEGORY_ID: int = 164
-
     data_items = models.TextField('Элементы сводки')
     data_result = models.TextField('Результат компоновки сводки')
 
@@ -255,7 +253,7 @@ class Summary(RealmBaseModel):
         article.mark_published()
         article.save()
 
-        article.add_to_category(Category(pk=cls.SUMMARY_CATEGORY_ID), User(pk=robot_id))
+        article.add_to_category(Category(pk=settings.SUMMARY_CATEGORY_ID), User(pk=robot_id))
 
         return article
 
