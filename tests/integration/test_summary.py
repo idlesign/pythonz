@@ -18,7 +18,7 @@ def test_lwn():
     assert not results
 
 
-@pytest.mark.skip('Takes too long to run')
+@pytest.mark.skip('Долгий')
 def test_pipermail():
     by_title, latest = MailarchConferences(None, None, year_month='2009-May').run()
 
@@ -38,7 +38,7 @@ def test_pipermail():
     assert len(latest) == 1
 
 
-@pytest.mark.skip('Takes too long to run')
+@pytest.mark.skip('Долгий')
 def test_github():
     by_title, latest = GithubTrending(None, None).run()
     len_latest = len(latest)
@@ -55,7 +55,7 @@ def test_github():
     assert one_latest in latest
 
 
-@pytest.mark.skip('Takes too long to run')
+@pytest.mark.skip('Долгий')
 def test_stack():
 
     by_title, latest = Stackoverflow(None, None).run()

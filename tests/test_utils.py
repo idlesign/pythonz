@@ -2,6 +2,7 @@ from pythonz.apps.utils import url_mangle, BasicTypograph, TextCompiler, PersonN
 
 
 def test_person_name():
+
     name = PersonName('Иван Иванов')
 
     assert name.first_last == 'Иван Иванов'
@@ -56,6 +57,7 @@ def test_url_mangle():
 
 
 def test_typography():
+
     input_str = "Мама     ''мыла'' раму. " \
                 'Фабрика “Красная Заря”. ' \
                 '"Маме - раму!",- кричал\tИван. ' \
