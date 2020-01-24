@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from typing import Optional, List, Tuple, Union
 from urllib.parse import urlparse
 
@@ -233,7 +232,7 @@ def init_partners_module():
     if _PARTNERS_REGISTRY is not None:
         return
 
-    _PARTNERS_REGISTRY = OrderedDict()
+    _PARTNERS_REGISTRY = {}
 
     PARTNER_CLASSES = [BooksRu, LitRes, Ozon, ReadRu, LabirintRu]
 

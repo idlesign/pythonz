@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from itertools import groupby
 from operator import attrgetter
 from typing import List
@@ -172,7 +171,7 @@ class CategoryListingView(RealmView):
         # Выводим список материалов (разбитых по областям сайта) для конкретной категории.
         category = get_object_or_404(Category.objects.select_related('parent'), pk=obj_id)
 
-        realms_links = OrderedDict()
+        realms_links = {}
         for realm in realms:
             realm_model = realm.model
 

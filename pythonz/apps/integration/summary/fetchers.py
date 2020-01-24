@@ -1,5 +1,5 @@
-from collections import OrderedDict, defaultdict
-from typing import Tuple, List, Dict, Union, Optional
+from collections import defaultdict
+from typing import Tuple, List, Dict, Union
 
 from .base import PipermailBase, StackdataBase, ItemsFetcherBase, SummaryItem, FetcherResult
 from ..utils import get_from_url, make_soup
@@ -143,7 +143,7 @@ class GithubTrending(ItemsFetcherBase):
         page = get_from_url(url)
         soup = make_soup(page.text)
 
-        items = OrderedDict()
+        items = {}
 
         list_items = soup.select('ol.repo-list li')
         for list_item in list_items:

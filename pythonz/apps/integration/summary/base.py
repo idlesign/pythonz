@@ -3,7 +3,6 @@ import json
 import re
 from io import StringIO
 from datetime import datetime
-from collections import OrderedDict
 from traceback import format_exc
 from typing import List, Tuple, Optional, Union, Dict
 
@@ -130,7 +129,7 @@ class ItemsFetcherBase:
                     pass
 
         new_result = []
-        by_title = OrderedDict()
+        by_title = {}
         for idx_current, (key, summary_item) in enumerate(items.items()):
             summary_item: SummaryItem
 
@@ -183,7 +182,7 @@ class PipermailBase(ItemsFetcherBase):
         page = get_from_url(url + year_month + details_page_file)
         soup = make_soup(page.text)
 
-        items = OrderedDict()
+        items = {}
 
         prefix_re = re.compile(r'\[[^]]+\]\s*')
 
@@ -236,7 +235,7 @@ class StackdataBase(ItemsFetcherBase):
         url = self.get_url()
         response = get_from_url(url)
 
-        items = OrderedDict()
+        items = {}
 
         reader = csv.DictReader(StringIO(response.text))
         for row in reader:

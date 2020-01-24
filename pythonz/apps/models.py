@@ -1,5 +1,4 @@
 import json
-from collections import OrderedDict
 from datetime import timedelta, datetime
 from functools import partial
 from itertools import chain
@@ -129,9 +128,9 @@ class ExternalResource(UtmReady, RealmBaseModel):
         (SRC_ALIAS_PYDIGEST, 'pythondigest.ru'),
     )
 
-    RESOURCES = OrderedDict([
-        (SRC_ALIAS_PYDIGEST, PyDigestResource),
-    ])
+    RESOURCES = {
+        SRC_ALIAS_PYDIGEST: PyDigestResource,
+    }
 
     src_alias = models.CharField('Идентификатор источника', max_length=20, choices=SRC_ALIASES)
     realm_name = models.CharField('Идентификатор области на pythonz', max_length=20)
@@ -254,7 +253,7 @@ class Summary(RealmBaseModel):
         prev_results = json.loads(getattr(latest, 'data_result', '{}'))
         prev_dt = getattr(latest, 'time_created', None)
 
-        all_items = OrderedDict()
+        all_items = {}
         all_results = {}
 
         for fetcher_alias, fetcher_cls in SUMMARY_FETCHERS.items():
@@ -392,9 +391,9 @@ class Vacancy(UtmReady, RealmBaseModel):
         (SRC_ALIAS_HH, 'hh.ru'),
     )
 
-    MANAGERS = OrderedDict([
-        (SRC_ALIAS_HH, HhVacancyManager)
-    ])
+    MANAGERS = {
+        SRC_ALIAS_HH: HhVacancyManager,
+    }
 
     src_alias = models.CharField('Идентификатор источника', max_length=20, choices=SRC_ALIASES)
     src_id = models.CharField('ID в источнике', max_length=50)
@@ -703,7 +702,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         """
         from .realms import get_realms_models
 
-        drafts = OrderedDict()
+        drafts = {}
         for realm_model in get_realms_models():
             try:
                 realm_name = realm_model.get_verbose_name_plural()
@@ -731,7 +730,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         """
         from .realms import get_realms_models
 
-        stats = OrderedDict()
+        stats = {}
         for realm_model in get_realms_models():
 
             try:
@@ -1691,7 +1690,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
 
         realms = [get_realm('pep'), get_realm('book'), get_realm('video')]  # Пока ограничимся.
 
-        materials = OrderedDict()
+        materials = {}
         for realm in realms:
             realm_model = realm.model
             realm_name = realm_model.get_verbose_name_plural()

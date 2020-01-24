@@ -3,7 +3,6 @@
 Конфигурирование производится в settings.py проекта.
 """
 from datetime import datetime, timedelta
-from collections import OrderedDict
 from functools import partial
 from typing import List, Union, Dict, Type
 
@@ -336,7 +335,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
                 'time_published__lte': date_till
             }
 
-        realms_data = OrderedDict()
+        realms_data = {}
         for realm in get_realms().values():
             cls.extend_realms_data(realms_data, realm, filter_kwargs, 'time_published')
 
@@ -374,7 +373,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
             'time_start__lte': date_till
         }
 
-        realms_data = OrderedDict()
+        realms_data = {}
 
         realm = get_realm('event')
         cls.extend_realms_data(realms_data, realm, filter_kwargs, 'time_start')
@@ -392,7 +391,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
         date_from = get_date(context.get('date_from'))
         date_till = get_date(context.get('date_till'))
 
-        realms_data = OrderedDict()
+        realms_data = {}
 
         objects_upcoming = cls.get_upcoming_items()
         if objects_upcoming:

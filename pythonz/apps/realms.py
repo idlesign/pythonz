@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from operator import attrgetter
 from typing import List, Type, Dict, Optional, Generator, Tuple
 
@@ -42,7 +41,7 @@ def bootstrap_realms(urlpatterns: List) -> List:
     return urlpatterns
 
 
-REALMS_REGISTRY: Dict[str, Type[RealmBase]] = OrderedDict()
+REALMS_REGISTRY: Dict[str, Type[RealmBase]] = {}
 
 
 def connect_signals():

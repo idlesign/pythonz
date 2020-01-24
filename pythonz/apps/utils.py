@@ -1,6 +1,5 @@
 import logging
 import re
-from collections import OrderedDict
 from datetime import timedelta, datetime
 from textwrap import wrap
 from typing import Tuple, List, Dict, Callable, Any, Union
@@ -275,23 +274,23 @@ class BasicTypograph:
     Позволяет применить эти правила к строке.
 
     """
-    rules = OrderedDict((
-        ('QUOTES_REPLACE', (re.compile('(„|“|”|(\'\'))'), '"')),
-        ('DASH_REPLACE', (re.compile('(-|­|–|—|―|−|--)'), '-')),
+    rules = {
+        'QUOTES_REPLACE': (re.compile('(„|“|”|(\'\'))'), '"'),
+        'DASH_REPLACE': (re.compile('(-|­|–|—|―|−|--)'), '-'),
 
-        ('SEQUENTIAL_SPACES', (re.compile('([ \t]+)'), ' ')),
+        'SEQUENTIAL_SPACES': (re.compile('([ \t]+)'), ' '),
 
-        ('DASH_EM', (re.compile('([ ,])-[ ]'), '\g<1>— ')),
-        ('DASH_EN', (re.compile('(\d+)[ ]*-[ ]*(\d+)'), '\g<1>–\g<2>')),
+        'DASH_EM': (re.compile('([ ,])-[ ]'), '\g<1>— '),
+        'DASH_EN': (re.compile('(\d+)[ ]*-[ ]*(\d+)'), '\g<1>–\g<2>'),
 
-        ('HELLIP', (re.compile('\.{2,3}'), '…')),
-        ('COPYRIGHT', (re.compile('\((c|с)\)'), '©')),
-        ('TRADEMARK', (re.compile('\(tm\)'), '™')),
-        ('TRADEMARK_R', (re.compile('\(r\)'), '®')),
+        'HELLIP': (re.compile('\.{2,3}'), '…'),
+        'COPYRIGHT': (re.compile('\((c|с)\)'), '©'),
+        'TRADEMARK': (re.compile('\(tm\)'), '™'),
+        'TRADEMARK_R': (re.compile('\(r\)'), '®'),
 
-        ('QUOTES_CYR_CLOSE', (re.compile('(\S+)"', re.U), '\g<1>»')),
-        ('QUOTES_CYR_OPEN', (re.compile('"(\S+)', re.U), '«\g<1>')),
-    ))
+        'QUOTES_CYR_CLOSE': (re.compile('(\S+)"', re.U), '\g<1>»'),
+        'QUOTES_CYR_OPEN': (re.compile('"(\S+)', re.U), '«\g<1>'),
+    }
 
     @classmethod
     def apply_to(cls, input_str: str) -> str:
