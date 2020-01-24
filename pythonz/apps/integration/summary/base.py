@@ -81,6 +81,7 @@ class ItemsFetcherBase:
             return fetched
 
         except Exception as e:
+
             sig_integration_failed.send(
                 None,
                 description=f'Summary fetcher `{fetcher_name}` error: {e} {format_exc()}')
@@ -116,12 +117,14 @@ class ItemsFetcherBase:
         if previous_result:
 
             if mode_cumulative:
+
                 if len(previous_result) > 1:
                     raise LogicError(
                         f'`{self.__class__}`fetcher uses `mode_cumulative` '
                         'but `previous_result` contains more than one item.')
 
                 previous_result = previous_result[0]
+
                 try:
                     idx_prev = list(items.keys()).index(previous_result)
 
@@ -130,6 +133,7 @@ class ItemsFetcherBase:
 
         new_result = []
         by_title = {}
+
         for idx_current, (key, summary_item) in enumerate(items.items()):
             summary_item: SummaryItem
 
@@ -164,10 +168,12 @@ class PipermailBase(ItemsFetcherBase):
         super().__init__(previous_result, previous_dt, **kwargs)
 
     def fetch(self) -> FetcherResult:
+
         url = self.get_url()
         year_month = self.year_month
 
         details_page_file = '/date.html'
+
         if not year_month:
             page = get_from_url(url)
 
@@ -187,6 +193,7 @@ class PipermailBase(ItemsFetcherBase):
         prefix_re = re.compile(r'\[[^]]+\]\s*')
 
         list_items = soup.select('ul')[1].select('li')
+
         for list_item in list_items:
             link = list_item.select('a')[0]
             item_url = url + year_month + '/' + link.attrs['href']
@@ -238,6 +245,7 @@ class StackdataBase(ItemsFetcherBase):
         items = {}
 
         reader = csv.DictReader(StringIO(response.text))
+
         for row in reader:
             item_id = row['id']
             item_url = self.get_item_url(item_id)

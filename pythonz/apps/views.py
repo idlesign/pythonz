@@ -43,6 +43,7 @@ class UserDetailsView(DetailsView):
             raise PermissionDenied()
 
     def update_context(self, context: dict, request: HttpRequest):
+
         user = context['item']
         context['bookmarks'] = user.get_bookmarks()
         context['stats'] = lambda: user.get_stats()  # Ленивость для кеша в шаблоне
@@ -71,6 +72,7 @@ class UserEditView(EditView):
 
         if request.POST:
             prefs_were_set = set_user_preferences_from_request(request)
+
             if prefs_were_set:
                 raise RedirectRequired()
 
@@ -93,6 +95,7 @@ class PlaceDetailsView(DetailsView):
 
         """
         user = request.user
+
         if user.is_authenticated:
             user.place = xross.attrs['item']
             user.set_timezone_from_place()
@@ -146,8 +149,10 @@ class ReferenceDetailsView(DetailsView):
     """Представление статьи справочника."""
 
     def update_context(self, context: dict, request: HttpRequest):
+
         reference = context['item']
         context['children'] = reference.get_actual(parent=reference).order_by('title')
+
         if reference.parent is not None:
             context['siblings'] = reference.get_actual(parent=reference.parent, exclude_id=reference.id).order_by('title')
 
@@ -157,6 +162,7 @@ class CategoryListingView(RealmView):
 
     def get(self, request: HttpRequest, obj_id: int = None):
         from .realms import get_realms
+
         realms = get_realms().values()
 
         if obj_id is None:  # Запрошен список всех известных категорий.
@@ -166,12 +172,14 @@ class CategoryListingView(RealmView):
                     'show_links': lambda cat: reverse(self.realm.get_details_urlname(), args=[cat.id])
                 },
                 additional_parents_aliases=get_category_aliases_under())
+
             return self.render(request, {'item': item, 'realms': realms})
 
         # Выводим список материалов (разбитых по областям сайта) для конкретной категории.
         category = get_object_or_404(Category.objects.select_related('parent'), pk=obj_id)
 
         realms_links = {}
+
         for realm in realms:
             realm_model = realm.model
 
@@ -230,6 +238,7 @@ def index(request: HttpRequest) -> HttpResponse:
     max_additional = 5
 
     for name, realm in realms_registry.items():
+
         if not realm.show_on_main:
             continue
 
@@ -245,6 +254,7 @@ def index(request: HttpRequest) -> HttpResponse:
         if realm_locals:
             main = realm_locals[0]
             additional = list(realm_locals[1:]) + realm_externals[:max_additional]
+
         else:
             main = {}
             additional = []
@@ -307,6 +317,7 @@ def search(request: HttpRequest) -> HttpResponse:
         # Перенаправляем на поиск по всему сайту.
         redirect_response = redirect('search_site')
         redirect_response['Location'] += f'?searchid={settings.YANDEX_SEARCH_ID}&text={quote_plus(search_term)}'
+
         return redirect_response
 
     elif total_results == 1:
@@ -323,10 +334,15 @@ def search(request: HttpRequest) -> HttpResponse:
 
 @redirect_signedin
 @signin_view(
-    widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label}, template='form_bootstrap4')
+    widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label},
+    template='form_bootstrap4'
+)
 @signup_view(
-    widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label}, template='form_bootstrap4',
-    flow=SimpleClassicWithEmailSignup, verify_email=True)
+    widget_attrs={'class': 'form-control', 'placeholder': lambda f: f.label},
+    template='form_bootstrap4',
+    flow=SimpleClassicWithEmailSignup,
+    verify_email=True
+)
 def login(request: HttpRequest) -> HttpResponse:
     """Страница авторизации и регистрации."""
     return render(request, 'static/login.html')

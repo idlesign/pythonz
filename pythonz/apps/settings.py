@@ -1,3 +1,4 @@
+"""Файл для siteprefs, чтобы настройки отображались в административном интерфейсе."""
 from django.conf import settings
 
 

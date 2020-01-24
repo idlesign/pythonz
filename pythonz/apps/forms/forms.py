@@ -1,10 +1,9 @@
-from typing import Optional, List
+from typing import Optional, List, Type, Union
 
 from django.conf import settings
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-# from datetimewidget.widgets import DateTimeWidget, DateWidget
-from ..generics.models import RealmBaseModel
+from ..generics.models import RealmBaseModel, CommonEntityModel
 from ..generics.realms import RealmBase
 from ..integration.videos import VideoBroker
 from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference, Version
@@ -12,19 +11,10 @@ from ..generics.forms import RealmEditBaseForm
 from .widgets import RstEditWidget, ReadOnlyWidget, PlaceWidget
 
 
-CALENDAR_OPTIONS = {
-    'options': {
-        'todayHighlight': True,
-        'weekStart': 1
-    },
-    'usel10n': True,
-    'bootstrap_version': 3
-}
-
-
 class DiscussionForm(RealmEditBaseForm):
 
     class Meta:
+
         model = Discussion
         fields = (
             'title',
@@ -39,7 +29,11 @@ class DiscussionForm(RealmEditBaseForm):
         }
 
     @classmethod
-    def _get_realm_item(cls, realm: RealmBase, item_id: int) -> Optional[RealmBaseModel]:
+    def _get_realm_item(
+            cls,
+            realm: Type[RealmBase],
+            item_id: int
+    ) -> Optional[Union[RealmBaseModel, CommonEntityModel]]:
         """Вернёт объект из указанной области по идентификтаору, либо None.
 
         :param realm:
@@ -47,10 +41,13 @@ class DiscussionForm(RealmEditBaseForm):
 
         """
         item = None
+
         try:
             item = realm.model.objects.get(pk=item_id)
+
         except realm.model.DoesNotExist:
             pass
+
         return item
 
     def __init__(self, *args, **kwargs):
@@ -63,6 +60,7 @@ class DiscussionForm(RealmEditBaseForm):
             from ..realms import get_realm
 
             realm = get_realm(data['related_item_realm'])
+
             if realm is not None:
                 item_id = data['related_item_id']
                 item = self._get_realm_item(realm, item_id)
@@ -84,6 +82,7 @@ class DiscussionForm(RealmEditBaseForm):
 class VersionForm(RealmEditBaseForm):
 
     class Meta:
+
         model = Version
         fields = (
             'title',
@@ -95,13 +94,13 @@ class VersionForm(RealmEditBaseForm):
         )
         widgets = {
             'text_src': RstEditWidget(attrs={'rows': 25}),
-            # 'date': DateWidget(usel10n=True, bootstrap_version=3),
         }
 
 
 class ArticleForm(RealmEditBaseForm):
     
     class Meta:
+
         model = Article
         fields = (
             'title',
@@ -126,10 +125,13 @@ class ArticleForm(RealmEditBaseForm):
     def full_clean(self):
 
         if self.data:
+
             try:
                 location = self.fields['location'].clean(self.data.get('location'))
+
             except (forms.ValidationError, KeyError):
                 pass
+
             else:
                 if location == Article.LOCATION_INTERNAL:
                     self.data['url'] = None
@@ -143,20 +145,25 @@ class ArticleForm(RealmEditBaseForm):
 
     def clean_url(self) -> Optional[str]:
         url = self.cleaned_data['url']
+
         if not url:
             url = None
+
         return url
 
     def save(self, *args, **kwargs):
         url = self.cleaned_data.get('url')
+
         if url:
             self.instance.update_data_from_url(url)
+
         return super().save(*args, **kwargs)
 
 
 class BookForm(RealmEditBaseForm):
 
     class Meta:
+
         model = Book
         fields = (
             'title',
@@ -175,11 +182,14 @@ class BookForm(RealmEditBaseForm):
         isbn = isbn or ''
         isbn = isbn.replace('-', '').strip()
         length = len(isbn)
+
         if length:
             if (length != 10 and length != 13) or not isbn.isdigit():
                 raise forms.ValidationError('Код ISBN должен содержать 10, либо 13 цифр.')
+
         else:
             isbn = None
+
         return isbn
 
     def clean_isbn(self) -> Optional[str]:
@@ -192,6 +202,7 @@ class BookForm(RealmEditBaseForm):
 class VideoForm(RealmEditBaseForm):
 
     class Meta:
+
         model = Video
         fields = (
             'title',
@@ -208,11 +219,13 @@ class VideoForm(RealmEditBaseForm):
 
     def clean_url(self) -> str:
         url = self.cleaned_data['url']
+
         if not VideoBroker.get_hosting_for_url(url):
             raise forms.ValidationError(
                 'К сожалению, мы не умеем работать с этим видео-хостингом. '
                 f'Если знаете, как это исправить, приходите <a href="{settings.PROJECT_SOURCE_URL}">сюда</a>.'
             )
+
         return url
 
     def save(self, *args, **kwargs):
@@ -223,6 +236,7 @@ class VideoForm(RealmEditBaseForm):
 class EventForm(RealmEditBaseForm):
 
     class Meta:
+
         model = Event
         fields = (
             'title',
@@ -240,14 +254,13 @@ class EventForm(RealmEditBaseForm):
         )
         widgets = {
             'place': PlaceWidget(),
-            # 'time_start': DateTimeWidget(**CALENDAR_OPTIONS),
-            # 'time_finish': DateTimeWidget(**CALENDAR_OPTIONS),
         }
 
 
 class UserForm(RealmEditBaseForm):
 
     class Meta:
+
         model = User
         fields = (
             'first_name',
@@ -268,14 +281,17 @@ class UserForm(RealmEditBaseForm):
         }
 
     def save(self, *args, **kwargs):
+
         if 'place' in self.changed_data:
             self.instance.set_timezone_from_place()
+
         super().save(*args, **kwargs)
 
 
 class CommunityForm(RealmEditBaseForm):
 
     class Meta:
+
         model = Community
         fields = (
             'title',
@@ -295,6 +311,7 @@ class CommunityForm(RealmEditBaseForm):
 class ReferenceForm(RealmEditBaseForm):
 
     class Meta:
+
         model = Reference
         fields = (
             'status',

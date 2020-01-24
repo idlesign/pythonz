@@ -32,11 +32,14 @@ def get_webhook_url() -> str:
 
 def set_webhook() -> dict:
     """Конфигурирует механизм webhook."""
+
     certificate = None
+
     if settings.PATH_CERTIFICATE and settings.CERTIFICATE_SELF_SIGNED:
         certificate = open(settings.PATH_CERTIFICATE, 'r')
 
     bot.remove_webhook()
+
     return bot.set_webhook(get_webhook_url(), certificate)
 
 
@@ -130,10 +133,12 @@ def compose_entities_inline_result(entities: List[Union['RealmBaseModel', 'Commo
     results = []
 
     for entity in entities:
+
         title = str(entity)
         # Усечение чтобы уложиться в 64 Кб на одно сообщение
         # иначе, по словам техподдержки, получаем HTTP 414 Request-URI Too Large
         description = truncate_chars(entity.description, 30)
+
         results.append(
             telebot.types.InlineQueryResultArticle(
                 str(entity.id),
@@ -141,6 +146,7 @@ def compose_entities_inline_result(entities: List[Union['RealmBaseModel', 'Commo
                 telebot.types.InputTextMessageContent(f'{title} — {entity.get_absolute_url(with_prefix=True)}'),
                 description=description
             ))
+
     return results
 
 

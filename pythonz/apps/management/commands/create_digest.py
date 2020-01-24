@@ -10,5 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         self.stdout.write('Creating pythonz digest...\n')
+
         PythonzEmailDigest.create()
+
         self.stdout.write('Digest is created.\n')

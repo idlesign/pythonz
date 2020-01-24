@@ -40,6 +40,7 @@ class PartnerBase:
         link_url = link.url
 
         link_mutator = self.link_mutator.replace('{partner_id}', self.partner_id)
+
         if '?' in link_url and link_mutator.startswith('?'):
             link_mutator = link_mutator.replace('?', '&')
 
@@ -47,6 +48,7 @@ class PartnerBase:
 
         title = f'{realm.model.get_verbose_name()} на {self.title}'
         description = link.description
+
         if description:
             title = f'{title} — {description}'
 
@@ -74,6 +76,7 @@ class PartnerBase:
 
     @classmethod
     def get_page_soup(cls, url: str) -> Optional[BeautifulSoup]:
+
         try:
             page = cls.get_page(url)
 
@@ -109,6 +112,7 @@ class BooksRu(PartnerBase):
 
         if page_soup:
             matches = page_soup.select('.item-price .yprice.price')
+
             if matches:
                 price = matches[0].text
 
@@ -139,6 +143,7 @@ class LitRes(PartnerBase):
 
         if page_soup:
             matches = page_soup.select('.block48')
+
             if matches:
                 price = matches[0].text
 
@@ -209,6 +214,7 @@ class LabirintRu(PartnerBase):
 
         if page_soup:
             matches = page_soup.select('.buying-price-val-number')
+
             if matches:
                 price = matches[0].text
 
@@ -262,7 +268,9 @@ init_partners_module()
 
 def get_partners_choices() -> List[Tuple[str, str]]:
     """Возвращает варианты выбора известных партнёров для раскрывающихся списков."""
+
     choices = []
+
     for partner in _PARTNERS_REGISTRY.values():
         choices.append((partner.ident, partner.title))
 
@@ -281,6 +289,7 @@ def get_partner_links(realm: 'RealmBase', item: Union['RealmBaseModel', 'ModelWi
     links_data = cache.get(cache_key)
 
     if links_data is None:
+
         links_data = []
         links = item.partner_links.order_by('partner_alias', 'description').all()
 

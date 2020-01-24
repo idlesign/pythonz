@@ -59,6 +59,7 @@ class Lwn(ItemsFetcherBase):
     }
 
     def _filter(self, items: dict) -> Tuple[List[SummaryItem], Union[List, Dict]]:
+
         previous_result = self.previous_result or {}
         latest_result = {}
         result = []
@@ -81,6 +82,7 @@ class Lwn(ItemsFetcherBase):
         return result, latest_result
 
     def fetch(self) -> FetcherResult:
+
         url_base = 'https://lwn.net'
 
         page = get_from_url(url_base + '/Archives/ConferenceIndex/')
@@ -146,6 +148,7 @@ class GithubTrending(ItemsFetcherBase):
         items = {}
 
         list_items = soup.select('ol.repo-list li')
+
         for list_item in list_items:
             link = list_item.select('h3 a')[0]
 

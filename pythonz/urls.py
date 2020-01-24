@@ -10,7 +10,7 @@ from robots.views import rules_list
 from sitegate.toolbox import get_sitegate_urls
 from sitemessage.toolbox import get_sitemessage_urls
 
-from .apps.realms import bootstrap_realms  # Здесь относительный импорт работать не будет.
+from .apps.realms import bootstrap_realms
 from .apps.views import page_not_found, permission_denied, server_error, index, search, login, telebot, user_settings
 
 urlpatterns = [
@@ -41,6 +41,7 @@ if settings.DEBUG:
     # Чтобы работала отладочная панель.
     import debug_toolbar
     from django.conf.urls import include, url
+
     urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls)),]
     # Чтобы статика раздавалась при runserver.
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

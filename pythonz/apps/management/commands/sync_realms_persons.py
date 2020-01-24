@@ -19,6 +19,7 @@ class Command(BaseCommand):
         known_persons = Person.get_known_persons()
 
         for model_cls in (Video, Book):
+
             for item in model_cls.objects.all():
                 item: Union[Video, Book]
                 item.sync_persons_fields(known_persons)

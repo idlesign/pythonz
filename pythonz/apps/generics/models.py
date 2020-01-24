@@ -15,9 +15,9 @@ from django.utils.html import urlize
 from django.utils.text import Truncator
 from siteflags.models import ModelWithFlag
 from slugify import Slugify, CYRILLIC
-
+from ..integration.utils import get_image_from_url
 from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
-from ..utils import UTM, TextCompiler
+from ..utils import UTM, TextCompiler, BasicTypograph
 
 USER_MODEL: str = getattr(settings, 'AUTH_USER_MODEL')
 SLUGIFIER = Slugify(pretranslate=CYRILLIC, to_lower=True, safe_chars='-._', max_length=200)
@@ -79,6 +79,7 @@ def get_upload_to(instance: Model, filename: str) -> str:
 
     """
     category = getattr(instance, 'COVER_UPLOAD_TO')
+
     return os.path.join('img', category, 'orig', f'{uuid4()}{os.path.splitext(filename)[-1]}')
 
 
@@ -93,8 +94,9 @@ class CommonEntityModel(models.Model):
     cover = models.ImageField('Обложка', max_length=255, upload_to=get_upload_to, null=True, blank=True)
     year = models.CharField('Год', max_length=10, null=True, blank=True)
 
-    linked = models.ManyToManyField('self', verbose_name='Связанные объекты', blank=True,
-                                    help_text='Выберите объекты, имеющие отношение к данному.')
+    linked = models.ManyToManyField(
+        'self', verbose_name='Связанные объекты', blank=True,
+        help_text='Выберите объекты, имеющие отношение к данному.')
 
     class Meta:
         abstract = True
@@ -133,8 +135,6 @@ class CommonEntityModel(models.Model):
         :param kwargs:
 
         """
-        from ..utils import BasicTypograph
-
         self.title = BasicTypograph.apply_to(self.title)
         self.description = BasicTypograph.apply_to(self.description)
 
@@ -161,7 +161,6 @@ class CommonEntityModel(models.Model):
         :param url:
 
         """
-        from ..integration.utils import get_image_from_url
         img = get_image_from_url(url)
         self.cover.save(img.name, img, save=False)
 
@@ -334,12 +333,14 @@ class RealmBaseModel(ModelWithFlag):
 
         if self._consider_modified:
             setattr(self, 'time_modified', now)
+
         else:
             self._consider_modified = True
 
         super().save(*args, **kwargs)
 
         with suppress(AttributeError):  # Пропускаем модели, в которых нет нужных атрибутов.
+
             if notify_new and (not initial_pk and self.pk):
                 sig_entity_new.send(self.__class__, entity=self)
 
@@ -363,9 +364,12 @@ class RealmBaseModel(ModelWithFlag):
     @classmethod
     def get_paginator_objects(cls) -> QuerySet:
         """Возвращает выборку для постраничной навигации."""
+
         qs = cls.objects.published()
+
         if cls.paginator_related:
             qs = qs.select_related(*cls.paginator_related)
+
         qs = qs.order_by(cls.paginator_order)
 
         return qs
@@ -380,6 +384,7 @@ class RealmBaseModel(ModelWithFlag):
         """
         if class_name is None:
             class_name = cls.__name__
+
         return f'most_voted|{class_name}|{category}'
 
     @classmethod
@@ -567,6 +572,7 @@ class RealmBaseModel(ModelWithFlag):
 
         if id_attr:
             details_urlname += '_slug'
+
         else:
             id_attr = self.id
 
@@ -591,6 +597,7 @@ class RealmBaseModel(ModelWithFlag):
 
         """
         tmp, realm_name_plural = self.realm.get_names()
+
         return reverse(f'{realm_name_plural}:tags', args=[str(category.id)])
 
     def get_display_name(self) -> str:

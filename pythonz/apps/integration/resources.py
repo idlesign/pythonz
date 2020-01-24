@@ -16,6 +16,7 @@ class PyDigestResource:
     @classmethod
     def get_mapping(cls) -> Dict[Type['RealmBase'], Tuple[str, ...]]:
         """Возвращает словарь соотношений классов областей псевдонимам разделов."""
+
         if cls.mapping is None:
             from ..realms import ArticleRealm, VideoRealm, EventRealm
 
@@ -31,6 +32,7 @@ class PyDigestResource:
     @classmethod
     def fetch_entries(cls) -> List[dict]:
         """Собирает данные (записи) со внешнего ресурса, соотнося их с разделами pythonz."""
+
         base_url = 'http://pythondigest.ru/rss/'
 
         mapping = cls.get_mapping()
@@ -39,6 +41,7 @@ class PyDigestResource:
 
         results = []
         known_links = []
+
         for realm, aliases in mapping.items():
             realm_name, _ = realm.get_names()
 
@@ -56,6 +59,7 @@ class PyDigestResource:
                     sig_integration_failed.send(None, description=f'URL {url}. Error: {e}')
 
                 else:
+
                     for entry in reversed(parsed.entries[:entries_max]):
                         link = entry.link
                         if link in known_links:

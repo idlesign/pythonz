@@ -33,6 +33,7 @@ def get_from_url(url: str, method: str = 'get', **kwargs) -> Response:
     r_kwargs.update(kwargs)
 
     method = getattr(requests, method)
+
     return method(url, **r_kwargs)
 
 
@@ -63,8 +64,10 @@ def get_json(url: str, return_none_statuses: List[int] = None) -> dict:
             sig_integration_failed.send(None, description=f'URL {url}. Error: {e}')
 
     else:
+
         try:
             result = response.json()
+
         except ValueError:
             pass
 
@@ -123,8 +126,10 @@ def get_thumb_url(realm: 'RealmBase', image: Image, width: int, height: int, abs
 
     """
     base_path = os.path.join('img', realm.name_plural, 'thumbs', f'{width}x{height}')
+
     try:
         thumb_file_base = os.path.join(base_path, os.path.basename(image.path))
+
     except (ValueError, AttributeError):
         return ''
 
@@ -137,6 +142,7 @@ def get_thumb_url(realm: 'RealmBase', image: Image, width: int, height: int, abs
         thumb_file = os.path.join(settings.MEDIA_ROOT, thumb_file_base)
 
         if not os.path.exists(thumb_file):
+
             try:
                 os.makedirs(os.path.join(settings.MEDIA_ROOT, base_path), mode=0o755)
 
@@ -148,6 +154,7 @@ def get_thumb_url(realm: 'RealmBase', image: Image, width: int, height: int, abs
             img.convert('RGB').save(thumb_file)
 
         url = os.path.join(settings.MEDIA_URL, thumb_file_base)
+
         if absolute_url:
             url = f'{settings.SITE_URL}{url}'
 
@@ -173,6 +180,7 @@ def get_timezone_name(lat: str, lng: str) -> Optional[str]:
             'api_key': settings.GOOGLE_API_KEY,
         }
     )
+
     try:
         result = requests.get(url)
         doc = result.json()
@@ -192,6 +200,7 @@ def get_location_data(location_name: str) -> dict:
 
     """
     url = f'http://geocode-maps.yandex.ru/1.x/?results=1&format=json&geocode={location_name}'
+
     try:
         result = requests.get(url)
         doc = result.json()
@@ -200,6 +209,7 @@ def get_location_data(location_name: str) -> dict:
         return {}
 
     found = doc['response']['GeoObjectCollection']['metaDataProperty']['GeocoderResponseMetaData']['found']
+
     if not int(found):
         return {}
 

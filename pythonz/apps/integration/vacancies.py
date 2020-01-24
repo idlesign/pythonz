@@ -16,6 +16,7 @@ class HhVacancyManager:
 
         """
         response = get_json(url, return_none_statuses=[404])
+
         if not response:
             return response
 
@@ -42,6 +43,7 @@ class HhVacancyManager:
             return []
 
         results = []
+
         for item in response['items']:
             salary_from = salary_till = salary_currency = ''
 
@@ -53,6 +55,7 @@ class HhVacancyManager:
 
             employer = item['employer']
             url_logo = employer.get('logo_urls')
+
             if url_logo:
                 url_logo = url_logo.get('90')
 

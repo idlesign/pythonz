@@ -1,4 +1,4 @@
-from typing import Iterable, Callable, List, Tuple, Type
+from typing import Callable, List, Tuple, Type
 
 from django.conf.urls import url
 from django.contrib.sitemaps import GenericSitemap
@@ -10,6 +10,7 @@ from yaturbo import YandexTurboFeed
 
 from .forms import CommonEntityForm
 from .views import ListingView, DetailsView, AddView, EditView, TagsView, RealmView
+from ..integration.utils import get_thumb_url
 from ..utils import get_logger
 
 if False:  # pragma: nocover
@@ -121,7 +122,6 @@ class RealmBase:
         func_items: Callable,
         cls_name: str
     ) -> YandexTurboFeed:
-        from ..integration.utils import get_thumb_url
 
         type_dict = {
             'title': title,
@@ -153,6 +153,7 @@ class RealmBase:
 
         def get_items(self) -> QuerySet:
             items = []
+
             try:
                 items = cls.model.get_actual()[:SYNDICATION_ITEMS_LIMIT]
 
@@ -163,7 +164,9 @@ class RealmBase:
             return items
 
         if cls.syndication_feed is None:
+
             title = cls.model._meta.verbose_name_plural
+
             cls.syndication_feed = cls._get_syndication_feed(
                 title=title,
                 description=f'Материалы в разделе «{title}»',
@@ -171,23 +174,27 @@ class RealmBase:
                 func_items=get_items,
                 cls_name=cls.name
             )
+
         return cls.syndication_feed
 
     @classmethod
     def get_sitemap(cls) -> GenericSitemap:
         """Возвращает объект карты сайта (sitemap)."""
+
         if cls.sitemap is None:
             settings = {
                 'queryset': cls.model.get_actual(),
                 'date_field': cls.sitemap_date_field,
             }
             cls.sitemap = GenericSitemap(settings, priority=0.5, changefreq=cls.sitemap_changefreq)
+
         return cls.sitemap
 
     @classmethod
     def get_listing_urlname(cls) -> str:
         """Возвращает название URL страницы со списком объектов."""
         _tmp, realm_name_plural = cls.get_names()
+
         return f'{realm_name_plural}:listing'
 
     @classmethod
@@ -199,15 +206,20 @@ class RealmBase:
 
         """
         _tmp, realm_name_plural = cls.get_names()
+
         name = f'{realm_name_plural}:details'
+
         if slugged:
             name += '_slug'
+
         return name
 
     @classmethod
     def get_sitetree_details_item(cls) -> List[TreeItemBase]:
         """Возвращает элемент древа сайта, указывающий на страницу с детальной информацией об объекте."""
+
         realm_name, realm_name_plural = cls.get_names()
+
         children = []
 
         if 'edit' in cls.allowed_views:
@@ -225,6 +237,7 @@ class RealmBase:
             )
 
         items = [get_item(details_urlname)]
+
         if getattr(cls.model, 'autogenerate_slug', False):
             items.append(get_item(cls.get_details_urlname(slugged=True), id_attr='slug'))
 
@@ -234,19 +247,23 @@ class RealmBase:
     def get_edit_urlname(cls) -> str:
         """Возвращает название URL страницы редактирования объекта."""
         _tmp, realm_name_plural = cls.get_names()
+
         return f'{realm_name_plural}:edit'
 
     @classmethod
     def get_sitetree_edit_item(cls) -> TreeItemBase:
         """Возвращает элемент древа сайта, указывающий на страницу редактирования объекта."""
         realm_name, _tmp = cls.get_names()
-        return item(cls.txt_form_edit, f'{cls.get_edit_urlname()} {realm_name}.id',
-                    in_menu=False, in_sitetree=False, access_loggedin=True)
+
+        return item(
+            cls.txt_form_edit, f'{cls.get_edit_urlname()} {realm_name}.id',
+            in_menu=False, in_sitetree=False, access_loggedin=True)
 
     @classmethod
     def get_add_urlname(cls) -> str:
         """Возвращает название URL страницы добавления объекта."""
         _tmp, realm_name_plural = cls.get_names()
+
         return f'{realm_name_plural}:add'
 
     @classmethod
@@ -262,24 +279,31 @@ class RealmBase:
     def get_tags_urlname(cls) -> str:
         """Возвращает название URL страницы со списком объектов в определённой категории."""
         _tmp, realm_name_plural = cls.get_names()
+
         return f'{realm_name_plural}:tags'
 
     @classmethod
     def get_sitetree_tags_item(cls) -> TreeItemBase:
         """Возвращает элемент древа сайта, указывающий на страницу разбивки объектов по метке (категории)."""
-        return item('Категория «{{ category.title }}»', f'{cls.get_tags_urlname()} category.id',
-                    in_menu=False, in_sitetree=False)
+        return item(
+            'Категория «{{ category.title }}»', f'{cls.get_tags_urlname()} category.id',
+            in_menu=False, in_sitetree=False)
 
     @classmethod
     def get_sitetree_items(cls) -> TreeItemBase:
         """Возвращает элементы древа сайта."""
+
         if cls.sitetree_items is None:
             children = []
+
             for view_name in cls.allowed_views:
+
                 if view_name not in ('listing', 'edit'):
                     items = getattr(cls, f'get_sitetree_{view_name}_item')()
+
                     if not isinstance(items, list):
                         items = [items]
+
                     children.extend(items)
 
             cls.sitetree_items = item(
@@ -296,6 +320,7 @@ class RealmBase:
     @classmethod
     def get_names(cls) -> Tuple[str, str]:
         """Возвращает кортеж с именами области в ед. и мн. числах."""
+
         if cls.name is None:
             cls.name = cls.__name__.lower().replace('realm', '')
 
@@ -313,22 +338,28 @@ class RealmBase:
         """
         view_attr_name = f'view_{name}'
         view = getattr(cls, view_attr_name)
+
         if view is None:
             realm_name, _ = cls.get_names()
             base_view_class = getattr(cls, f'view_{name}_base_class')
+
             class_dict = {
                 'realm': cls,
                 'name': name
             }
+
             view = type(f'{realm_name.capitalize()}{name.capitalize()}View', (base_view_class,), class_dict)
             setattr(cls, view_attr_name, view)
+
         return view
 
     @classmethod
     def get_syndication_url(cls) -> str:
         """Возвращает URL потока синдикации (RSS)."""
+
         if cls.syndication_url is None:
             cls.syndication_url = reverse(f'{cls.name_plural}:syndication')
+
         return cls.syndication_url
 
     @classmethod
@@ -355,4 +386,5 @@ class RealmBase:
             views.append(url(fr'^{SYNDICATION_URL_MARKER}/$', cls.get_syndication_feed(), name='syndication'))
 
         _, realm_name_plural = cls.get_names()
+
         return [url(fr'^{realm_name_plural}/', (views, realm_name_plural, realm_name_plural))]

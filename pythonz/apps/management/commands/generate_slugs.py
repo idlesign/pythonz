@@ -15,6 +15,7 @@ class Command(BaseCommand):
         for realm_name in realm_names:
 
             realm = get_realm(realm_name)
+
             if realm is None:
                 self.stderr.write(self.style.ERROR(f'Unknown realm: {realm_name}\n'))
 

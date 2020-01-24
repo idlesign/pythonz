@@ -20,8 +20,10 @@ def thumbs_get_thumb_url(context, image: Union[str, Image], width: int, height: 
     :param realm:
 
     """
+
     if isinstance(image, str):
         url = image
+
     else:
         url = get_thumb_url(realm, image, width, height)
 

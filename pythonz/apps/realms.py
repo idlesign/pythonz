@@ -8,6 +8,7 @@ from django.db.models import signals
 from django.urls import get_resolver, reverse
 from sitecats.toolbox import get_tie_model
 from sitetree.models import TreeItemBase
+from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree
 from sitetree.utils import tree, item
 
 from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm, \
@@ -36,8 +37,10 @@ def bootstrap_realms(urlpatterns: List) -> List:
 
     """
     urlpatterns += get_realms_urls()
+
     connect_signals()
     build_sitetree()
+
     return urlpatterns
 
 
@@ -65,7 +68,6 @@ def register_realms(*classes: Type[RealmBase]):
 
 def get_realms_models() -> List[Type[RealmBaseModel]]:
     """Возвращает список моделей всех областей сайта."""
-
     return [r.model for r in get_realms().values()]
 
 
@@ -88,6 +90,7 @@ def get_realm(name: str) -> Optional[Type[RealmBase]]:
 
     try:
         realm = realms[name]
+
     except KeyError:
         pass
 
@@ -98,9 +101,12 @@ def get_sitemaps() -> Dict[str, GenericSitemap]:
     """Возвращает словарь с sitemap-директивами для поисковых систем."""
 
     sitemaps = {}
+
     for realm in get_realms().values():
+
         if realm.sitemap_enabled:
             sitemaps[realm.name_plural] = realm.get_sitemap()
+
     return sitemaps
 
 
@@ -108,12 +114,15 @@ def get_realms_urls() -> List:
     """Возвращает url-шаблоны всех зарегистрированных областей сайта."""
 
     url_patterns = []
+
     for realm in get_realms().values():
         url_patterns += realm.get_urls()
+
     sitemaps = get_sitemaps()
+
     if sitemaps:
-        url_patterns += [
-            url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps})]
+        url_patterns += [url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps})]
+
     return url_patterns
 
 
@@ -133,8 +142,6 @@ def get_sitetree_root_item(children: Generator[TreeItemBase, None, None] = None)
 def build_sitetree():
     """Строит древо сайта, исходя из доступных областей сайта."""
 
-    # Потакаем поведению Django 1.7 при загрузке приложений.
-    from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree
     register_dynamic_trees(
         compose_dynamic_tree((
             tree('main', 'Основное дерево', (
@@ -290,7 +297,6 @@ class ReferenceRealm(RealmBase):
             child.parent = parent
             parent.dynamic_children.append(child)
 
-        from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree
         register_dynamic_trees(compose_dynamic_tree([tree('references', items=[root_item])]), reset_cache=True)
 
 
@@ -430,6 +436,7 @@ class CategoryRealm(RealmBase):
     @classmethod
     def update_syndication_urls(cls, **kwargs):
         """Обновляет url-шаблоны синдикации, заменяя старые новыми."""
+
         target_namespace = cls.SYNDICATION_NAMESPACE
         linked_category_id_str = f"category_{kwargs['instance'].category_id}"
         pattern_idx = -1
@@ -438,11 +445,14 @@ class CategoryRealm(RealmBase):
         urlpatterns = getattr(resolver.urlconf_module, 'urlpatterns', resolver.urlconf_module)
 
         for idx, pattern in enumerate(urlpatterns):
+
             if getattr(pattern, 'namespace', '') == target_namespace:
                 pattern_idx = idx
+
                 if linked_category_id_str in pattern.reverse_dict.keys():
                     # Категория была известна и ранее, перепривязка URL не требуется.
                     return
+
                 break
 
         if pattern_idx > -1:
@@ -463,12 +473,16 @@ class CategoryRealm(RealmBase):
             """Возвращает объекты из разных областей в указанной категории."""
             linked = tie_model.get_linked_objects(filter_kwargs={'category_id': category_id}, id_only=True)
             result = []
+
             for model, ids in linked.items():
                 result.extend(model.get_actual().filter(id__in=ids)[:SYNDICATION_ITEMS_LIMIT])
+
             result = sorted(result, key=attrgetter('time_published'), reverse=True)
+
             return result[:SYNDICATION_ITEMS_LIMIT]
 
         for category in categories.keys():
+
             title = category.title
             category_id = category.id
             feed = RealmBase._get_syndication_feed(

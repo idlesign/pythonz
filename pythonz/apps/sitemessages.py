@@ -40,6 +40,7 @@ def register_messengers():
     SETTINGS_VK = SETTINGS['vk']
 
     messengers = []
+
     if SETTINGS_TWITTER:
         from sitemessage.messengers.twitter import TwitterMessenger
         messengers.append(TwitterMessenger(*SETTINGS_TWITTER))
@@ -96,7 +97,9 @@ def connect_signals():
 
     # Материал опубликован.
     def notify_published(sender, **kwargs):
+
         entity = kwargs['entity']
+
         if not entity.notify_on_publish:
             return False
 
@@ -169,15 +172,16 @@ class PythonzTwitterMessage(PythonzBaseMessage):
 
     @classmethod
     def create_published(cls, entity: Entity):
-        MAX_LEN = 139  # Максимальная длина твита. Для верности меньше.
-        URL_SHORTENED_LEN = 30  # Максимальная длина сокращённого URL
+
+        len_max = 139  # Максимальная длина твита. Для верности меньше.
+        len_shortened = 30  # Максимальная длина сокращённого URL
 
         prefix = f'{entity.get_verbose_name()} «'
         postfix = '»'
         if settings.AGRESSIVE_MODE:
             postfix = f'{postfix} #python'
 
-        title = Truncator(str(entity)).chars(MAX_LEN - URL_SHORTENED_LEN - len(prefix) - len(postfix))
+        title = Truncator(str(entity)).chars(len_max - len_shortened - len(prefix) - len(postfix))
 
         url = entity.get_absolute_url(with_prefix=True, utm_source='twee')
         message = f'{prefix}{title}{postfix} {url}'
@@ -218,8 +222,10 @@ class PythonzEmailMessage(EmailHtmlMessage):
     allow_user_subscription: bool = False
 
     def __init__(self, subject: str, html_or_dict: Union[str, dict], template_path: str = None):
+
         if not isinstance(html_or_dict, dict):
             html_or_dict = {'text': html_or_dict.replace('\n', '<br>')}
+
         super().__init__(subject, html_or_dict, template_path=template_path)
 
     @classmethod
@@ -235,8 +241,10 @@ class PythonzEmailMessage(EmailHtmlMessage):
     def get_admins_emails(cls) -> List[str]:
         """Возвращает адреса электронной почты администраторов проекта."""
         to = []
+
         for item in settings.ADMINS:
             to.append(item[1])  # Адрес электронной почты админа.
+
         return to
 
 
@@ -275,10 +283,12 @@ class PythonzEmailNewEntity(PythonzEmailMessage):
             return False
 
         subject = cls.get_full_subject(f'Новое - {entity}')
+
         context = {
             'entity_title': str(entity),
             'entity_url': entity.get_absolute_url()
         }
+
         cls(subject, context).schedule(cls.recipients('smtp', cls.get_admins_emails()))
 
 
@@ -302,10 +312,12 @@ class PythonzEmailDigest(PythonzEmailMessage):
         date_from, date_till = get_datetime_from_till(7)
 
         subject = cls.get_full_subject(f'Подборка материалов {format_date(date_from)}-{format_date(date_till)}')
+
         context = {
             'date_from': date_from.timestamp(),
             'date_till': date_till.timestamp()
         }
+
         cls(subject, context).schedule(cls.get_subscribers())
 
     @classmethod
@@ -336,6 +348,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
             }
 
         realms_data = {}
+
         for realm in get_realms().values():
             cls.extend_realms_data(realms_data, realm, filter_kwargs, 'time_published')
 
@@ -353,10 +366,14 @@ class PythonzEmailDigest(PythonzEmailMessage):
 
         """
         if realm.ready_for_digest:
+
             entries = realm.model.get_actual().filter(**filter_kwargs).order_by(order_by)
+
             if entries:
+
                 for entry in entries:
                     entry.absolute_url = entry.get_absolute_url(with_prefix=True, utm_source='mail')
+
                 realms_data[realm.model.get_verbose_name_plural()] = entries
 
     @classmethod
@@ -406,6 +423,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
             realms_data['Изменившиеся'] = objects_modified
 
         context.update({'realms_data': realms_data})
+
         return context
 
 

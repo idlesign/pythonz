@@ -9,6 +9,7 @@ class Command(BaseCommand):
     help = 'Registers a webhook URL from Telegram Bot'
 
     def handle(self, *args, **options):
+
         self.stdout.write(f'Registering a webhook at {get_webhook_url()} ...')
 
         self_signed = settings.PATH_CERTIFICATE and settings.CERTIFICATE_SELF_SIGNED

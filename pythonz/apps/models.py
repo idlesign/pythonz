@@ -17,15 +17,16 @@ from etc.models import InheritedModel
 from etc.toolbox import choices_list, get_choices
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory, Category as Category_
-
+from siteflags.utils import get_flag_model
 from .exceptions import RemoteSourceError
 from .generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
 from .integration.peps import sync as sync_peps
 from .integration.resources import PyDigestResource
 from .integration.summary import SUMMARY_FETCHERS
+from .integration.utils import get_location_data, get_timezone_name
 from .integration.utils import scrape_page
-from .integration.videos import VideoBroker
 from .integration.vacancies import HhVacancyManager
+from .integration.videos import VideoBroker
 from .utils import format_currency, truncate_chars, UTM, PersonName, sync_many_to_many, get_datetime_from_till
 
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL')
@@ -54,6 +55,7 @@ class Category(Category_):
     """Посредник для мимикрии под области."""
 
     class Meta:
+
         proxy = True
 
     @classmethod
@@ -95,15 +97,19 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
     history = HistoricalRecords()
 
     class Meta:
+
         verbose_name = 'Обсуждение'
         verbose_name_plural = 'Обсуждения'
 
     class Fields:
+
         text = 'Обсуждение'
 
     def save(self, *args, **kwargs):
+
         if not self.pk:
             self.mark_published()
+
         super().save(*args, **kwargs)
 
     def get_description(self) -> str:
@@ -116,6 +122,7 @@ class ModelWithDiscussions(models.Model):
     discussions = GenericRelation(Discussion)
 
     class Meta:
+
         abstract = True
 
 
@@ -140,6 +147,7 @@ class ExternalResource(UtmReady, RealmBaseModel):
     description = models.TextField('Описание', blank=True, default='')
 
     class Meta:
+
         verbose_name = 'Внешний ресурс'
         verbose_name_plural = 'Внешние ресурсы'
         ordering = ('-time_created',)
@@ -150,11 +158,13 @@ class ExternalResource(UtmReady, RealmBaseModel):
 
         for resource_alias, resource_cls in cls.RESOURCES.items():
             entries = resource_cls.fetch_entries()
+
             if not entries:
                 return
 
             added = []
             existing = []
+
             for entry_data in entries:
                 new_resource = cls(**entry_data)
                 new_resource.src_alias = resource_alias
@@ -163,6 +173,7 @@ class ExternalResource(UtmReady, RealmBaseModel):
                 try:
                     new_resource.save()
                     added.append(new_resource.url)
+
                 except IntegrityError:
                     existing.append(new_resource.url)
 
@@ -180,6 +191,7 @@ class Summary(RealmBaseModel):
     data_result = models.TextField('Результат компоновки сводки')
 
     class Meta:
+
         verbose_name = 'Сводка'
         verbose_name_plural = 'Сводки'
         ordering = ('-time_created',)
@@ -197,6 +209,7 @@ class Summary(RealmBaseModel):
         summary_text = []
 
         for fetcher_alias, items in fetched.items():
+
             if not items:
                 continue
 
@@ -218,6 +231,7 @@ class Summary(RealmBaseModel):
 
         summary_text.append('')
         summary_text = '\n'.join(summary_text)
+
         return summary_text
 
     @classmethod
@@ -264,6 +278,7 @@ class Summary(RealmBaseModel):
             if result is None:
                 # По всей видимости, произошла необработанная ошибка.
                 items, result = [], prev_result
+
             else:
                 items, result = result
 
@@ -297,6 +312,7 @@ class PartnerLink(models.Model):
     linked_object = GenericForeignKey()
 
     class Meta:
+
         verbose_name = 'Партнёрская ссылка'
         verbose_name_plural = 'Партнёрские ссылки'
 
@@ -310,6 +326,7 @@ class ModelWithPartnerLinks(models.Model):
     partner_links = GenericRelation(PartnerLink)
 
     class Meta:
+
         abstract = True
 
 
@@ -338,6 +355,7 @@ class Place(RealmBaseModel, ModelWithDiscussions):
     history = HistoricalRecords()
 
     class Meta:
+
         verbose_name = 'Место'
         verbose_name_plural = 'Места'
 
@@ -363,12 +381,13 @@ class Place(RealmBaseModel, ModelWithDiscussions):
         :param name:
 
         """
-        from .integration.utils import get_location_data
         loc_data = get_location_data(name)
+
         if not loc_data:
             return None
 
         full_title = loc_data['name']
+
         place = cls(
             title=loc_data['requested_name'],
             geo_title=full_title,
@@ -376,10 +395,13 @@ class Place(RealmBaseModel, ModelWithDiscussions):
             geo_pos=loc_data['pos'],
             geo_type=loc_data['type']
         )
+
         try:
             place.save()
+
         except IntegrityError:
             place = cls.objects.get(geo_title=full_title)
+
         return place
 
 
@@ -415,6 +437,7 @@ class Vacancy(UtmReady, RealmBaseModel):
     salary_currency = models.CharField('Валюта', max_length=255, null=True, blank=True)
 
     class Meta:
+
         verbose_name = 'Вакансия'
         verbose_name_plural = 'Работа'
         unique_together = ('src_alias', 'src_id')
@@ -441,8 +464,10 @@ class Vacancy(UtmReady, RealmBaseModel):
         """
         chunks = [self.employer_name, self.src_place_name]
         salary_chunk = self.get_salary_str()
+
         if salary_chunk:
             chunks.append(salary_chunk)
+
         return ', '.join(chunks)
 
     @classmethod
@@ -452,8 +477,10 @@ class Vacancy(UtmReady, RealmBaseModel):
         stats = list(Place.objects.filter(
             id__in=cls.objects.published().filter(place__isnull=False).distinct().values_list('place_id', flat=True),
             vacancies__status=cls.STATUS_PUBLISHED
+
         ).annotate(vacancies_count=Count('vacancies')).filter(
             vacancies_count__gt=2
+
         ).order_by('-vacancies_count', 'title'))
 
         return stats
@@ -470,6 +497,7 @@ class Vacancy(UtmReady, RealmBaseModel):
             'salary_till__isnull': False,
             'salary_from__gt': 900,
         }
+
         if place is not None:
             filter_kwargs['place'] = place
 
@@ -482,6 +510,7 @@ class Vacancy(UtmReady, RealmBaseModel):
         ))
 
         for stat_row in stats:
+
             for factor in ('min', 'max'):
                 stat_row[factor] = stat_row[factor] or 0
 
@@ -521,6 +550,7 @@ class Vacancy(UtmReady, RealmBaseModel):
 
         if match:
             self.place_id = match.place_id
+
         else:
             # Вычисляем место.
             match = Place.create_place_from_name(self.src_place_name)
@@ -531,28 +561,35 @@ class Vacancy(UtmReady, RealmBaseModel):
         """Обновляет состояния записей по данным внешнего ресурса."""
 
         for vacancy in cls.objects.published():
+
             manager = cls.MANAGERS.get(vacancy.src_alias)
-            if manager:
-                status = manager.get_status(vacancy.url_api)
 
-                if status:
-                    vacancy.status = cls.STATUS_ARCHIVED
-                    vacancy.save()
+            if not manager:
+                continue
 
-                elif status is None:
-                    vacancy.status = cls.STATUS_DELETED
-                    vacancy.save()
+            status = manager.get_status(vacancy.url_api)
+
+            if status:
+                vacancy.status = cls.STATUS_ARCHIVED
+                vacancy.save()
+
+            elif status is None:
+                vacancy.status = cls.STATUS_DELETED
+                vacancy.save()
 
     @classmethod
     def fetch_new(cls):
         """Добывает данные из источника и складирует их."""
 
         for manager_alias, manager in cls.MANAGERS.items():
+
             vacancies = manager.fetch_list()
+
             if not vacancies:
                 return
 
             for vacancy_data in vacancies:
+
                 if vacancy_data.pop('__archived', True):
                     # Архивные пропускаем.
                     continue
@@ -561,8 +598,10 @@ class Vacancy(UtmReady, RealmBaseModel):
                 new_vacancy.src_alias = manager_alias
                 new_vacancy.status = new_vacancy._status_backup = cls.STATUS_PUBLISHED
                 new_vacancy.link_to_place()
+
                 try:
                     new_vacancy.save()
+
                 except IntegrityError:
                     pass
 
@@ -589,10 +628,12 @@ class Community(
     history = HistoricalRecords()
 
     class Meta:
+
         verbose_name = 'Сообщество'
         verbose_name_plural = 'Сообщества'
 
     class Fields:
+
         title = 'Название сообщества'
         cover = 'Логотип'
         description = {
@@ -616,8 +657,10 @@ class Community(
         return self.text
 
     def save(self, *args, **kwargs):
+
         if not self.pk:
             self.mark_published()
+
         super().save(*args, **kwargs)
 
 
@@ -669,6 +712,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
     url = models.URLField('Страница в сети', null=True, blank=True)
 
     class Meta:
+
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
@@ -691,7 +735,6 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
             self.timezone = None
             return True
 
-        from .integration.utils import get_timezone_name
         lat, lng = self.place.geo_pos.split(',')
         self.timezone = get_timezone_name(lat, lng)
 
@@ -703,7 +746,9 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         from .realms import get_realms_models
 
         drafts = {}
+
         for realm_model in get_realms_models():
+
             try:
                 realm_name = realm_model.get_verbose_name_plural()
 
@@ -712,7 +757,9 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
 
             else:
                 items = realm_model.objects.filter(
-                    status__in=(self.STATUS_DRAFT, self.STATUS_POSTPONED), submitter_id=self.id
+                    status__in=(self.STATUS_DRAFT, self.STATUS_POSTPONED),
+                    submitter_id=self.id
+
                 ).order_by('time_created')
 
                 if items:
@@ -756,18 +803,20 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         Словарь индексирован классами моделей различных сущностей, в значениях - списки с самими сущностями.
 
         """
-        from siteflags.utils import get_flag_model
         from .realms import get_realms_models
 
         FLAG_MODEL = get_flag_model()
+
         bookmarks = FLAG_MODEL.get_flags_for_types(
             get_realms_models(), user=self, status=RealmBaseModel.FLAG_STATUS_BOOKMARK,
             allow_empty=False
         )
+
         for realm_model, flags in bookmarks.items():
             ids = [flag.object_id for flag in flags]
             items = realm_model.objects.filter(id__in=ids)
             bookmarks[realm_model] = items
+
         return bookmarks
 
     @property
@@ -806,6 +855,7 @@ class PersonsLinked(models.Model):
     persons_fields: List[str] = []
 
     class Meta:
+
         abstract = True
 
     def save(self, *args, **kwargs):
@@ -813,6 +863,7 @@ class PersonsLinked(models.Model):
         self.sync_persons_fields()
 
     def sync_persons_fields(self, known_persons: Dict[str, List['Person']] = None):
+
         if not self.persons_fields:
             return
 
@@ -831,6 +882,7 @@ class PersonsLinked(models.Model):
         related_attr: str = 'name'
     ):
         names_list = []
+
         for name in names_str.split(','):
             # Убираем разметку типа [u:1:идле]
             name = name.strip(' []').rpartition(':')[2]
@@ -876,10 +928,12 @@ class Book(
     persons_fields: List[str] = ['authors']
 
     class Meta:
+
         verbose_name = 'Книга'
         verbose_name_plural = 'Книги'
 
     class Fields:
+
         title = 'Название книги'
         description = {
             'verbose_name': 'Аннотация',
@@ -935,10 +989,12 @@ class Article(
     history = HistoricalRecords()
 
     class Meta:
+
         verbose_name = 'Статья'
         verbose_name_plural = 'Статьи'
 
     class Fields:
+
         description = {
             'verbose_name': 'Введение',
             'help_text': 'Пара-тройка предложений, описывающих, о чём пойдёт речь в статье.',
@@ -973,6 +1029,7 @@ class Article(
 
         """
         result = scrape_page(url)
+
         if not result:
             raise RemoteSourceError('Не удалось получить данные статьи. Проверьте доступность указанного URL.')
 
@@ -988,6 +1045,7 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
     date = models.DateField('Дата выпуска')
 
     class Fields:
+
         title = {
             'verbose_name': 'Номер',
             'help_text': 'Номер версии с двумя обязательными разрядами и третим опциональным. Например: 2.7.12, 3.6.',
@@ -1004,6 +1062,7 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         }
 
     class Meta:
+
         verbose_name = 'Версия Python'
         verbose_name_plural = 'Версии Python'
         ordering = ('-date',)
@@ -1040,6 +1099,7 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
             date=timezone.now().date()
         )
         stub.save()
+
         return stub
 
 
@@ -1122,6 +1182,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         'self', verbose_name='Поглощает', symmetrical=False, related_name='replaced_by', blank=True)
 
     class Meta:
+
         verbose_name = 'PEP'
         verbose_name_plural = 'PEP'
 
@@ -1205,8 +1266,11 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         q = Q()
 
         for term in search_terms:
-            if term:
-                q |= Q(slug__icontains=term) | Q(title__icontains=term) | Q(description__icontains=term)
+
+            if not term:
+                continue
+
+            q |= Q(slug__icontains=term) | Q(title__icontains=term) | Q(description__icontains=term)
 
         return cls.get_actual().filter(q)
 
@@ -1219,6 +1283,7 @@ class ReferenceMissing(models.Model):
     hits = models.PositiveIntegerField('Запросы', default=0)
 
     class Meta:
+
         verbose_name = 'Промах справочника'
         verbose_name_plural = 'Промахи справочника'
 
@@ -1233,11 +1298,16 @@ class ReferenceMissing(models.Model):
         :param search_term: Термин для поиска.
 
         """
-        obj = cls.objects.filter(Q(term__icontains=search_term) | Q(synonyms__icontains=search_term)).first()
+        obj = cls.objects.filter(
+            Q(term__icontains=search_term) |
+            Q(synonyms__icontains=search_term)
+
+        ).first()
 
         if obj:
             obj.hits += 1
             obj.save()
+
         else:
             cls(term=search_term, hits=1).save()
 
@@ -1311,11 +1381,13 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     history = HistoricalRecords()
 
     class Meta:
+
         verbose_name = 'Статья справочника'
         verbose_name_plural = 'Справочник'
         ordering = ('parent_id', 'title')
 
     class Fields:
+
         title = {
             'verbose_name': 'Название',
             'help_text': ('Здесь следует указать название раздела справки '
@@ -1364,6 +1436,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
 
     @classmethod
     def get_actual(cls, parent: 'Reference' = None, exclude_id: int = None) -> QuerySet:
+
         qs = cls.objects.published()
 
         if parent is not None:
@@ -1384,8 +1457,11 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         q = Q()
 
         for term in search_terms:
-            if term:
-                q |= Q(title__icontains=term) | Q(search_terms__icontains=term)
+
+            if not term:
+                continue
+
+            q |= Q(title__icontains=term) | Q(search_terms__icontains=term)
 
         return cls.objects.published().filter(q).order_by('time_published')
 
@@ -1407,10 +1483,12 @@ class Video(
     persons_fields: List[str] = ['authors']
 
     class Meta:
+
         verbose_name = 'Видео'
         verbose_name_plural = 'Видео'
 
     class Fields:
+
         title = 'Название видео'
         translator = 'Перевод/озвучание'
         description = {
@@ -1432,6 +1510,7 @@ class Video(
         return list(VideoBroker.hostings.keys())
 
     def update_code_and_cover(self, url: str):
+
         embed_code, cover_url = VideoBroker.get_code_and_cover(url)
 
         self.code = embed_code
@@ -1492,10 +1571,12 @@ class Event(
     history = HistoricalRecords()
 
     class Meta:
+
         verbose_name = 'Событие'
         verbose_name_plural = 'События'
 
     class Fields:
+
         description = {
             'verbose_name': 'Краткое описание',
             'help_text': f'Краткое описание события. {HINT_IMPERSONAL_REQUIRED}',
@@ -1507,8 +1588,10 @@ class Event(
         cover = 'Логотип'
 
     def save(self, *args, **kwargs):
+
         if not self.pk:
             self.mark_published()
+
         super().save(*args, **kwargs)
 
     def get_display_type(self) -> str:
@@ -1519,15 +1602,20 @@ class Event(
 
     @property
     def is_in_past(self) -> Optional[bool]:
+
         field = self.time_finish or self.time_start
+
         if field is None:
             return None
+
         return field < timezone.now()
 
     @property
     def is_now(self) -> bool:
+
         if not all([self.time_start, self.time_finish]):
             return False
+
         return self.time_start <= timezone.now() <= self.time_finish
 
     @property
@@ -1576,10 +1664,12 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
     aka = models.CharField('Другие имена', max_length=255, blank=True)  # Разделены ;
 
     class Meta:
+
         verbose_name = 'Персона'
         verbose_name_plural = 'Персоны'
 
     class Fields:
+
         text = {'verbose_name': 'Описание'}
         text_src = {'verbose_name': 'Описание (исх.)'}
 
@@ -1600,8 +1690,10 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
 
         """
         known = {}
+
         for person in cls.objects.exclude(status=cls.STATUS_DELETED):
             cls.contribute_to_known_persons(person, known_persons=known)
+
         return known
 
     @classmethod
@@ -1621,7 +1713,9 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
             name = PersonName(name)
 
             for variant in name.get_variants:
+
                 persons_for_variant = known_persons.setdefault(variant, [])
+
                 if person not in persons_for_variant:  # Дубли не нужны.
                     persons_for_variant.append(person)
 
@@ -1641,8 +1735,11 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         q = Q()
 
         for term in search_terms:
-            if term:
-                q |= Q(name__icontains=term) | Q(name_en__icontains=term) | Q(aka__icontains=term)
+
+            if not term:
+                continue
+
+            q |= Q(name__icontains=term) | Q(name_en__icontains=term) | Q(aka__icontains=term)
 
         return cls.get_actual().filter(q)
 
@@ -1662,6 +1759,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
             text_src='Описание отсутствует',
             submitter_id=settings.ROBOT_USER_ID,
         )
+
         if save:
             person.save(notify_published=False, notify_new=False)
 
@@ -1678,6 +1776,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
             return name
 
         result = sorted(persons, key=sort_by_surname)
+
         return result
 
     def get_materials(self) -> Dict[str, Tuple[str, QuerySet]]:
@@ -1691,7 +1790,9 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         realms = [get_realm('pep'), get_realm('book'), get_realm('video')]  # Пока ограничимся.
 
         materials = {}
+
         for realm in realms:
+
             realm_model = realm.model
             realm_name = realm_model.get_verbose_name_plural()
 

@@ -57,6 +57,7 @@ def normalize_date(value: str) -> datetime:
     created = value.strip()
 
     if created:
+
         if '(' in created:
             created = created[:created.index('(')].strip()
 
@@ -64,9 +65,11 @@ def normalize_date(value: str) -> datetime:
 
         # 29-May-2011 / 18-June-2001 / 2011-03-16 / 30 Aug 2012 / 30 March 2013
         for fmt in ['%d-%b-%Y', '%d-%B-%Y', '%Y-%m-%d', '%d %b %Y', '%d %B %Y']:
+
             try:
                 created = timezone.make_aware(strptime(fmt), timezone.get_current_timezone())
                 break
+
             except ValueError:
                 continue
         else:
@@ -97,8 +100,10 @@ def get_peps(exclude_peps: List[str] = None, limit: int = None) -> List[PepInfo]
 
         if version:
             version_ = []
+
             for match in RE_VERSION.findall(version):
                 version_.append(match[0].replace(',', '.').replace('3000', '3.0'))
+
             version = version_
 
         pep['python-version'] = version
@@ -128,6 +133,7 @@ def get_peps(exclude_peps: List[str] = None, limit: int = None) -> List[PepInfo]
                 key, value = line.split(':', 1)
                 value = value.strip()
                 header.append((key, value))
+
             else:
                 # продолжение секции
                 key, value = header[-1]
@@ -136,6 +142,7 @@ def get_peps(exclude_peps: List[str] = None, limit: int = None) -> List[PepInfo]
 
         for key, value in header:
             key = key.lower()
+
             if key in KEYS_ALL:
                 info_dict[key] = value.strip()
 
@@ -164,6 +171,7 @@ def get_peps(exclude_peps: List[str] = None, limit: int = None) -> List[PepInfo]
     limit = limit or float('inf')
 
     json = requests.get(url_base).json()
+
     for item in json:
         name = item['name']
 
@@ -173,15 +181,18 @@ def get_peps(exclude_peps: List[str] = None, limit: int = None) -> List[PepInfo]
         name_split = splitext(name)
 
         ext = name_split[1]
+
         if item['type'] == 'file' and ext in ('.txt', '.rst'):
 
             pep_num = name_split[0].replace('pep-', '')
+
             if pep_num in exclude_peps:
                 continue
 
             peps.append(get_pep_info(item['download_url']))
 
             pep_counter += 1
+
             if pep_counter == limit:
                 break
 
@@ -220,6 +231,7 @@ def sync(skip_deadend_peps: bool = True, limit: int = None):
     }
 
     exclude_peps = None
+
     if skip_deadend_peps:
         exclude_peps = PEP.objects.filter(status__in=PEP.STATUSES_DEADEND).values_list('slug', flat=True)
 
@@ -231,6 +243,7 @@ def sync(skip_deadend_peps: bool = True, limit: int = None):
     submitter_id = settings.ROBOT_USER_ID
 
     for pep in peps:
+
         pep: PepInfo
 
         num = pep.num
@@ -246,6 +259,7 @@ def sync(skip_deadend_peps: bool = True, limit: int = None):
         LOG.info(f'Working on PEP {num} ...')
 
         if num in known_peps:
+
             pep_model: PEP = known_peps[num]
 
             if pep_model.status != status_id:

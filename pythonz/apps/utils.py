@@ -37,6 +37,7 @@ def get_datetime_from_till(days_gap: int) -> Tuple[datetime, datetime]:
     """
     date_till = timezone.now()
     date_from = date_till - timedelta(days=days_gap)
+
     return date_from, date_till
 
 
@@ -101,6 +102,7 @@ class PersonName:
             return ''
 
         name = self._name
+
         return f"{name[0][0]}. {' '.join(name[1:])}"
 
 
@@ -114,7 +116,7 @@ def truncate_words(text: str, to: int, html: bool = False) -> str:
     return Truncator(text).words(to, html=html)
 
 
-def format_currency(val: str) -> str:
+def format_currency(val: Union[str, int]) -> str:
     """Форматирует значение валюты, разбивая его кратно
     тысяче для облегчения восприятия.
 
@@ -162,6 +164,7 @@ def sync_many_to_many(
     """
     if isinstance(src_obj, list):
         new_list = src_obj
+
     else:
         new_list = getattr(src_obj, m2m_attr)
 
@@ -179,6 +182,7 @@ def sync_many_to_many(
         # Синхронизируем данные в БД.
         m2m_model_attr.clear()
         to_add = []
+
         for item in new_list:
 
             if isinstance(item, str):
@@ -190,8 +194,10 @@ def sync_many_to_many(
             val = known_items.get(item, None)  # Модель или список моделей.
 
             if val is None:
+
                 LOG.debug(f'Handling unknown item in sync_many_to_many(): {item}')
                 val = unknown_handler(item, known_items)
+
                 if val is None:
                     unknown.append(item)
                     continue
@@ -217,9 +223,11 @@ def update_url_qs(url: str, new_qs_params: dict) -> str:
 
     """
     parsed = list(urlparse(url))
+
     parsed_qs = parse_qs(parsed[4])
     parsed_qs.update(new_qs_params)
     parsed[4] = urlencode(parsed_qs, doseq=True)
+
     return urlunparse(parsed)
 
 
@@ -247,6 +255,7 @@ class UTM:
             'utm_medium': medium,
             'utm_campaign': campaign,
         }
+
         return update_url_qs(url, params)
 
     @classmethod
@@ -294,6 +303,7 @@ class BasicTypograph:
 
     @classmethod
     def apply_to(cls, input_str: str) -> str:
+
         input_str = f' {input_str.strip()} '
 
         for name, (regexp, replacement) in cls.rules.items():
@@ -361,6 +371,7 @@ class TextCompiler:
             }
 
             for line in body.splitlines():
+
                 if line.startswith('! '):
                     # Заголовок таблицы.
                     rows.append(
@@ -368,9 +379,11 @@ class TextCompiler:
                 else:
                     attrs_row = ''
                     cells = []
+
                     for value in map(str.strip, line.split(' | ')):
 
                         attrs_cell = ''
+
                         # Подсветка. Например, !b:d+ для всего ряда или !b:d ячейки.
                         if value.startswith('!b:'):
                             bg_letter, row_sign = value[3:5]
@@ -450,6 +463,7 @@ class TextCompiler:
         text = re.sub(cls.RE_URL, replace_href, text)
 
         text = text.replace('\n', '<br>')
+
         return text
 
 
@@ -462,13 +476,17 @@ def url_mangle(url: str) -> str:
     """
     if len(url) <= 45:
         return url
+
     path, qs, frag = 2, 3, 4
     splitted = list(urlsplit(url))
     splitted[qs] = ''
     splitted[frag] = ''
+
     if splitted[path].strip('/'):
         splitted[path] = f"<...>{splitted[path].split('/')[-1]}"  # Последний кусок пути.
+
     mangled = urlunsplit(splitted)
+
     return mangled
 
 

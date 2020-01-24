@@ -10,16 +10,16 @@ from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition
 from django.views.generic.base import View
+from sitecats.toolbox import get_category_aliases_under
 from xross.toolbox import xross_view, xross_listener
 from xross.utils import XrossHandlerBase
 
 from .models import ModelWithCompiledText, RealmBaseModel
 from ..exceptions import RedirectRequired, PythonzException
 from ..integration.partners import get_partner_links
-from ..models import ModelWithDiscussions, ModelWithCategory, User, Discussion, Article, Community, Event, Reference, \
+from ..models import ModelWithDiscussions, ModelWithCategory, Discussion, Article, Community, Event, Reference, \
     Category, User
 from ..utils import message_info, message_warning, message_success, message_error
-
 
 if False:  # pragma: nocover
     from .realms import RealmBase
@@ -63,6 +63,7 @@ class RealmView(View):
 
         """
         if not request.user.is_superuser:
+
             if item.is_deleted:
                 # Запрещаем доступ к удалённым.
                 raise Http404()
@@ -88,27 +89,36 @@ class RealmView(View):
 
             try:
                 edit_by_owner = (request.user_id == item.submitter_id)
+
             except AttributeError:
                 edit_by_owner = (request.user == item)  # Модель User
 
             if not edit_by_owner:
+
                 personal_edit_models = User, Article, Discussion
+
                 if self.realm.model in personal_edit_models:
                     raise PermissionDenied()
 
                 # Запрещаем редактирование опубликованных материалов.
                 public_edit_models = Community, Event, Reference
+
                 if item.is_published and self.realm.model not in public_edit_models:
+
                     message_warning(
-                        request, 'Этот материал уже прошёл модерацию и был опубликован. '
-                                 'На данный момент в проекте запрещено редактирование опубликованных материалов.')
+                        request,
+                        'Этот материал уже прошёл модерацию и был опубликован. '
+                        'На данный момент в проекте запрещено редактирование опубликованных материалов.')
+
                     raise PermissionDenied()
 
     @classmethod
     def get_template_path(cls, name: str = None) -> str:
         """Возвращает путь к шаблону страницы представления для данной области."""
+
         if name is None:
             name = cls.name
+
         return f'realms/{cls.realm.name_plural}/{name}.html'
 
     def render(self, request: HttpRequest, data_dict: dict) -> HttpResponse:
@@ -154,6 +164,7 @@ class RealmView(View):
         q = model.objects
 
         related = getattr(model, 'details_related', [])
+
         if related:
             q = q.select_related(*related)
 
@@ -168,6 +179,7 @@ class ListingView(RealmView):
 
     def get_last_modified(self, *args, **kwargs) -> Optional[datetime]:
         """Возвращает Last-Modified для списка сущностей."""
+
         field = 'time_published'
         objects = self.get_paginator_objects()
 
@@ -177,6 +189,7 @@ class ListingView(RealmView):
             return
 
         last = objects.values(field).order_by(field).last()
+
         return last and last[field]
 
     func_last_mod = get_last_modified
@@ -211,8 +224,10 @@ class ListingView(RealmView):
         page_items.after_current = range(page+1, max_page_after+1)
 
     def get(self, request: HttpRequest, category_id: int = None) -> HttpResponse:
+
         try:
             page = int(request.GET.get('p'))
+
         except (TypeError, ValueError):
             page = 1
 
@@ -220,6 +235,7 @@ class ListingView(RealmView):
 
         try:
             page_items = paginator.page(page)
+
         except EmptyPage:
             page_items = paginator.page(1)
 
@@ -235,6 +251,7 @@ class ListingView(RealmView):
             'category': category,
             'items_most_voted': self.get_most_voted_objects()
         }
+
         self.update_context(context, request)
 
         return self.render(request, context)
@@ -280,11 +297,15 @@ class DetailsView(RealmView):
 
         """
         item = xross.attrs['item']
+
         if action == 1:
             item.set_bookmark(self.request.user)
+
         elif action == 0:
             item.remove_bookmark(self.request.user)
+
         self._attach_bookmark_data(item, self.request)
+
         return render(self.request, 'sub_box_bookmark.html', {'item': item})
 
     def set_rate(self, request: HttpRequest, action: int, xross: XrossHandlerBase = None) -> HttpResponse:
@@ -296,12 +317,17 @@ class DetailsView(RealmView):
 
         """
         item = xross.attrs['item']
+
         if self._is_rating_allowed(request, item):
+
             if action == 1:
                 item.set_support(self.request.user)
+
             elif action == 0:
                 item.remove_support(self.request.user)
+
         self._attach_support_data(item, self.request)
+
         return render(self.request, 'sub_box_rating.html', {'item': item})
 
     @classmethod
@@ -324,6 +350,7 @@ class DetailsView(RealmView):
 
         """
         item = xross.attrs['item']
+
         return render(request, self.get_template_path('partner_links'), get_partner_links(self.realm, item))
 
     @xross_view(set_rate, toggle_bookmark, list_partner_links)
@@ -342,6 +369,7 @@ class DetailsView(RealmView):
 
         try:
             self._attach_data(item, request)
+
         except RedirectRequired:
             return redirect(item, permanent=True)
 
@@ -350,6 +378,7 @@ class DetailsView(RealmView):
         try:
             self.check_edit_permissions(request, item)
             item_edit_allowed = True
+
         except PermissionDenied:
             item_edit_allowed = False
 
@@ -365,7 +394,9 @@ class DetailsView(RealmView):
             'item_edit_allowed': item_edit_allowed,
             'item_rating_allowed': item_rating_allowed
         }
+
         self.update_context(context, request)
+
         return self.render(request, context)
 
 
@@ -395,11 +426,13 @@ class EditView(RealmView):
 
         """
         item = xross.attrs['item']
+
         if item is None or isinstance(item, ModelWithCompiledText):
             return HttpResponse(ModelWithCompiledText.compile_text(text_src))
 
     @xross_view(preview_rst)
     def get(self, request: HttpRequest, obj_id: Optional[int] = None) -> HttpResponse:
+
         item = None
 
         if obj_id is not None:
@@ -410,16 +443,18 @@ class EditView(RealmView):
             data = request.POST
 
         form = self.realm.form(data, request.FILES or None, instance=item, user=request.user)
+
         if item is None:
             form.submit_title = self.realm.txt_form_add
+
         else:
             self.check_edit_permissions(request, item)
             form.submit_title = self.realm.txt_form_edit
 
         xross_listener(http_method='POST', item=item)
 
-        from sitecats.toolbox import get_category_aliases_under
         if isinstance(item, ModelWithCategory):
+
             item.has_categories = True
             category_handled = item.enable_category_lists_editor(
                 request,
@@ -438,14 +473,17 @@ class EditView(RealmView):
         show_modetation_hint = self.realm.model not in (User, Article, Discussion, Community, Event)
 
         if data is None:
+
             if show_modetation_hint:
                 message_warning(
-                    request, 'Обратите внимание, что на данном этапе развития проекта добавляемые '
-                             'материалы проходят модерацию, прежде чем появиться на сайте.'
+                    request,
+                    'Обратите внимание, что на данном этапе развития проекта добавляемые '
+                    'материалы проходят модерацию, прежде чем появиться на сайте.'
                 )
 
         if item is None:
             redirector = lambda: redirect(item, permanent=True)
+
         else:
             redirector = lambda: redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 
@@ -453,14 +491,18 @@ class EditView(RealmView):
 
             try:
                 if item is None:
+
                     form.instance.submitter = request.user
                     item = form.save()
                     message_success(request, 'Объект добавлен.')
+
                     if show_modetation_hint:
                         message_info(request, 'Данный объект появится на сайте после модерации.')
+
                 else:
                     form.instance.last_editor = request.user
                     form.save()
+
                     message_success(request, 'Данные сохранены.')
 
                 return redirector()
@@ -472,6 +514,7 @@ class EditView(RealmView):
 
         try:
             self.update_context(context, request)
+
         except RedirectRequired:
             return redirector()
 

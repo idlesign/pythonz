@@ -16,6 +16,7 @@ class VideoBroker:
 
     @classmethod
     def get_data_from_vimeo(cls, url: str) -> Tuple[str, str]:
+
         from ..integration.utils import get_json
 
         if 'vimeo.com' not in url:  # http://vimeo.com/{id}

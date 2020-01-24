@@ -50,10 +50,13 @@ class UserCreationForm(BaseUserCreationForm):
 
     def clean_username(self):
         username = self.cleaned_data['username']
+
         try:
             User.objects.get(username=username)
+
         except User.DoesNotExist:
             return username
+
         raise forms.ValidationError(self.error_messages['duplicate_username'])
 
 
@@ -65,14 +68,14 @@ class UserAdmin(BaseUserAdmin):
     list_display = BaseUserAdmin.list_display + ('is_active',)
 
     fieldsets = BaseUserAdmin.fieldsets + ((None, {'fields': (
-            'profile_public',
-            'comments_enabled',
-            'disqus_shortname',
-            'disqus_category_id',
-            'timezone',
-            'url',
-            'twitter',
-            'email_public'
+        'profile_public',
+        'comments_enabled',
+        'disqus_shortname',
+        'disqus_category_id',
+        'timezone',
+        'url',
+        'twitter',
+        'email_public'
     )}),)
 
 ##################################################################################
@@ -155,6 +158,7 @@ class EntityBaseAdmin(SimpleHistoryAdmin):
     actions = ['publish']
 
     def publish(self, request, queryset):
+
         for obj in queryset:
             obj.mark_published()
             obj.save()
