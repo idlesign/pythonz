@@ -160,7 +160,7 @@ class HyperKittyBase(ItemsFetcherBase):
     HyperKitty (Mailman 3) с mail.python.org.
 
     """
-    url_base = 'https://mail.python.org'
+    url_base: str = 'https://mail.python.org'
 
     def __init__(
             self,

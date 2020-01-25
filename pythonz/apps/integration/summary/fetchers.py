@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Tuple, List, Dict, Union, Optional
 
 from .base import PipermailBase, StackdataBase, ItemsFetcherBase, SummaryItem, FetcherResult, HyperKittyBase
-from ..utils import get_from_url, make_soup
+from ..utils import get_from_url, make_soup, get_json
 
 
 class MailarchAnnounce(HyperKittyBase):
@@ -46,6 +46,35 @@ class StackoverflowRu(StackdataBase):
     site: str = 'ru'
     domain: str = 'ru.stackoverflow.com'
     query_revision_id: int = 851710
+
+
+class Discuss(ItemsFetcherBase):
+    """Получатель обсуждений от discuss.python.org."""
+
+    title: str = 'Обсуждения'
+    alias: str = 'discuss'
+
+    url_base: str = 'https://discuss.python.org'
+
+    def fetch(self) -> FetcherResult:
+
+        url_digest = f'{self.url_base}/top/weekly.json'  # За неделю.
+        url_topic_prefix = f'{self.url_base}/t/'
+
+        items = {}
+        result = get_json(url_digest)
+
+        if not result:
+            return
+
+        for topic in result['topic_list']['topics']:
+            item_title = topic['title']
+            item_url = f"{url_topic_prefix}{topic['id']}"
+            items[item_url] = SummaryItem(url=item_url, title=item_title)
+
+        items, latest_result = self._filter(items)
+
+        return items, latest_result
 
 
 class Lwn(ItemsFetcherBase):
