@@ -269,6 +269,7 @@ class Summary(RealmBaseModel):
         all_results = {}
 
         for fetcher_alias, fetcher_cls in SUMMARY_FETCHERS.items():
+
             prev_result = prev_results.get(fetcher_alias) or []
             fetcher: ItemsFetcherBase = fetcher_cls(previous_result=prev_result, previous_dt=prev_dt)
             result = fetcher.run()

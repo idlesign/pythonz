@@ -1,18 +1,17 @@
 import csv
 import json
 import re
+from datetime import datetime, timedelta
 from io import StringIO
-from datetime import datetime
 from traceback import format_exc
 from typing import List, Tuple, Optional, Union, Dict
 
 import attr
 
+from ..utils import get_from_url, make_soup
 from ...exceptions import LogicError
 from ...signals import sig_integration_failed
 from ...utils import get_logger, get_datetime_from_till
-from ..utils import get_from_url, make_soup
-
 
 LOG = get_logger(__name__)
 
@@ -55,7 +54,8 @@ class ItemsFetcherBase:
 
     """
 
-    def __init__(self, previous_result: List, previous_dt: datetime, **kwargs):
+    # todo prev result dict
+    def __init__(self, *, previous_result: List, previous_dt: Optional[datetime], **kwargs):
         """
 
         :param previous_result: Результат предыдущего забора данных.
@@ -155,6 +155,56 @@ class ItemsFetcherBase:
         return list(by_title.values()), new_result
 
 
+class HyperKittyBase(ItemsFetcherBase):
+    """Базовый сборщик данных из архивов почтовых рассылок
+    HyperKitty (Mailman 3) с mail.python.org.
+
+    """
+    url_base = 'https://mail.python.org'
+
+    def __init__(
+            self,
+            *,
+            previous_result: List,
+            previous_dt: Optional[datetime],
+            till: Optional[datetime] = None,
+            **kwargs
+    ):
+        self.till = till
+        super().__init__(previous_result=previous_result, previous_dt=previous_dt, **kwargs)
+
+    def get_url(self, *, date: datetime) -> str:
+        return f"{self.url_base}/archives/list/{self.alias}/{date.strftime('%Y/%m/%d/')}"
+
+    def fetch(self) -> FetcherResult:
+
+        since = self.previous_dt
+        till = self.till or datetime.now()
+
+        if not since:
+            since = till
+
+        delta = till - since
+
+        items = {}
+        url_base = self.url_base
+
+        for target_date in [till - timedelta(days=x) for x in range(0, delta.days)] or [till]:
+            url = self.get_url(date=target_date)
+            response = get_from_url(url)
+            soup = make_soup(response.text)
+
+            for link in soup.select('.thread-title a'):
+                item_url = f"{url_base}{link.attrs['href']}"
+                item_title = link.text.strip()
+                items[item_url] = SummaryItem(url=item_url, title=item_title)
+
+        items, latest_result = self._filter(items)
+
+        return items, latest_result
+
+
+
 class PipermailBase(ItemsFetcherBase):
     """Базовый сборщик данных из архивов почтовых рассылок pipermail с mail.python.org"""
 
@@ -163,9 +213,9 @@ class PipermailBase(ItemsFetcherBase):
     def get_url(self) -> str:
         return f'https://mail.python.org/pipermail/{self.alias}/'
 
-    def __init__(self, previous_result: List, previous_dt: datetime, year_month: str = None, **kwargs):
+    def __init__(self, *, previous_result: List, previous_dt: Optional[datetime], year_month: str = None, **kwargs):
         self.year_month = year_month
-        super().__init__(previous_result, previous_dt, **kwargs)
+        super().__init__(previous_result=previous_result, previous_dt=previous_dt, **kwargs)
 
     def fetch(self) -> FetcherResult:
 
@@ -219,9 +269,9 @@ class StackdataBase(ItemsFetcherBase):
     domain: str = None
     query_revision_id: int = None
 
-    def __init__(self, previous_result: List, previous_dt: datetime, top_count: int = 10, **kwargs):
+    def __init__(self, *, previous_result: List, previous_dt: Optional[datetime], top_count: int = 10, **kwargs):
         self.top_count = top_count
-        super().__init__(previous_result, previous_dt, **kwargs)
+        super().__init__(previous_result=previous_result, previous_dt=previous_dt, **kwargs)
 
     def get_url(self) -> str:
         since = self.previous_dt.strftime('%Y%m%d')
