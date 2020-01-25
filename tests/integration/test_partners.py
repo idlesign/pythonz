@@ -4,7 +4,7 @@ from pythonz.apps.integration import partners
 from pythonz.apps.models import PartnerLink
 
 
-@pytest.mark.skip('Долгий')
+@pytest.mark.slow
 def test_booksru(mocker):
 
     book_link = 'https://www.books.ru/books/nosql-novaya-metodologiya-razrabotki-nerelyatsionnykh-baz-dannykh-3195898'
