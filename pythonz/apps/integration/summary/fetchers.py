@@ -180,6 +180,8 @@ class GithubTrending(ItemsFetcherBase):
     title: str = 'Популярное на GitHub'
     alias: str = 'github_trending'
 
+    url_base: str = 'https://github.com'
+
     mode_remove_unchanged: bool = True
 
     def __init__(self, *, previous_result: List, previous_dt: Optional[datetime], period=None, **kwargs):
@@ -195,24 +197,27 @@ class GithubTrending(ItemsFetcherBase):
 
     def fetch(self) -> FetcherResult:
         period = self.period
-        url_base = 'https://github.com'
-        url = url_base + '/trending/python?since=' + period
+
+        url_base = self.url_base
+        url = f'{url_base}/trending/python?since={period}'
 
         page = get_from_url(url)
         soup = make_soup(page.text)
 
         items = {}
 
-        list_items = soup.select('ol.repo-list li')
+        list_items = soup.select('article')
 
         for list_item in list_items:
-            link = list_item.select('h3 a')[0]
 
-            item_url = url_base + link.attrs['href']
-            item_title = link.text.strip()
+            link = list_item.select('h1 a')[0]
+
+            item_url = f"{url_base}{link.attrs['href']}"
+            item_title = link.text.strip().replace('\n', '').replace(' ', '')
 
             try:
-                item_description = list_item.select('div p')[0].text.strip()
+                item_description = list_item.select('p')[0].text.strip()
+
             except IndexError:
                 item_description = ''
 

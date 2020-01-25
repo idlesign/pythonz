@@ -100,6 +100,8 @@ def test_github():
         previous_dt=None
     ).run()
 
+    assert current
+
     len_latest = len(latest)
     len_current = len(current)
 
