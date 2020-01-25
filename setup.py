@@ -55,6 +55,6 @@ setup(
 
     tests_require=[
         'pytest',
-        'pytest-djangoapp>=0.13.0',
+        'pytest-djangoapp>=0.14.0',
     ],
 )
