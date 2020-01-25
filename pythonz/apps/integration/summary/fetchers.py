@@ -108,6 +108,8 @@ class Lwn(ItemsFetcherBase):
     title: str = 'Материалы от LWN'
     alias: str = 'lwn'
 
+    url_base: str = 'https://lwn.net'
+
     relevant_cats: dict = {
         'EuroPython',
         'PyCon',
@@ -139,7 +141,7 @@ class Lwn(ItemsFetcherBase):
 
     def fetch(self) -> FetcherResult:
 
-        url_base = 'https://lwn.net'
+        url_base = self.url_base
 
         page = get_from_url(f'{url_base}/Archives/ConferenceIndex/')
         soup = make_soup(page.text)
@@ -168,8 +170,9 @@ class Lwn(ItemsFetcherBase):
                 is_related = 'python' in title.lower()
 
                 if is_relevant or is_related:
-                    url = url_base + paragraph.select('a')[0].attrs['href']
-                    by_category[category].append(SummaryItem(url=url, title=f'{category}: {title}'))
+                    url = paragraph.select('a')[0].attrs['href']
+                    by_category[category].append(
+                        SummaryItem(url=f'{url_base}{url}', title=f'{category}: {title}'))
 
         return self._filter(by_category)
 

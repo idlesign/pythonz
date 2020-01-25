@@ -54,8 +54,7 @@ class ItemsFetcherBase:
 
     """
 
-    # todo prev result dict
-    def __init__(self, *, previous_result: List, previous_dt: Optional[datetime], **kwargs):
+    def __init__(self, *, previous_result: Union[List, Dict], previous_dt: Optional[datetime], **kwargs):
         """
 
         :param previous_result: Результат предыдущего забора данных.
@@ -202,7 +201,6 @@ class HyperKittyBase(ItemsFetcherBase):
         items, latest_result = self._filter(items)
 
         return items, latest_result
-
 
 
 class PipermailBase(ItemsFetcherBase):

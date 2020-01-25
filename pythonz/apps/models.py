@@ -185,8 +185,10 @@ class ExternalResource(UtmReady, RealmBaseModel):
 class Summary(RealmBaseModel):
     """Cводки. Ссылки на материалы, собранные с внешних ресурсов."""
 
-    data_items = models.TextField('Элементы сводки')
-    data_result = models.TextField('Результат компоновки сводки')
+    data_items = models.TextField('Текущие элементы сводки')
+    data_result = models.TextField(
+        'Результат для фильтрации сводки',
+        help_text='Данные для фильтрации элементов сводки при последующих обращениях к ресурсу.')
 
     class Meta:
 
@@ -271,7 +273,11 @@ class Summary(RealmBaseModel):
         for fetcher_alias, fetcher_cls in SUMMARY_FETCHERS.items():
 
             prev_result = prev_results.get(fetcher_alias) or []
-            fetcher: ItemsFetcherBase = fetcher_cls(previous_result=prev_result, previous_dt=prev_dt)
+
+            fetcher: ItemsFetcherBase = fetcher_cls(
+                previous_result=prev_result,
+                previous_dt=prev_dt
+            )
             result = fetcher.run()
 
             if result is None:
@@ -284,7 +290,10 @@ class Summary(RealmBaseModel):
             all_items[fetcher_alias] = items
             all_results[fetcher_alias] = result
 
-        new_summary = cls(data_items=json.dumps(all_items), data_result=json.dumps(all_results))
+        new_summary = cls(
+            data_items=json.dumps(all_items),
+            data_result=json.dumps(all_results)
+        )
         new_summary.save()
 
         return all_items
