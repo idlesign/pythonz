@@ -86,7 +86,7 @@ class Lwn(ItemsFetcherBase):
 
         url_base = 'https://lwn.net'
 
-        page = get_from_url(url_base + '/Archives/ConferenceIndex/')
+        page = get_from_url(f'{url_base}/Archives/ConferenceIndex/')
         soup = make_soup(page.text)
 
         category = ''

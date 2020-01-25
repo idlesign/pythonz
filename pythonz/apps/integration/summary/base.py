@@ -235,7 +235,7 @@ class PipermailBase(ItemsFetcherBase):
 
             year_month = match.group(2)
 
-        page = get_from_url(url + year_month + details_page_file)
+        page = get_from_url(f'{url}{year_month}{details_page_file}')
         soup = make_soup(page.text)
 
         items = {}

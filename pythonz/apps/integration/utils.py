@@ -17,7 +17,7 @@ if False:  # pragma: nocover
     from ..generics.realms import RealmBase
 
 
-def get_from_url(url: str, method: str = 'get', **kwargs) -> Response:
+def get_from_url(url: str, *, method: str = 'get', **kwargs) -> Response:
     """Возвращает объект ответа requests с указанного URL.
     
     По умолчанию запрос производится методом GET.
