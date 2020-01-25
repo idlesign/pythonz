@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import pytest
 
 from pythonz.apps.integration import partners
@@ -5,13 +7,13 @@ from pythonz.apps.models import PartnerLink
 
 
 @pytest.mark.slow
-def test_booksru(mocker):
+def test_booksru():
 
-    book_link = 'https://www.books.ru/books/nosql-novaya-metodologiya-razrabotki-nerelyatsionnykh-baz-dannykh-3195898'
+    book_link = 'https://www.books.ru/books/bibliya-705085/'
     partner_id = '12345'
     booksru = partners.BooksRu(partner_id=partner_id)
     link = PartnerLink(url=book_link)
-    mock_realm = mocker.Mock()
+    mock_realm = Mock()
 
     data = booksru.get_link_data(mock_realm, link)
 

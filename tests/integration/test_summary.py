@@ -61,7 +61,7 @@ def test_pipermail():
 
 def test_hyperkitty():
 
-    current, latest = D(
+    current, latest = Discuss(
         previous_result=[],
         previous_dt=datetime(2019, 12, 31),
         till=datetime(2019, 12, 31)

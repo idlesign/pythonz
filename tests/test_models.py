@@ -42,7 +42,7 @@ def test_pep(user):
     assert pep9999.get_absolute_url(with_prefix=True) == 'https://pythonz.net/peps/named/9999/'
 
 
-@pytest.mark.slow
+@pytest.mark.skip('Требуется имитация.')
 def test_summary(user):
     Category(creator=user).save()
     Summary.create_article()
