@@ -1,20 +1,21 @@
 from collections import defaultdict
-from typing import Tuple, List, Dict, Union
+from datetime import datetime
+from typing import Tuple, List, Dict, Union, Optional
 
-from .base import PipermailBase, StackdataBase, ItemsFetcherBase, SummaryItem, FetcherResult
+from .base import PipermailBase, StackdataBase, ItemsFetcherBase, SummaryItem, FetcherResult, HyperKittyBase
 from ..utils import get_from_url, make_soup
 
 
-class MailarchAnnounce(PipermailBase):
+class MailarchAnnounce(HyperKittyBase):
 
     title: str = 'Анонсы'
-    alias: str = 'python-announce-list'
+    alias: str = 'python-announce-list@python.org'
 
 
-class MailarchDev(PipermailBase):
+class MailarchDev(HyperKittyBase):
 
     title: str = 'Разработка языка'
-    alias: str = 'python-dev'
+    alias: str = 'python-dev@python.org'
 
 
 class MailarchConferences(PipermailBase):
@@ -23,10 +24,10 @@ class MailarchConferences(PipermailBase):
     alias: str = 'conferences'
 
 
-class MailarchIdeas(PipermailBase):
+class MailarchIdeas(HyperKittyBase):
 
     title: str = 'Идеи'
-    alias: str = 'python-ideas'
+    alias: str = 'python-ideas@python.org'
 
 
 class Stackoverflow(StackdataBase):
@@ -126,7 +127,7 @@ class GithubTrending(ItemsFetcherBase):
 
     mode_remove_unchanged: bool = True
 
-    def __init__(self, previous_result, previous_dt, period=None, **kwargs):
+    def __init__(self, *, previous_result: List, previous_dt: Optional[datetime], period=None, **kwargs):
         """
 
         :param previous_result:
@@ -135,7 +136,7 @@ class GithubTrending(ItemsFetcherBase):
 
         """
         self.period = period or 'weekly'
-        super().__init__(previous_result, previous_dt, **kwargs)
+        super().__init__(previous_result=previous_result, previous_dt=previous_dt, **kwargs)
 
     def fetch(self) -> FetcherResult:
         period = self.period
