@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from pythonz.apps.integration.summary import MailarchConferences, GithubTrending, Stackoverflow, Lwn, Discuss
+from pythonz.apps.integration.summary import MailarchConferences, GithubTrending, Stackoverflow, Lwn, Discuss, Psf
 
 pytestmark = [pytest.mark.slow]
 
@@ -74,6 +74,17 @@ def test_hyperkitty():
 def test_discuss():
 
     current, latest = Discuss(
+        previous_result=[],
+        previous_dt=None,
+    ).run()
+
+    assert current
+    assert latest
+
+
+def test_psf():
+
+    current, latest = Psf(
         previous_result=[],
         previous_dt=None,
     ).run()

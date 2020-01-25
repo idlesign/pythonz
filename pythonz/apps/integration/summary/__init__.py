@@ -2,7 +2,7 @@ from typing import Dict, Type
 
 from .base import ItemsFetcherBase
 from .fetchers import MailarchAnnounce, MailarchConferences, MailarchDev, MailarchIdeas, \
-    Stackoverflow, StackoverflowRu, GithubTrending, Lwn, Discuss
+    Stackoverflow, StackoverflowRu, GithubTrending, Lwn, Discuss, Psf
 
 SUMMARY_FETCHERS: Dict[str, Type[ItemsFetcherBase]] = dict(((fetcher.alias, fetcher) for fetcher in [
     MailarchAnnounce,
@@ -10,6 +10,7 @@ SUMMARY_FETCHERS: Dict[str, Type[ItemsFetcherBase]] = dict(((fetcher.alias, fetc
     MailarchDev,
     MailarchIdeas,
     Discuss,
+    Psf,
     Stackoverflow,
     StackoverflowRu,
     GithubTrending,

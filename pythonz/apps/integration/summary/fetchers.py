@@ -77,6 +77,32 @@ class Discuss(ItemsFetcherBase):
         return items, latest_result
 
 
+class Psf(ItemsFetcherBase):
+
+    title: str = 'Блог PSF'
+    alias: str = 'psf'
+
+    url_base: str = 'https://discuss.python.org'
+    mode_remove_unchanged: bool = True
+
+    def fetch(self) -> FetcherResult:
+
+        url_rss = 'https://pyfound.blogspot.com/feeds/posts/default?alt=rss'
+
+        items = {}
+        result = get_from_url(url_rss)
+        soup = make_soup(result.text)
+
+        for entry in soup.select('entry'):
+            item_title = entry.find('title').text.strip()
+            item_url = entry.find('feedburner:origlink').text.strip()
+            items[item_url] = SummaryItem(url=item_url, title=item_title)
+
+        items, latest_result = self._filter(items)
+
+        return items, latest_result
+
+
 class Lwn(ItemsFetcherBase):
 
     title: str = 'Материалы от LWN'
