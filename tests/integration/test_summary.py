@@ -67,8 +67,8 @@ def test_hyperkitty():
         till=datetime(2019, 12, 31)
     ).run()
 
-    assert len(current) == 6
-    assert len(latest) == 6
+    assert len(current) >= 6
+    assert len(latest) >= 6
 
 
 def test_discuss():
