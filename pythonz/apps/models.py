@@ -2,6 +2,7 @@ import json
 from datetime import timedelta, datetime
 from functools import partial
 from itertools import chain
+from statistics import median
 from typing import Dict, List, Tuple, Optional
 
 from django.conf import settings
@@ -10,7 +11,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import FieldError
 from django.db import models, IntegrityError
-from django.db.models import Min, Max, Count, Q, F, QuerySet
+from django.db.models import Min, Max, Count, Q, F, QuerySet, StdDev, Avg
 from django.urls import reverse
 from django.utils import timezone
 from etc.models import InheritedModel
@@ -494,7 +495,7 @@ class Vacancy(UtmReady, RealmBaseModel):
         return stats
 
     @classmethod
-    def get_salary_stats(cls, place: Optional[Place] = None) -> List[dict]:
+    def get_salary_stats(cls, place: Optional[Place] = None) -> dict:
         """Возвращает статистику по зарплатам.
 
         :param place: Место, для которого следует получить статистику.
@@ -504,6 +505,7 @@ class Vacancy(UtmReady, RealmBaseModel):
             'salary_currency__isnull': False,
             'salary_till__isnull': False,
             'salary_from__gt': 900,
+            'status': cls.STATUS_PUBLISHED,
         }
 
         if place is not None:
@@ -511,23 +513,44 @@ class Vacancy(UtmReady, RealmBaseModel):
 
         stats = list(cls.objects.published().filter(
             **filter_kwargs
+
         ).values(
-            'salary_currency'
-        ).annotate(
-            min=Min('salary_from'), max=Max('salary_till'), count=Count('id')
+            'salary_currency',
+            'salary_from',
+            'salary_till',
         ))
+
+        by_currency = {}
 
         for stat_row in stats:
 
-            for factor in ('min', 'max'):
-                stat_row[factor] = stat_row[factor] or 0
+            row = by_currency.setdefault(stat_row['salary_currency'], {
+                'min': float('inf'),
+                'max': 0,
+                'avg': [],
+            })
 
-            stat_row['avg'] = stat_row['min'] + ((stat_row['max'] - stat_row['min']) / 2)
+            if row['min'] > stat_row['salary_from']:
+                row['min'] = stat_row['salary_from']
 
-            for factor in ('min', 'avg', 'max'):
-                stat_row[factor] = format_currency(stat_row[factor])
+            if row['max'] < stat_row['salary_till']:
+                row['max'] = stat_row['salary_till']
 
-        return stats
+            if row['max'] < row['min']:
+                row['max'] = row['min']
+
+            row['avg'].append(
+                row['min'] + ((row['max'] - row['min']) / 2)
+            )
+
+        for currency, info in by_currency.items():
+
+            info['avg'] = median(info['avg'])
+
+            for key in {'min', 'max', 'avg'}:
+                info[key] = f'{round(info[key] / 1000, 1)}K'
+
+        return by_currency
 
     def get_salary_str(self) -> str:
         """Возвращает данные о зарплате в виде строки."""
@@ -568,6 +591,8 @@ class Vacancy(UtmReady, RealmBaseModel):
     def update_statuses(cls):
         """Обновляет состояния записей по данным внешнего ресурса."""
 
+        for_update = []
+
         for vacancy in cls.objects.published():
 
             manager = cls.MANAGERS.get(vacancy.src_alias)
@@ -575,15 +600,18 @@ class Vacancy(UtmReady, RealmBaseModel):
             if not manager:
                 continue
 
+            for_update.append(vacancy)
+
             status = manager.get_status(vacancy.url_api)
 
             if status:
                 vacancy.status = cls.STATUS_ARCHIVED
-                vacancy.save()
 
             elif status is None:
                 vacancy.status = cls.STATUS_DELETED
-                vacancy.save()
+
+        if for_update:
+            cls.objects.bulk_update(for_update, fields=['status'])
 
     @classmethod
     def fetch_new(cls):

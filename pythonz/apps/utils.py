@@ -116,7 +116,7 @@ def truncate_words(text: str, to: int, html: bool = False) -> str:
     return Truncator(text).words(to, html=html)
 
 
-def format_currency(val: Union[str, int]) -> str:
+def format_currency(val: int) -> str:
     """Форматирует значение валюты, разбивая его кратно
     тысяче для облегчения восприятия.
 

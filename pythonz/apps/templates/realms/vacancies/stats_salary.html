@@ -10,12 +10,12 @@
             </tr>
         </thead>
         <tbody>
-            {% for stat_row in stats_salary %}
+            {% for currency, stat in stats_salary.items %}
             <tr>
-                <th scope="row">{{ stat_row.salary_currency }}</th>
-                <td>{{ stat_row.min }}</td>
-                <td>{{ stat_row.avg }}</td>
-                <td>{{ stat_row.max }}</td>
+                <th scope="row">{{ currency }}</th>
+                <td>{{ stat.min }}</td>
+                <td>{{ stat.avg }}</td>
+                <td>{{ stat.max }}</td>
             </tr>
             {% endfor %}
         </tbody>
