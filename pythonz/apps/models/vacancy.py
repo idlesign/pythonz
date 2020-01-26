@@ -1840,3 +1840,4 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
                 materials[realm_name] = (plural, items)
 
         return materials
+ 
