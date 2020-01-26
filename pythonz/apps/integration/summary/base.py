@@ -183,12 +183,13 @@ class HyperKittyBase(ItemsFetcherBase):
         if not since:
             since = till
 
-        delta = till - since
+        delta = till.date() - since.date()
+        target_dates = [till - timedelta(days=day_num) for day_num in range(0, delta.days)] or [till]
 
         items = {}
         url_base = self.url_base
 
-        for target_date in [till - timedelta(days=x) for x in range(0, delta.days)] or [till]:
+        for target_date in target_dates:
             url = self.get_url(date=target_date)
             response = get_from_url(url)
             soup = make_soup(response.text)
