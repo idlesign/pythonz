@@ -154,7 +154,7 @@ class Vacancy(UtmReady, RealmBaseModel):
             info['avg'] = median(info['avg'])
 
             for key in {'min', 'max', 'avg'}:
-                info[key] = f'{round(info[key] / 1000, 1)}K'
+                info[key] = f'{round(info[key] / 1000, 1)}'.replace('.0', '', 1) + 'K'
 
         return by_currency
 
