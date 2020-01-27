@@ -8,7 +8,7 @@
         {% endif %}
 
     {% else %}
-        <a href="{% url "login" %}" class="btn btn-default" title="Нажмите, чтобы поместить в избранные {% model_meta_verbose_name_plural item %}.">
+        <a href="{% url "login" %}" class="btn btn-light" title="Нажмите, чтобы поместить в избранные {% model_meta_verbose_name_plural item %}.">
             <i class="fa fa-bookmark-o"></i></a>
     {% endif %}
 </div>
