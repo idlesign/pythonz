@@ -6,6 +6,7 @@
 {% block head %}
     {{ block.super }}
     {% include "sub_vk_head.html" %}
+    <meta property="yandex_recommendations_title" content="{{ item.title }}"/>
     <meta property="yandex_recommendations_category" content="{{ realm.model.get_verbose_name }}"/>
 {% endblock %}
 
