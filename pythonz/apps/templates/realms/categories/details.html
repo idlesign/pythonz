@@ -15,7 +15,7 @@
 
     {% cache 3600 category_materials item.pk %}
         {% if realms_links %}
-            {% include "sub_realms_links_tabs.html" %}
+            {% include "sub/realms_links_tabs.html" %}
         {% else %}
             Пока нет материалов связанных с этой категорией.
         {% endif %}

@@ -158,7 +158,7 @@
 {% block column_controls %}
     {% if user.twitter %}
         <div class="sticky">
-            {% include "sub_twitter_timeline.html" with username=user.twitter %}
+            {% include "sub/twitter_timeline.html" with username=user.twitter %}
         </div>
     {% endif %}
 {% endblock %}

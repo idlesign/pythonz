@@ -9,7 +9,7 @@
 
 {% block head %}
     {{ block.super }}
-    {% include "sub_vk_head.html" %}
+    {% include "sub/vk_head.html" %}
 {% endblock %}
 
 
@@ -50,7 +50,7 @@
 {% cache 300 person_materials person.pk %}
     {% if materials %}
     <div class="mt-4">
-        {% include "sub_realms_links_tabs.html" with realms_links=materials %}
+        {% include "sub/realms_links_tabs.html" with realms_links=materials %}
     </div>
     {% endif %}
 {% endcache %}

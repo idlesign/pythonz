@@ -20,7 +20,7 @@
 
         <div class="col">
             {% block ads %}
-                {% include "sub_box_ads.html" with area="rightbar" %}
+                {% include "sub/box_ads.html" with area="rightbar" %}
             {% endblock %}
         </div>
 
@@ -28,6 +28,6 @@
 
     <div class="clearfix"></div>
 
-    {% block zen %}{% include "sub_zen.html" %}{% endblock %}
+    {% block zen %}{% include "sub/zen.html" %}{% endblock %}
 
 {%  endblock %}

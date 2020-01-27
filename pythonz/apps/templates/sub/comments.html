@@ -39,16 +39,16 @@
 
     {% if not disable_vk %}
     <div role="tabpanel" class="tab-pane active" id="comments_vk">
-        {% include "sub_vk_comments.html" %}
+        {% include "sub/vk_comments.html" %}
     </div>
     {% endif %}
 
     {% if not disable_disqus %}
     <div role="tabpanel" class="tab-pane" id="comments_disqus">
         {% if personalized and author.disqus_shortname %}
-            {% include "sub_disqus.html" with shortname=author.disqus_shortname comments_enabled=author.comments_enabled category_id=author.disqus_category_id %}
+            {% include "sub/disqus.html" with shortname=author.disqus_shortname comments_enabled=author.comments_enabled category_id=author.disqus_category_id %}
         {% else %}
-            {% include "sub_disqus.html" with shortname="pythonz-discussions" comments_enabled=1 %}
+            {% include "sub/disqus.html" with shortname="pythonz-discussions" comments_enabled=1 %}
         {% endif %}
     </div>
     {% endif %}

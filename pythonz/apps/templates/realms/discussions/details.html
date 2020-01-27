@@ -10,7 +10,7 @@
 
 {% block head %}
     {{ block.super }}
-    {% include "sub_vk_head.html" %}
+    {% include "sub/vk_head.html" %}
 {% endblock %}
 
 {% block schema_type %}Comment{% endblock %}
@@ -39,6 +39,6 @@
 
 {% block discussions %}
     <div class="mt-4 p-2 clearfix border rounded">
-        {% include "sub_comments.html" with disable_internal=1 author=discussion.submitter entity_name='discussion' entity_id=discussion.id personalized=1 %}
+        {% include "sub/comments.html" with disable_internal=1 author=discussion.submitter entity_name='discussion' entity_id=discussion.id personalized=1 %}
     </div>
 {% endblock %}

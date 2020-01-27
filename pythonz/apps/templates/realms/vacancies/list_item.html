@@ -1,6 +1,6 @@
 <div class="listing-item card mb-3">
     <div class="card-body">
-        {% include "sub_item_cover.html" with thumb_url=item.cover %}
+        {% include "sub/item_cover.html" with thumb_url=item.cover %}
         <div class="card-title">
             <a href="{{ item.get_utm_url }}">{{ item.title }}</a>
         </div>

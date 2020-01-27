@@ -18,7 +18,7 @@
 
     <div class="row">
         <div class="col-12">
-            {% include "sub_title_block.html" %}
+            {% include "sub/title_block.html" %}
 
         {% block promo %}
             {% if category.note %}
@@ -31,7 +31,7 @@
 
     <div class="row">
         <div class="col-8">
-            {% include "sub_paginator.html" with paginator=items %}
+            {% include "sub/paginator.html" with paginator=items %}
 {%  endblock %}
 
 
@@ -41,14 +41,14 @@
 
 
 {% block page_contents_post %}
-            {% include "sub_paginator.html" with paginator=items %}
+            {% include "sub/paginator.html" with paginator=items %}
         </div>
 
         <div class="col-4 d-none d-md-block">
 
             {% block ad_rightbar %}
             <div class="col-12 mb-4">
-                {% include "sub_box_ads.html" with area="rightbar" %}
+                {% include "sub/box_ads.html" with area="rightbar" %}
             </div>
             <div class="clearfix"></div>
             {% endblock %}
@@ -81,7 +81,7 @@
             <div class="mt-3">
             {% block bar_right_after %}
                 <hr>
-                {% include "sub_hint.html" %}
+                {% include "sub/hint.html" %}
             {% endblock %}
             </div>
         </div>

@@ -5,7 +5,7 @@
 
 {% block head %}
     {{ block.super }}
-    {% include "sub_vk_head.html" %}
+    {% include "sub/vk_head.html" %}
     <meta property="yandex_recommendations_title" content="{{ item.title }}"/>
     <meta property="yandex_recommendations_category" content="{{ realm.model.get_verbose_name }}"/>
 {% endblock %}
@@ -35,32 +35,32 @@
             {% sitetree_breadcrumbs from "main" template "sitetree/crumbs.html" %}
             {% endblock %}
 
-            <div>{% include "sub_box_controls.html" %}</div>
+            <div>{% include "sub/box_controls.html" %}</div>
 
             {% block details_author %}
             <div class="text-muted small bg-white float-right mt-2 mr-2 p-1 rounded">
-                {% include "sub_author_editor.html" %}
+                {% include "sub/author_editor.html" %}
             </div>
             {% endblock %}
 
-            {% include "sub_title_block.html" with hide_breadcurmbs=1 %}
+            {% include "sub/title_block.html" with hide_breadcurmbs=1 %}
 
             {% block details_contents %}{% endblock %}
             {% block details_description %}<div class="mb-3" itemprop="description">{{ item.description|urlize|linebreaksbr }}</div>{% endblock %}
             {% block details_contents_add %}{% endblock %}
 
             {% block details_contents_after %}{% endblock %}
-            {% block details_share %}{% include "sub_box_share.html" %}{% endblock %}
+            {% block details_share %}{% include "sub/box_share.html" %}{% endblock %}
 
-            {% include "sub_linked.html" %}
+            {% include "sub/linked.html" %}
 
             {% block details_discussions_pre %}
-                {% include "sub_box_recommend.html" with block_id="247489-6" %}
+                {% include "sub/box_recommend.html" with block_id="247489-6" %}
             {% endblock %}
             {% block discussions %}
                 {% if item.has_discussions %}
                     <div class="mt-4 p-2 clearfix border rounded">
-                        {% include "sub_comments.html" with disable_disqus=1 %}
+                        {% include "sub/comments.html" with disable_disqus=1 %}
                     </div>
                 {% endif %}
             {% endblock %}
@@ -83,7 +83,7 @@
                         {% endblock %}
                     </div>
                 </div>
-                {% block column_controls %}{% include "sub_column_controls.html" %}{% endblock %}
+                {% block column_controls %}{% include "sub/column_controls.html" %}{% endblock %}
                 {% endblock %}
             </div>
         {% endblock %}

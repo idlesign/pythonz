@@ -7,7 +7,7 @@
 
 {% block head %}
     {{ block.super }}
-    {% include "sub_vk_head.html" %}
+    {% include "sub/vk_head.html" %}
 {% endblock %}
 
 
@@ -51,7 +51,7 @@
             {% if authors %}
             <tr>
                 <th>{% model_field_verbose_name from pep.authors %}</th>
-                <td>{% include "sub_persons_links.html" with persons=authors %}</td>
+                <td>{% include "sub/persons_links.html" with persons=authors %}</td>
             </tr>
             {% endif %}
         {% endwith %}

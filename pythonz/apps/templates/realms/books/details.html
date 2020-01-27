@@ -22,7 +22,7 @@
     <div class="mb-3 text-muted">
         <small>
             <span class="mr-3">
-                {% model_field_verbose_name from book.author %}: {% include "sub_persons_links.html" with persons=book.authors.all %}
+                {% model_field_verbose_name from book.author %}: {% include "sub/persons_links.html" with persons=book.authors.all %}
             </span>
             <span class="mr-3">{% model_field_verbose_name from book.year %}: {{ book.year }}</span>
             {% if book.isbn or book.isbn_ebook %}

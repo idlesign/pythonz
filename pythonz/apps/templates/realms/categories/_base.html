@@ -3,7 +3,7 @@
 {% block page_contents %}
     <div class="row">
         <div class="col-md-12">
-            {% include "sub_title_block.html" %}
+            {% include "sub/title_block.html" %}
         </div>
     </div>
 
@@ -11,18 +11,18 @@
         <div class="col-md-8 container-fluid">
             {% block workarea %}{% endblock %}
 
-            {% include "sub_box_recommend.html" with block_id="247489-6" %}
+            {% include "sub/box_recommend.html" with block_id="247489-6" %}
         </div>
 
         <div class="col-4 container-fluid">
 
             <div class="mt-3 mb-4">
-                {% include "sub_hint.html" %}
+                {% include "sub/hint.html" %}
             </div>
 
             {% block ad_rightbar %}
             <div class="col-md-12 mb-3">
-                {% include "sub_box_ads.html" with area="rightbar" %}
+                {% include "sub/box_ads.html" with area="rightbar" %}
             </div>
             <div class="clearfix"></div>
             {% endblock %}

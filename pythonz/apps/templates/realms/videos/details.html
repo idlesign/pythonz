@@ -29,7 +29,7 @@
         <small>
             <span class="mr-3">{% model_field_verbose_name from video.year %}: {{ video.year }}</span>
             <span class="mr-3">
-                {% model_field_verbose_name from video.author %}: {% include "sub_persons_links.html" with persons=video.authors.all %}
+                {% model_field_verbose_name from video.author %}: {% include "sub/persons_links.html" with persons=video.authors.all %}
             </span>
             {%  if video.translator %}
                 <span class="py_user">{% model_field_verbose_name from video.translator %}: {{ video.translator }}</span>

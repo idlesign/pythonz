@@ -87,6 +87,6 @@ class RstEditWidget(forms.Widget):
 
         final_attrs = self.build_attrs(attrs, {'name': name})
 
-        html = loader.render_to_string('sub_rst_hints.html')
+        html = loader.render_to_string('sub/rst_hints.html')
 
         return format_html(html, flatatt(final_attrs), force_text(value))

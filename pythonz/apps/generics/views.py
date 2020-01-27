@@ -306,7 +306,7 @@ class DetailsView(RealmView):
 
         self._attach_bookmark_data(item, self.request)
 
-        return render(self.request, 'sub_box_bookmark.html', {'item': item})
+        return render(self.request, 'sub/box_bookmark.html', {'item': item})
 
     def set_rate(self, request: HttpRequest, action: int, xross: XrossHandlerBase = None) -> HttpResponse:
         """Используется xross. Реализует оценку самого объекта.
@@ -328,7 +328,7 @@ class DetailsView(RealmView):
 
         self._attach_support_data(item, self.request)
 
-        return render(self.request, 'sub_box_rating.html', {'item': item})
+        return render(self.request, 'sub/box_rating.html', {'item': item})
 
     @classmethod
     def _is_rating_allowed(cls, request: HttpRequest, item: RealmBaseModel) -> bool:
