@@ -312,6 +312,15 @@ class BasicTypograph:
         return input_str.strip()
 
 
+def get_simple_directive(name: str) -> str:
+    """Возвращает регулярку простой однострочной директивы для TextCompiler.
+
+    :param name: Имя директивы.
+
+    """
+    return fr'\.{{2}}\s*{name}::\s*([^\n]+)[/]*\n'
+
+
 class TextCompiler:
     """Предоставляет инструменты для RST-подобного форматирования в HTML."""
 
@@ -319,21 +328,21 @@ class TextCompiler:
 
     RE_TABLE = re.compile(r'\.{2}\s*table::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
 
-    RE_NOTE = re.compile(r'\.{2}\s*note::\s*([^\n]+)\n', re.S)
+    RE_NOTE = re.compile(get_simple_directive('note'), re.S)
 
-    RE_TITLE = re.compile(r'\.{2}\s*title::\s*([^\n]+)\n', re.S)
+    RE_TITLE = re.compile(get_simple_directive('title'), re.S)
 
-    RE_WARNIGN = re.compile(r'\.{2}\s*warning::\s*([^\n]+)\n', re.S)
+    RE_WARNIGN = re.compile(get_simple_directive('warning'), re.S)
 
-    RE_GIST = re.compile(r'\.{2}\s*gist::\s*([^\n]+)\n', re.S)
+    RE_GIST = re.compile(get_simple_directive('gist'), re.S)
 
-    RE_POLL = re.compile(r'\.{2}\s*poll::\s*([^\n]+)\n', re.S)
+    RE_POLL = re.compile(get_simple_directive('poll'), re.S)
 
-    RE_VIDEO = re.compile(r'\.{2}\s*video::\s*([^\n]+)\n', re.S)
+    RE_VIDEO = re.compile(get_simple_directive('video'), re.S)
 
-    RE_PODSTER = re.compile(r'\.{2}\s*podster::\s*([^\n]+)[/]*\n', re.S)
+    RE_PODSTER = re.compile(get_simple_directive('podster'), re.S)
 
-    RE_IMAGE = re.compile(r'\.{2}\s*image::\s*([^\n]+)[/]*\n', re.S)
+    RE_IMAGE = re.compile(get_simple_directive('image'), re.S)
 
     RE_ACCENT = re.compile(r'``([^`\n]+)``')
 
