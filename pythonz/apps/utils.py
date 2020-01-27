@@ -332,7 +332,7 @@ class TextCompiler:
 
     RE_TITLE = re.compile(get_simple_directive('title'), re.S)
 
-    RE_WARNIGN = re.compile(get_simple_directive('warning'), re.S)
+    RE_WARNING = re.compile(get_simple_directive('warning'), re.S)
 
     RE_GIST = re.compile(get_simple_directive('gist'), re.S)
 
@@ -474,7 +474,7 @@ class TextCompiler:
             cls.RE_NOTE, '<div class="card mb-3"><div class="card-header text-white bg-success">На заметку</div>'
                          '<div class="card-body">\g<1></div></div>', text)
         text = re.sub(
-            cls.RE_WARNIGN, '<div class="card mb-3"><div class="card-header text-white bg-danger">Внимание</div>'
+            cls.RE_WARNING, '<div class="card mb-3"><div class="card-header text-white bg-danger">Внимание</div>'
                             '<div class="card-body">\g<1></div></div>', text)
 
         text = re.sub(
