@@ -350,7 +350,7 @@ class TextCompiler:
 
     RE_BOLD = re.compile(r'\*{2}(\S[^*\n]+(\S)?)\*{2}')
 
-    RE_ITALIC = re.compile(r'\*(\S[^*\n]+\S)\*')
+    RE_ITALIC = re.compile(r'\*(\S[^*{1,2}\n]+\S)\*')
 
     RE_URL = re.compile(r'(?<!["])(http[s]?:[^\s)<]+)')
 

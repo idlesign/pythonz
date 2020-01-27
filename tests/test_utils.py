@@ -79,6 +79,9 @@ def test_text_compiler():
 
     compile = TextCompiler.compile
 
+    assert compile('- ``func(*args, **kwargs)`` -') == '- <code>func(*args, **kwargs)</code> -'
+    assert compile("    myfunc(*[1], **{'three': 'some'})") == "    myfunc(*[1], **{'three': 'some'})"
+
     assert (
         'is <a href="https://some.org">https://some.org</a></td>' in
         compile('.. table::\n`one / two<https://some.com>`_ - is https://some.org\nanother\n\n\n')
