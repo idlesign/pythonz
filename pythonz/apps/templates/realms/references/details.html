@@ -117,7 +117,7 @@
 {% endblock %}
 
 {% block details_discussions_pre %}
-    {{ block.super }}
+
     <div class="card bg-light border-light mb-3 small">
         <div class="card-body">
             {% if children and not reference.is_type_bundle %}
@@ -131,6 +131,7 @@
         </div>
     </div>
 
+    {{ block.super }}
 {% endblock %}
 
 
