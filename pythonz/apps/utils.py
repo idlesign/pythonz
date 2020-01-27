@@ -316,21 +316,37 @@ class TextCompiler:
     """Предоставляет инструменты для RST-подобного форматирования в HTML."""
 
     RE_CODE = re.compile(r'\.{2}\s*code::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
+
     RE_TABLE = re.compile(r'\.{2}\s*table::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
+
     RE_NOTE = re.compile(r'\.{2}\s*note::\s*([^\n]+)\n', re.S)
+
     RE_TITLE = re.compile(r'\.{2}\s*title::\s*([^\n]+)\n', re.S)
+
     RE_WARNIGN = re.compile(r'\.{2}\s*warning::\s*([^\n]+)\n', re.S)
+
     RE_GIST = re.compile(r'\.{2}\s*gist::\s*([^\n]+)\n', re.S)
+
     RE_POLL = re.compile(r'\.{2}\s*poll::\s*([^\n]+)\n', re.S)
+
     RE_VIDEO = re.compile(r'\.{2}\s*video::\s*([^\n]+)\n', re.S)
+
     RE_PODSTER = re.compile(r'\.{2}\s*podster::\s*([^\n]+)[/]*\n', re.S)
+
     RE_IMAGE = re.compile(r'\.{2}\s*image::\s*([^\n]+)[/]*\n', re.S)
-    RE_ACCENT = re.compile(r'`{2}([^`\n]+)`{2}')
-    RE_QUOTE = re.compile(r'`{3}\n+([^`]+)\n+`{3}')
-    RE_BOLD = re.compile(r'\*{2}([^\s]{1}[^*\n]+([^\s]{1})?)\*{2}')
-    RE_ITALIC = re.compile(r'\*([^\s]{1}[^*\n]+[^\s]{1})\*')
+
+    RE_ACCENT = re.compile(r'``([^`\n]+)``')
+
+    RE_QUOTE = re.compile(r'```\n+([^`]+)\n+```')
+
+    RE_BOLD = re.compile(r'\*{2}(\S[^*\n]+(\S)?)\*{2}')
+
+    RE_ITALIC = re.compile(r'\*(\S[^*\n]+\S)\*')
+
     RE_URL = re.compile(r'(?<!["])(http[s]?:[^\s)<]+)')
+
     RE_URL_WITH_TITLE = re.compile(r'`([^◀]+)\n*◀([^▶]+)▶`_', re.U)
+
     RE_UL = re.compile(r'^\*\s+([^\n]+)\n', re.M)
 
     @classmethod
