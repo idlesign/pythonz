@@ -199,21 +199,27 @@ def get_location_data(location_name: str) -> dict:
     :param location_name:
 
     """
-    url = f'http://geocode-maps.yandex.ru/1.x/?results=1&format=json&geocode={location_name}'
+    url = 'https://geocode-maps.yandex.ru/1.x/'
 
     try:
-        result = requests.get(url)
+        result = requests.get(url, params={
+            'results': 1,
+            'format': 'json',
+            'geocode': location_name,
+            'apikey': settings.YANDEX_GEOCODER_KEY,
+        })
         doc = result.json()
 
     except Exception:
         return {}
 
-    found = doc['response']['GeoObjectCollection']['metaDataProperty']['GeocoderResponseMetaData']['found']
+    collection = doc['response']['GeoObjectCollection']
+    found = collection['metaDataProperty']['GeocoderResponseMetaData']['found']
 
     if not int(found):
         return {}
 
-    object_dict = doc['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
+    object_dict = collection['featureMember'][0]['GeoObject']
     object_bounds_dict = object_dict['boundedBy']['Envelope']
     object_metadata_dict = object_dict['metaDataProperty']['GeocoderMetaData']
 
