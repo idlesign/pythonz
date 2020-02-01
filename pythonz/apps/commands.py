@@ -10,8 +10,8 @@ from .models import ReferenceMissing
 
 def publish_postponed():
     """Публикует материалы, назначенные к отложенной публикации."""
-    status_postponed = RealmBaseModel.STATUS_POSTPONED
-    status_published = RealmBaseModel.STATUS_PUBLISHED
+    status_postponed = RealmBaseModel.Status.POSTPONED
+    status_published = RealmBaseModel.Status.PUBLISHED
 
     # В каждой области будем публиковать отложенные материалы,
     # если данный автор не публиковался более узананного периода.

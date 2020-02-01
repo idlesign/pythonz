@@ -3,7 +3,7 @@ from functools import partial
 from collections import namedtuple
 from os.path import splitext
 from datetime import datetime
-from typing import List
+from typing import List, Dict
 
 import requests
 from django.conf import settings
@@ -11,6 +11,9 @@ from django.utils import timezone
 
 from ..utils import sync_many_to_many, get_logger, PersonName
 from ..signals import sig_send_generic_telegram
+
+if False:  # pragma: nocover
+    from ..models import PEP
 
 
 LOG = get_logger(__name__)
@@ -201,7 +204,7 @@ def get_peps(exclude_peps: List[str] = None, limit: int = None) -> List[PepInfo]
     return peps
 
 
-def sync(skip_deadend_peps: bool = True, limit: int = None):
+def sync(*, skip_deadend_peps: bool = True, limit: int = None) -> Dict[int, 'PEP']:
     """Синхронизирует данные БД сайта с данными PEP из репозитория.
 
     :param skip_deadend_peps: Следует ли пропустить ПУПы, состояние которых уже не измениться.
@@ -213,21 +216,21 @@ def sync(skip_deadend_peps: bool = True, limit: int = None):
     LOG.debug('Syncing PEPs ...')
 
     map_statuses = {
-        'Draft': PEP.STATUS_DRAFT,
-        'Active': PEP.STATUS_ACTIVE,
-        'Withdrawn': PEP.STATUS_WITHDRAWN,
-        'Deferred': PEP.STATUS_DEFERRED,
-        'Rejected': PEP.STATUS_REJECTED,
-        'Accepted': PEP.STATUS_ACCEPTED,
-        'Final': PEP.STATUS_FINAL,
-        'Superseded': PEP.STATUS_SUPERSEDED,
-        'April Fool!': PEP.STATUS_FOOL,
+        'Draft': PEP.Status.DRAFT,
+        'Active': PEP.Status.ACTIVE,
+        'Withdrawn': PEP.Status.WITHDRAWN,
+        'Deferred': PEP.Status.DEFERRED,
+        'Rejected': PEP.Status.REJECTED,
+        'Accepted': PEP.Status.ACCEPTED,
+        'Final': PEP.Status.FINAL,
+        'Superseded': PEP.Status.SUPERSEDED,
+        'April Fool!': PEP.Status.FOOL,
 
     }
     map_types = {
-        'Process': PEP.TYPE_PROCESS,
-        'Standards Track': PEP.TYPE_STANDARD,
-        'Informational': PEP.TYPE_INFO,
+        'Process': PEP.Type.PROCESS,
+        'Standards Track': PEP.Type.STANDARD,
+        'Informational': PEP.Type.INFO,
     }
 
     exclude_peps = None
@@ -266,10 +269,15 @@ def sync(skip_deadend_peps: bool = True, limit: int = None):
                 pep_model.status = status_id
                 pep_model.save()
 
-                msg = 'PEP {} сменил статус на «{}»\n{}'.format(
-                    pep_model.num,
-                    PEP.STATUSES.get(status_id, 'Неизвестный'),
-                    pep_model.get_absolute_url(with_prefix=True)
+                try:
+                    status_title = PEP.Status.get_title(status_id)
+
+                except KeyError:
+                    status_title = 'Неизвестный'
+
+                msg = (
+                    f'PEP {pep_model.num} сменил статус на «{status_title}»\n'
+                    f'{pep_model.get_absolute_url(with_prefix=True)}'
                 )
                 sig_send_generic_telegram.send(None, text=msg)
 
@@ -311,3 +319,5 @@ def sync(skip_deadend_peps: bool = True, limit: int = None):
         sync_many_to_many(pep, pep_model, 'authors', 'name_en', known_persons, unknown_handler=create_person)
 
     LOG.debug('Syncing PEPs done')
+
+    return known_peps

@@ -106,7 +106,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
 
             else:
                 items = realm_model.objects.filter(
-                    status__in=(self.STATUS_DRAFT, self.STATUS_POSTPONED),
+                    status__in=(self.Status.DRAFT, self.Status.POSTPONED),
                     submitter_id=self.id
 
                 ).order_by('time_created')

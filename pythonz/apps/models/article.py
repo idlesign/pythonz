@@ -1,6 +1,9 @@
+from enum import unique, Enum
+
 from django.db import models
+from etc.choices import ChoicesEnumMixin
 from etc.models import InheritedModel
-from etc.toolbox import choices_list, get_choices
+from etc.toolbox import get_choices
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
@@ -16,28 +19,24 @@ class Article(
     ModelWithCompiledText):
     """Модель сущности `Статья`."""
 
-    LOCATION_INTERNAL = 1
-    LOCATION_EXTERNAL = 2
+    @unique
+    class Location(ChoicesEnumMixin, Enum):
 
-    LOCATIONS = choices_list(
-        (LOCATION_INTERNAL, 'На этом сайте'),
-        # (LOCATION_EXTERNAL, 'На другом сайте'),
-    )
+        INTERNAL = 1, 'На этом сайте'
+        # EXTERNAL = 2, 'На другом сайте'
 
-    SOURCE_HANDMADE = 1
-    SOURCE_SCRAPING = 2
+    @unique
+    class Source(ChoicesEnumMixin, Enum):
 
-    SOURCES = choices_list(
-        (SOURCE_HANDMADE, 'Написана на этом сайте'),
-        (SOURCE_SCRAPING, 'Соскоблена с другого сайта'),
-    )
+        HANDMADE = 1, 'Написана на этом сайте'
+        SCRAPING = 2, 'Соскоблена с другого сайта'
 
     source = models.PositiveIntegerField(
-        'Тип источника', choices=get_choices(SOURCES), default=SOURCE_HANDMADE,
+        'Тип источника', choices=get_choices(Source), default=Source.HANDMADE,
         help_text='Указывает на механизм, при помощи которого статья появилась на сайте.')
 
     location = models.PositiveIntegerField(
-        'Расположение статьи', choices=get_choices(LOCATIONS), default=LOCATION_INTERNAL,
+        'Расположение статьи', choices=get_choices(Location), default=Location.INTERNAL,
         help_text='Статью можно написать прямо на этом сайте, либо сформировать статью-ссылку на внешний ресурс.')
 
     url = models.URLField(
@@ -72,7 +71,7 @@ class Article(
     @property
     def is_handmade(self) -> bool:
         """Возвращат флаг, указывающий на то, что статья создана на этом сайте."""
-        return self.source == self.SOURCE_HANDMADE
+        return self.source == self.Source.HANDMADE
 
     def save(self, *args, **kwargs):
 
@@ -96,4 +95,4 @@ class Article(
         self.title = result['title']
         self.description = result['content_less']
         self.text_src = result['content_more']
-        self.source = self.SOURCE_SCRAPING
+        self.source = self.Source.SCRAPING

@@ -1,6 +1,7 @@
 import os
 from contextlib import suppress
 from datetime import datetime
+from enum import unique, Enum
 from typing import List, Union
 from uuid import uuid4
 
@@ -13,6 +14,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import urlize
 from django.utils.text import Truncator
+from etc.choices import ChoicesEnumMixin, get_choices
 from siteflags.models import ModelWithFlag
 from slugify import Slugify, CYRILLIC
 from ..integration.utils import get_image_from_url
@@ -194,29 +196,24 @@ class RealmFilteredQuerySet(models.QuerySet):
 
     def published(self) -> QuerySet:
         """Возвращает только опубликованные сущности."""
-        return self.filter(status=RealmBaseModel.STATUS_PUBLISHED)
+        return self.filter(status=RealmBaseModel.Status.PUBLISHED)
 
     def postponed(self) -> QuerySet:
         """Возвращает только сущности, назначенные к отложенной публикации."""
-        return self.filter(status=RealmBaseModel.STATUS_POSTPONED)
+        return self.filter(status=RealmBaseModel.Status.POSTPONED)
 
 
 class RealmBaseModel(ModelWithFlag):
     """Базовый класс для моделей, использующихся в областях (realms) сайта."""
 
-    STATUS_DRAFT = 1
-    STATUS_PUBLISHED = 2
-    STATUS_DELETED = 3
-    STATUS_ARCHIVED = 4
-    STATUS_POSTPONED = 5
+    @unique
+    class Status(ChoicesEnumMixin, Enum):
 
-    STATUSES = (
-        (STATUS_DRAFT, 'Черновик'),
-        (STATUS_PUBLISHED, 'Опубликован'),
-        (STATUS_POSTPONED, 'К отложенной публикации'),
-        (STATUS_DELETED, 'Удален'),
-        (STATUS_ARCHIVED, 'В архиве'),
-    )
+        DRAFT = 1, 'Черновик'
+        PUBLISHED = 2, 'Опубликован'
+        DELETED = 3, 'Удален'
+        ARCHIVED = 4, 'В архиве'
+        POSTPONED = 5, 'К отложенной публикации'
 
     FLAG_STATUS_BOOKMARK = 1
     """Идентификатор флагов-закладок."""
@@ -229,7 +226,7 @@ class RealmBaseModel(ModelWithFlag):
     time_created = models.DateTimeField('Дата создания', auto_now_add=True, editable=False)
     time_published = models.DateTimeField('Дата публикации', null=True, editable=False)
     time_modified = models.DateTimeField('Дата редактирования', null=True, editable=False)
-    status = models.PositiveIntegerField('Статус', choices=STATUSES, default=STATUS_DRAFT)
+    status = models.PositiveIntegerField('Статус', choices=get_choices(Status), default=Status.DRAFT)
     supporters_num = models.PositiveIntegerField('Поддержка', default=0)
 
     submitter = models.ForeignKey(
@@ -283,7 +280,7 @@ class RealmBaseModel(ModelWithFlag):
 
     def mark_published(self):
         """Помечает материал опубликованным."""
-        self.status = self.STATUS_PUBLISHED
+        self.status = self.Status.PUBLISHED
 
     def mark_unmodified(self):
         """Используется для того, чтобы при следующем вызове save()
@@ -428,17 +425,17 @@ class RealmBaseModel(ModelWithFlag):
     @property
     def is_draft(self) -> bool:
         """Возвращает булево указывающее на то, является ли сущность черновиком."""
-        return self.status == self.STATUS_DRAFT
+        return self.status == self.Status.DRAFT
 
     @property
     def is_deleted(self) -> bool:
         """Возвращает булево указывающее на то, помечена ли сущность удаленной."""
-        return self.status == self.STATUS_DRAFT
+        return self.status == self.Status.DELETED
 
     @property
     def is_published(self) -> bool:
         """Возвращает булево указывающее на то, опубликована ли сущность."""
-        return self.status == self.STATUS_PUBLISHED
+        return self.status == self.Status.PUBLISHED
 
     def is_supported_by(self, user: 'User') -> bool:
         """Возвращает указание на то, поддерживает ли данный пользователь данную сущность.
@@ -457,7 +454,7 @@ class RealmBaseModel(ModelWithFlag):
         """
         return cls.get_from_category_qs(  # ModelWithCategory
             category
-        ).filter(status=RealmBaseModel.STATUS_PUBLISHED).select_related('submitter')
+        ).filter(status=RealmBaseModel.Status.PUBLISHED).select_related('submitter')
 
     @classmethod
     def get_most_voted_objects_in_category(cls, category: 'Category') -> QuerySet:

@@ -1,11 +1,13 @@
 from datetime import timedelta, datetime
+from enum import unique, Enum
 from typing import Optional
 
 from django.db import models
 from django.db.models import F, QuerySet
 from django.utils import timezone
+from etc.choices import ChoicesEnumMixin
 from etc.models import InheritedModel
-from etc.toolbox import choices_list, get_choices
+from etc.toolbox import get_choices
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
@@ -20,29 +22,21 @@ class Event(
     ModelWithCompiledText):
     """Модель сущности `Событие`."""
 
-    SPEC_DEDICATED = 1
-    SPEC_HAS_SECTION = 2
-    SPEC_HAS_SOME = 3
-    SPEC_MOST = 4
+    @unique
+    class Spec(ChoicesEnumMixin, Enum):
 
-    SPECS = choices_list(
-        (SPEC_DEDICATED, 'Только Python'),
-        (SPEC_MOST, 'В основном Python'),
-        (SPEC_HAS_SECTION, 'Есть секция/отделение про Python'),
-        (SPEC_HAS_SOME, 'Есть упоминания про Python'),
-    )
+        DEDICATED = 1, 'Только Python'
+        HAS_SECTION = 2, 'В основном Python'
+        HAS_SOME = 3, 'Есть секция/отделение про Python'
+        MOST = 4, 'Есть упоминания про Python'
 
-    TYPE_MEETING = 1
-    TYPE_CONFERENCE = 2
-    TYPE_LECTURE = 3
-    TYPE_SPRINT = 4
+    @unique
+    class Type(ChoicesEnumMixin, Enum):
 
-    TYPES = choices_list(
-        (TYPE_MEETING, 'Встреча'),
-        (TYPE_LECTURE, 'Лекция'),
-        (TYPE_CONFERENCE, 'Конференция'),
-        (TYPE_SPRINT, 'Спринт'),
-    )
+        MEETING = 1, 'Встреча'
+        CONFERENCE = 2, 'Лекция'
+        LECTURE = 3, 'Конференция'
+        SPRINT = 4, 'Спринт'
 
     url = models.URLField('Страница в сети', null=True, blank=True)
 
@@ -59,9 +53,9 @@ class Event(
             'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».'),
         on_delete=models.CASCADE)
 
-    specialization = models.PositiveIntegerField('Специализация', choices=get_choices(SPECS), default=SPEC_DEDICATED)
+    specialization = models.PositiveIntegerField('Специализация', choices=get_choices(Spec), default=Spec.DEDICATED)
 
-    type = models.PositiveIntegerField('Тип', choices=get_choices(TYPES), default=TYPE_MEETING)
+    type = models.PositiveIntegerField('Тип', choices=get_choices(Type), default=Type.MEETING)
 
     time_start = models.DateTimeField('Начало', null=True, blank=True)
 
@@ -100,10 +94,10 @@ class Event(
         super().save(*args, **kwargs)
 
     def get_display_type(self) -> str:
-        return self.TYPES[self.type]
+        return self.Type.get_title(self.type)
 
     def get_display_specialization(self) -> str:
-        return self.SPECS[self.specialization]
+        return self.Spec.get_title(self.specialization)
 
     @property
     def is_in_past(self) -> Optional[bool]:

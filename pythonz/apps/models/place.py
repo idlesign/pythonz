@@ -1,6 +1,8 @@
+from enum import unique, Enum
 from typing import List, Tuple, Optional
 
 from django.db import models, IntegrityError
+from etc.choices import ChoicesEnumMixin, get_choices
 from simple_history.models import HistoricalRecords
 
 from .discussion import ModelWithDiscussions
@@ -13,15 +15,12 @@ class Place(RealmBaseModel, ModelWithDiscussions):
 
     details_related: List[str] = ['last_editor']
 
-    TYPE_COUNTRY = 'country'
-    TYPE_LOCALITY = 'locality'
-    TYPE_HOUSE = 'house'
+    @unique
+    class GeoType(ChoicesEnumMixin, Enum):
 
-    TYPES = (
-        (TYPE_COUNTRY, 'Страна'),
-        (TYPE_LOCALITY, 'Местность'),
-        (TYPE_HOUSE, 'Здание'),
-    )
+        COUNTRY = 'country', 'Страна'
+        LOCALITY = 'locality', 'Местность'
+        HOUSE = 'house', 'Здание'
 
     title = models.CharField('Название', max_length=255)
 
@@ -33,7 +32,8 @@ class Place(RealmBaseModel, ModelWithDiscussions):
 
     geo_pos = models.CharField('Координаты', max_length=255, null=True, blank=True)
 
-    geo_type = models.CharField('Тип', max_length=25, null=True, blank=True, choices=TYPES, db_index=True)
+    geo_type = models.CharField(
+        'Тип', max_length=25, null=True, blank=True, choices=get_choices(GeoType), db_index=True)
 
     history = HistoricalRecords()
 
@@ -43,7 +43,7 @@ class Place(RealmBaseModel, ModelWithDiscussions):
         verbose_name_plural = 'Места'
 
     def __str__(self):
-        return self.geo_title
+        return self.geo_title or self.title
 
     @property
     def turbo_content(self) -> str:

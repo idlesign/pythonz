@@ -1,9 +1,11 @@
+from enum import unique, Enum
 from typing import List
 
 from django.db import models
 from django.db.models import Q, QuerySet
+from etc.choices import ChoicesEnumMixin
 from etc.models import InheritedModel
-from etc.toolbox import choices_list, get_choices
+from etc.toolbox import get_choices
 from simple_history.models import HistoricalRecords
 
 from .discussion import ModelWithDiscussions
@@ -59,26 +61,19 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     allow_linked: bool = False
     details_related: List[str] = ['parent', 'submitter']
 
-    TYPE_CHAPTER = 1
-    TYPE_PACKAGE = 2
-    TYPE_MODULE = 3
-    TYPE_FUNCTION = 4
-    TYPE_CLASS = 5
-    TYPE_METHOD = 6
-    TYPE_PROPERTY = 7
+    @unique
+    class Type(ChoicesEnumMixin, Enum):
 
-    TYPES = choices_list(
-        (TYPE_CHAPTER, 'Раздел справки'),
-        (TYPE_PACKAGE, 'Описание пакета'),
-        (TYPE_MODULE, 'Описание модуля'),
-        (TYPE_FUNCTION, 'Описание функции'),
-        (TYPE_CLASS, 'Описание класса/типа'),
-        (TYPE_METHOD, 'Описание метода класса/типа'),
-        (TYPE_PROPERTY, 'Описание свойства класса/типа'),
-    )
+        CHAPTER = 1, 'Раздел справки'
+        PACKAGE = 2, 'Описание пакета'
+        MODULE = 3, 'Описание модуля'
+        FUNCTION = 4, 'Описание функции'
+        CLASS = 5, 'Описание класса/типа'
+        METHOD = 6, 'Описание метода класса/типа'
+        PROPERTY = 7, 'Описание свойства класса/типа'
 
     type = models.PositiveIntegerField(
-        'Тип статьи', choices=get_choices(TYPES), default=TYPE_CHAPTER,
+        'Тип статьи', choices=get_choices(Type), default=Type.CHAPTER,
         help_text='Служит для структурирования информации. Справочные статьи разных типов могут выглядеть по-разному.')
 
     parent = models.ForeignKey(
@@ -150,27 +145,27 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
 
     @property
     def is_type_callable(self) -> bool:
-        return self.type in {self.TYPE_METHOD, self.TYPE_FUNCTION, self.TYPE_CLASS}
+        return self.type in {self.Type.METHOD, self.Type.FUNCTION, self.Type.CLASS}
 
     @property
     def is_type_bundle(self) -> bool:
-        return self.type in {self.TYPE_CHAPTER, self.TYPE_PACKAGE, self.TYPE_MODULE}
+        return self.type in {self.Type.CHAPTER, self.Type.PACKAGE, self.Type.MODULE}
 
     @property
     def is_type_method(self) -> bool:
-        return self.type == self.TYPE_METHOD
+        return self.type == self.Type.METHOD
 
     @property
     def is_type_module(self) -> bool:
-        return self.type == self.TYPE_MODULE
+        return self.type == self.Type.MODULE
 
     @property
     def is_type_class(self) -> bool:
-        return self.type == self.TYPE_CLASS
+        return self.type == self.Type.CLASS
 
     @property
     def is_type_chapter(self) -> bool:
-        return self.type == self.TYPE_CHAPTER
+        return self.type == self.Type.CHAPTER
 
     @classmethod
     def get_actual(cls, parent: 'Reference' = None, exclude_id: int = None) -> QuerySet:

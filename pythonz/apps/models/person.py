@@ -123,7 +123,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         """
         known = {}
 
-        for person in cls.objects.exclude(status=cls.STATUS_DELETED):
+        for person in cls.objects.exclude(status=cls.Status.DELETED):
             cls.contribute_to_known_persons(person, known_persons=known)
 
         return known
@@ -187,7 +187,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         person = cls(
             name=name,
             name_en=name,
-            status=cls.STATUS_PUBLISHED if publish else cls.STATUS_DRAFT,
+            status=cls.Status.PUBLISHED if publish else cls.Status.DRAFT,
             text_src='Описание отсутствует',
             submitter_id=settings.ROBOT_USER_ID,
         )

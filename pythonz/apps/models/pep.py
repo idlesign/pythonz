@@ -1,8 +1,10 @@
+from enum import Enum, unique
 from typing import List
 
 from django.db import models
 from django.db.models import Q, QuerySet
-from etc.toolbox import choices_list, get_choices
+from etc.choices import ChoicesEnumMixin
+from etc.toolbox import get_choices
 
 from .discussion import ModelWithDiscussions
 from .version import Version
@@ -18,53 +20,34 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     """
     TPL_URL_PYORG: str = 'https://www.python.org/dev/peps/pep-%s/'
 
-    STATUS_DRAFT = 1
-    STATUS_ACTIVE = 2
-    STATUS_WITHDRAWN = 3
-    STATUS_DEFERRED = 4
-    STATUS_REJECTED = 5
-    STATUS_ACCEPTED = 6
-    STATUS_FINAL = 7
-    STATUS_SUPERSEDED = 8
-    STATUS_FOOL = 9
+    @unique
+    class Status(ChoicesEnumMixin, Enum):
 
-    STATUSES = choices_list(
-        (STATUS_DRAFT, 'Черновик'),
-        (STATUS_ACTIVE, 'Действует'),
-        (STATUS_WITHDRAWN, 'Отозвано [автором]'),
-        (STATUS_DEFERRED, 'Отложено'),
-        (STATUS_REJECTED, 'Отклонено'),
-        (STATUS_ACCEPTED, 'Утверждено (принято; возможно не реализовано)'),
-        (STATUS_FINAL, 'Финализировано (работа завершена; реализовано)'),
-        (STATUS_SUPERSEDED, 'Заменено (имеется более актуальное PEP)'),
-        (STATUS_FOOL, 'Розыгрыш на 1 апреля'),
-    )
+        DRAFT = 1, 'Черновик', ('Черн.', '')
+        ACTIVE = 2, 'Действует', ('Действ.', 'success')
+        WITHDRAWN = 3, 'Отозвано [автором]', ('Отозв.', 'danger')
+        DEFERRED = 4, 'Отложено', ('Отл.', '')
+        REJECTED = 5, 'Отклонено', ('Откл.', 'danger')
+        ACCEPTED = 6, 'Утверждено (принято; возможно не реализовано)', ('Утв.', 'info')
+        FINAL = 7, 'Финализировано (работа завершена; реализовано)', ('Фин.', 'success')
+        SUPERSEDED = 8, 'Заменено (имеется более актуальное PEP)', ('Зам.', 'warning')
+        FOOL = 9, 'Розыгрыш на 1 апреля', ('Апр.', '')
 
-    STATUSES_DEADEND = [STATUS_WITHDRAWN, STATUS_REJECTED, STATUS_SUPERSEDED, STATUS_ACTIVE, STATUS_FOOL, STATUS_FINAL]
+    STATUSES_DEADEND = [
+        Status.WITHDRAWN,
+        Status.REJECTED,
+        Status.SUPERSEDED,
+        Status.ACTIVE,
+        Status.FOOL,
+        Status.FINAL
+    ]
 
-    MAP_STATUSES = {
-        # (литера, идентификатор_стиля_для_подсветки_строки_таблицы)
-        STATUS_DRAFT: ('Черн.', ''),
-        STATUS_ACTIVE: ('Действ.', 'success'),
-        STATUS_WITHDRAWN: ('Отозв.', 'danger'),
-        STATUS_DEFERRED: ('Отл.', ''),
-        STATUS_REJECTED: ('Откл.', 'danger'),
-        STATUS_ACCEPTED: ('Утв.', 'info'),
-        STATUS_FINAL: ('Фин.', 'success'),
-        STATUS_SUPERSEDED: ('Зам.', 'warning'),
-        STATUS_FOOL: ('Апр.', ''),
+    @unique
+    class Type(ChoicesEnumMixin, Enum):
 
-    }
-
-    TYPE_PROCESS = 1
-    TYPE_STANDARD = 2
-    TYPE_INFO = 3
-
-    TYPES = choices_list(
-        (TYPE_PROCESS, 'Процесс'),
-        (TYPE_STANDARD, 'Стандарт'),
-        (TYPE_INFO, 'Информация'),
-    )
+        PROCESS = 1, 'Процесс'
+        STANDARD = 2, 'Стандарт'
+        INFO = 3, 'Информация'
 
     autogenerate_slug: bool = True
     items_per_page: int = 40
@@ -90,9 +73,9 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     num = models.PositiveIntegerField('Номер')
 
-    status = models.PositiveIntegerField('Статус', choices=get_choices(STATUSES), default=STATUS_DRAFT)
+    status = models.PositiveIntegerField('Статус', choices=get_choices(Status), default=Status.DRAFT)
 
-    type = models.PositiveIntegerField('Тип', choices=get_choices(TYPES), default=TYPE_STANDARD)
+    type = models.PositiveIntegerField('Тип', choices=get_choices(Type), default=Type.STANDARD)
 
     authors = models.ManyToManyField('Person', verbose_name='Авторы', related_name='peps', blank=True)
 
@@ -150,23 +133,23 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     @property
     def bg_class(self) -> str:
-        return self.MAP_STATUSES[self.status][1]
+        return self.Status.get_hint(self.status)[1]
 
     @property
     def display_status(self) -> str:
-        return self.STATUSES[self.status]
-
-    @property
-    def display_type(self) -> str:
-        return self.TYPES[self.type]
+        return self.Status.get_title(self.status)
 
     @property
     def display_status_letter(self) -> str:
-        return self.MAP_STATUSES[self.status][0]
+        return self.Status.get_hint(self.status)[0]
+
+    @property
+    def display_type(self) -> str:
+        return self.Type.get_title(self.type)
 
     @property
     def display_type_letter(self) -> str:
-        return self.TYPES[self.type][0]
+        return self.Type.get_title(self.type)[0]
 
     @classmethod
     def find(cls, *search_terms: str) -> QuerySet:

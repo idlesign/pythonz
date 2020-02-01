@@ -1,8 +1,10 @@
+from enum import unique, Enum
 from statistics import median
 from typing import List, Optional
 
 from django.db import models, IntegrityError
 from django.db.models import Count
+from etc.choices import ChoicesEnumMixin, get_choices
 
 from .place import Place
 from .shared import UtmReady
@@ -18,17 +20,12 @@ class Vacancy(UtmReady, RealmBaseModel):
     notify_on_publish: bool = False
     url_attr: str = 'url_site'
 
-    SRC_ALIAS_HH = 'hh'
+    @unique
+    class Source(ChoicesEnumMixin, Enum):
 
-    SRC_ALIASES = (
-        (SRC_ALIAS_HH, 'hh.ru'),
-    )
+        HH = 'hh', 'hh.ru', HhVacancyManager
 
-    MANAGERS = {
-        SRC_ALIAS_HH: HhVacancyManager,
-    }
-
-    src_alias = models.CharField('Идентификатор источника', max_length=20, choices=SRC_ALIASES)
+    src_alias = models.CharField('Идентификатор источника', max_length=20, choices=get_choices(Source))
 
     src_id = models.CharField('ID в источнике', max_length=50)
 
@@ -91,7 +88,7 @@ class Vacancy(UtmReady, RealmBaseModel):
 
         stats = list(Place.objects.filter(
             id__in=cls.objects.published().filter(place__isnull=False).distinct().values_list('place_id', flat=True),
-            vacancies__status=cls.STATUS_PUBLISHED
+            vacancies__status=cls.Status.PUBLISHED
 
         ).annotate(vacancies_count=Count('vacancies')).filter(
             vacancies_count__gt=2
@@ -111,7 +108,7 @@ class Vacancy(UtmReady, RealmBaseModel):
             'salary_currency__isnull': False,
             'salary_till__isnull': False,
             'salary_from__gt': 900,
-            'status': cls.STATUS_PUBLISHED,
+            'status': cls.Status.PUBLISHED,
         }
 
         if place is not None:
@@ -201,7 +198,11 @@ class Vacancy(UtmReady, RealmBaseModel):
 
         for vacancy in cls.objects.published():
 
-            manager = cls.MANAGERS.get(vacancy.src_alias)
+            try:
+                manager = cls.Source.get_hint(vacancy.src_alias)
+
+            except KeyError:
+                manager = None
 
             if not manager:
                 continue
@@ -211,10 +212,10 @@ class Vacancy(UtmReady, RealmBaseModel):
             status = manager.get_status(vacancy.url_api)
 
             if status:
-                vacancy.status = cls.STATUS_ARCHIVED
+                vacancy.status = cls.Status.ARCHIVED
 
             elif status is None:
-                vacancy.status = cls.STATUS_DELETED
+                vacancy.status = cls.Status.DELETED
 
         if for_update:
             cls.objects.bulk_update(for_update, fields=['status'])
@@ -222,6 +223,8 @@ class Vacancy(UtmReady, RealmBaseModel):
     @classmethod
     def fetch_new(cls):
         """Добывает данные из источника и складирует их."""
+
+        # todo
 
         for manager_alias, manager in cls.MANAGERS.items():
 
@@ -238,7 +241,7 @@ class Vacancy(UtmReady, RealmBaseModel):
 
                 new_vacancy = cls(**vacancy_data)
                 new_vacancy.src_alias = manager_alias
-                new_vacancy.status = new_vacancy._status_backup = cls.STATUS_PUBLISHED
+                new_vacancy.status = new_vacancy._status_backup = cls.Status.PUBLISHED
                 new_vacancy.link_to_place()
 
                 try:
