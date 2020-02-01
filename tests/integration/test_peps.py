@@ -1,4 +1,6 @@
-from pythonz.apps.integration.peps import strip_mail
+import pytest
+
+from pythonz.apps.integration.peps import strip_mail, sync
 
 
 def test_strip_mail():
@@ -21,3 +23,9 @@ def test_strip_mail():
         'Nick Coghlan <ncoghlan at gmail.com>')
 
     assert result == ['Guido van Rossum', 'Barry Warsaw', 'Nick Coghlan']
+
+
+@pytest.mark.slow
+def test_sync(robot):
+    synced = sync(limit=3)
+    assert len(synced) == 3
