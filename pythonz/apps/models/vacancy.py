@@ -224,9 +224,10 @@ class Vacancy(UtmReady, RealmBaseModel):
     def fetch_new(cls):
         """Добывает данные из источника и складирует их."""
 
-        # todo
+        for source in list(cls.Source):
 
-        for manager_alias, manager in cls.MANAGERS.items():
+            manager_alias = source.title
+            manager = source.hint
 
             vacancies = manager.fetch_list()
 

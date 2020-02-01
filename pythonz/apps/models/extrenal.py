@@ -37,8 +37,10 @@ class ExternalResource(UtmReady, RealmBaseModel):
     def fetch_new(cls):
         """Добывает данные из источников и складирует их."""
 
-        # todo
-        for resource_alias, resource_cls in cls.RESOURCES.items():
+        for resource in list(cls.Resource):
+            resource_alias = resource.title
+            resource_cls = resource.hint
+
             entries = resource_cls.fetch_entries()
 
             if not entries:

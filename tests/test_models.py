@@ -1,5 +1,6 @@
 import pytest
-from pythonz.apps.models import PEP, Summary, Person, Category
+
+from pythonz.apps.models import PEP, Summary, Person, Category, ExternalResource, Vacancy
 
 
 def test_person():
@@ -46,3 +47,13 @@ def test_pep(user):
 def test_summary(user):
     Category(creator=user).save()
     Summary.create_article()
+
+
+@pytest.mark.slow
+def test_external():
+    ExternalResource.fetch_new()
+
+
+@pytest.mark.slow
+def test_vacancy():
+    Vacancy.fetch_new()
