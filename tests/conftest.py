@@ -1,5 +1,6 @@
 import os
 
+import pytest
 from pytest_djangoapp import configure_djangoapp_plugin
 
 # Используем имитатор вместо uwsgi.
@@ -10,3 +11,11 @@ pytest_plugins = configure_djangoapp_plugin(
     admin_contrib=True,
     migrate=False,
 )
+
+from django.conf import settings
+
+
+@pytest.fixture
+def robot(user_create):
+    """Возвращает объект пользовтеля-робота (суперпользователь)."""
+    yield user_create(attributes={'id': settings.ROBOT_USER_ID}, superuser=True)
