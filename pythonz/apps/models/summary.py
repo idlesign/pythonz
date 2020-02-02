@@ -1,5 +1,5 @@
 import json
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from django.conf import settings
 from django.db import models
@@ -13,6 +13,9 @@ from ..utils import get_datetime_from_till
 
 if False:  # pragma: nocover
     from ..integration.summary.base import ItemsFetcherBase, SummaryItem
+
+
+TypeFetched = Dict[str, List['SummaryItem']]
 
 
 class Summary(RealmBaseModel):
@@ -34,7 +37,7 @@ class Summary(RealmBaseModel):
         return str(self.time_created)
 
     @classmethod
-    def make_text(cls, fetched: Dict[str, List['SummaryItem']]) -> str:
+    def make_text(cls, fetched: TypeFetched) -> str:
         """Компонует текст из полученных извне данных.
 
         :param fetched:
@@ -69,9 +72,16 @@ class Summary(RealmBaseModel):
         return summary_text
 
     @classmethod
-    def create_article(cls) -> 'Article':
-        """Создаёт сводку, используя данные, полученные извне."""
-        summary_text = cls.make_text(cls.fetch())
+    def create_article(cls, fetched: Optional[TypeFetched] = None) -> 'Article':
+        """Создаёт сводку, используя данные, полученные извне.
+
+        :param fetched: Данные для составления статьи.
+
+        """
+        if fetched is None:
+            fetched = cls.fetch()
+
+        summary_text = cls.make_text(fetched)
 
         format_date = lambda d: d.date().strftime('%d.%m.%Y')
         date_from, date_till = get_datetime_from_till(7)
@@ -83,7 +93,7 @@ class Summary(RealmBaseModel):
             description='А теперь о том, что происходило в последнее время на других ресурсах.',
             submitter_id=robot_id,
             text_src=summary_text,
-            source=Article.SOURCE_SCRAPING,
+            source=Article.Source.SCRAPING,
             published_by_author=False,
         )
         article.mark_published()
@@ -94,7 +104,7 @@ class Summary(RealmBaseModel):
         return article
 
     @classmethod
-    def fetch(cls) -> Dict[str, List['SummaryItem']]:
+    def fetch(cls) -> TypeFetched:
         """Добывает данные из источников, складирует их и возвращает в виде словаря."""
         latest = cls.objects.order_by('-pk').first()
 

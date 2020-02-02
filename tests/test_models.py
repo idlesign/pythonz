@@ -1,6 +1,6 @@
 import pytest
 
-from pythonz.apps.models import PEP, Summary, Person, Category, ExternalResource, Vacancy
+from pythonz.apps.models import PEP, Person, ExternalResource, Vacancy
 
 
 def test_person():
@@ -41,12 +41,6 @@ def test_pep(user):
 
     assert pep1.get_absolute_url(with_prefix=True) == 'https://pythonz.net/peps/named/0001/'
     assert pep9999.get_absolute_url(with_prefix=True) == 'https://pythonz.net/peps/named/9999/'
-
-
-@pytest.mark.skip('Требуется имитация.')
-def test_summary(user):
-    Category(creator=user).save()
-    Summary.create_article()
 
 
 @pytest.mark.slow
