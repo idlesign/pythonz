@@ -72,6 +72,18 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         METHOD = 6, 'Описание метода класса/типа'
         PROPERTY = 7, 'Описание свойства класса/типа'
 
+    TYPES_CALLABLE = {
+        Type.METHOD,
+        Type.FUNCTION,
+        Type.CLASS,
+    }
+
+    TYPES_BUNDLE = {
+        Type.CHAPTER,
+        Type.PACKAGE,
+        Type.MODULE,
+    }
+
     type = models.PositiveIntegerField(
         'Тип статьи', choices=get_choices(Type), default=Type.CHAPTER,
         help_text='Служит для структурирования информации. Справочные статьи разных типов могут выглядеть по-разному.')
@@ -145,11 +157,11 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
 
     @property
     def is_type_callable(self) -> bool:
-        return self.type in {self.Type.METHOD, self.Type.FUNCTION, self.Type.CLASS}
+        return self.Type(self.type) in self.TYPES_CALLABLE
 
     @property
     def is_type_bundle(self) -> bool:
-        return self.type in {self.Type.CHAPTER, self.Type.PACKAGE, self.Type.MODULE}
+        return self.Type(self.type) in self.TYPES_BUNDLE
 
     @property
     def is_type_method(self) -> bool:
