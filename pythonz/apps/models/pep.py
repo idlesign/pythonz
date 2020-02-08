@@ -43,7 +43,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     ]
 
     @unique
-    class Type(ChoicesEnumMixin, Enum):
+    class Type(models.IntegerChoices):
 
         PROCESS = 1, 'Процесс'
         STANDARD = 2, 'Стандарт'
@@ -75,7 +75,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     status = models.PositiveIntegerField('Статус', choices=get_choices(Status), default=Status.DRAFT)
 
-    type = models.PositiveIntegerField('Тип', choices=get_choices(Type), default=Type.STANDARD)
+    type = models.PositiveIntegerField('Тип', choices=Type.choices, default=Type.STANDARD)
 
     authors = models.ManyToManyField('Person', verbose_name='Авторы', related_name='peps', blank=True)
 
@@ -145,11 +145,11 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     @property
     def display_type(self) -> str:
-        return self.Type.get_title(self.type)
+        return self.Type.labels[self.type]
 
     @property
     def display_type_letter(self) -> str:
-        return self.Type.get_title(self.type)[0]
+        return self.Type.labels[self.type][0]
 
     @classmethod
     def find(cls, *search_terms: str) -> QuerySet:

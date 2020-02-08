@@ -1,7 +1,7 @@
 import os
 from contextlib import suppress
 from datetime import datetime
-from enum import unique, Enum
+from enum import unique
 from typing import List, Union
 from uuid import uuid4
 
@@ -14,9 +14,9 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import urlize
 from django.utils.text import Truncator
-from etc.choices import ChoicesEnumMixin, get_choices
 from siteflags.models import ModelWithFlag
 from slugify import Slugify, CYRILLIC
+
 from ..integration.utils import get_image_from_url
 from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
 from ..utils import UTM, TextCompiler, BasicTypograph
@@ -207,7 +207,7 @@ class RealmBaseModel(ModelWithFlag):
     """Базовый класс для моделей, использующихся в областях (realms) сайта."""
 
     @unique
-    class Status(ChoicesEnumMixin, Enum):
+    class Status(models.IntegerChoices):
 
         DRAFT = 1, 'Черновик'
         PUBLISHED = 2, 'Опубликован'
@@ -226,7 +226,7 @@ class RealmBaseModel(ModelWithFlag):
     time_created = models.DateTimeField('Дата создания', auto_now_add=True, editable=False)
     time_published = models.DateTimeField('Дата публикации', null=True, editable=False)
     time_modified = models.DateTimeField('Дата редактирования', null=True, editable=False)
-    status = models.PositiveIntegerField('Статус', choices=get_choices(Status), default=Status.DRAFT)
+    status = models.PositiveIntegerField('Статус', choices=Status.choices, default=Status.DRAFT)
     supporters_num = models.PositiveIntegerField('Поддержка', default=0)
 
     submitter = models.ForeignKey(

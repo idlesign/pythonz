@@ -1,9 +1,7 @@
-from enum import unique, Enum
+from enum import unique
 
 from django.db import models
-from etc.choices import ChoicesEnumMixin
 from etc.models import InheritedModel
-from etc.toolbox import get_choices
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
@@ -20,23 +18,23 @@ class Article(
     """Модель сущности `Статья`."""
 
     @unique
-    class Location(ChoicesEnumMixin, Enum):
+    class Location(models.IntegerChoices):
 
         INTERNAL = 1, 'На этом сайте'
         # EXTERNAL = 2, 'На другом сайте'
 
     @unique
-    class Source(ChoicesEnumMixin, Enum):
+    class Source(models.IntegerChoices):
 
         HANDMADE = 1, 'Написана на этом сайте'
         SCRAPING = 2, 'Соскоблена с другого сайта'
 
     source = models.PositiveIntegerField(
-        'Тип источника', choices=get_choices(Source), default=Source.HANDMADE,
+        'Тип источника', choices=Source.choices, default=Source.HANDMADE,
         help_text='Указывает на механизм, при помощи которого статья появилась на сайте.')
 
     location = models.PositiveIntegerField(
-        'Расположение статьи', choices=get_choices(Location), default=Location.INTERNAL,
+        'Расположение статьи', choices=Location.choices, default=Location.INTERNAL,
         help_text='Статью можно написать прямо на этом сайте, либо сформировать статью-ссылку на внешний ресурс.')
 
     url = models.URLField(

@@ -1,11 +1,9 @@
-from enum import unique, Enum
+from enum import unique
 from typing import List
 
 from django.db import models
 from django.db.models import Q, QuerySet
-from etc.choices import ChoicesEnumMixin
 from etc.models import InheritedModel
-from etc.toolbox import get_choices
 from simple_history.models import HistoricalRecords
 
 from .discussion import ModelWithDiscussions
@@ -62,7 +60,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     details_related: List[str] = ['parent', 'submitter']
 
     @unique
-    class Type(ChoicesEnumMixin, Enum):
+    class Type(models.IntegerChoices):
 
         CHAPTER = 1, 'Раздел справки'
         PACKAGE = 2, 'Описание пакета'
@@ -85,7 +83,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     }
 
     type = models.PositiveIntegerField(
-        'Тип статьи', choices=get_choices(Type), default=Type.CHAPTER,
+        'Тип статьи', choices=Type.choices, default=Type.CHAPTER,
         help_text='Служит для структурирования информации. Справочные статьи разных типов могут выглядеть по-разному.')
 
     parent = models.ForeignKey(
@@ -157,11 +155,11 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
 
     @property
     def is_type_callable(self) -> bool:
-        return self.Type(self.type) in self.TYPES_CALLABLE
+        return self.type in self.TYPES_CALLABLE
 
     @property
     def is_type_bundle(self) -> bool:
-        return self.Type(self.type) in self.TYPES_BUNDLE
+        return self.type in self.TYPES_BUNDLE
 
     @property
     def is_type_method(self) -> bool:

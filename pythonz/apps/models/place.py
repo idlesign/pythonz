@@ -16,7 +16,7 @@ class Place(RealmBaseModel, ModelWithDiscussions):
     details_related: List[str] = ['last_editor']
 
     @unique
-    class GeoType(ChoicesEnumMixin, Enum):
+    class GeoType(models.TextChoices):
 
         COUNTRY = 'country', 'Страна'
         LOCALITY = 'locality', 'Местность'
@@ -33,7 +33,7 @@ class Place(RealmBaseModel, ModelWithDiscussions):
     geo_pos = models.CharField('Координаты', max_length=255, null=True, blank=True)
 
     geo_type = models.CharField(
-        'Тип', max_length=25, null=True, blank=True, choices=get_choices(GeoType), db_index=True)
+        'Тип', max_length=25, null=True, blank=True, choices=GeoType.choices, db_index=True)
 
     history = HistoricalRecords()
 

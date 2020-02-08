@@ -1,13 +1,11 @@
 from datetime import timedelta, datetime
-from enum import unique, Enum
+from enum import unique
 from typing import Optional
 
 from django.db import models
 from django.db.models import F, QuerySet
 from django.utils import timezone
-from etc.choices import ChoicesEnumMixin
 from etc.models import InheritedModel
-from etc.toolbox import get_choices
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
@@ -23,7 +21,7 @@ class Event(
     """Модель сущности `Событие`."""
 
     @unique
-    class Spec(ChoicesEnumMixin, Enum):
+    class Spec(models.IntegerChoices):
 
         DEDICATED = 1, 'Только Python'
         HAS_SECTION = 2, 'В основном Python'
@@ -31,7 +29,7 @@ class Event(
         MOST = 4, 'Есть упоминания про Python'
 
     @unique
-    class Type(ChoicesEnumMixin, Enum):
+    class Type(models.IntegerChoices):
 
         MEETING = 1, 'Встреча'
         CONFERENCE = 2, 'Лекция'
@@ -53,9 +51,9 @@ class Event(
             'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».'),
         on_delete=models.CASCADE)
 
-    specialization = models.PositiveIntegerField('Специализация', choices=get_choices(Spec), default=Spec.DEDICATED)
+    specialization = models.PositiveIntegerField('Специализация', choices=Spec.choices, default=Spec.DEDICATED)
 
-    type = models.PositiveIntegerField('Тип', choices=get_choices(Type), default=Type.MEETING)
+    type = models.PositiveIntegerField('Тип', choices=Type.choices, default=Type.MEETING)
 
     time_start = models.DateTimeField('Начало', null=True, blank=True)
 
@@ -94,10 +92,10 @@ class Event(
         super().save(*args, **kwargs)
 
     def get_display_type(self) -> str:
-        return self.Type.get_title(self.type)
+        return self.Type.labels[self.type]
 
     def get_display_specialization(self) -> str:
-        return self.Spec.get_title(self.specialization)
+        return self.Spec.labels[self.specialization]
 
     @property
     def is_in_past(self) -> Optional[bool]:
