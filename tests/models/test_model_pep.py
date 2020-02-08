@@ -1,7 +1,7 @@
 from pythonz.apps.models import PEP
 
 
-def test_pep(user):
+def test_pep(robot):
 
     pep1 = PEP(num=1)
     pep1.save()

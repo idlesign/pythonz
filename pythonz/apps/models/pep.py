@@ -1,10 +1,8 @@
-from enum import Enum, unique
+from enum import unique
 from typing import List
 
 from django.db import models
 from django.db.models import Q, QuerySet
-from etc.choices import ChoicesEnumMixin
-from etc.toolbox import get_choices
 
 from .discussion import ModelWithDiscussions
 from .version import Version
@@ -21,17 +19,29 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     TPL_URL_PYORG: str = 'https://www.python.org/dev/peps/pep-%s/'
 
     @unique
-    class Status(ChoicesEnumMixin, Enum):
+    class Status(models.IntegerChoices):
 
-        DRAFT = 1, 'Черновик', ('Черн.', '')
-        ACTIVE = 2, 'Действует', ('Действ.', 'success')
-        WITHDRAWN = 3, 'Отозвано [автором]', ('Отозв.', 'danger')
-        DEFERRED = 4, 'Отложено', ('Отл.', '')
-        REJECTED = 5, 'Отклонено', ('Откл.', 'danger')
-        ACCEPTED = 6, 'Утверждено (принято; возможно не реализовано)', ('Утв.', 'info')
-        FINAL = 7, 'Финализировано (работа завершена; реализовано)', ('Фин.', 'success')
-        SUPERSEDED = 8, 'Заменено (имеется более актуальное PEP)', ('Зам.', 'warning')
-        FOOL = 9, 'Розыгрыш на 1 апреля', ('Апр.', '')
+        DRAFT = 1, 'Черновик'
+        ACTIVE = 2, 'Действует'
+        WITHDRAWN = 3, 'Отозвано [автором]'
+        DEFERRED = 4, 'Отложено'
+        REJECTED = 5, 'Отклонено'
+        ACCEPTED = 6, 'Утверждено (принято; возможно не реализовано)'
+        FINAL = 7, 'Финализировано (работа завершена; реализовано)'
+        SUPERSEDED = 8, 'Заменено (имеется более актуальное PEP)'
+        FOOL = 9, 'Розыгрыш на 1 апреля'
+
+    STATUS_MAP = {
+        Status.DRAFT: ('Черн.', ''),
+        Status.ACTIVE: ('Действ.', 'success'),
+        Status.WITHDRAWN: ('Отозв.', 'danger'),
+        Status.DEFERRED: ('Отл.', ''),
+        Status.REJECTED: ('Откл.', 'danger'),
+        Status.ACCEPTED: ('Утв.', 'info'),
+        Status.FINAL: ('Фин.', 'success'),
+        Status.SUPERSEDED: ('Зам.', 'warning'),
+        Status.FOOL: ('Апр.', ''),
+    }
 
     STATUSES_DEADEND = [
         Status.WITHDRAWN,
@@ -67,7 +77,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     num = models.PositiveIntegerField('Номер')
 
-    status = models.PositiveIntegerField('Статус', choices=get_choices(Status), default=Status.DRAFT)
+    status = models.PositiveIntegerField('Статус', choices=Status.choices, default=Status.DRAFT)
 
     type = models.PositiveIntegerField('Тип', choices=Type.choices, default=Type.STANDARD)
 
@@ -127,23 +137,23 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     @property
     def bg_class(self) -> str:
-        return self.Status.get_hint(self.status)[1]
+        return self.STATUS_MAP[self.Status(self.status)][1]
 
     @property
     def display_status(self) -> str:
-        return self.Status.get_title(self.status)
+        return self.Status(self.status).label
 
     @property
     def display_status_letter(self) -> str:
-        return self.Status.get_hint(self.status)[0]
+        return self.STATUS_MAP[self.Status(self.status)][0]
 
     @property
     def display_type(self) -> str:
-        return self.Type.labels[self.type]
+        return self.Type(self.type).label
 
     @property
     def display_type_letter(self) -> str:
-        return self.Type.labels[self.type][0]
+        return self.Type(self.type).label[0]
 
     @classmethod
     def find(cls, *search_terms: str) -> QuerySet:

@@ -1,8 +1,7 @@
-from enum import unique, Enum
+from enum import unique
 from itertools import chain
 
 from django.db import models, IntegrityError
-from etc.choices import ChoicesEnumMixin, get_choices
 
 from .shared import UtmReady
 from ..generics.models import RealmBaseModel
@@ -13,11 +12,15 @@ class ExternalResource(UtmReady, RealmBaseModel):
     """Внешние ресурсы. Представляют из себя ссылки на страницы вне сайта."""
 
     @unique
-    class Resource(ChoicesEnumMixin, Enum):
+    class Resource(models.TextChoices):
 
-        PYDIGEST = 'pydigest', 'pythondigest.ru', PyDigestResource
+        PYDIGEST = 'pydigest', 'pythondigest.ru'
 
-    src_alias = models.CharField('Идентификатор источника', max_length=20, choices=get_choices(Resource))
+    RESOURCE_MAP = {
+        Resource.PYDIGEST: PyDigestResource
+    }
+
+    src_alias = models.CharField('Идентификатор источника', max_length=20, choices=Resource.choices)
 
     realm_name = models.CharField('Идентификатор области на pythonz', max_length=20)
 
@@ -37,9 +40,8 @@ class ExternalResource(UtmReady, RealmBaseModel):
     def fetch_new(cls):
         """Добывает данные из источников и складирует их."""
 
-        for resource in list(cls.Resource):
-            resource_alias = resource.title
-            resource_cls = resource.hint
+        for resource_alias, resource_cls in cls.RESOURCE_MAP.items():
+            resource_alias = resource_alias.name
 
             entries = resource_cls.fetch_entries()
 

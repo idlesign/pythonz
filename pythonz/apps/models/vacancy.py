@@ -1,10 +1,9 @@
-from enum import unique, Enum
+from enum import unique
 from statistics import median
 from typing import List, Optional
 
 from django.db import models, IntegrityError
 from django.db.models import Count
-from etc.choices import ChoicesEnumMixin, get_choices
 
 from .place import Place
 from .shared import UtmReady
@@ -21,11 +20,15 @@ class Vacancy(UtmReady, RealmBaseModel):
     url_attr: str = 'url_site'
 
     @unique
-    class Source(ChoicesEnumMixin, Enum):
+    class Source(models.TextChoices):
 
-        HH = 'hh', 'hh.ru', HhVacancyManager
+        HH = 'hh', 'hh.ru'
 
-    src_alias = models.CharField('Идентификатор источника', max_length=20, choices=get_choices(Source))
+    SOURCE_MAP = {
+        Source.HH: HhVacancyManager
+    }
+
+    src_alias = models.CharField('Идентификатор источника', max_length=20, choices=Source.choices)
 
     src_id = models.CharField('ID в источнике', max_length=50)
 
@@ -199,7 +202,8 @@ class Vacancy(UtmReady, RealmBaseModel):
         for vacancy in cls.objects.published():
 
             try:
-                manager = cls.Source.get_hint(vacancy.src_alias)
+                source = cls.Source(vacancy.src_alias)
+                manager = cls.SOURCE_MAP[source]
 
             except KeyError:
                 manager = None
@@ -224,10 +228,8 @@ class Vacancy(UtmReady, RealmBaseModel):
     def fetch_new(cls):
         """Добывает данные из источника и складирует их."""
 
-        for source in list(cls.Source):
-
-            manager_alias = source.title
-            manager = source.hint
+        for manager_alias, manager in cls.SOURCE_MAP.items():
+            manager_alias = manager_alias.name
 
             vacancies = manager.fetch_list()
 

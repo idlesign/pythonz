@@ -92,10 +92,10 @@ class Event(
         super().save(*args, **kwargs)
 
     def get_display_type(self) -> str:
-        return self.Type.labels[self.type]
+        return self.Type(self.type).label
 
     def get_display_specialization(self) -> str:
-        return self.Spec.labels[self.specialization]
+        return self.Spec(self.specialization).label
 
     @property
     def is_in_past(self) -> Optional[bool]:
