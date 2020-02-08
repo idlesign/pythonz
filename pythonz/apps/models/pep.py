@@ -53,16 +53,10 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     items_per_page: int = 40
     details_related: List[str] = []
 
+    # Далее отключаем общую логику работы с удалёнными.
+    is_published: bool = True
     is_deleted: bool = False
-    """Отключаем общую логику работы с удалёнными.
-    Здесь у понятия "отозван" своё значение.
-
-    """
     is_draft: bool = False
-    """Отключаем общую логику работы с черновиками.
-    Здесь у понятия "черновик" своё значение.
-
-    """
 
     # title - перевод заголовка на русский
     # description - английский заголовок
