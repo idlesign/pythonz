@@ -86,15 +86,19 @@ class Vacancy(UtmReady, RealmBaseModel):
         return ', '.join(chunks)
 
     @classmethod
-    def get_places_stats(cls) -> List[Place]:
-        """Возвращает статистику по количеству вакансий на местах."""
+    def get_places_stats(cls, min_count: int = 5) -> List[Place]:
+        """Возвращает статистику по количеству вакансий на местах.
 
+        :param min_count: Минимальное количество вакансий для попадения
+            места в результат.
+
+        """
         stats = list(Place.objects.filter(
             id__in=cls.objects.published().filter(place__isnull=False).distinct().values_list('place_id', flat=True),
             vacancies__status=cls.Status.PUBLISHED
 
         ).annotate(vacancies_count=Count('vacancies')).filter(
-            vacancies_count__gt=2
+            vacancies_count__gte=min_count
 
         ).order_by('-vacancies_count', 'title'))
 
