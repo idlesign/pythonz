@@ -1,6 +1,6 @@
 <div class="listing-item card mb-3">
     <div class="card-body">
-        <a href="{{ item.get_absolute_url }}">{% include "sub/item_cover.html" %}</a>
+        {% block cover %}<a href="{{ item.get_absolute_url }}">{% include "sub/item_cover.html" %}</a>{% endblock %}
         <div class="card-title">
             <a href="{{ item.get_absolute_url }}" title="{{ item.title }}">{{ item.title|truncatechars:58 }}</a>
         </div>

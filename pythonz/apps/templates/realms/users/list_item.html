@@ -1,0 +1,10 @@
+{% extends "base_list_item.html" %}
+{% load gravatar %}
+
+{% block cover %}<img src="{% gravatar_get_url item 64 %}" class="pull-left img-thumbnail img-rounded" alt="{{ item.title }}">{% endblock %}
+
+{% block info %}<i class="small text-muted">{{ item.username }}</i>{% endblock %}
+
+{% block bottom %}
+    <span class="badge badge-success float-right">{{ item.supporters_num }}</span>
+{% endblock %}
