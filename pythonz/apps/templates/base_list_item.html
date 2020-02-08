@@ -8,15 +8,7 @@
     </div>
     <div class="card-footer small">
         {% block bottom %}
-        {{ item.time_created|date:"j E Y" }} / <strong>{{ item.year|default:'' }}</strong>
-        <span class="py_user">
-            {% if item.author %}
-                {{ item.author }}
-            {% else %}
-                {{ item.submitter }}
-            {% endif %}
-        </span>
-        <span class="badge badge-success float-right">{{ item.supporters_num }}</span>
+            {% include "sub/item_info.html" with show_date=1 %}
         {% endblock %}
     </div>
 </div>

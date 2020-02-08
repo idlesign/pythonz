@@ -1,0 +1,9 @@
+{% if show_date %}{{ item.time_created|date:"j E Y" }} / {%  endif %}<strong>{{ item.year|default:'' }}</strong>
+<span class="py_user">
+    {% if item.author %}
+        {{ item.author }}
+    {% else %}
+        {{ item.submitter }}
+    {% endif %}
+</span>
+<span class="badge badge-success float-right">{{ item.supporters_num }}</span>
