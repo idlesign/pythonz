@@ -1,8 +1,7 @@
-from enum import unique, Enum
+from enum import unique
 from typing import List, Tuple, Optional
 
 from django.db import models, IntegrityError
-from etc.choices import ChoicesEnumMixin, get_choices
 from simple_history.models import HistoricalRecords
 
 from .discussion import ModelWithDiscussions

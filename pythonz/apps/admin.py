@@ -122,7 +122,7 @@ class SummaryAdmin(admin.ModelAdmin):
 @admin.register(ExternalResource)
 class ExternalResourceAdmin(admin.ModelAdmin):
 
-    list_display = ('title', 'url', 'src_alias', 'realm_name')
+    list_display = ('title', 'url', 'src_alias', 'realm_name', 'time_created')
     list_filter = ['src_alias', 'realm_name']
     search_fields = ['title', 'description']
 
@@ -140,9 +140,9 @@ class PlaceAdmin(admin.ModelAdmin):
 @admin.register(Vacancy)
 class VacancyAdmin(admin.ModelAdmin):
 
-    list_display = ('title', 'src_id', 'status', 'time_created')
+    list_display = ('title', 'src_alias', 'src_id', 'status', 'time_created')
     search_fields = ['title', 'src_id']
-    list_filter = ['status', 'place']
+    list_filter = ['status', 'src_alias']
     ordering = ['-time_created']
 
 
@@ -171,6 +171,7 @@ class ArticleAdmin(EntityBaseAdmin):
 
     list_display = ('time_created', 'title', 'submitter', 'source', 'published_by_author')
     list_filter = ['time_created', 'status', 'source', 'published_by_author']
+
 
 @admin.register(Book)
 class BookAdmin(EntityBaseAdmin):
