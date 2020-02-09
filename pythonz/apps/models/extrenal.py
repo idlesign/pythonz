@@ -41,7 +41,7 @@ class ExternalResource(UtmReady, RealmBaseModel):
         """Добывает данные из источников и складирует их."""
 
         for resource_alias, resource_cls in cls.RESOURCE_MAP.items():
-            resource_alias = resource_alias.name
+            resource_alias = resource_alias.value
 
             entries = resource_cls.fetch_entries()
 

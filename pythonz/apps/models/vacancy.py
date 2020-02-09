@@ -233,7 +233,7 @@ class Vacancy(UtmReady, RealmBaseModel):
         """Добывает данные из источника и складирует их."""
 
         for manager_alias, manager in cls.SOURCE_MAP.items():
-            manager_alias = manager_alias.name
+            manager_alias = manager_alias.value
 
             vacancies = manager.fetch_list()
 
