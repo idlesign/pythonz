@@ -77,7 +77,6 @@ INSTALLED_APPS = [
 
     'uwsgiconf.contrib.django.uwsgify',
 
-    'datetimewidget',
     'simple_history',
     'robots',
     'raven.contrib.django.raven_compat',
