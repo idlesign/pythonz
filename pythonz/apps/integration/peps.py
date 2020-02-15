@@ -269,11 +269,7 @@ def sync(*, skip_deadend_peps: bool = True, limit: int = None) -> Dict[int, 'PEP
                 pep_model.status = status_id
                 pep_model.save()
 
-                try:
-                    status_title = PEP.Status.get_title(status_id)
-
-                except KeyError:
-                    status_title = 'Неизвестный'
+                status_title = PEP.Status(status_id).label
 
                 msg = (
                     f'PEP {pep_model.num} сменил статус на «{status_title}»\n'
