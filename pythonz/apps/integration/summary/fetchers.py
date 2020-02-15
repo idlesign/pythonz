@@ -83,6 +83,8 @@ class Psf(ItemsFetcherBase):
     alias: str = 'psf'
 
     url_base: str = 'https://discuss.python.org'
+
+    mode_cumulative: bool = True
     mode_remove_unchanged: bool = True
 
     def fetch(self) -> FetcherResult:
