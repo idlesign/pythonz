@@ -9,7 +9,9 @@ from envbox import import_by_environment, get_environment
 
 current_env = import_by_environment(
     # For production one can place `/var/lib/pythonz/environ` file with `production` as it contents.
-    get_environment(detectors_opts={'file': {'source': '/var/lib/pythonz/environ'}}))
+    get_environment(detectors_opts={'file': {'source': '/var/lib/pythonz/environ'}}),
+    module_name_pattern='env_%s'
+)
 
 
 IN_PRODUCTION = current_env == 'production'

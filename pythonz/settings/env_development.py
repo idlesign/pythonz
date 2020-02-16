@@ -1,7 +1,7 @@
 #
 # Для конфигурирования в ходе разработки используйте этот файл, а не settings_base.py
 #
-from .settings_base import *
+from .base import *
 
 
 DEBUG = True

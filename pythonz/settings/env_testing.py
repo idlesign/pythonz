@@ -1,7 +1,7 @@
 #
 # Этот файл конфигурации используется для тестов.
 #
-from .settings_base import *
+from .base import *
 
 SITEPREFS_DISABLE_AUTODISCOVER = True
 
