@@ -84,7 +84,7 @@ class Psf(ItemsFetcherBase):
 
     url_base: str = 'https://discuss.python.org'
 
-    filter_skip_unchanged: bool = True
+    filter_hide_seen = True
 
     def fetch(self) -> TypeFetcherResult:
 

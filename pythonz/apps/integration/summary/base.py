@@ -54,6 +54,9 @@ class ItemsFetcherBase:
 
     """
 
+    filter_hide_seen = False
+    """Убирать ли из представления элементы присутствующие и в предыдущем, и в текущем заборах."""
+
     def __init__(self, *, previous_result: Union[List, Dict], previous_dt: Optional[datetime], **kwargs):
         """
 
@@ -114,6 +117,7 @@ class ItemsFetcherBase:
 
         flt_cumulative = self.filter_cumulative
         flt_skip_unchanged = self.filter_skip_unchanged
+        flt_hide_seen = self.filter_hide_seen
 
         idx_prev = -1
 
@@ -138,17 +142,19 @@ class ItemsFetcherBase:
         by_title = {}
 
         for idx_current, (key, summary_item) in enumerate(items.items()):
+
             summary_item: SummaryItem
 
-            if flt_cumulative:
-                if idx_current <= idx_prev:
-                    continue
+            seen = key in result_old
 
-            elif flt_skip_unchanged:
-                if key in result_old:
-                    continue
+            if flt_cumulative and idx_current <= idx_prev:
+                continue
 
-            by_title.setdefault(summary_item.title, summary_item)
+            elif flt_skip_unchanged and seen:
+                continue
+
+            if not seen or not flt_hide_seen:
+                by_title.setdefault(summary_item.title, summary_item)
 
             result_new.append(key)
 

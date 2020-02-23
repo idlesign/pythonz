@@ -93,6 +93,14 @@ def test_psf():
     assert current
     assert latest
 
+    current_2, latest_2 = Psf(
+        previous_result=latest,
+        previous_dt=None,
+    ).run()
+
+    assert latest == latest_2
+    assert current_2 == []
+
 
 def test_github():
 
