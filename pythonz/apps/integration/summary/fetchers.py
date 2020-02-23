@@ -2,7 +2,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Tuple, List, Dict, Union, Optional
 
-from .base import PipermailBase, StackdataBase, ItemsFetcherBase, SummaryItem, FetcherResult, HyperKittyBase
+from .base import PipermailBase, StackdataBase, ItemsFetcherBase, SummaryItem, TypeFetcherResult, HyperKittyBase
 from ..utils import get_from_url, make_soup, get_json
 
 
@@ -56,7 +56,7 @@ class Discuss(ItemsFetcherBase):
 
     url_base: str = 'https://discuss.python.org'
 
-    def fetch(self) -> FetcherResult:
+    def fetch(self) -> TypeFetcherResult:
 
         url_digest = f'{self.url_base}/top/weekly.json'  # За неделю.
         url_topic_prefix = f'{self.url_base}/t/'
@@ -84,10 +84,9 @@ class Psf(ItemsFetcherBase):
 
     url_base: str = 'https://discuss.python.org'
 
-    mode_cumulative: bool = True
-    mode_remove_unchanged: bool = True
+    filter_skip_unchanged: bool = True
 
-    def fetch(self) -> FetcherResult:
+    def fetch(self) -> TypeFetcherResult:
 
         url_rss = 'https://pyfound.blogspot.com/feeds/posts/default?alt=rss'
 
@@ -141,7 +140,7 @@ class Lwn(ItemsFetcherBase):
 
         return result, latest_result
 
-    def fetch(self) -> FetcherResult:
+    def fetch(self) -> TypeFetcherResult:
 
         url_base = self.url_base
 
@@ -187,7 +186,7 @@ class GithubTrending(ItemsFetcherBase):
 
     url_base: str = 'https://github.com'
 
-    mode_remove_unchanged: bool = True
+    filter_skip_unchanged: bool = True
 
     def __init__(self, *, previous_result: List, previous_dt: Optional[datetime], period=None, **kwargs):
         """
@@ -200,7 +199,7 @@ class GithubTrending(ItemsFetcherBase):
         self.period = period or 'weekly'
         super().__init__(previous_result=previous_result, previous_dt=previous_dt, **kwargs)
 
-    def fetch(self) -> FetcherResult:
+    def fetch(self) -> TypeFetcherResult:
         period = self.period
 
         url_base = self.url_base

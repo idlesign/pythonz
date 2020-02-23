@@ -29,7 +29,7 @@ class SummaryItem:
         return json.dumps(attr.asdict(self))
 
 
-FetcherResult = Optional[Tuple[List[SummaryItem], Union[List, Dict]]]
+TypeFetcherResult = Optional[Tuple[List[SummaryItem], Union[List, Dict]]]
 
 
 class ItemsFetcherBase:
@@ -41,15 +41,15 @@ class ItemsFetcherBase:
     alias: str = None
     """Псевдоним сводки. Однажды установленный не должен оставаться неизменным."""
 
-    mode_cumulative: bool = False
+    filter_cumulative: bool = False
     """Режим для работы с ресурсами, данные которых кумулятивны 
     (дополняются новые к имеющимся старым). В этом режиме все старые 
-    данные будут отсеяны.
+    данные будут отсеяны и останется единственный результат.
 
     """
 
-    mode_remove_unchanged: bool = False
-    """Режим, при котором элементы из старого забора исключаются из нового даже если
+    filter_skip_unchanged: bool = False
+    """Режим, при котором элементы старого забора исключаются из нового, если
     присутствуют в нём.
 
     """
@@ -59,14 +59,16 @@ class ItemsFetcherBase:
 
         :param previous_result: Результат предыдущего забора данных.
         :param previous_dt: Дата и время предыдущего забора данных.
-
         :param kwargs:
 
         """
+        assert not all((self.filter_cumulative, self.filter_skip_unchanged)), (
+            'Указаны взимоисключающие режимы фильтрации данных')
+
         self.previous_result = previous_result or []
         self.previous_dt = previous_dt or get_datetime_from_till(7)[0]
 
-    def run(self) -> FetcherResult:
+    def run(self) -> TypeFetcherResult:
         """Основной рабочий метод. Запускает сбор данных."""
         fetcher_name = self.__class__.__name__
 
@@ -89,15 +91,16 @@ class ItemsFetcherBase:
 
         return None
 
-    def fetch(self) -> FetcherResult:
+    def fetch(self) -> TypeFetcherResult:
         """Забирает данные для последующей сборки в сводку.
 
         Должен реализовываться наследниками.
 
         Возвращает кортеж вида:
-            (список_SummaryItem, список_результов)
+            (список_SummaryItem, результ)
 
-            Результат будет передан в previous_result при следующем заборе данных.
+            Результат используется для восставноления состояния забора
+            и будет передан в previous_result при следующем заборе данных.
 
         """
         raise NotImplementedError(f'`{self.__class__.__name__}` must implement .fetch()')  # pragma: nocover
@@ -107,51 +110,53 @@ class ItemsFetcherBase:
         :param items:
 
         """
-        previous_result = self.previous_result
-        mode_cumulative = self.mode_cumulative
-        mode_remove_unchanged = self.mode_remove_unchanged
+        result_old = self.previous_result
+
+        flt_cumulative = self.filter_cumulative
+        flt_skip_unchanged = self.filter_skip_unchanged
 
         idx_prev = -1
 
-        if previous_result:
+        if result_old:
 
-            if mode_cumulative:
+            if flt_cumulative:
 
-                if len(previous_result) > 1:
+                if len(result_old) > 1:
                     raise LogicError(
                         f'`{self.__class__}`fetcher uses `mode_cumulative` '
                         'but `previous_result` contains more than one item.')
 
-                previous_result = previous_result[0]
+                result_old = result_old[0]
 
                 try:
-                    idx_prev = list(items.keys()).index(previous_result)
+                    idx_prev = list(items.keys()).index(result_old)
 
                 except ValueError:
                     pass
 
-        new_result = []
+        result_new = []
         by_title = {}
 
         for idx_current, (key, summary_item) in enumerate(items.items()):
             summary_item: SummaryItem
 
-            if mode_cumulative:
+            if flt_cumulative:
                 if idx_current <= idx_prev:
                     continue
 
-            elif mode_remove_unchanged:
-                if key in previous_result:
+            elif flt_skip_unchanged:
+                if key in result_old:
                     continue
 
             by_title.setdefault(summary_item.title, summary_item)
 
-            new_result.append(key)
+            result_new.append(key)
 
-        if mode_cumulative:
-            new_result = new_result[-1:]  # Необходима и достаточна только одна строка
+        if flt_cumulative:
+            # Необходима и достаточна только одна запись
+            result_new = result_new[-1:]
 
-        return list(by_title.values()), new_result
+        return list(by_title.values()), result_new
 
 
 class HyperKittyBase(ItemsFetcherBase):
@@ -175,7 +180,7 @@ class HyperKittyBase(ItemsFetcherBase):
     def get_url(self, *, date: datetime) -> str:
         return f"{self.url_base}/archives/list/{self.alias}/{date.strftime('%Y/%m/%d/')}"
 
-    def fetch(self) -> FetcherResult:
+    def fetch(self) -> TypeFetcherResult:
 
         since = self.previous_dt
         till = self.till or datetime.now()
@@ -207,7 +212,7 @@ class HyperKittyBase(ItemsFetcherBase):
 class PipermailBase(ItemsFetcherBase):
     """Базовый сборщик данных из архивов почтовых рассылок pipermail с mail.python.org"""
 
-    mode_cumulative: bool = True
+    filter_cumulative: bool = True
 
     def get_url(self) -> str:
         return f'https://mail.python.org/pipermail/{self.alias}/'
@@ -216,7 +221,7 @@ class PipermailBase(ItemsFetcherBase):
         self.year_month = year_month
         super().__init__(previous_result=previous_result, previous_dt=previous_dt, **kwargs)
 
-    def fetch(self) -> FetcherResult:
+    def fetch(self) -> TypeFetcherResult:
 
         url = self.get_url()
         year_month = self.year_month
@@ -287,7 +292,7 @@ class StackdataBase(ItemsFetcherBase):
     def get_item_url(self, item_id: int) -> str:
         return f'https://{self.domain}/questions/{item_id}/'
 
-    def fetch(self) -> FetcherResult:
+    def fetch(self) -> TypeFetcherResult:
         url = self.get_url()
         response = get_from_url(url)
 
