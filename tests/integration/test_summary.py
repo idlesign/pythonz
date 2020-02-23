@@ -2,8 +2,8 @@ from datetime import datetime
 
 import pytest
 
-from apps.integration.summary import MailarchDev
-from pythonz.apps.integration.summary import MailarchConferences, GithubTrending, Stackoverflow, Lwn, Discuss, Psf
+from pythonz.apps.integration.summary import MailarchConferences, GithubTrending, Stackoverflow, Lwn, Discuss, Psf, \
+    MailarchDev
 
 pytestmark = [pytest.mark.slow]
 

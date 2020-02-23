@@ -2,11 +2,25 @@ from typing import List
 
 from django.utils.dateparse import parse_datetime
 
+from .base import RemoteSource
 from .utils import get_json
 
 
-class HhVacancyManager:
+class VacancySource(RemoteSource):
+    """База для истоничков вакансий."""
+
+    realm: str = 'vacancy'
+
+    @classmethod
+    def get_status(cls, url: str) -> dict:
+        raise NotImplementedError  # pragma: nocover
+
+
+class HhVacancy(VacancySource):
     """Объединяет инструменты для работы с вакансиями с hh.ru."""
+
+    alias: str = 'hh'
+    title: str = 'hh.ru'
 
     @classmethod
     def get_status(cls, url: str) -> dict:
@@ -22,8 +36,7 @@ class HhVacancyManager:
 
         return response['archived']
 
-    @classmethod
-    def fetch_list(cls) -> List[dict]:
+    def fetch_list(self) -> List[dict]:
         """Возвращает словарь с данными вакансий, полученный из внешнего
         источника.
 

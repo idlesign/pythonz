@@ -1,4 +1,3 @@
-from enum import unique
 from statistics import median
 from typing import List, Optional
 
@@ -8,7 +7,7 @@ from django.db.models import Count
 from .place import Place
 from .shared import UtmReady
 from ..generics.models import RealmBaseModel
-from ..integration.vacancies import HhVacancyManager
+from ..integration.vacancies import VacancySource
 from ..utils import format_currency
 
 
@@ -19,14 +18,7 @@ class Vacancy(UtmReady, RealmBaseModel):
     notify_on_publish: bool = False
     url_attr: str = 'url_site'
 
-    @unique
-    class Source(models.TextChoices):
-
-        HH = 'hh', 'hh.ru'
-
-    SOURCE_MAP = {
-        Source.HH: HhVacancyManager
-    }
+    Source = VacancySource.get_enum()
 
     src_alias = models.CharField('Идентификатор источника', max_length=20, choices=Source.choices)
 
@@ -205,19 +197,14 @@ class Vacancy(UtmReady, RealmBaseModel):
 
         for vacancy in cls.objects.published():
 
-            try:
-                source = cls.Source(vacancy.src_alias)
-                manager = cls.SOURCE_MAP[source]
+            source = VacancySource.get_source(vacancy.src_alias)
 
-            except KeyError:
-                manager = None
-
-            if not manager:
+            if not source:
                 continue
 
             for_update.append(vacancy)
 
-            status = manager.get_status(vacancy.url_api)
+            status = source.get_status(vacancy.url_api)
 
             if status:
                 vacancy.status = cls.Status.ARCHIVED
@@ -232,27 +219,26 @@ class Vacancy(UtmReady, RealmBaseModel):
     def fetch_new(cls):
         """Добывает данные из источника и складирует их."""
 
-        for manager_alias, manager in cls.SOURCE_MAP.items():
-            manager_alias = manager_alias.value
+        for source_alias, source in VacancySource.get_sources().items():
 
-            vacancies = manager.fetch_list()
+            items = source().fetch_list()
 
-            if not vacancies:
+            if not items:
                 return
 
-            for vacancy_data in vacancies:
+            for item_data in items:
 
-                if vacancy_data.pop('__archived', True):
+                if item_data.pop('__archived', True):
                     # Архивные пропускаем.
                     continue
 
-                new_vacancy = cls(**vacancy_data)
-                new_vacancy.src_alias = manager_alias
-                new_vacancy.status = new_vacancy._status_backup = cls.Status.PUBLISHED
-                new_vacancy.link_to_place()
+                obj = cls(**item_data)
+                obj.src_alias = source_alias
+                obj.status = obj._status_backup = cls.Status.PUBLISHED
+                obj.link_to_place()
 
                 try:
-                    new_vacancy.save()
+                    obj.save()
 
                 except IntegrityError:
                     pass
