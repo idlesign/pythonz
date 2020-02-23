@@ -20,9 +20,3 @@ def test_booksru():
     assert "руб" in data['price']
     assert "%s?partner=%s" % (book_link, partner_id) == data['url']
     assert 'https://favicon.yandex.net/favicon/books.ru' == data['icon_url']
-
-    # проверка валюты нидерландов
-    partners.BooksRu.default_location = 'ned'
-    data = booksru.get_link_data(mock_realm, link)
-
-    assert "euro" in data['price']

@@ -57,7 +57,10 @@ class PartnerBase:
         if not page_soup:
             return {}
 
-        price = self.get_price(page_soup).lower().strip(' .').replace('руб', 'руб.')
+        price = self.get_price(
+            page_soup
+        ).lower().strip(' .').replace('руб', 'руб.').replace('₽', 'руб.').strip()
+
         if price.isdigit():
             price += ' руб.'
 
@@ -97,36 +100,19 @@ class BooksRu(PartnerBase):
     title: str = 'books.ru'
     link_mutator: str = '?partner={partner_id}'
 
-    change_location_url: str = "https://www.books.ru/change_region.php"
-    locations: dict = {
-        'nsk': {'mainregion_other': 1, 'subregion_other': 277},
-        'msk': {'mainregion_other': 1, 'subregion_other': 271},
-        'ned': {'mainregion_other': 0, 'subregion_other': 157}
-    }
-    default_location: str = 'nsk'
-
     @classmethod
     def get_price(cls, page_soup: BeautifulSoup) -> str:
 
         price = ''
 
         if page_soup:
-            matches = page_soup.select('.item-price .yprice.price')
+            matches = page_soup.select('h3.book-price')
 
             if matches:
                 price = matches[0].text
 
         return price
 
-    @classmethod
-    def get_page(cls, url: str) -> Response:
-        resp = get_from_url(
-            cls.change_location_url,
-            data=cls.locations[cls.default_location],
-            params={'back_url': urlparse(url).path},
-            method='post',
-        )
-        return resp
 
 
 class LitRes(PartnerBase):
