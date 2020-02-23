@@ -1,32 +1,30 @@
 from statistics import median
 from typing import List, Optional
 
-from django.db import models, IntegrityError
+from django.db import models
 from django.db.models import Count
 
 from .place import Place
 from .shared import UtmReady
-from ..generics.models import RealmBaseModel
+from ..generics.models import WithRemoteSource
 from ..integration.vacancies import VacancySource
 from ..utils import format_currency
 
 
-class Vacancy(UtmReady, RealmBaseModel):
+class Vacancy(UtmReady, WithRemoteSource):
 
     paginator_related: List[str] = ['place']
     items_per_page: int = 15
     notify_on_publish: bool = False
     url_attr: str = 'url_site'
 
-    Source = VacancySource.get_enum()
-
-    src_alias = models.CharField('Идентификатор источника', max_length=20, choices=Source.choices)
-
-    src_id = models.CharField('ID в источнике', max_length=50)
+    source_group = VacancySource
 
     src_place_name = models.CharField('Название места в источнике', max_length=255)
-
     src_place_id = models.CharField('ID места в источнике', max_length=20, db_index=True)
+    place = models.ForeignKey(
+        Place, verbose_name='Место', related_name='vacancies', null=True, blank=True,
+        on_delete=models.CASCADE)
 
     title = models.CharField('Название', max_length=255)
 
@@ -38,10 +36,6 @@ class Vacancy(UtmReady, RealmBaseModel):
 
     employer_name = models.CharField('Работодатель', max_length=255)
 
-    place = models.ForeignKey(
-        Place, verbose_name='Место', related_name='vacancies', null=True, blank=True,
-        on_delete=models.CASCADE)
-
     salary_from = models.PositiveIntegerField('Заработная плата', null=True, blank=True)
 
     salary_till = models.PositiveIntegerField('З/п до', null=True, blank=True)
@@ -52,7 +46,6 @@ class Vacancy(UtmReady, RealmBaseModel):
 
         verbose_name = 'Вакансия'
         verbose_name_plural = 'Работа'
-        unique_together = ('src_alias', 'src_id')
 
     @property
     def cover(self) -> str:
@@ -172,6 +165,12 @@ class Vacancy(UtmReady, RealmBaseModel):
     def get_absolute_url(self, with_prefix: bool = False, utm_source: str = None) -> str:
         return self.get_utm_url()
 
+    @classmethod
+    def spawn_object(cls, *args, **kwargs):
+        obj = super().spawn_object(*args, **kwargs)
+        obj.link_to_place()
+        return obj
+
     def link_to_place(self):
         """Связывает запись с местом Place, заполняя атрибут place_id."""
 
@@ -197,7 +196,7 @@ class Vacancy(UtmReady, RealmBaseModel):
 
         for vacancy in cls.objects.published():
 
-            source = VacancySource.get_source(vacancy.src_alias)
+            source = cls.source_group.get_source(vacancy.src_alias)
 
             if not source:
                 continue
@@ -214,31 +213,3 @@ class Vacancy(UtmReady, RealmBaseModel):
 
         if for_update:
             cls.objects.bulk_update(for_update, fields=['status'])
-
-    @classmethod
-    def fetch_items(cls):
-        """Добывает данные из источника и складирует их."""
-
-        for source_alias, source in VacancySource.get_sources().items():
-
-            items = source().fetch_list()
-
-            if not items:
-                return
-
-            for item_data in items:
-
-                if item_data.pop('__archived', True):
-                    # Архивные пропускаем.
-                    continue
-
-                obj = cls(**item_data)
-                obj.src_alias = source_alias
-                obj.status = obj._status_backup = cls.Status.PUBLISHED
-                obj.link_to_place()
-
-                try:
-                    obj.save()
-
-                except IntegrityError:
-                    pass

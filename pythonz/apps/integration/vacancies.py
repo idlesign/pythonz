@@ -73,7 +73,7 @@ class HhVacancy(VacancySource):
                 url_logo = url_logo.get('90')
 
             results.append({
-                '__archived': item['archived'],
+                '__skip': item['archived'],
                 'src_id': item['id'],
                 'src_place_name': item['area']['name'],
                 'src_place_id': item['area']['id'],
