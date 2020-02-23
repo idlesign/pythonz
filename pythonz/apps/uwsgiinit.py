@@ -27,7 +27,7 @@ def task_send_messages(sig_num):
 def task_get_vacancies(sig_num):
     """Синхронизация вакансий."""
     Vacancy.update_statuses()
-    Vacancy.fetch_new()
+    Vacancy.fetch_items()
 
 
 @register_cron(hour=-2, minute=1)

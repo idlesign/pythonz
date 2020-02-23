@@ -216,7 +216,7 @@ class Vacancy(UtmReady, RealmBaseModel):
             cls.objects.bulk_update(for_update, fields=['status'])
 
     @classmethod
-    def fetch_new(cls):
+    def fetch_items(cls):
         """Добывает данные из источника и складирует их."""
 
         for source_alias, source in VacancySource.get_sources().items():

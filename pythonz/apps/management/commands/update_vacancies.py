@@ -12,6 +12,6 @@ class Command(BaseCommand):
         self.stdout.write('Updating vacancies...\n')
 
         Vacancy.update_statuses()
-        Vacancy.fetch_new()
+        Vacancy.fetch_items()
 
         self.stdout.write('Vacancies updated.\n')

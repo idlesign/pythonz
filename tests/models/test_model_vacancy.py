@@ -5,4 +5,4 @@ from pythonz.apps.models import Vacancy
 
 @pytest.mark.slow
 def test_vacancy():
-    Vacancy.fetch_new()
+    Vacancy.fetch_items()
