@@ -608,7 +608,7 @@ class RealmBaseModel(ModelWithFlag):
 class WithRemoteSourceMeta(ModelBase):
 
     def __new__(cls, name, bases, attrs, **kwargs):
-        source_group = attrs['source_group']
+        source_group = attrs.get('source_group')
 
         if source_group:
             # Прописываем choices для источников.

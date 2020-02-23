@@ -5,7 +5,7 @@ from django.db import models, IntegrityError
 from simple_history.models import HistoricalRecords
 
 from .discussion import ModelWithDiscussions
-from ..generics.models import RealmBaseModel
+from ..generics.models import RealmBaseModel, WithRemoteSource
 from ..integration.utils import get_location_data
 
 
@@ -85,3 +85,42 @@ class Place(RealmBaseModel, ModelWithDiscussions):
             place = cls.objects.get(geo_title=full_title)
 
         return place
+
+
+class WithPlace(WithRemoteSource):
+    """Примесь для сущностей, которые могут связывать с местом."""
+
+    src_place_name = models.CharField('Название места в источнике', max_length=255)
+
+    src_place_id = models.CharField('ID места в источнике', max_length=20, db_index=True)
+
+    place = models.ForeignKey(
+        Place, verbose_name='Место', related_name='lnk_%(class)s', null=True, blank=True,
+        on_delete=models.CASCADE)
+
+    class Meta:
+
+        abstract = True
+
+    @classmethod
+    def spawn_object(cls, *args, **kwargs):
+        obj = super().spawn_object(*args, **kwargs)
+        obj.link_to_place()
+        return obj
+
+    def link_to_place(self):
+        """Связывает запись с местом Place, заполняя атрибут place_id."""
+
+        # Попробуем найти ранее связанные записи.
+        match = self.__class__.objects.filter(
+            src_alias=self.src_alias,
+            src_place_id=self.src_place_id,
+        ).first()
+
+        if match:
+            self.place_id = match.place_id
+
+        else:
+            # Вычисляем место.
+            match = Place.create_place_from_name(self.src_place_name)
+            self.place_id = match.id

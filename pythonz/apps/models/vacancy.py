@@ -4,14 +4,13 @@ from typing import List, Optional
 from django.db import models
 from django.db.models import Count
 
-from .place import Place
+from .place import Place, WithPlace
 from .shared import UtmReady
-from ..generics.models import WithRemoteSource
 from ..integration.vacancies import VacancySource
 from ..utils import format_currency
 
 
-class Vacancy(UtmReady, WithRemoteSource):
+class Vacancy(UtmReady, WithPlace):
 
     paginator_related: List[str] = ['place']
     items_per_page: int = 15
@@ -19,12 +18,6 @@ class Vacancy(UtmReady, WithRemoteSource):
     url_attr: str = 'url_site'
 
     source_group = VacancySource
-
-    src_place_name = models.CharField('Название места в источнике', max_length=255)
-    src_place_id = models.CharField('ID места в источнике', max_length=20, db_index=True)
-    place = models.ForeignKey(
-        Place, verbose_name='Место', related_name='vacancies', null=True, blank=True,
-        on_delete=models.CASCADE)
 
     title = models.CharField('Название', max_length=255)
 
@@ -80,9 +73,9 @@ class Vacancy(UtmReady, WithRemoteSource):
         """
         stats = list(Place.objects.filter(
             id__in=cls.objects.published().filter(place__isnull=False).distinct().values_list('place_id', flat=True),
-            vacancies__status=cls.Status.PUBLISHED
+            lnk_vacancy__status=cls.Status.PUBLISHED
 
-        ).annotate(vacancies_count=Count('vacancies')).filter(
+        ).annotate(vacancies_count=Count('lnk_vacancy')).filter(
             vacancies_count__gte=min_count
 
         ).order_by('-vacancies_count', 'title'))
@@ -164,29 +157,6 @@ class Vacancy(UtmReady, WithRemoteSource):
 
     def get_absolute_url(self, with_prefix: bool = False, utm_source: str = None) -> str:
         return self.get_utm_url()
-
-    @classmethod
-    def spawn_object(cls, *args, **kwargs):
-        obj = super().spawn_object(*args, **kwargs)
-        obj.link_to_place()
-        return obj
-
-    def link_to_place(self):
-        """Связывает запись с местом Place, заполняя атрибут place_id."""
-
-        # Попробуем найти ранее связанные записи.
-        match = self.__class__.objects.filter(
-            src_alias=self.src_alias,
-            src_place_id=self.src_place_id,
-        ).first()
-
-        if match:
-            self.place_id = match.place_id
-
-        else:
-            # Вычисляем место.
-            match = Place.create_place_from_name(self.src_place_name)
-            self.place_id = match.id
 
     @classmethod
     def update_statuses(cls):
