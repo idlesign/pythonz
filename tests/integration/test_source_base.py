@@ -27,3 +27,6 @@ def test_sources():
     assert list(SourceGroup2.get_sources().keys()) == []
 
     assert SourceGroup1.get_source('one') is Src1Grp1
+
+    enum = SourceGroup1.get_enum()
+    assert enum.values == ['one', 'two']

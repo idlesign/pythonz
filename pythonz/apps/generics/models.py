@@ -1,5 +1,6 @@
 import os
 from contextlib import suppress
+from copy import copy
 from datetime import datetime
 from enum import unique
 from typing import List, Union
@@ -7,8 +8,9 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.core.cache import cache
-from django.db import models
+from django.db import models, IntegrityError
 from django.db.models import Model, QuerySet
+from django.db.models.base import ModelBase
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -17,6 +19,7 @@ from django.utils.text import Truncator
 from siteflags.models import ModelWithFlag
 from slugify import Slugify, CYRILLIC
 
+from ..integration.base import RemoteSource
 from ..integration.utils import get_image_from_url
 from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
 from ..utils import UTM, TextCompiler, BasicTypograph
@@ -600,3 +603,76 @@ class RealmBaseModel(ModelWithFlag):
     def get_display_name(self) -> str:
         """Имя для отображения в интерфейсе."""
         return self.__str__()
+
+
+class WithRemoteSourceMeta(ModelBase):
+
+    def __new__(cls, name, bases, attrs, **kwargs):
+        source_group = attrs['source_group']
+
+        if source_group:
+            # Прописываем choices для источников.
+            src_alias = copy(bases[-1].src_alias.field)
+            src_alias.choices = source_group.get_enum().choices
+            attrs['src_alias'] = src_alias
+
+        cls_new = super().__new__(cls, name, bases, attrs, **kwargs)
+
+        if source_group:
+            # Прописываем уникальность.
+            cls_new._meta.unique_together = (('src_alias', 'src_id'),)
+
+        return cls_new
+
+
+class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
+    """Примесь для моделей, умеющих хранить данные, полученные из внешних источников."""
+
+    source_group: RemoteSource = None
+
+    # Ограничения (choices) выбора источников проставляются в метаклассе.
+    src_alias = models.CharField('Идентификатор источника', max_length=20)
+    src_id = models.CharField('ID в источнике', max_length=50)
+
+    class Meta:
+
+        abstract = True
+        unique_together = ('src_alias', 'src_id')
+
+    @classmethod
+    def spawn_object(cls, item_data: dict, *, source_alias: str):
+        """Конструирует объект модели, наполняя данными из словаря.
+
+        :param item_data:
+        :param source_alias: Псевдоним источника.
+
+        """
+        obj = cls(**item_data)
+        obj.src_alias = source_alias
+        obj.status = obj._status_backup = cls.Status.PUBLISHED
+
+        return obj
+
+    @classmethod
+    def fetch_items(cls):
+        """Добывает данные из источника и складирует их."""
+
+        for source_alias, source in cls.source_group.get_sources().items():
+
+            items = source().fetch_list()
+
+            if not items:
+                return
+
+            for item_data in items:
+
+                if item_data.pop('__skip', True):
+                    continue
+
+                obj = cls.spawn_object(item_data, source_alias=source_alias)
+
+                try:
+                    obj.save()
+
+                except IntegrityError:
+                    pass
