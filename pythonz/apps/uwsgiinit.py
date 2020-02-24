@@ -4,7 +4,7 @@ from sitemessage.toolbox import send_scheduled_messages, cleanup_sent_messages, 
 from uwsgiconf.runtime.scheduling import register_timer, register_cron
 
 from .commands import publish_postponed, clean_missing_refs
-from .models import Summary, PEP, ExternalResource, Vacancy
+from .models import Summary, PEP, ExternalResource, Vacancy, Event
 from .sitemessages import PythonzEmailDigest
 
 
@@ -28,6 +28,12 @@ def task_get_vacancies(sig_num):
     """Синхронизация вакансий."""
     Vacancy.update_statuses()
     Vacancy.fetch_items()
+
+
+@register_cron(hour=_nsk(15), minute=25)
+def task_get_events(sig_num):
+    """Синхронизация событий."""
+    Event.fetch_items()
 
 
 @register_cron(hour=-2, minute=1)
