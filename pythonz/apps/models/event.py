@@ -10,14 +10,16 @@ from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
 from .discussion import ModelWithDiscussions
-from .place import Place
+from .place import WithPlace
 from .shared import UtmReady, HINT_IMPERSONAL_REQUIRED
-from ..generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
+from ..generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator
+from ..integration.base import RemoteSource
+from ..integration.events import EventSource
 
 
 class Event(
-    UtmReady, InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
-    ModelWithCompiledText):
+    UtmReady, InheritedModel, CommonEntityModel, ModelWithDiscussions, ModelWithCategory,
+    ModelWithCompiledText, WithPlace):
     """Модель сущности `Событие`."""
 
     @unique
@@ -36,20 +38,13 @@ class Event(
         LECTURE = 3, 'Конференция'
         SPRINT = 4, 'Спринт'
 
-    url = models.URLField('Страница в сети', null=True, blank=True)
+    source_group = EventSource
 
     contacts = models.CharField(
         'Контактные лица', null=True, blank=True, max_length=255,
         help_text=(
             'Контактные лица через запятую, координирующие/устраивающие событие.'
             f'{ModelWithAuthorAndTranslator._hint_userlink}'))
-
-    place = models.ForeignKey(
-        Place, verbose_name='Место', related_name='events', null=True, blank=True,
-        help_text=(
-            'Укажите место проведения мероприятия.<br><b>Конкретный адрес следует указывать в описании.</b><br>'
-            'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».'),
-        on_delete=models.CASCADE)
 
     specialization = models.PositiveIntegerField('Специализация', choices=Spec.choices, default=Spec.DEDICATED)
 
@@ -61,7 +56,7 @@ class Event(
         'Завершение', null=True, blank=True,
         help_text='Дату завершения можно и не указывать.')
 
-    fee = models.BooleanField('Участие платное', default=False, db_index=True)
+    fee = models.BooleanField('Участие платное', null=True, blank=True, db_index=True)
 
     history = HistoricalRecords()
 
@@ -80,6 +75,12 @@ class Event(
         text_src = {
             'verbose_name': 'Описание, контактная информация',
             'help_text': HINT_IMPERSONAL_REQUIRED,
+        }
+
+        place = {
+            'help_text': (
+                'Укажите место проведения мероприятия.<br><b>Конкретный адрес следует указывать в описании.</b><br>'
+                'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».'),
         }
 
         cover = 'Логотип'
@@ -119,6 +120,35 @@ class Event(
     def time_forgetmenot(self) -> datetime:
         """Дата напоминания о предстоящем событии (на сутки ранее начала события)."""
         return self.time_start - timedelta(days=1)
+
+    @classmethod
+    def spawn_object(cls, item_data: dict, *, source: RemoteSource):
+
+        big = item_data.pop('big')
+        page_info = item_data.pop('__page_info')
+
+        obj: Event = super().spawn_object(item_data, source=source)
+        obj.specialization = cls.Spec.HAS_SECTION
+
+        if big:
+            obj.type = cls.Type.CONFERENCE
+
+        if page_info:
+            site_name = page_info.site_name
+            description = page_info.description
+
+            if description:
+                if site_name == 'Meetup':
+                    # Meetup в описание пихает мусорную конкатенацию.
+                    description = page_info.title or ''
+
+                obj.description = description
+
+            images = page_info.images
+            if images:
+                obj.update_cover_from_url(images[0]['src'])
+
+        return obj
 
     @classmethod
     def get_paginator_objects(cls) -> QuerySet:
