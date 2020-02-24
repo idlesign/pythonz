@@ -31,3 +31,4 @@ envbox==1.1.0
 uwsgi==2.0.18
 uwsgiconf[cli]==0.20.1
 psycopg2==2.8.4
+icalendar_light==0.2.0
