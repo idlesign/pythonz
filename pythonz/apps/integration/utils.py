@@ -213,7 +213,11 @@ def get_location_data(location_name: str) -> dict:
     except Exception:
         return {}
 
-    collection = doc['response']['GeoObjectCollection']
+    response = doc.get('response')
+    if not response:
+        return {}
+
+    collection = response['GeoObjectCollection']
     found = collection['metaDataProperty']['GeocoderResponseMetaData']['found']
 
     if not int(found):
