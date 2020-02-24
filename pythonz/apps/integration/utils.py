@@ -131,7 +131,7 @@ def get_image_from_url(url: str) -> Optional[ContentFile]:
     if response.status_code != 200 or not content:
         return None
 
-    return ContentFile(content, url.rsplit('/', 1)[-1])
+    return ContentFile(content, url.rstrip('/').rsplit('/', 1)[-1])
 
 
 def scrape_page(url: str) -> dict:
