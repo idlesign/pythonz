@@ -1,7 +1,7 @@
 <script src="//yastatic.net/forgetmenot/forgetmenot.min.js" type="text/javascript"></script>
 <div class="ya-forgetmenot-autoinit" style="padding-bottom: 10px;"
      data-forgetmenot-name="{{ event.title }}"
-     data-forgetmenot-description="{{ event.place.title }} {{ event.time_start|date:"d E H:i" }} {% if event.time_finish %}- {{ event.time_finish|date:"d E H:i" }}{% endif %} {{ event.fee|yesno:"Платно,Бесплатно" }}"
+     data-forgetmenot-description="{{ event.place.title }} {{ event.time_start|date:"d E H:i" }} {% if event.time_finish %}- {{ event.time_finish|date:"d E H:i" }}{% endif %} {{ event.fee|yesno:"Платно,Бесплатно," }}"
      data-forgetmenot-reminder-date="{{ event.time_forgetmenot|date:'c' }}"
      data-forgetmenot-size="l" data-forgetmenot-icon="bell"
      data-forgetmenot-theme="white">

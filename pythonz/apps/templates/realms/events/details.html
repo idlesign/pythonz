@@ -50,31 +50,51 @@
                 </span>
                 {% endif %}
             {% endif %}
-
-            {% if event.place or event.src_place_name %}
-                <div class="small">
-                    {% if event.place %}
-                        <a href="{{ event.place.get_absolute_url }}"><span itemprop="location">{{ event.place.title }}</span></a>
-                    {% else %}
-                        <span itemprop="location">{{ event.src_place_name }}</span>
-                    {% endif %}
-                </div>
-            {% endif %}
-
         </div>
     </div>
 
+    <div class="text-muted mb-2 small">
+        <table class="table table-borderless table-sm">
+
+        {% if event.place or event.src_place_name %}
+            <tr>
+                <td width="2%" nowrap>{% model_field_verbose_name from event.place %}:</td>
+                <td>
+                {% if event.place %}
+                    <a href="{{ event.place.get_absolute_url }}"><span itemprop="location">{{ event.place.title }}</span></a>
+                {% else %}
+                    <span itemprop="location">{{ event.src_place_name }}</span>
+                {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+            <tr>
+                <td width="2%" nowrap>{% model_field_verbose_name from event.type %}:</td>
+                <td>{{ event.get_display_type }}</td>
+            </tr>
+            <tr>
+                <td width="2%" nowrap>{% model_field_verbose_name from event.specialization %}:</td>
+                <td>{{ event.get_display_specialization }}</td>
+            </tr>
+        {% if event.url %}
+            <tr>
+                <td width="2%" nowrap>{% model_field_verbose_name from event.url %}:</td>
+                <td><a href="{{ event.get_utm_url }}">{{ event.url }}</a></td>
+            </tr>
+        {% endif %}
+        {% if event.contacts %}
+            <tr>
+                <td width="2%" nowrap>{% model_field_verbose_name from event.contacts %}</td>
+                <td class="py_user">{{ event.contacts }}</td>
+            </tr>
+        {% endif %}
+        </table>
+    </div>
     {% if not event.is_now and not event.is_in_past and event.time_start %}
-        <div class="mt-2 mb-3">
+        <div class="mb-3">
             {% include "sub/ya_forgetmenot.html" %}
         </div>
     {% endif %}
-
-    <div class="mb-2">{{ event.get_display_type }} <span class="cl__gray">&#8212; {{ event.get_display_specialization }}</span></div>
-    <div class="text-muted mb-3 small">
-        {% if event.url %}<div>{% model_field_verbose_name from event.url %}: <a href="{{ event.get_utm_url }}">{{ event.url }}</a></div>{% endif %}
-        {% if event.contacts %}<div class="py_user">{% model_field_verbose_name from event.contacts %}: {{ event.contacts }}</div>{% endif %}
-    </div>
 
     {% if event.place %}
         <div id="event-map" class="mt-3 mb-3" style="height: 200px"></div>
