@@ -112,10 +112,17 @@ class WithPlace(WithRemoteSource):
     def link_to_place(self):
         """Связывает запись с местом Place, заполняя атрибут place_id."""
 
-        # Попробуем найти ранее связанные записи.
+        src_place_id = self.src_place_id
+
+        if not src_place_id:
+            # Нам необходим некий идентификатор места во внешней системе.
+            # Без него ничего делать не будем.
+            return
+
+        # Попробуем найти ранее связанные записи, чтобы не нагружать API карт.
         match = self.__class__.objects.filter(
             src_alias=self.src_alias,
-            src_place_id=self.src_place_id,
+            src_place_id=src_place_id,
         ).first()
 
         if match:
