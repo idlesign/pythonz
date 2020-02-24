@@ -1,6 +1,8 @@
 from collections import defaultdict
+from concurrent.futures import as_completed
+from concurrent.futures.thread import ThreadPoolExecutor
 from enum import unique
-from typing import Dict, Type, Optional, List
+from typing import Dict, Type, Optional, List, Set
 
 from django.db import models
 
@@ -84,3 +86,50 @@ class RemoteSource:
 
         """
         return get_page_info(url)
+
+    @classmethod
+    def get_pages_info(cls, urls: Set[str], *, thread_num: int = None) -> Dict[str, Optional[PageInfo]]:
+        """Возвращает информацию о страницах, расположенных
+        по указанным адресам. Отправляет запросы в нитях.
+
+        :param urls:
+        :param thread_num: Количество нитей для забора данных.
+            Если не указано, о будет создано нитей по количеству URL,
+            но не более определённого числа.
+
+        """
+        result = {}
+
+        if not thread_num:
+            max_auto_threads = 12
+
+            thread_num = len(urls)
+
+            if thread_num > max_auto_threads:
+                thread_num = max_auto_threads
+
+        with ThreadPoolExecutor(max_workers=thread_num) as executor:
+
+            task_to_url = {executor.submit(cls.get_page_info, url): url for url in urls}
+
+            for task in as_completed(task_to_url):
+                url = task_to_url[task]
+                result[url] = task.result()
+
+        return result
+
+    @classmethod
+    def contribute_page_info(cls, results: List[dict]):
+        """Дополняет указанные словари результатов ключем __page_info,
+        в котором будут указаны данные страниц, упомянутых в ключах `url`.
+
+        Внимание: изменяет исходный список.
+
+        :param results:
+
+        """
+        by_url = cls.get_pages_info(set(item['url'] for item in results))
+
+        for item in results:
+            page_info = by_url.get(item['url'])
+            item['__page_info'] = page_info or None

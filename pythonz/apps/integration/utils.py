@@ -2,7 +2,7 @@ import os
 from collections import namedtuple
 from typing import List, Optional
 
-import lassie
+from lassie import Lassie, LassieError
 import requests
 from PIL import Image
 from bs4 import BeautifulSoup
@@ -22,29 +22,39 @@ if False:  # pragma: nocover
 PageInfo = namedtuple('PageInfo', ['title', 'description', 'site_name', 'images'])
 
 
-def get_page_info(url: str) -> Optional[PageInfo]:
+def get_page_info(url: str, timeout: int = 4) -> Optional[PageInfo]:
     """Возвращает информацию о странице, расположенной
     по указанному адресу, либо None.
 
     :param url:
+    :param timeout: Таймаут на подключение.
 
     """
     if not url:
         return None
 
-    result = lassie.fetch(
-        url,
-        touch_icon=False,
-        favicon=False,
-    )
+    lassie = Lassie()
+    lassie.request_opts = {'timeout': timeout}
+
+    try:
+        result = lassie.fetch(
+            url,
+            touch_icon=False,
+            favicon=False,
+        )
+
+    except LassieError:
+        # В LassieError заворачиваются исключения requests,
+        # в т.ч.ошибки подключения, таймаут и пр.
+        return None
 
     if result['status_code'] != 200:
         return None
 
     info = PageInfo(
         title=result['title'],
-        description=result['description'],
-        site_name=result['site_name'],
+        description=result.get('description', ''),
+        site_name=result.get('site_name', ''),
         images=result['images'],
     )
 
@@ -129,6 +139,8 @@ def scrape_page(url: str) -> dict:
     # Функция использовала ныне недоступный Rich Content API от Яндекса для получения данных о странице.
     # Если функциональность будет востребована, нужно будет перевести на использование догого механизма.
     result = {}
+
+    # todo Быть может перейти на get_page_info().
 
     if 'content' not in result:
         return {}
