@@ -4,6 +4,8 @@ from typing import Dict, Type, Optional, List
 
 from django.db import models
 
+from .utils import get_from_url, PageInfo, get_page_info
+
 
 class RemoteSource:
     """База для удалённых источников данных."""
@@ -56,9 +58,29 @@ class RemoteSource:
 
         return enum
 
+    def request(self, url: str) -> str:
+        """Отправляет запрос на указанный URL.
+
+        :param url:
+
+        """
+        response = get_from_url(url)
+
+        return response.text
+
     def fetch_list(self) -> List[dict]:
         """Возвращает словарь с данными записей, полученных из внешнего
         источника.
 
         """
         raise NotImplementedError  # pragma: nocover
+
+    @classmethod
+    def get_page_info(cls, url: str) -> Optional[PageInfo]:
+        """Возвращает информацию о странице, расположенной
+        по указанному адресу, либо None.
+
+        :param url:
+
+        """
+        return get_page_info(url)

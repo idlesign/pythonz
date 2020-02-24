@@ -1,6 +1,8 @@
 import os
+from collections import namedtuple
 from typing import List, Optional
 
+import lassie
 import requests
 from PIL import Image
 from bs4 import BeautifulSoup
@@ -15,6 +17,38 @@ from ..utils import truncate_words, truncate_chars
 
 if False:  # pragma: nocover
     from ..generics.realms import RealmBase
+
+
+PageInfo = namedtuple('PageInfo', ['title', 'description', 'site_name', 'images'])
+
+
+def get_page_info(url: str) -> Optional[PageInfo]:
+    """Возвращает информацию о странице, расположенной
+    по указанному адресу, либо None.
+
+    :param url:
+
+    """
+    if not url:
+        return None
+
+    result = lassie.fetch(
+        url,
+        touch_icon=False,
+        favicon=False,
+    )
+
+    if result['status_code'] != 200:
+        return None
+
+    info = PageInfo(
+        title=result['title'],
+        description=result['description'],
+        site_name=result['site_name'],
+        images=result['images'],
+    )
+
+    return info
 
 
 def get_from_url(url: str, *, method: str = 'get', **kwargs) -> Response:
