@@ -124,4 +124,6 @@ class WithPlace(WithRemoteSource):
         else:
             # Вычисляем место.
             match = Place.create_place_from_name(self.src_place_name)
-            self.place_id = match.id
+
+            if match:
+                self.place_id = match.id
