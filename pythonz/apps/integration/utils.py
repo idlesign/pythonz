@@ -1,8 +1,8 @@
 import os
 from collections import namedtuple
+from pathlib import Path
 from typing import List, Optional
 
-from lassie import Lassie, LassieError
 import requests
 from PIL import Image
 from bs4 import BeautifulSoup
@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.utils import timezone
+from lassie import Lassie, LassieError
 from requests import Response
 
 from ..signals import sig_integration_failed
@@ -118,13 +119,19 @@ def get_json(url: str, return_none_statuses: List[int] = None) -> dict:
     return result
 
 
-def get_image_from_url(url: str) -> ContentFile:
+def get_image_from_url(url: str) -> Optional[ContentFile]:
     """Забирает изображение с указанного URL.
 
     :param url:
 
     """
-    return ContentFile(requests.get(url).content, url.rsplit('/', 1)[-1])
+    response = requests.get(url)
+    content = response.content
+
+    if response.status_code != 200 or not content:
+        return None
+
+    return ContentFile(content, url.rsplit('/', 1)[-1])
 
 
 def scrape_page(url: str) -> dict:
@@ -171,10 +178,10 @@ def get_thumb_url(realm: 'RealmBase', image: Image, width: int, height: int, abs
     :param absolute_url:
 
     """
-    base_path = os.path.join('img', realm.name_plural, 'thumbs', f'{width}x{height}')
+    base_path = Path('img') / realm.name_plural / 'thumbs' / f'{width}x{height}'
 
     try:
-        thumb_file_base = os.path.join(base_path, os.path.basename(image.path))
+        thumb_file_base = base_path / Path(image.path).name
 
     except (ValueError, AttributeError):
         return ''
@@ -185,9 +192,9 @@ def get_thumb_url(realm: 'RealmBase', image: Image, width: int, height: int, abs
 
     if url is None:
 
-        thumb_file = os.path.join(settings.MEDIA_ROOT, thumb_file_base)
+        thumb_file = Path(settings.MEDIA_ROOT) / thumb_file_base
 
-        if not os.path.exists(thumb_file):
+        if not thumb_file.exists():
 
             try:
                 os.makedirs(os.path.join(settings.MEDIA_ROOT, base_path), mode=0o755)
@@ -197,9 +204,10 @@ def get_thumb_url(realm: 'RealmBase', image: Image, width: int, height: int, abs
 
             img = Image.open(image)
             img.thumbnail((width, height), Image.ANTIALIAS)
-            img.convert('RGB').save(thumb_file)
+            img.convert('RGB').save(f'{thumb_file}', format=img.format.lower())
 
-        url = os.path.join(settings.MEDIA_URL, thumb_file_base)
+        url = Path(settings.MEDIA_URL) / thumb_file_base
+        url = f'{url}'
 
         if absolute_url:
             url = f'{settings.SITE_URL}{url}'
