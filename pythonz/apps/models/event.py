@@ -34,8 +34,8 @@ class Event(
     class Type(models.IntegerChoices):
 
         MEETING = 1, 'Встреча'
-        CONFERENCE = 2, 'Лекция'
-        LECTURE = 3, 'Конференция'
+        CONFERENCE = 2, 'Конференция'
+        LECTURE = 3, 'Лекция'
         SPRINT = 4, 'Спринт'
 
     source_group = EventSource
