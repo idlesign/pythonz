@@ -641,6 +641,15 @@ class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
         abstract = True
         unique_together = ('src_alias', 'src_id')
 
+    def extract_page_info(self):
+        """Возвращает информацию о странице, расположенной
+        по указанному в объекте URL, либо None.
+
+        """
+        source = self.source_group.get_source(self.src_alias)
+        info = source.get_page_info(self.url)
+        return info
+
     @classmethod
     def spawn_object(cls, item_data: dict, *, source: RemoteSource):
         """Конструирует объект модели, наполняя данными из словаря.
