@@ -2,6 +2,12 @@
 {% load model_field %}
 
 
+{% block head %}
+    {{ block.super }}
+    {% include "sub/ya_map_head.html" %}
+{% endblock %}
+
+
 {% block page_description %}Событие «{{ event.title }}»{% endblock %}
 
 
@@ -23,6 +29,7 @@
         <div class="pull-right">
             {% if event.fee %}
                 <span class="badge badge-danger" title="За участие взымается плата">Платно</span>
+            {% elif event.fee is None %}
             {% else %}
                 <span class="badge badge-success" title="Участие беслатное">Бесплатно</span>
             {% endif %}
@@ -44,9 +51,13 @@
                 {% endif %}
             {% endif %}
 
-            {% if event.place %}
+            {% if event.place or event.src_place_name %}
                 <div class="small">
-                    <a href="{{ event.place.get_absolute_url }}"><span itemprop="location">{{ event.place.title }}</span></a>
+                    {% if event.place %}
+                        <a href="{{ event.place.get_absolute_url }}"><span itemprop="location">{{ event.place.title }}</span></a>
+                    {% else %}
+                        <span itemprop="location">{{ event.src_place_name }}</span>
+                    {% endif %}
                 </div>
             {% endif %}
 
@@ -65,15 +76,22 @@
         {% if event.contacts %}<div class="py_user">{% model_field_verbose_name from event.contacts %}: {{ event.contacts }}</div>{% endif %}
     </div>
 
+    {% if event.place %}
+        <div id="event-map" class="mt-3 mb-3" style="height: 200px"></div>
+        {% include "sub/ya_map.html" with item=event.place element_id="event-map" zoom=5 %}
+    {% endif %}
+
 {% endblock %}
 
 {% block details_description %}
 
+    {% if item.description or event.text %}
     <div class="card bg-light">
         <div class="card-body">
             <p><i itemprop="description">{{ item.description|urlize|linebreaksbr }}</i></p>
             <p class="py_user">{{ event.text|safe }}</p>
         </div>
     </div>
+    {% endif %}
 
 {% endblock %}
