@@ -634,6 +634,8 @@ class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
     src_alias = models.CharField('Идентификатор источника', max_length=20)
     src_id = models.CharField('ID в источнике', max_length=50)
 
+    url = models.URLField('Страница в сети', null=True, blank=True)
+
     class Meta:
 
         abstract = True

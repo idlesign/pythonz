@@ -15,13 +15,10 @@ class Vacancy(UtmReady, WithPlace):
     paginator_related: List[str] = ['place']
     items_per_page: int = 15
     notify_on_publish: bool = False
-    url_attr: str = 'url_site'
 
     source_group = VacancySource
 
     title = models.CharField('Название', max_length=255)
-
-    url_site = models.URLField('Страница сайта')
 
     url_api = models.URLField('URL API', null=True, blank=True)
 

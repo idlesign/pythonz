@@ -78,7 +78,7 @@ class HhVacancy(VacancySource):
                 'src_place_name': item['area']['name'],
                 'src_place_id': item['area']['id'],
                 'title': item['name'],
-                'url_site': item['alternate_url'],
+                'url': item['alternate_url'],
                 'url_api': item['url'],
                 'url_logo': url_logo,
                 'employer_name': employer['name'],
