@@ -3,7 +3,7 @@
 
 {% block head %}
     {{ block.super }}
-    <script src="//api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    {% include "sub/ya_map_head.html" %}
     <meta property="yandex_recommendations_kill" content="1"/>
 {% endblock %}
 

@@ -10,7 +10,7 @@
 
 {% block head %}
     {{ block.super }}
-    <script src="//api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    {% include "sub/ya_map_head.html" %}
 {% endblock %}
 
 
@@ -18,16 +18,8 @@
 
 
 {% block cover %}
-    <div id="cover_map" style="width: 260px; height: 300px;"></div>
-    <script type="text/javascript">
-        ymaps.ready(function() {
-            var pos = [{{ item.geo_pos }}],
-                title = '{{ item.title }}',
-                coverMap = new ymaps.Map('cover_map', {center: pos, zoom: 2, controls: []}),
-                placeMark = new ymaps.Placemark(pos, {iconContent: title}, {preset: 'islands#darkBlueStretchyIcon'});
-            coverMap.geoObjects.add(placeMark);
-        });
-    </script>
+    <div id="cover-map" style="width: 260px; height: 300px;"></div>
+    {% include "sub/ya_map.html" with item=item element_id="cover-map" %}
 {% endblock %}
 
 

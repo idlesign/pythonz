@@ -1,0 +1,9 @@
+<script type="text/javascript">
+    ymaps.ready(function() {
+        var pos = [{{ item.geo_pos }}],
+            title = '{{ item.title }}',
+            coverMap = new ymaps.Map('{{ element_id }}', {center: pos, zoom: {{ zoom|default:"2" }}, controls: []}),
+            placeMark = new ymaps.Placemark(pos, {iconContent: title}, {preset: 'islands#darkBlueStretchyIcon'});
+        coverMap.geoObjects.add(placeMark);
+    });
+</script>
