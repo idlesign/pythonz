@@ -19,3 +19,9 @@ from django.conf import settings
 def robot(user_create):
     """Возвращает объект пользовтеля-робота (суперпользователь)."""
     yield user_create(attributes={'id': settings.ROBOT_USER_ID}, superuser=True)
+
+
+@pytest.fixture
+def mock_get_location(monkeypatch):
+    monkeypatch.setattr(
+        'pythonz.apps.models.place.get_location_data', lambda location_name: {})
