@@ -1,7 +1,9 @@
 import re
+from datetime import timedelta
 from typing import List
 from hashlib import md5
 
+from django.utils import timezone
 from icalendar_light.toolbox import Calendar
 
 from .base import RemoteSource
@@ -18,6 +20,9 @@ class GoogleCalendarSource(EventSource):
 
     group: str = ''
     """Идентификатор группы гуглового календаря."""
+
+    days_skip: int = 7
+    """Если событие меньше, чем за указанное количество дней, оно не будет принято в рассчёт."""
 
     days_forward: int = 30
     """Количество дней, на которое требуется заглянуть вперёд в календаре."""
@@ -41,6 +46,7 @@ class GoogleCalendarSource(EventSource):
 
         item = {
             '__skip': False,
+
             'title': event.summary,
             'url': url,
             'src_id': md5(f'{event.uid}|{dt_start.date()}'.encode()).hexdigest(),
@@ -54,19 +60,27 @@ class GoogleCalendarSource(EventSource):
 
     def fetch_list(self) -> List[dict]:
 
-        result = []
+        results = []
 
         compose = self.compose_item
 
         contents = self.request(self.construct_url())
 
+        min_date = timezone.now() + timedelta(days=self.days_skip)
         events = Calendar.iter_events_upcoming(contents.splitlines(), days_forward=self.days_forward)
 
         for event in events:
-            if not event.status or event.status == 'CONFIRMED':
-                result.append(compose(event))
 
-        return result
+            if not event.status or event.status == 'CONFIRMED':
+
+                if event.dt_start < min_date:
+                    continue
+
+                results.append(compose(event))
+
+        self.contribute_page_info(results)
+
+        return results
 
 
 class PyEvent(GoogleCalendarSource):
