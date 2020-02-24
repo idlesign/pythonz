@@ -91,9 +91,9 @@ class Place(RealmBaseModel, ModelWithDiscussions):
 class WithPlace(WithRemoteSource):
     """Примесь для сущностей, которые могут связывать с местом."""
 
-    src_place_name = models.CharField('Название места в источнике', max_length=255)
+    src_place_name = models.CharField('Название места в источнике', max_length=255, default='')
 
-    src_place_id = models.CharField('ID места в источнике', max_length=20, db_index=True)
+    src_place_id = models.CharField('ID места в источнике', max_length=20, db_index=True, default='')
 
     place = models.ForeignKey(
         Place, verbose_name='Место', related_name='lnk_%(class)s', null=True, blank=True,

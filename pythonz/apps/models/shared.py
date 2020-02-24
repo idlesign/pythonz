@@ -12,4 +12,4 @@ class UtmReady:
 
     def get_utm_url(self) -> str:
         """Возвращает URL с UTM-метками."""
-        return UTM.add_to_external_url(getattr(self, self.url_attr))
+        return UTM.add_to_external_url(getattr(self, self.url_attr) or '')

@@ -631,8 +631,8 @@ class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
     source_group: Type[RemoteSource] = None
 
     # Ограничения (choices) выбора источников проставляются в метаклассе.
-    src_alias = models.CharField('Идентификатор источника', max_length=20)
-    src_id = models.CharField('ID в источнике', max_length=50)
+    src_alias = models.CharField('Идентификатор источника', max_length=20, null=True, blank=True)
+    src_id = models.CharField('ID в источнике', max_length=50, null=True, blank=True)
 
     url = models.URLField('Страница в сети', null=True, blank=True)
 
