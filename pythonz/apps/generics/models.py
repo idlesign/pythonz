@@ -167,7 +167,9 @@ class CommonEntityModel(models.Model):
 
         """
         img = get_image_from_url(url)
-        self.cover.save(img.name, img, save=False)
+
+        if img is not None:
+            self.cover.save(img.name, img, save=False)
 
     def get_linked(self) -> Union[List, QuerySet]:
         """Возвращает связанные объекты."""
