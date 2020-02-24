@@ -6,6 +6,7 @@ from simple_history.models import HistoricalRecords
 
 from .discussion import ModelWithDiscussions
 from ..generics.models import RealmBaseModel, WithRemoteSource
+from ..integration.base import RemoteSource
 from ..integration.utils import get_location_data
 
 
@@ -103,8 +104,8 @@ class WithPlace(WithRemoteSource):
         abstract = True
 
     @classmethod
-    def spawn_object(cls, *args, **kwargs):
-        obj = super().spawn_object(*args, **kwargs)
+    def spawn_object(cls, item_data: dict, *, source: RemoteSource):
+        obj = super().spawn_object(item_data, source=source)
         obj.link_to_place()
         return obj
 

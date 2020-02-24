@@ -3,19 +3,19 @@ from contextlib import suppress
 from copy import copy
 from datetime import datetime
 from enum import unique
-from typing import List, Union
+from typing import List, Union, Type
 from uuid import uuid4
 
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models, IntegrityError
 from django.db.models import Model, QuerySet
-from django.db.models.base import ModelBase
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import urlize
 from django.utils.text import Truncator
+from etc.models import InheritedModelMetaclass
 from siteflags.models import ModelWithFlag
 from slugify import Slugify, CYRILLIC
 
@@ -605,7 +605,7 @@ class RealmBaseModel(ModelWithFlag):
         return self.__str__()
 
 
-class WithRemoteSourceMeta(ModelBase):
+class WithRemoteSourceMeta(InheritedModelMetaclass):
 
     def __new__(cls, name, bases, attrs, **kwargs):
         source_group = attrs.get('source_group')
@@ -628,7 +628,7 @@ class WithRemoteSourceMeta(ModelBase):
 class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
     """Примесь для моделей, умеющих хранить данные, полученные из внешних источников."""
 
-    source_group: RemoteSource = None
+    source_group: Type[RemoteSource] = None
 
     # Ограничения (choices) выбора источников проставляются в метаклассе.
     src_alias = models.CharField('Идентификатор источника', max_length=20)
@@ -640,15 +640,15 @@ class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
         unique_together = ('src_alias', 'src_id')
 
     @classmethod
-    def spawn_object(cls, item_data: dict, *, source_alias: str):
+    def spawn_object(cls, item_data: dict, *, source: RemoteSource):
         """Конструирует объект модели, наполняя данными из словаря.
 
         :param item_data:
-        :param source_alias: Псевдоним источника.
+        :param source: Объект источника.
 
         """
         obj = cls(**item_data)
-        obj.src_alias = source_alias
+        obj.src_alias = source.alias
         obj.status = obj._status_backup = cls.Status.PUBLISHED
 
         return obj
@@ -657,9 +657,10 @@ class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
     def fetch_items(cls):
         """Добывает данные из источника и складирует их."""
 
-        for source_alias, source in cls.source_group.get_sources().items():
+        for _, source in cls.source_group.get_sources().items():
 
-            items = source().fetch_list()
+            source_obj = source()
+            items = source_obj.fetch_list()
 
             if not items:
                 return
@@ -669,7 +670,7 @@ class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
                 if item_data.pop('__skip', True):
                     continue
 
-                obj = cls.spawn_object(item_data, source_alias=source_alias)
+                obj = cls.spawn_object(item_data, source=source_obj)
 
                 try:
                     obj.save()
