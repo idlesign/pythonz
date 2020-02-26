@@ -1,11 +1,14 @@
+from enum import Enum
 from itertools import groupby
 from operator import attrgetter
-from typing import List
+from sys import maxsize
+from typing import List, Type, Dict
 from urllib.parse import quote_plus
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.shortcuts import render
@@ -28,7 +31,7 @@ from .exceptions import RedirectRequired
 from .generics.views import DetailsView, RealmView, EditView, ListingView, HttpRequest
 from .integration.telegram import handle_request
 from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource, ReferenceMissing, \
-    Category, Person
+    Category, Person, PEP
 from .utils import message_warning, swap_layout
 
 
@@ -124,6 +127,45 @@ class PlaceListingView(RealmView):
     def get(self, request: HttpRequest) -> HttpResponse:
         places = Place.get_actual().order_by('-supporters_num', 'title')
         return self.render(request, {self.realm.name_plural: places})
+
+
+class PepListingView(ListingView):
+    """Представление со списком PEP."""
+
+    def get_paginator_per_page(self, request: HttpRequest) -> int:
+        if request.disable_paginator:
+            return maxsize
+        return super().get_paginator_per_page(request)
+
+    def apply_object_filter(self, *, attrs: Dict[str, Type[Enum]], objects: QuerySet):
+
+        applied = False
+
+        for attr, enum in attrs.items():
+            val = self.request.GET.get(attr)
+
+            if val is not None:
+
+                val = int(val)
+
+                if val in enum.values:
+                    objects = objects.filter(**{attr: val})
+                    applied = True
+
+        return applied, objects
+
+    def get_paginator_objects(self) -> QuerySet:
+
+        objects = super().get_paginator_objects()
+
+        applied, objects = self.apply_object_filter(attrs={
+            'status': PEP.Status,
+            'type': PEP.Type,
+        }, objects=objects)
+
+        self.request.disable_paginator = applied
+
+        return objects
 
 
 class VacancyListingView(ListingView):

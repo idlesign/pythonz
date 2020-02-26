@@ -121,7 +121,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     @classmethod
     def get_paginator_objects(cls) -> QuerySet:
-        return cls.objects.order_by('num')
+        return cls.objects.order_by(cls.paginator_order)
 
     def get_description(self) -> str:
         # Русское наименование для показа в рассылке и подобном.

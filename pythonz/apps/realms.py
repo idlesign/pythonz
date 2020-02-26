@@ -21,7 +21,8 @@ from .models import User, Discussion, Book, Video, Place, Article, Community, Ev
     PEP, Person, Category
 from .signals import sig_support_changed
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
-    ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView, PersonDetailsView
+    ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView, PersonDetailsView, \
+    PepListingView
 from .zen import register_zen_siteblock
 
 # Регистрируем блок сайта с дзеном
@@ -553,6 +554,8 @@ class PepRealm(RealmBase):
 
     view_listing_description: str = 'Предложения по улучшению Питона (PEP).'
     view_listing_keywords: str = 'python pep, преложения по улучшению, пепы, пеп'
+
+    view_listing_base_class: Type[RealmView] = PepListingView
 
     allowed_views: Tuple[str, ...] = ('listing', 'details')
 

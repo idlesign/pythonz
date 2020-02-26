@@ -223,6 +223,9 @@ class ListingView(RealmView):
         page_items.before_current = reversed(range(page-1, min_page_before, -1))
         page_items.after_current = range(page+1, max_page_after+1)
 
+    def get_paginator_per_page(self, request: HttpRequest) -> int:
+        return self.realm.model.items_per_page
+
     def get(self, request: HttpRequest, category_id: int = None) -> HttpResponse:
 
         try:
@@ -231,7 +234,7 @@ class ListingView(RealmView):
         except (TypeError, ValueError):
             page = 1
 
-        paginator = Paginator(self.get_paginator_objects(), self.realm.model.items_per_page)
+        paginator = Paginator(self.get_paginator_objects(), self.get_paginator_per_page(request))
 
         try:
             page_items = paginator.page(page)

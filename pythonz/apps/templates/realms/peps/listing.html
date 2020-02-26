@@ -1,7 +1,8 @@
 {% extends "base_listing.html" %}
-
+{% load cache %}
 
 {% block bar_right %}
+    {% cache 21600 pep_filter %}
     <div>
         <h2>Легенда</h2><hr>
 
@@ -10,64 +11,31 @@
                 <tr><th colspan="2">Состояние</th></tr>
             </thead>
             <tbody>
+
+            {% for enum, tuple in realm.model.STATUS_MAP.items %}
             <tr>
-                <td><code>Черн.</code></td>
-                <td>Черновик</td>
+                <td class="table-{{ tuple.1 }}"><code>{{ tuple.0 }}</code></td>
+                <td class="table-{{ tuple.1 }}"><a href="?status={{ enum.value }}">{{ enum.label }}</a></td>
             </tr>
-            <tr>
-                <td class="table-info"><code>Действ.</code></td>
-                <td class="table-info">Действует</td>
-            </tr>
-            <tr>
-                <td class="table-danger"><code>Отозв.</code></td>
-                <td class="table-danger">Отозвано [автором]</td>
-            </tr>
-            <tr>
-                <td><code>Отл.</code></td>
-                <td>Отложено</td>
-            </tr>
-            <tr>
-                <td class="table-danger"><code>Откл.</code></td>
-                <td class="table-danger">Отклонёно</td>
-            </tr>
-            <tr>
-                <td class="table-info"><code>Утв.</code></td>
-                <td class="table-info">Утверждено (принято; возможно не реализовано)</td>
-            </tr>
-            <tr>
-                <td class="table-success"><code>Фин.</code></td>
-                <td class="table-success">Финализировано (работа завершена; реализовано)</td>
-            </tr>
-            <tr>
-                <td class="table-warning"><code>Зам.</code></td>
-                <td class="table-warning">Заменено (имеется большее актуальное PEP)</td>
-            </tr>
-            <tr>
-                <td><code>Апр.</code></td>
-                <td>Розыгрыш на 1 апреля</td>
-            </tr>
+            {% endfor %}
+
             </tbody>
 
             <thead>
                 <tr><th colspan="2">Тип</th></tr>
             </thead>
             <tbody>
+            {% for enum in realm.model.Type %}
             <tr>
-                <td><code>И</code></td>
-                <td>Информация</td>
+                <td><code>{{ enum.label.0 }}</code></td>
+                <td><a href="?type={{ enum.value }}">{{ enum.label }}</a></td>
             </tr>
-            <tr>
-                <td><code>П</code></td>
-                <td>Процесс</td>
-            </tr>
-            <tr>
-                <td><code>С</code></td>
-                <td>Стандарт</td>
-            </tr>
+            {% endfor %}
             </tbody>
         </table>
 
     </div>
+    {% endcache %}
 
     {{ block.super }}
 {% endblock %}
