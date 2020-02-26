@@ -180,14 +180,6 @@ var pythonz = {
 
         RULE_LITERAL: [/'([^']+)'/g, '<strong class="cl__green">$1</strong>'],
         RULE_UNDERMETHOD: [/(__[^\s]+__)/g, '<i>$1</i>'],
-        RULE_BASE_TYPES: [
-            /([^\w/])(bool|callable|dict|False|int|iterable|iterator|list|None|object|set|str|True|tuple|unicode)([^\w])/g,
-            '$1<small><code>$2</code></small>$3'
-        ],
-        RULE_EXCEPTIONS: [
-            /([^\w])(AttributeError|AssertionError|ImportError|IndexError|KeyError|NotImplementedError|RuntimeError|StopIteration|SyntaxError|SystemError|TypeError|UnboundLocalError|ValueError|OSError)([^\w])/g,
-            '$1<small><div class="badge badge-warning">$2</div></small>$3'
-        ],
         RULE_EMDASH: [/\s+-\s+/g, ' &#8212; '],
 
         decorateDescription: function(areaId) {
@@ -196,8 +188,6 @@ var pythonz = {
                 [
                     this.RULE_PYVERSION_REMOVED,
                     this.RULE_PYVERSION_ADDED,
-                    this.RULE_BASE_TYPES,
-                    this.RULE_EXCEPTIONS,
                     this.RULE_EMDASH
                 ]
             );
@@ -209,7 +199,6 @@ var pythonz = {
                 [
                     this.RULE_PYVERSION_REMOVED,
                     this.RULE_PYVERSION_ADDED,
-                    this.RULE_BASE_TYPES,
                     this.RULE_EMDASH
                 ]
             );
@@ -230,7 +219,6 @@ var pythonz = {
                     this.RULE_PYVERSION_ADDED,
                     this.RULE_LITERAL,
                     this.RULE_UNDERMETHOD,
-                    this.RULE_BASE_TYPES,
                     this.RULE_EXCEPTIONS,
                     this.RULE_EMDASH
                 ]
