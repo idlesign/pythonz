@@ -259,7 +259,7 @@ class ReferenceRealm(RealmBase):
     txt_form_edit: str = 'Редактировать статью'
 
     view_listing_description: str = 'Справочные и обучающие материалы по языку программирования Python.'
-    view_listing_keywords: str = 'справочник питон, руководство python'
+    view_listing_keywords: str = 'справочник питон, руководство python, самоучитель python'
 
     view_listing_base_class: Type[RealmView] = ReferenceListingView
     view_details_base_class: Type[RealmView] = ReferenceDetailsView
@@ -309,7 +309,7 @@ class ArticleRealm(RealmBase):
     txt_form_edit: str = 'Редактировать статью'
 
     view_listing_description: str = 'Статьи и заметки, связанные с программированием Python и не только.'
-    view_listing_keywords: str = 'статьи о питоне, материалы по python'
+    view_listing_keywords: str = 'статьи про питон, материалы по python'
 
     model: Type[RealmBaseModel] = Article
     form: Type[CommonEntityForm] = ArticleForm
@@ -346,7 +346,7 @@ class DiscussionRealm(RealmBase):
     txt_form_edit: str = 'Редактировать обсуждение'
 
     view_listing_description: str = 'Обсуждения вопросов, связанных с программированием на Питоне.'
-    view_listing_keywords: str = 'вопросы по питону, обсуждения python'
+    view_listing_keywords: str = 'вопросы по питону, обсуждения python, отзывы'
 
     model: Type[RealmBaseModel] = Discussion
     form: Type[CommonEntityForm] = DiscussionForm

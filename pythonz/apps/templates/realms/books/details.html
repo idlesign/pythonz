@@ -2,7 +2,7 @@
 {% load goodreads model_field %}
 
 
-{% block page_keywords %}{{ block.super }}, книга {{ book.title }}, купить {{ book.title }}{% endblock %}
+{% block page_keywords %}{{ block.super }}, {{ book.title }} книга, {{ book.title }} купить{% endblock %}
 
 
 {% block meta_og %}

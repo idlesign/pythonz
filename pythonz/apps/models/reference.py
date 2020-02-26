@@ -3,6 +3,7 @@ from typing import List
 
 from django.db import models
 from django.db.models import Q, QuerySet
+from django.utils.functional import cached_property
 from etc.models import InheritedModel
 from simple_history.models import HistoricalRecords
 
@@ -148,6 +149,10 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
             'verbose_name': 'Описание',
             'help_text': 'Подробное описание. Здесь же следует располагать примеры кода.',
         }
+
+    @cached_property
+    def keywords(self):
+        return f"{self.title.replace('.', ', ')}, {self.search_terms}".rstrip(', ')
 
     @property
     def turbo_content(self) -> str:
