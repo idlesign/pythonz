@@ -93,7 +93,7 @@ class CommonEntityModel(models.Model):
 
     COVER_UPLOAD_TO = 'common'  # Имя категории (оно же имя директории) для хранения загруженных обложек.
 
-    title = models.CharField('Название', max_length=255, unique=True)
+    title = models.CharField('Название', max_length=255)
     slug = models.CharField('Краткое имя для URL', max_length=200, null=True, blank=True, unique=True)
     description = models.TextField('Описание', blank=False, null=False)
     cover = models.ImageField('Обложка', max_length=255, upload_to=get_upload_to, null=True, blank=True)
@@ -641,7 +641,7 @@ class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
     class Meta:
 
         abstract = True
-        unique_together = ('src_alias', 'src_id')
+        unique_together = ('src_alias', 'src_id')  # Не наследуется https://code.djangoproject.com/ticket/16732
 
     def extract_page_info(self):
         """Возвращает информацию о странице, расположенной
@@ -678,15 +678,19 @@ class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
             if not items:
                 return
 
+            seen = set(cls.objects.filter(
+
+                src_alias=source.alias,
+                src_id__in=[item_data['src_id'] for item_data in items],
+
+            ).values_list('src_id', flat=True))
+
             for item_data in items:
 
-                if item_data.pop('__skip', True):
+                if item_data['src_id'] in seen:
                     continue
 
                 obj = cls.spawn_object(item_data, source=source_obj)
 
-                try:
-                    obj.save()
-
-                except IntegrityError:
-                    pass
+                # По одному, чтобы отработала логика save().
+                obj.save()

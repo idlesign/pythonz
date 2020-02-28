@@ -36,6 +36,7 @@ class Vacancy(UtmReady, WithPlace):
 
         verbose_name = 'Вакансия'
         verbose_name_plural = 'Работа'
+        unique_together = ('src_alias', 'src_id')
 
     @property
     def cover(self) -> str:

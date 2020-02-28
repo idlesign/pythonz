@@ -64,6 +64,7 @@ class Event(
 
         verbose_name = 'Событие'
         verbose_name_plural = 'События'
+        unique_together = ('src_alias', 'src_id')
 
     class Fields:
 
