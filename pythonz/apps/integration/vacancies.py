@@ -58,6 +58,10 @@ class HhVacancy(VacancySource):
         results = []
 
         for item in response['items']:
+
+            if item['archived']:
+                continue
+
             salary_from = salary_till = salary_currency = ''
 
             if item['salary']:
@@ -73,7 +77,6 @@ class HhVacancy(VacancySource):
                 url_logo = url_logo.get('90')
 
             results.append({
-                '__skip': item['archived'],
                 'src_id': item['id'],
                 'src_place_name': item['area']['name'],
                 'src_place_id': item['area']['id'],

@@ -50,8 +50,6 @@ class GoogleCalendarSource(EventSource):
             place_id = md5(f'{place}'.encode()).hexdigest()
 
         item = {
-            '__skip': False,
-
             'title': event.summary,
             'url': url,
             'src_id': md5(f'{event.uid}|{dt_start.date()}'.encode()).hexdigest(),
