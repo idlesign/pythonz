@@ -53,7 +53,7 @@ def get_page_info(url: str, timeout: int = 4) -> Optional[PageInfo]:
         return None
 
     info = PageInfo(
-        title=result['title'],
+        title=result.get('title', ''),
         description=result.get('description', ''),
         site_name=result.get('site_name', ''),
         images=result['images'],
