@@ -74,6 +74,7 @@ def get_from_url(url: str, *, method: str = 'get', **kwargs) -> Response:
     r_kwargs = {
         'allow_redirects': True,
         'headers': {'User-agent': settings.USER_AGENT},
+        'timeout': 15,
     }
     r_kwargs.update(kwargs)
 
