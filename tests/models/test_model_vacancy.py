@@ -12,5 +12,5 @@ def test_vacancy_unique_source(robot):
 
 
 @pytest.mark.slow
-def test_vacancy_fetch_items(mock_get_location):
+def test_vacancy_fetch_items(robot, mock_get_location):
     Vacancy.fetch_items()
