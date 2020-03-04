@@ -22,6 +22,8 @@ class Event(
     ModelWithCompiledText, WithPlace):
     """Модель сущности `Событие`."""
 
+    notify_on_publish: bool = False
+
     @unique
     class Spec(models.IntegerChoices):
 
