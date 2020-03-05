@@ -1,5 +1,6 @@
+import json
+
 import pytest
-import responses
 
 from pythonz.apps.integration.utils import get_location_data, get_page_info
 
@@ -16,34 +17,30 @@ def test_get_page_info():
         'type': 'og:image'}]
 
 
-@responses.activate
-def test_get_location_data():
+def test_get_location_data(response_mock):
 
-    responses.add(
-        responses.GET,
-        'https://geocode-maps.yandex.ru/1.x/',
-        json={'response': {
-            'GeoObjectCollection': {
-                'metaDataProperty': {'GeocoderResponseMetaData': {'found': 1}},
-                'featureMember': [
-                    {'GeoObject': {
-                        'Point': {'pos': 'a b'},
-                        'boundedBy': {'Envelope': {'lowerCorner': '1', 'upperCorner': '2'}},
-                        'metaDataProperty': {
-                            'GeocoderMetaData': {
-                                'kind': 'xxx',
-                                'text': 'yyy',
-                                'AddressDetails': {'Country': {'CountryName': 'zzz'}}
-                            }
+    json_response = json.dumps({'response': {
+        'GeoObjectCollection': {
+            'metaDataProperty': {'GeocoderResponseMetaData': {'found': 1}},
+            'featureMember': [
+                {'GeoObject': {
+                    'Point': {'pos': 'a b'},
+                    'boundedBy': {'Envelope': {'lowerCorner': '1', 'upperCorner': '2'}},
+                    'metaDataProperty': {
+                        'GeocoderMetaData': {
+                            'kind': 'xxx',
+                            'text': 'yyy',
+                            'AddressDetails': {'Country': {'CountryName': 'zzz'}}
                         }
-                    }}
-                ]
-            }
-        }},
-        status=200
-    )
+                    }
+                }}
+            ]
+        }
+    }})
 
-    result = get_location_data('Some')
+    with response_mock(f'GET https://geocode-maps.yandex.ru/1.x/ -> 200 :{json_response}'):
+        result = get_location_data('Some')
+
     assert result == {
         'requested_name': 'Some',
         'type': 'xxx',
