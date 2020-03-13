@@ -219,7 +219,6 @@ var pythonz = {
                     this.RULE_PYVERSION_ADDED,
                     this.RULE_LITERAL,
                     this.RULE_UNDERMETHOD,
-                    this.RULE_EXCEPTIONS,
                     this.RULE_EMDASH
                 ]
             );
