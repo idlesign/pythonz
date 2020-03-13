@@ -17,7 +17,7 @@ django-siteprefs==1.1.0
 django-sitetree==1.14.0
 django-xross==0.6.0
 django-yaturbo==0.3.0
-Django==3.0.3
+Django==3.0.4
 envbox==1.1.0
 feedparser==5.2.1
 icalendar_light==0.2.0
@@ -28,8 +28,8 @@ psycopg2==2.8.4
 pyTelegramBotAPI==3.6.7
 pytz==2019.3
 raven==6.10.0
-regex==2020.1.8
-requests[socks]==2.22.0
+regex==2020.2.20
+requests[socks]==2.23.0
 twitter==1.18.0
 uwsgi==2.0.18
 uwsgiconf[cli]==0.20.1
