@@ -11,3 +11,8 @@ DATABASES = {
         'NAME': ':memory:'
     }
 }
+
+PARTNER_IDS = {
+    'booksru': 'abc',
+    'litres': 'def',
+}

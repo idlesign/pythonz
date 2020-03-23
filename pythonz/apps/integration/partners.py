@@ -1,4 +1,5 @@
-from typing import Optional, List, Tuple, Union
+from collections import namedtuple
+from typing import Optional, List, Tuple, Union, Type
 
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -8,7 +9,7 @@ from django.utils.timezone import now
 from requests import Response
 from requests.exceptions import ConnectionError
 
-from .utils import make_soup, get_from_url
+from .utils import make_soup, get_from_url, run_threads
 
 if False:  # pragma: nocover
     from ..generics.realms import RealmBase
@@ -261,7 +262,7 @@ def get_partners_choices() -> List[Tuple[str, str]]:
     return choices
 
 
-def get_partner_links(realm: 'RealmBase', item: Union['RealmBaseModel', 'ModelWithPartnerLinks']) -> dict:
+def get_partner_links(realm: Type['RealmBase'], item: Union['RealmBaseModel', 'ModelWithPartnerLinks']) -> dict:
     """Возвращает словарь с данными по партнёрским ссылкам,
     готовый для передачи в шаблон.
 
@@ -272,19 +273,31 @@ def get_partner_links(realm: 'RealmBase', item: Union['RealmBaseModel', 'ModelWi
     cache_key = get_cache_key(item)
     links_data = cache.get(cache_key)
 
+    Task = namedtuple('Task', ['link', 'realm', 'partner'])
+
+    def contribute_info(task: Task):
+        data = task.partner.get_link_data(task.realm, task.link)
+
+        if data:
+            links_data.append(data)
+
     if links_data is None:
 
         links_data = []
-        links = item.partner_links.order_by('partner_alias', 'description').all()
+        tasks = []
 
-        for link in links:
+        for link in item.partner_links.order_by('partner_alias', 'description').all():
             partner = _PARTNERS_REGISTRY.get(link.partner_alias)
 
             if partner:
-                data = partner.get_link_data(realm, link)
+                tasks.append(Task(
+                    link=link,
+                    realm=realm,
+                    partner=partner
+                ))
 
-                if data:
-                    links_data.append(data)
+        if tasks:
+            run_threads(tasks, contribute_info)
 
         cache.set(cache_key, links_data, _CACHE_TIMEOUT)
 
