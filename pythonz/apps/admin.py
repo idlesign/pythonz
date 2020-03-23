@@ -106,7 +106,7 @@ class PartnerLinkInline(GenericTabularInline):
 @admin.register(PartnerLink)
 class PartnerLinkAdmin(admin.ModelAdmin):
 
-    list_display = ('linked_object', 'partner_alias', 'url')
+    list_display = ('linked_object', 'partner_alias', 'description', 'url')
     list_filter = ['partner_alias']
 
 
