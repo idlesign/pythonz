@@ -6,17 +6,34 @@ from pythonz.apps.integration import partners
 from pythonz.apps.models import PartnerLink
 
 
+@pytest.fixture
+def assert_link_data():
+
+    def assert_link_data_(partner_cls, url):
+        partner = partner_cls(partner_id='dummy')
+
+        data = partner.get_link_data(Mock(), PartnerLink(url=url))
+
+        assert "руб" in data['price']
+        assert 'dummy' in data['url']
+
+        return data
+
+    return assert_link_data_
+
+
 @pytest.mark.slow
-def test_booksru():
+def test_booksru(assert_link_data):
 
-    book_link = 'https://www.books.ru/books/bibliya-705085/'
-    partner_id = '12345'
-    booksru = partners.BooksRu(partner_id=partner_id)
-    link = PartnerLink(url=book_link)
-    mock_realm = Mock()
+    data = assert_link_data(
+        partners.BooksRu, 'https://www.books.ru/books/bibliya-705085/')
 
-    data = booksru.get_link_data(mock_realm, link)
-
-    assert "руб" in data['price']
-    assert "%s?partner=%s" % (book_link, partner_id) == data['url']
     assert 'https://favicon.yandex.net/favicon/books.ru' == data['icon_url']
+
+
+@pytest.mark.slow
+def test_litres(assert_link_data):
+
+    assert_link_data(
+        partners.LitRes,
+        'https://www.litres.ru/mark-summerfield/programmirovanie-na-python-3-podrobnoe-rukovodstvo-24499518/')

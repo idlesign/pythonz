@@ -114,7 +114,6 @@ class BooksRu(PartnerBase):
         return price
 
 
-
 class LitRes(PartnerBase):
     """Класс реализует работу по партнёрской программе сайта litres.ru."""
 
@@ -128,7 +127,7 @@ class LitRes(PartnerBase):
         price = ''
 
         if page_soup:
-            matches = page_soup.select('.block48')
+            matches = page_soup.select('.simple-price')
 
             if matches:
                 price = matches[0].text
