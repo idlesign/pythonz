@@ -1,12 +1,10 @@
 from collections import defaultdict
-from concurrent.futures import as_completed
-from concurrent.futures.thread import ThreadPoolExecutor
 from enum import unique
 from typing import Dict, Type, Optional, List, Set
 
 from django.db import models
 
-from .utils import get_from_url, PageInfo, get_page_info
+from .utils import get_from_url, PageInfo, get_page_info, run_threads
 
 
 class RemoteSource:
@@ -93,30 +91,13 @@ class RemoteSource:
         по указанным адресам. Отправляет запросы в нитях.
 
         :param urls:
+
         :param thread_num: Количество нитей для забора данных.
             Если не указано, о будет создано нитей по количеству URL,
             но не более определённого числа.
 
         """
-        result = {}
-
-        if not thread_num:
-            max_auto_threads = 12
-
-            thread_num = len(urls)
-
-            if thread_num > max_auto_threads:
-                thread_num = max_auto_threads
-
-        with ThreadPoolExecutor(max_workers=thread_num) as executor:
-
-            task_to_url = {executor.submit(cls.get_page_info, url): url for url in urls}
-
-            for task in as_completed(task_to_url):
-                url = task_to_url[task]
-                result[url] = task.result()
-
-        return result
+        return run_threads(urls, cls.get_page_info, thread_num=thread_num)
 
     @classmethod
     def contribute_page_info(cls, results: List[dict]):

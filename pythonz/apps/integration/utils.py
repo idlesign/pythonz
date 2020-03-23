@@ -1,7 +1,9 @@
 import os
 from collections import namedtuple
+from concurrent.futures import as_completed
+from concurrent.futures.thread import ThreadPoolExecutor
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Set, Callable, Dict, Union
 
 import requests
 from PIL import Image
@@ -292,3 +294,38 @@ def get_location_data(location_name: str) -> dict:
     }
 
     return location_data
+
+
+def run_threads(items: Union[List, Set], func: Callable, *, thread_num: int = None) -> Dict[str, Optional[PageInfo]]:
+    """Возвращает результаты обработки в нитях указанной функцей указанных элементов.
+
+    :param items: Элементы для обработки.
+
+    :param func: Функция для вызова.
+
+    :param thread_num: Количество нитей для забора данных.
+        Если не указано, о будет создано нитей по количеству элементов,
+        но не более определённого числа.
+
+    """
+    result = {}
+
+    if not thread_num:
+        max_auto_threads = 12
+
+        thread_num = len(items)
+
+        if thread_num > max_auto_threads:
+            thread_num = max_auto_threads
+
+    with ThreadPoolExecutor(max_workers=thread_num) as executor:
+
+        task_to_item = {
+            executor.submit(func, item): item
+            for item in items}
+
+        for task in as_completed(task_to_item):
+            item = task_to_item[task]
+            result[item] = task.result()
+
+    return result
