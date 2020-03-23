@@ -1,5 +1,4 @@
 from typing import Optional, List, Tuple, Union
-from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -75,7 +74,7 @@ class PartnerBase:
 
     @classmethod
     def get_page(cls, url: str) -> Response:
-        return get_from_url(url)
+        return get_from_url(url, timeout=20)
 
     @classmethod
     def get_page_soup(cls, url: str) -> Optional[BeautifulSoup]:
