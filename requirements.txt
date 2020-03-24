@@ -1,7 +1,7 @@
 attrs==19.3.0
 awesome-slugify==1.6.5
 beautifulsoup4==4.8.2
-bleach==3.1.1
+bleach==3.1.2
 django-admirarchy==1.2.0
 django-debug-toolbar==2.2
 django-etc==1.2.0
