@@ -144,7 +144,7 @@ class PepListingView(ListingView):
         for attr, enum in attrs.items():
             val = self.request.GET.get(attr)
 
-            if val is not None:
+            if val and val.isdigit():
 
                 val = int(val)
 
