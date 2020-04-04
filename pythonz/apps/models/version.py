@@ -1,4 +1,5 @@
 from collections import namedtuple
+from datetime import timedelta
 
 from django.conf import settings
 from django.db import models
@@ -104,11 +105,18 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
             num=Cast('title', FloatField())
         ).order_by('num')
 
+        def format_date(val):
+            return val.strftime('%Y-%m-%d')
+
+        now = timezone.now().date()
+        delta = timedelta(days=1095)  # 3 года
+
         data = {
             'titles': [],
             'indexes': [],
             'info': [],
-            'now': timezone.now().date().strftime('%Y-%m-%d'),
+            'now': format_date(now),
+            'range': f"'{format_date(now-delta)}', '{format_date(now+delta)}'"
         }
 
         next_pos = -0.1
@@ -119,8 +127,8 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
             data['indexes'].append(idx)
             data['info'].append(LifeTimeInfo(
                 idx=idx,
-                since=version.date.strftime('%Y-%m-%d'),
-                till=version.date_till.strftime('%Y-%m-%d'),
+                since=format_date(version.date),
+                till=format_date(version.date_till),
                 pos1=str(next_pos),
                 pos2=str(next_pos + 0.2),
             ))
