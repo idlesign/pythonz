@@ -7,14 +7,11 @@ from django.db.models.functions import Cast
 from django.utils import timezone
 from etc.models import InheritedModel
 
-from colorhash import color_hash
-
 from .discussion import ModelWithDiscussions
 from .shared import HINT_IMPERSONAL_REQUIRED
 from ..generics.models import CommonEntityModel, ModelWithCompiledText, RealmBaseModel
 
-
-LifeTimeInfo = namedtuple('LifeTimeInfo', ['idx', 'since', 'till', 'color', 'pos1', 'pos2'])
+LifeTimeInfo = namedtuple('LifeTimeInfo', ['idx', 'since', 'till', 'pos1', 'pos2'])
 
 
 class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
@@ -124,11 +121,6 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
                 idx=idx,
                 since=version.date.strftime('%Y-%m-%d'),
                 till=version.date_till.strftime('%Y-%m-%d'),
-                color=color_hash(
-                    f'{title}',
-                    lightness=0.9,
-                    saturation=0.9,
-                ),
                 pos1=str(next_pos),
                 pos2=str(next_pos + 0.2),
             ))
