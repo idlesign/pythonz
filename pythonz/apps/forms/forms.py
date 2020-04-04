@@ -87,8 +87,8 @@ class VersionForm(RealmEditBaseForm):
         fields = (
             'title',
             'date',
+            'date_till',
             'status',
-            'current',
             'description',
             'text_src',
         )

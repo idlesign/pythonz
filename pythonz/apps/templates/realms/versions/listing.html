@@ -1,0 +1,11 @@
+{% extends "base_listing.html" %}
+
+{% block head %}
+    {{ block.super }}
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %}
+
+{% block page_contents_pre %}
+    {{ block.super }}
+    {% include "realms/versions/lifetime.html" %}
+{% endblock %}

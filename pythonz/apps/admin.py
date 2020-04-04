@@ -236,7 +236,7 @@ class ReferenceMissingAdmin(admin.ModelAdmin):
 @admin.register(Version)
 class VersionAdmin(EntityBaseAdmin):
 
-    list_display = ('title', 'current', 'status', 'slug')
+    list_display = ('title', 'date', 'date_till', 'status', 'slug')
 
 
 @admin.register(Person)

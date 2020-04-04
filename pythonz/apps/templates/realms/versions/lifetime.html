@@ -1,0 +1,70 @@
+
+<div class="mt-2 mb-2">
+    <div id="lifetime"></div>
+    <script>
+        {% with versions=realm.model.get_lifetime_data %}
+            {% if versions %}
+
+            Plotly.plot('lifetime', {
+
+                data: [
+                    {% for info in versions.info %}
+                    {
+                      name: '',
+                      x: ['{{ info.since }}', '{{ info.till }}'], y: [{{ info.idx }}, {{ info.idx }}],
+                      marker: {color: 'white'}
+                    },
+                    {% endfor %}
+                ],
+
+                layout: {
+                    title: 'Время жизни версий',
+                    height: 300,
+                    margin: {l: 30, r: 30, b: 35, t: 50, pad: 4},
+                    xaxis: {
+                        type: 'date',
+                        showgrid: false,
+                        zeroline: false
+                    },
+                    yaxis: {
+                        ticktext: ['{{ versions.titles|join:"','" }}'],
+                        tickvals: [{{ versions.indexes|join:"," }}],
+                        zeroline: false
+                    },
+                    shapes: [
+                        {
+                            type: 'line',
+                            x0: '{{ versions.now }}', x1: '{{ versions.now }}',
+                            y0: 0, y1: 1,
+                            yref: 'paper',
+                            line: {width: 1.5, color: 'grey', dash: 'dot'}
+                        },
+                        {% for info in versions.info %}
+                        {
+                            type: 'rect',
+                            x0: '{{ info.since }}', x1: '{{ info.till }}',
+                            y0: {{ info.pos1 }}, y1: {{ info.pos2 }},
+                            xref: 'x', yref: 'y',
+                            line: {width: 0},
+                            opacity: 1,
+                            fillcolor: 'green'
+                        },
+                        {% endfor %}
+                    ],
+                    hovermode: 'closest',
+                    showlegend: false
+                },
+
+                config: {
+                    locale: 'ru',
+                    responsive: true
+                }
+
+            });
+
+            {% endif %}
+        {% endwith %}
+
+    </script>
+</div>
+

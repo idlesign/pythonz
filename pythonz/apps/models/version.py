@@ -1,12 +1,20 @@
+from collections import namedtuple
+
 from django.conf import settings
 from django.db import models
-from django.db.models import QuerySet
+from django.db.models import QuerySet, FloatField
+from django.db.models.functions import Cast
 from django.utils import timezone
 from etc.models import InheritedModel
+
+from colorhash import color_hash
 
 from .discussion import ModelWithDiscussions
 from .shared import HINT_IMPERSONAL_REQUIRED
 from ..generics.models import CommonEntityModel, ModelWithCompiledText, RealmBaseModel
+
+
+LifeTimeInfo = namedtuple('LifeTimeInfo', ['idx', 'since', 'till', 'color', 'pos1', 'pos2'])
 
 
 class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
@@ -14,9 +22,8 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
     autogenerate_slug: bool = True
     items_per_page: int = 10
 
-    current = models.BooleanField('Текущая', default=False)
-
     date = models.DateField('Дата выпуска')
+    date_till = models.DateField('Окончание поддержки', null=True, blank=True)
 
     class Fields:
 
@@ -47,6 +54,22 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         return f'Python {self.title}'
 
     @property
+    def current(self) -> bool:
+        """Возвращает флаг, указывающий на то,
+        является ли версия актуальной (поддерживается ли на текущий момент).
+
+        """
+        date = self.date
+        date_till = self.date_till
+
+        if not date or not date_till:
+            return False
+
+        now = timezone.now().date()
+
+        return date < now < date_till
+
+    @property
     def turbo_content(self) -> str:
         return self.text
 
@@ -74,3 +97,41 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
         stub.save()
 
         return stub
+
+    @classmethod
+    def get_lifetime_data(cls):
+
+        versions = cls.objects.exclude(
+            date_till__isnull=True
+        ).annotate(
+            num=Cast('title', FloatField())
+        ).order_by('num')
+
+        data = {
+            'titles': [],
+            'indexes': [],
+            'info': [],
+            'now': timezone.now().date().strftime('%Y-%m-%d'),
+        }
+
+        next_pos = -0.1
+
+        for idx, version in enumerate(versions):
+            title = version.title
+            data['titles'].append(title)
+            data['indexes'].append(idx)
+            data['info'].append(LifeTimeInfo(
+                idx=idx,
+                since=version.date.strftime('%Y-%m-%d'),
+                till=version.date_till.strftime('%Y-%m-%d'),
+                color=color_hash(
+                    f'{title}',
+                    lightness=0.9,
+                    saturation=0.9,
+                ),
+                pos1=str(next_pos),
+                pos2=str(next_pos + 0.2),
+            ))
+            next_pos += 1
+
+        return data
