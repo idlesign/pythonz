@@ -149,7 +149,9 @@ class Event(
 
             images = page_info.images
             if images:
-                obj.update_cover_from_url(images[0]['src'])
+                image_src = images[0].get('src')
+                if image_src:
+                    obj.update_cover_from_url(image_src)
 
         return obj
 
