@@ -1,0 +1,27 @@
+{% if reference.is_type_callable %}
+    <div class="mb-3">
+
+        {% if reference.func_proto %}
+        <div class="mb-3 card"><div class="card-body">
+            <div id="area_func_proto" class="block">
+                {{ reference.func_proto }}
+            </div>
+            {% if reference.func_result %} -> <span id="area_func_result">{{ reference.func_result }}</span>{% endif %}
+        </div></div>
+        {% endif %}
+
+        {% if reference.func_params %}
+        <div class="mb-3">
+            <div id="area_func_params">
+                {{ reference.func_params|linebreaksbr }}
+            </div>
+        </div>
+        {% endif %}
+
+    <hr>
+    </div>
+{% endif %}
+
+<div id="area_description">
+    {{ reference.text|safe }}
+</div>

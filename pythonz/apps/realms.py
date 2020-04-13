@@ -5,7 +5,7 @@ from django.conf.urls import url
 from django.contrib.sitemaps import GenericSitemap
 from django.contrib.sitemaps.views import sitemap
 from django.db.models import signals
-from django.urls import get_resolver, reverse
+from django.urls import get_resolver, reverse, path
 from sitecats.toolbox import get_tie_model
 from sitetree.models import TreeItemBase
 from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree
@@ -22,7 +22,7 @@ from .models import User, Discussion, Book, Video, Place, Article, Community, Ev
 from .signals import sig_support_changed
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
     ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView, PersonDetailsView, \
-    PepListingView
+    PepListingView, ide
 from .zen import register_zen_siteblock
 
 # Регистрируем блок сайта с дзеном
@@ -114,7 +114,9 @@ def get_sitemaps() -> Dict[str, GenericSitemap]:
 def get_realms_urls() -> List:
     """Возвращает url-шаблоны всех зарегистрированных областей сайта."""
 
-    url_patterns = []
+    url_patterns = [
+        path('references/ide/', ide),
+    ]
 
     for realm in get_realms().values():
         url_patterns += realm.get_urls()

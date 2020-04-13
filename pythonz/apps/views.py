@@ -32,7 +32,7 @@ from .generics.views import DetailsView, RealmView, EditView, ListingView, HttpR
 from .integration.telegram import handle_request
 from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource, ReferenceMissing, \
     Category, Person, PEP
-from .utils import message_warning, swap_layout
+from .utils import message_warning, search_models
 
 
 class UserDetailsView(DetailsView):
@@ -326,27 +326,18 @@ def search(request: HttpRequest) -> HttpResponse:
     Если найден один результат, перенаправляет на страницу результата.
 
     """
-    search_term = request.POST.get('text', '').strip(' ()')[:200]
+
+    search_term, results = search_models(
+        request.POST.get('text', ''), search_in=(
+            Category,
+            Person,
+            Reference,
+        ))
 
     if not search_term:
         return redirect('index')
 
-    swapped = swap_layout(search_term)
-
-    search_in = [
-        Category,
-        Person,
-        Reference,
-    ]
-
-    results = []
-    total_results = 0
-
-    for model_cls in search_in:
-        results.extend(model_cls.find(search_term, swapped))
-        total_results += len(results)
-
-    if not total_results:
+    if not results:
         # Поиск не дал результатов. Запомним, что искали и сообщим администраторам,
         # чтобы приняли меры по возможности.
 
@@ -362,10 +353,10 @@ def search(request: HttpRequest) -> HttpResponse:
 
         return redirect_response
 
-    elif total_results == 1:
-        return redirect(results[0].get_absolute_url())
-
     results_len = len(results)
+
+    if results_len == 1:
+        return redirect(results[0].get_absolute_url())
 
     return render(request, 'static/search.html', {
         'search_term': search_term,
@@ -394,3 +385,11 @@ def login(request: HttpRequest) -> HttpResponse:
 def user_settings(request: HttpRequest) -> HttpResponse:
     """Перенаправляет на страницу настроек текущего пользователя."""
     return redirect('users:edit', request.user.pk)
+
+
+def ide(request: HttpRequest) -> HttpResponse:
+    """Страница подсказок для IDE."""
+
+    term, results = search_models(request.GET.get('term', ''), search_in=(Reference,))
+
+    return render(request, 'realms/references/ide.html', {'term': term, 'results': results})

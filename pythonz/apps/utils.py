@@ -2,11 +2,12 @@ import logging
 import re
 from datetime import timedelta, datetime
 from textwrap import wrap
-from typing import Tuple, List, Dict, Callable, Any, Union
+from typing import Tuple, List, Dict, Callable, Any, Union, Type, Optional
 from urllib.parse import urlsplit, urlunsplit, parse_qs, urlparse, urlencode, urlunparse
 
 from bleach import clean
 from django.contrib import messages
+from django.db import models
 from django.db.models import Model
 from django.http import HttpRequest
 from django.utils import timezone
@@ -575,3 +576,26 @@ def swap_layout(src_text: str) -> str:
         return ''
 
     return src_text.translate(TRANSLATION_DICT)
+
+
+def search_models(term: str, *, search_in=List[Type[models.Model]]) -> Tuple[str, List[models.Model]]:
+    """Производит поиск указанной строки в указанных областях.
+    Возвращает результаты поиска.
+
+    :param term: Строка для посика.
+    :param search_in: Области иска.
+
+    """
+    search_term = term.strip(' ()')[:200]
+
+    if not search_term:
+        return search_term, []
+
+    swapped = swap_layout(search_term)
+
+    results = []
+
+    for model_cls in search_in:
+        results.extend(model_cls.find(search_term, swapped))
+
+    return search_term, results

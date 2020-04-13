@@ -1,0 +1,54 @@
+{% load sitemetrics static%}
+{% get_static_prefix as STATIC_URL %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pythonz IDE hint — {{ term }}</title>
+    <link href="{{ STATIC_URL }}css/pythonz.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body style="padding-bottom: 120px; background-color: #999">
+
+    <div class="container-fluid p-1 m-0" style="background-color: #999">
+        <div class="col-12">
+        {% if not results %}
+
+            <div class="alert alert-warning mt-4" role="alert">Поиск не дал результатов.</div>
+
+        {% else %}
+
+            {% for reference in results %}
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <span class="mr-2">{{ reference.title }}</span>
+                        {% if reference.pep %}
+                            <span class="badge badge-primary mr-2">PEP-{{ reference.pep }}</span>
+                        {% endif %}
+                        {% if reference.version_deprecated %}
+                            <span class="badge badge-danger mr-2">Устрело: {{ reference.version_deprecated }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">
+                            {% include "realms/references/body.html" %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        {% endif %}
+        </div>
+    </div>
+
+    <nav class="navbar fixed-bottom">
+        {% include "sub/box_ads.html" with area="ide" %}
+    </nav>
+
+
+    <script src="{{ STATIC_URL }}js/pythonz.min.js" type="text/javascript"></script>
+    {% include "realms/references/js.html" %}
+
+    {% sitemetrics by yandex for "21211468" %}
+</body>
+</html>
