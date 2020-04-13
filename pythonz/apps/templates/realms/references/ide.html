@@ -1,15 +1,11 @@
-{% load sitemetrics static%}
-{% get_static_prefix as STATIC_URL %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>pythonz IDE hint — {{ term }}</title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" type="text/javascript"></script>
+    {% include "sub/static_base.html" %}
 
-    <link href="{{ STATIC_URL }}css/pythonz.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body style="padding-bottom: 120px; background-color: #999">
 
@@ -48,10 +44,8 @@
         {% include "sub/box_ads.html" with area="ide" %}
     </nav>
 
-    <script src="{{ STATIC_URL }}js/xross/xross.min.js" type="text/javascript"></script>
-    <script src="{{ STATIC_URL }}js/pythonz.min.js" type="text/javascript"></script>
+    {% include "sub/static_footer.html" %}
     {% include "realms/references/js.html" %}
 
-    {% sitemetrics by yandex for "21211468" %}
 </body>
 </html>
