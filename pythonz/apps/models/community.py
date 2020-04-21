@@ -18,7 +18,7 @@ class Community(
         Place, verbose_name='Место', related_name='communities', null=True, blank=True,
         help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>'
                   'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».',
-        on_delete=models.CASCADE)
+        on_delete=models.SET_NULL)
 
     contacts = models.CharField(
         'Контактные лица', null=True, blank=True, max_length=255,

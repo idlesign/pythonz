@@ -236,10 +236,11 @@ class RealmBaseModel(ModelWithFlag):
 
     submitter = models.ForeignKey(
         USER_MODEL, verbose_name='Добавил', related_name='%(class)s_submitters', default=settings.ROBOT_USER_ID,
-        on_delete=models.CASCADE)
+        on_delete=models.SET_DEFAULT)
     last_editor = models.ForeignKey(
         USER_MODEL, verbose_name='Редактор', related_name='%(class)s_editors', null=True, blank=True,
-        help_text='Пользователь, последним отредактировавший объект.', on_delete=models.CASCADE)
+        help_text='Пользователь, последним отредактировавший объект.', default=settings.ROBOT_USER_ID, 
+        on_delete=models.SET_DEFAULT,)
 
     class Meta:
         abstract = True

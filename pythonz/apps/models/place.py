@@ -97,7 +97,7 @@ class WithPlace(WithRemoteSource):
 
     place = models.ForeignKey(
         Place, verbose_name='Место', related_name='lnk_%(class)s', null=True, blank=True,
-        on_delete=models.CASCADE)
+        on_delete=models.SET_NULL)
 
     class Meta:
 

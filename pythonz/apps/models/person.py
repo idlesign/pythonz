@@ -87,7 +87,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
 
     user = models.OneToOneField(
         User, verbose_name='Пользователь', related_name='person', null=True, blank=True,
-        on_delete=models.CASCADE)
+        on_delete=models.SET_NULL)
 
     name = models.CharField('Имя', max_length=90, blank=True)
 

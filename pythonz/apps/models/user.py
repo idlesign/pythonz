@@ -25,7 +25,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         Place, verbose_name='Место', related_name='users', null=True, blank=True,
         help_text='Место вашего пребывания (страна, город, село).<br>'
                   'Например: «Россия, Новосибирск» или «Новосибирск», но не «Нск».',
-        on_delete=models.CASCADE)
+        on_delete=models.SET_NULL)
 
     profile_public = models.BooleanField(
         'Публичный профиль', default=True, db_index=True,

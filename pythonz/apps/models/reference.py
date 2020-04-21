@@ -92,19 +92,19 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         help_text='Укажите родительский раздел. '
                   'Например, для модуля можно указать раздел справки, в которому он относится; '
                   'для метода &#8212; класс.',
-        on_delete=models.CASCADE)
+        on_delete=models.PROTECT)
 
     version_added = models.ForeignKey(
         Version, related_name='%(class)s_added', verbose_name='Добавлено в', null=True, blank=True,
         help_text='Версия Python, для которой впервые стала актульна данная статья<br>'
                   '(версия, где впервые появился модуль, пакет, класс, функция).',
-        on_delete = models.CASCADE)
+        on_delete=models.SET_NULL)
 
     version_deprecated = models.ForeignKey(
         Version, related_name='%(class)s_deprecated', verbose_name='Устарело в', null=True, blank=True,
         help_text='Версия Python, для которой впервые данная статья перестала быть актуальной<br>'
         '(версия, где модуль, пакет, класс, функция были объявлены устаревшими).',
-        on_delete=models.CASCADE)
+        on_delete=models.SET_NULL)
 
     func_proto = models.CharField(
         'Прототип', max_length=250, null=True, blank=True,

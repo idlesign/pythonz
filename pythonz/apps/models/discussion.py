@@ -12,13 +12,13 @@ from ..utils import truncate_chars
 class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCategory, ModelWithCompiledText):
     """Модель обсуждений. Пользователи могут обсудить желаемые темы и привязать обсужедние к сущности на сайте.
     Фактически - форум.
+    
     """
-
     object_id = models.PositiveIntegerField(verbose_name='ID объекта', db_index=True, null=True, blank=True)
 
     content_type = models.ForeignKey(
         ContentType, verbose_name='Тип содержимого', related_name='%(class)s_discussions', null=True, blank=True,
-        on_delete=models.CASCADE)
+        on_delete=models.SET_NULL)
 
     linked_object = GenericForeignKey()
 
