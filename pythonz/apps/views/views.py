@@ -27,12 +27,12 @@ from sitemessage.toolbox import get_user_preferences_for_ui, set_user_preference
 from xross.toolbox import xross_view
 from xross.utils import XrossHandlerBase
 
-from .exceptions import RedirectRequired
-from .generics.views import DetailsView, RealmView, EditView, ListingView, HttpRequest
-from .integration.telegram import handle_request
-from .models import Place, User, Community, Event, Reference, Vacancy, ExternalResource, ReferenceMissing, \
+from ..exceptions import RedirectRequired
+from ..generics.views import DetailsView, RealmView, EditView, ListingView, HttpRequest
+from ..integration.telegram import handle_request
+from ..models import Place, User, Community, Event, Reference, Vacancy, ExternalResource, ReferenceMissing, \
     Category, Person, PEP
-from .utils import message_warning, search_models
+from ..utils import message_warning, search_models
 
 
 class UserDetailsView(DetailsView):
@@ -203,7 +203,7 @@ class CategoryListingView(RealmView):
     """Выводит список известных категорий, либо список сущностей для конкретной категории."""
 
     def get(self, request: HttpRequest, obj_id: int = None):
-        from .realms import get_realms
+        from ..realms import get_realms
 
         realms = get_realms().values()
 
@@ -269,7 +269,7 @@ def server_error(request: HttpRequest):
 @csrf_protect
 def index(request: HttpRequest) -> HttpResponse:
     """Индексная страница."""
-    from .realms import get_realms
+    from ..realms import get_realms
 
     realms_data = []
     realms_registry = get_realms()
