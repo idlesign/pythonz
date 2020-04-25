@@ -406,3 +406,4 @@ def ide(request: HttpRequest) -> HttpResponse:
             error = f'Используемая вами среда разработки "{ide_name} {ide_version}" не поддерживается.'
 
     return render(request, 'realms/references/ide.html', {'term': term, 'results': results, 'error': error})
+ 
