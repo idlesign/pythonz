@@ -130,7 +130,7 @@ class ExternalResourceAdmin(admin.ModelAdmin):
 @admin.register(Place)
 class PlaceAdmin(admin.ModelAdmin):
 
-    list_display = ('geo_title', 'title', 'status', 'time_created')
+    list_display = ('geo_title', 'title', 'status', 'time_created', 'time_published')
     search_fields = ['title', 'geo_title']
     raw_id_fields = ('last_editor',)
     list_filter = ['time_created', 'status', 'geo_type']
@@ -148,7 +148,7 @@ class VacancyAdmin(admin.ModelAdmin):
 
 class EntityBaseAdmin(SimpleHistoryAdmin):
 
-    list_display = ('time_created', 'title', 'submitter',)
+    list_display = ('time_created', 'title', 'submitter', 'time_published')
     raw_id_fields = ['submitter', 'last_editor', 'linked']
     search_fields = ['title', 'description']
     list_filter = ['time_created', 'status']
@@ -169,7 +169,7 @@ class EntityBaseAdmin(SimpleHistoryAdmin):
 @admin.register(Article)
 class ArticleAdmin(EntityBaseAdmin):
 
-    list_display = ('time_created', 'title', 'submitter', 'source', 'published_by_author')
+    list_display = ('time_created', 'title', 'submitter', 'source', 'published_by_author', 'time_published')
     list_filter = ['time_created', 'status', 'source', 'published_by_author']
 
 
@@ -178,7 +178,7 @@ class BookAdmin(EntityBaseAdmin):
 
     form = BookForm
 
-    list_display = ('time_created', 'title', 'submitter', 'isbn')
+    list_display = ('time_created', 'title', 'submitter', 'isbn', 'time_published')
     search_fields = ['title', 'isbn']
     inlines = [PartnerLinkInline]
 
@@ -198,7 +198,7 @@ class DiscussionAdmin(EntityBaseAdmin):
 @admin.register(Event)
 class EventAdmin(EntityBaseAdmin):
 
-    list_display = ('time_created', 'title', 'submitter', 'type', 'specialization')
+    list_display = ('time_created', 'title', 'submitter', 'type', 'specialization', 'time_published')
     search_fields = ['title', 'description', 'text']
     list_filter = ['time_created', 'status', 'type', 'specialization']
 
@@ -221,7 +221,7 @@ class PEPAdmin(EntityBaseAdmin):
 class ReferenceAdmin(HierarchicalModelAdmin, EntityBaseAdmin):
 
     hierarchy = True
-    list_display = ('title', 'submitter', 'type')
+    list_display = ('title', 'submitter', 'type', 'time_published')
     list_filter = ['time_created', 'status', 'type', 'version_added', 'version_deprecated']
 
 
@@ -236,13 +236,13 @@ class ReferenceMissingAdmin(admin.ModelAdmin):
 @admin.register(Version)
 class VersionAdmin(EntityBaseAdmin):
 
-    list_display = ('title', 'date', 'date_till', 'status', 'slug')
+    list_display = ('title', 'date', 'date_till', 'status', 'slug', 'time_published')
 
 
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
 
-    list_display = ('name', 'name_en', 'time_created')
+    list_display = ('name', 'name_en', 'time_created', 'time_published')
     search_fields = ['name', 'name_en', 'aka']
     list_filter = ['status']
     ordering = ['name']
