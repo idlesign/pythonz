@@ -14,3 +14,4 @@ def test_event_unique_source(robot):
 @pytest.mark.slow
 def test_event_fetch_items(robot, mock_get_location):
     Event.fetch_items()
+    assert Event.objects.first().time_published

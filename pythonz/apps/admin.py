@@ -161,7 +161,7 @@ class EntityBaseAdmin(SimpleHistoryAdmin):
 
         for obj in queryset:
             obj.mark_published()
-            obj.save()
+            obj.save(notify_published=False)
 
     publish.short_description = 'Опубликовать'
 

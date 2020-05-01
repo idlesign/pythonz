@@ -287,6 +287,7 @@ class RealmBaseModel(ModelWithFlag):
     def mark_published(self):
         """Помечает материал опубликованным."""
         self.status = self.Status.PUBLISHED
+        self._consider_published = True
 
     def mark_unmodified(self):
         """Используется для того, чтобы при следующем вызове save()
@@ -301,7 +302,10 @@ class RealmBaseModel(ModelWithFlag):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._consider_modified = True  # Указывает на то, нужно ли при сохранении устанавливать время изменения
+        self._consider_published = False
+        """Указывает на то, следует ли считать сущность опубликованной."""
+        self._consider_modified = True
+        """Указывает на то, нужно ли при сохранении устанавливать время изменения"""
         self._status_backup = self.status
 
     def save(self, *args, **kwargs):
@@ -324,12 +328,17 @@ class RealmBaseModel(ModelWithFlag):
 
         now = timezone.now()
 
-        if self._status_backup != self.status:
-            # Если сохраняем с переходом статуса, наивно полагаем объект немодифицированным.
-            self._consider_modified = False
+        status_changed = self._status_backup != self.status
+
+        if status_changed or self._consider_published:
+
+            if status_changed:
+                # Если сохраняем с переходом статуса, наивно полагаем объект немодифицированным.
+                self._consider_modified = False
 
             if self.is_published:
                 setattr(self, 'time_published', now)
+                self._consider_published = False
 
                 if notify_published is None:
                     notify_published = True
@@ -694,4 +703,4 @@ class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
                 obj = cls.spawn_object(item_data, source=source_obj)
 
                 # По одному, чтобы отработала логика save().
-                obj.save()
+                obj.save(notify_published=False)
