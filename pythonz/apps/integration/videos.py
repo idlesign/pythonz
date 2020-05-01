@@ -46,6 +46,8 @@ class VideoBroker:
         else:
             raise RemoteSourceError(f'Не удалось обнаружить ID видео в URL `{url}`')
 
+        cover_url = f"http://img.youtube.com/vi/{video_id.split('?', 1)[0]}/default.jpg"
+
         if '?' in video_id:
             video_id += '&'
 
@@ -58,8 +60,6 @@ class VideoBroker:
             f'<iframe src="//www.youtube.com/embed/{video_id}" '
             f'width="{cls.EMBED_WIDTH}" height="{cls.EMBED_HEIGHT}" frameborder="0" allowfullscreen>'
             '</iframe>')
-
-        cover_url = f'http://img.youtube.com/vi/{video_id}/default.jpg'
 
         return embed_code, cover_url
 
