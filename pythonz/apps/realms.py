@@ -1,4 +1,3 @@
-from operator import attrgetter
 from typing import List, Type, Dict, Optional, Generator, Tuple
 
 from django.conf.urls import url
@@ -480,7 +479,7 @@ class CategoryRealm(RealmBase):
             for model, ids in linked.items():
                 result.extend(model.get_actual().filter(id__in=ids)[:SYNDICATION_ITEMS_LIMIT])
 
-            result = sorted(result, key=attrgetter('time_published'), reverse=True)
+            result = sorted(result, key=lambda model: model.time_published or model.id, reverse=True)
 
             return result[:SYNDICATION_ITEMS_LIMIT]
 
