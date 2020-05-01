@@ -41,6 +41,7 @@ def get_configurations() -> PythonSection:
             domain=domain,
             webroot=f"{dir_state / 'certbot'}",
             allow_shared_sockets=True)
+        section._set('http-to-https', '=0')
 
     section.configure_maintenance_mode(
         f"{dir_state / 'maintenance'}", section.get_bundled_static_path('503.html'))
