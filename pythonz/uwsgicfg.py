@@ -41,7 +41,15 @@ def get_configurations() -> PythonSection:
             domain=domain,
             webroot=f"{dir_state / 'certbot'}",
             allow_shared_sockets=True)
-        section._set('http-to-https', '=0')
+
+        rule = section.routing.route_rule
+
+        section.routing.register_route([
+            rule(
+                rule.actions.redirect('https://${HTTP_HOST}${REQUEST_URI}', permanent=True),
+                rule.subjects.custom('${HTTPS}', negate=True).eq('on')
+            ),
+        ])
 
     section.configure_maintenance_mode(
         f"{dir_state / 'maintenance'}", section.get_bundled_static_path('503.html'))
