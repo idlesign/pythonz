@@ -1,0 +1,8 @@
+{% load model_meta %}
+
+{% model_meta_verbose_name_plural realm_data.cls.model as realm_title%}
+
+<h4 class="text-uppercase">
+    <a href="{% url realm_data.cls.get_listing_urlname %}">{{ realm_title }}</a>
+    <div class="ruler"></div>
+</h4>

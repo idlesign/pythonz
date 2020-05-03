@@ -354,6 +354,8 @@ class DiscussionRealm(RealmBase):
     model: Type[RealmBaseModel] = Discussion
     form: Type[CommonEntityForm] = DiscussionForm
     icon: str = 'comments-o'
+
+    show_on_main: bool = False
     show_on_top: bool = False
 
 
@@ -546,6 +548,7 @@ class VersionRealm(RealmBase):
     form: Type[CommonEntityForm] = VersionForm
     icon: str = 'code-fork'
 
+    show_on_main: bool = False
     show_on_top: bool = False
 
 

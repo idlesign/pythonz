@@ -2,27 +2,17 @@
 
 <div class="card col-md-6 mt-3 float-left">
 
-    {% model_meta_verbose_name_plural realm_data.cls.model as realm_title%}
-
-    <h4 class="text-uppercase" data-geopattern="{{ realm_title }}">
-        <a href="{% url realm_data.cls.get_listing_urlname %}">
-            <i class="fa fa-{{ realm_data.cls.icon }} text-left"></i>
-            {{ realm_title }}</a>
-    </h4>
+    {% include "sub/realm_card_title.html" %}
 
     <ul>
-        <li class="">
-            <a href="{{ realm_data.main.get_absolute_url }}">
-                {{ realm_data.main.title|truncatechars:57 }}</a>
-        </li>
-    {% if realm_data.additional %}
-        {% for item in realm_data.additional %}
-        <li class="">
+        {% for item in realm_data.items %}
+        <li class="mb-2">
             <a href="{% if item.src_alias %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">
-                {{ item.title|truncatechars:57 }}</a>
+                {{ item.title }}
+            </a>
+            {% if not item.src_alias and item.title != item.description %}<div class="small text-muted">{{ item.description }}</div>{% endif %}
         </li>
         {% endfor %}
-    {% endif %}
     </ul>
 
 </div>

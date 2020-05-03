@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% load etc_misc %}
 
 {% block head %}
     {{ block.super }}
@@ -29,7 +30,7 @@
 
     <div class="row mt-4 no-gutters justify-content-around" id="box-index">
     {% for realm_data in realms_data %}
-        {% include "sub/realm_card.html" %}
+        {% include_ "realms/{{ realm_data.cls.name_plural }}/index_card.html" fallback "sub/realm_card.html" %}
     {% endfor %}
     </div>
 

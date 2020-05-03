@@ -1,7 +1,32 @@
-<div class="media">
-    <div class="media-left img-cover">{% include "sub/item_cover.html" with item=local nofade=1 %}</div>
-    <div class="media-body">
-        <a href="{{ local.get_absolute_url }}">{{ local.title }}</a>
-        <div class="cl__gray small">{{ local.get_description|truncatewords_html:80|safe }}</div>
+{% load thumbs %}
+
+<div class="card col-md-12 mt-6 float-left mt-3 mb-4">
+
+    {% include "sub/realm_card_title.html" %}
+    <div>
+        <div class="col-md-6 col-sm-12 float-left mb-3">
+            <div class="feature p-3 rounded">
+                {% with item=realm_data.items.0 %}
+                {% block cover %}
+                    <div>
+                    {% thumbs_get_thumb_url item.cover 180 236 item.realm as thumb_url %}
+                    <img src="{{ thumb_url }}" class="img-thumbnail" alt="{{ item.title }}">
+                    </div>
+                {% endblock %}
+                <div class="mt-2"><a class="text-white" href="{{ item.get_absolute_url }}">{{ item.title }}</a></div>
+                {% endwith %}
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-12 float-left">
+            <ul class="pl-4">
+                {% for item in realm_data.items %}
+                <li class="mb-2">
+                    <a href="{% if item.src_alias %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">
+                        {{ item.title }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </div>
