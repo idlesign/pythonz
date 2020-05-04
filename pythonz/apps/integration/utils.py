@@ -318,6 +318,9 @@ def run_threads(items: Union[List, Set], func: Callable, *, thread_num: int = No
         if thread_num > max_auto_threads:
             thread_num = max_auto_threads
 
+    if not thread_num:
+        return result
+
     with ThreadPoolExecutor(max_workers=thread_num) as executor:
 
         task_to_item = {
