@@ -101,7 +101,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         verbose_name_plural = 'PEP'
 
     def __str__(self):
-        return f'{self.slug} — {self.title}'
+        return f'PEP {self.num} — {self.title}'
 
     @property
     def turbo_content(self) -> str:

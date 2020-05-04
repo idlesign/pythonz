@@ -2,7 +2,7 @@
 {% load model_field %}
 
 
-{% block page_keywords %}{{ block.super }}, PEP {{ pep.title }}, предложение по улучшению {{ pep.title }}{% endblock %}
+{% block page_keywords %}{{ block.super }}, PEP {{ pep.num }}, {{ pep.title }}, предложение по улучшению{% endblock %}
 
 
 {% block head %}
