@@ -166,6 +166,11 @@ class CommonEntityModel(models.Model):
         :param url:
 
         """
+        if '.svg' in url:
+            # todo PIL не умеет работать с вектором. Не будем пытаться.
+            # Наивно орентируемся на наличие расширения в целях экономии ресурсов.
+            return
+
         img = get_image_from_url(url)
 
         if img is not None:
