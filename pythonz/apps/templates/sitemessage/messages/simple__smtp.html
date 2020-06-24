@@ -2,7 +2,7 @@
 
 {% block contents %}
     {% if contents %}
-        {{ contents|safe|urlize }}
+        {{ contents|safe|linebreaksbr|urlize }}
     {% else %}
         {{ text|safe }}
     {% endif %}
