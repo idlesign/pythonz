@@ -1,5 +1,9 @@
 {% extends "sitemessage/messages/base.html" %}
 
 {% block contents %}
-    {{ text|safe }}
+    {% if contents %}
+        {{ contents|safe|urlize }}
+    {% else %}
+        {{ text|safe }}
+    {% endif %}
 {% endblock %}
