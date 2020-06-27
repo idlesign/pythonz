@@ -267,7 +267,7 @@ def sync(*, skip_deadend_peps: bool = True, limit: int = None) -> Dict[int, 'PEP
 
             if pep_model.status != status_id:
                 pep_model.status = status_id
-                pep_model.save()
+                pep_model.save(notify_published=False)
 
                 status_title = PEP.Status(status_id).label
 
