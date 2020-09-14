@@ -176,13 +176,13 @@ class CommonEntityModel(models.Model):
         if img is not None:
             self.cover.save(img.name, img, save=False)
 
-    def get_linked(self) -> Union[List, QuerySet]:
+    def get_linked(self) -> QuerySet:
         """Возвращает связанные объекты."""
 
         if self.allow_linked:
             return self.linked.all()
 
-        return []
+        return QuerySet(self.__class__).none()
 
     @classmethod
     def get_paginator_objects(cls) -> QuerySet:
