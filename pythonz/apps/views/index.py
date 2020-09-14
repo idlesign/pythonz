@@ -20,7 +20,9 @@ def index(request: HttpRequest) -> HttpResponse:
     realms_registry = get_realms()
 
     externals = ExternalResource.objects.filter(realm_name__in=realms_registry.keys())
-    externals = {k: list(v) for k, v in groupby(externals, attrgetter('realm_name'))}
+    externals = {
+        k: sorted(v, key=attrgetter('id'), reverse=True)
+        for k, v in groupby(externals, attrgetter('realm_name'))}
 
     max_items = 6
     min_local = 2
