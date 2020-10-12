@@ -6,6 +6,7 @@ from io import StringIO
 from traceback import format_exc
 from typing import List, Tuple, Optional, Union, Dict
 
+# todo remove
 import attr
 
 from ..utils import get_from_url, make_soup
