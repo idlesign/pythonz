@@ -1,13 +1,11 @@
 import csv
 import json
 import re
+from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta
 from io import StringIO
 from traceback import format_exc
 from typing import List, Tuple, Optional, Union, Dict
-
-# todo remove
-import attr
 
 from ..utils import get_from_url, make_soup
 from ...exceptions import LogicError
@@ -17,17 +15,17 @@ from ...utils import get_logger, get_datetime_from_till
 LOG = get_logger(__name__)
 
 
-@attr.s(slots=True, frozen=True)
+@dataclass(frozen=True)
 class SummaryItem:
     """Элемент сводки."""
 
-    url = attr.ib()
-    title = attr.ib()
-    description = attr.ib(default='')
+    url: str
+    title: str
+    description: str = ''
 
     def to_json(self) -> str:
         """Представляет объект в виде json."""
-        return json.dumps(attr.asdict(self))
+        return json.dumps(asdict(self))
 
 
 TypeFetcherResult = Optional[Tuple[List[SummaryItem], Union[List, Dict]]]
@@ -72,7 +70,7 @@ class ItemsFetcherBase:
         self.previous_result = previous_result or []
         self.previous_dt = previous_dt or get_datetime_from_till(7)[0]
 
-    def run(self) -> TypeFetcherResult:
+    def run(self) -> Optional[TypeFetcherResult]:
         """Основной рабочий метод. Запускает сбор данных."""
         fetcher_name = self.__class__.__name__
 
