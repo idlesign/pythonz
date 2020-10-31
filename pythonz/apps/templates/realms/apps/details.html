@@ -1,0 +1,59 @@
+{% extends "base_details.html" %}
+{% load model_field %}
+
+
+{% block page_keywords %}{{ block.super }}, python {{ app.title }}{% endblock %}
+
+
+{% block meta_og %}
+    <meta property="og:type" content="object" />
+    <meta property="og:title" content="{{ app.title }}" />
+    {{ block.super }}
+{% endblock %}
+
+
+{% block schema_type %}SoftwareApplication{% endblock %}
+
+{% block details_contents %}
+    <meta itemprop="name" content="{{ app.title }}" />
+{% endblock %}
+
+{% block details_description %}
+    <div class="mb-3" itemprop="description"><i>{{ item.description }}</i></div>
+{% endblock %}
+
+{% block details_contents_add %}
+    {% if app.slug %}
+    <div class="mb-3">
+        <a href="https://pypi.org/project/{{ app.slug }}/">
+            <img src="https://img.shields.io/pypi/v/{{ app.slug }}?style=for-the-badge&labelColor=ddd&label=версия" alt="PyPI Страница приложения">
+        </a>
+
+        <a href="https://packaging.python.org/guides/analyzing-pypi-package-downloads/#background">
+            <img src="https://img.shields.io/pypi/dm/{{ app.slug }}?style=for-the-badge&labelColor=ddd&label=загрузки" alt="PyPI Загрузок за месяц">
+        </a>
+
+        {% with gh_ident=app.github_ident %}{% if gh_ident %}
+        <a href="https://github.com/{{ gh_ident }}">
+            <img src="https://img.shields.io/github/stars/{{ gh_ident }}?style=for-the-badge&labelColor=ddd&label=звёзды" alt="Звёзды">
+        </a>
+        {% endif %}{% endwith %}
+
+    </div>
+    {% endif %}
+    <div class="text-muted mb-3">
+        {% if app.repo %}
+        <span class="mr-3">
+            {% model_field_verbose_name from app.repo %}: <a href="{{ app.repo }}">{{ app.repo }}</a>
+        </span>
+        {% endif %}
+        <span class="mr-3">
+            {% model_field_verbose_name from app.author %}: {% include "sub/persons_links.html" with persons=app.authors.all %}
+        </span>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="py_user mb-3 card">
+        <div class="card-body">{{ app.text|safe }}</div>
+    </div>
+{% endblock %}

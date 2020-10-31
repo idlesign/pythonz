@@ -219,7 +219,12 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         """
         from ..realms import get_realm
 
-        realms = [get_realm('pep'), get_realm('book'), get_realm('video')]  # Пока ограничимся.
+        realms = [
+            get_realm('pep'),
+            get_realm('book'),
+            get_realm('video'),
+            get_realm('app'),
+        ]  # Пока ограничимся.
 
         materials = {}
 

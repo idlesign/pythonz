@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 
 from ..generics.views import HttpRequest
-from ..models import Reference, ReferenceMissing, Category, Person
+from ..models import Reference, ReferenceMissing, Category, Person, App
 from ..utils import message_warning, search_models
 
 
@@ -20,6 +20,7 @@ def search(request: HttpRequest) -> HttpResponse:
             Category,
             Person,
             Reference,
+            App,
         ))
 
     if not search_term:

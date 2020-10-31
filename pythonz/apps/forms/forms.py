@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from ..generics.models import RealmBaseModel, CommonEntityModel
 from ..generics.realms import RealmBase
 from ..integration.videos import VideoBroker
-from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference, Version
+from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference, Version, App
 from ..generics.forms import RealmEditBaseForm
 from .widgets import RstEditWidget, ReadOnlyWidget, PlaceWidget
 
@@ -331,3 +331,19 @@ class ReferenceForm(RealmEditBaseForm):
         widgets = {
             'func_params': forms.Textarea(attrs={'rows': 4}),
         }
+
+
+class AppForm(RealmEditBaseForm):
+
+    class Meta:
+
+        model = App
+        fields = (
+            'title',
+            'slug',
+            'description',
+            'repo',
+            'status',
+            'author',
+            'text_src',
+        )

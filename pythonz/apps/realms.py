@@ -12,13 +12,13 @@ from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree
 from sitetree.utils import tree, item
 
 from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm, \
-    ReferenceForm, VersionForm
+    ReferenceForm, VersionForm, AppForm
 from .generics.forms import CommonEntityForm
 from .generics.models import RealmBaseModel
 from .generics.realms import RealmBase, SYNDICATION_URL_MARKER, SYNDICATION_ITEMS_LIMIT
 from .generics.views import RealmView
 from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy, Version, \
-    PEP, Person, Category
+    PEP, Person, Category, App
 from .signals import sig_support_changed
 from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
     ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView, PersonDetailsView, \
@@ -595,6 +595,27 @@ class PersonRealm(RealmBase):
     ready_for_digest: bool = False
 
 
+class AppRealm(RealmBase):
+    """Область приложений."""
+
+    txt_form_add: str = 'Добавить приложение'
+    txt_form_edit: str = 'Редактировать приложение'
+
+    view_listing_description: str = 'Приложения на Python.'
+    view_listing_keywords: str = 'программы на python, приложения на питоне'
+
+    name: str = 'app'
+    name_plural: str = 'apps'
+
+    model: Type[RealmBaseModel] = App
+    form: Type[CommonEntityForm] = AppForm
+
+    icon: str = 'tablet'
+
+    show_on_main: bool = False
+    show_on_top: bool = False
+
+
 register_realms(
     CategoryRealm,
     ArticleRealm,
@@ -611,6 +632,7 @@ register_realms(
     VersionRealm,
     PepRealm,
     PersonRealm,
+    AppRealm,
 
     UserRealm,
 )

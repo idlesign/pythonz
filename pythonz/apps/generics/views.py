@@ -473,11 +473,11 @@ class EditView(RealmView):
             if category_handled:  # Добавилась категория, перенаправим на эту же страницу.
                 return redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
 
-        show_modetation_hint = self.realm.model not in (User, Article, Discussion, Community, Event)
+        show_moderation_hint = self.realm.model not in (User, Article, Discussion, Community, Event)
 
         if data is None:
 
-            if show_modetation_hint:
+            if show_moderation_hint:
                 message_warning(
                     request,
                     'Обратите внимание, что на данном этапе развития проекта добавляемые '
@@ -499,7 +499,7 @@ class EditView(RealmView):
                     item = form.save()
                     message_success(request, 'Объект добавлен.')
 
-                    if show_modetation_hint:
+                    if show_moderation_hint:
                         message_info(request, 'Данный объект появится на сайте после модерации.')
 
                 else:

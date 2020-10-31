@@ -1,3 +1,4 @@
+from .app import App
 from .article import Article
 from .book import Book
 from .category import Category, ModelWithCategory

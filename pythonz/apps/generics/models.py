@@ -41,7 +41,7 @@ class ModelWithAuthorAndTranslator(models.Model):
         '<br><b>[u:<ид>:<имя>]</b> формирует ссылку на профиль пользователя pythonz. Например: [u:1:идле].')
 
     author = models.CharField(
-        'Автор/Персона', max_length=255,
+        'Автор', max_length=255,
         help_text=f'Предпочтительно имя и фамилия. Можно указать несколько, разделяя запятыми.{_hint_userlink}')
 
     translator = models.CharField(
@@ -374,7 +374,7 @@ class RealmBaseModel(ModelWithFlag):
         :param search_terms: Строки для поиска.
 
         """
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: nocover
 
     @classmethod
     def get_actual(cls, **kwargs) -> QuerySet:
