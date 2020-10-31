@@ -5,7 +5,7 @@ import feedparser
 from ..signals import sig_integration_failed
 
 if False:  # pragma: nocover
-    from ..generics.realms import RealmBase
+    from ..generics.realms import RealmBase  # noqa
 
 
 class PyDigestResource:
@@ -21,9 +21,8 @@ class PyDigestResource:
             from ..realms import ArticleRealm, VideoRealm, EventRealm
 
             mapping = {
-                ArticleRealm: ('article', 'authors'),
+                ArticleRealm: ('article',),
                 VideoRealm: ('video',),
-                EventRealm: ('event',),
             }
             cls.mapping = mapping
 
@@ -60,6 +59,7 @@ class PyDigestResource:
 
                 else:
 
+                    # reverse - по степени свежести (более свежие в конце).
                     for entry in reversed(parsed.entries[:entries_max]):
                         link = entry.link
                         if link in known_links:
