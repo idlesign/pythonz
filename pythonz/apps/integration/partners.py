@@ -12,7 +12,7 @@ from requests.exceptions import ConnectionError
 from .utils import make_soup, get_from_url, run_threads
 
 if False:  # pragma: nocover
-    from ..generics.realms import RealmBase
+    from ..generics.realms import RealmBase  # noqa
     from ..generics.models import RealmBaseModel
     from ..models import PartnerLink, ModelWithPartnerLinks
 

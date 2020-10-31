@@ -285,21 +285,21 @@ class BasicTypograph:
 
     """
     rules = {
-        'QUOTES_REPLACE': (re.compile('(„|“|”|(\'\'))'), '"'),
-        'DASH_REPLACE': (re.compile('(-|­|–|—|―|−|--)'), '-'),
+        'QUOTES_REPLACE': (re.compile(r'(„|“|”|(\'\'))'), '"'),
+        'DASH_REPLACE': (re.compile(r'(-|­|–|—|―|−|--)'), '-'),
 
-        'SEQUENTIAL_SPACES': (re.compile('([ \t]+)'), ' '),
+        'SEQUENTIAL_SPACES': (re.compile(r'([ \t]+)'), ' '),
 
-        'DASH_EM': (re.compile('([ ,])-[ ]'), '\g<1>— '),
-        'DASH_EN': (re.compile('(\d+)[ ]*-[ ]*(\d+)'), '\g<1>–\g<2>'),
+        'DASH_EM': (re.compile(r'([ ,])-[ ]'), '\\g<1>— '),
+        'DASH_EN': (re.compile(r'(\d+)[ ]*-[ ]*(\d+)'), '\\g<1>–\\g<2>'),
 
-        'HELLIP': (re.compile('\.{2,3}'), '…'),
-        'COPYRIGHT': (re.compile('\((c|с)\)'), '©'),
-        'TRADEMARK': (re.compile('\(tm\)'), '™'),
-        'TRADEMARK_R': (re.compile('\(r\)'), '®'),
+        'HELLIP': (re.compile(r'\.{2,3}'), '…'),
+        'COPYRIGHT': (re.compile(r'\((c|с)\)'), '©'),
+        'TRADEMARK': (re.compile(r'\(tm\)'), '™'),
+        'TRADEMARK_R': (re.compile(r'\(r\)'), '®'),
 
-        'QUOTES_CYR_CLOSE': (re.compile('(\S+)"', re.U), '\g<1>»'),
-        'QUOTES_CYR_OPEN': (re.compile('"(\S+)', re.U), '«\g<1>'),
+        'QUOTES_CYR_CLOSE': (re.compile(r'(\S+)"', re.U), '\\g<1>»'),
+        'QUOTES_CYR_OPEN': (re.compile(r'"(\S+)', re.U), '«\\g<1>'),
     }
 
     @classmethod
@@ -446,22 +446,23 @@ class TextCompiler:
 
         text = text.replace('\r\n', '\n')
 
-        text = re.sub(cls.RE_UL, '<li>\g<1></li>', text)
+        text = re.sub(cls.RE_UL, '<li>\\g<1></li>', text)
         text = text.replace('\n<li>', '\n<ul><li>').replace('</li>\n', '</li></ul>\n')
 
-        text = re.sub(cls.RE_BOLD, '<b>\g<1></b>', text)
-        text = re.sub(cls.RE_ITALIC, '<i>\g<1></i>', text)
-        text = re.sub(cls.RE_QUOTE, '<blockquote>\g<1></blockquote>', text)
-        text = re.sub(cls.RE_ACCENT, '<code>\g<1></code>', text)
+        text = re.sub(cls.RE_BOLD, '<b>\\g<1></b>', text)
+        text = re.sub(cls.RE_ITALIC, '<i>\\g<1></i>', text)
+        text = re.sub(cls.RE_QUOTE, '<blockquote>\\g<1></blockquote>', text)
+        text = re.sub(cls.RE_ACCENT, '<code>\\g<1></code>', text)
         text = re.sub(cls.RE_CODE, replace_code, text)
-        text = re.sub(cls.RE_URL_WITH_TITLE, '<a href="\g<2>">\g<1></a>', text)
-        text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\g<1>.js"></script>', text)
+        text = re.sub(cls.RE_URL_WITH_TITLE, '<a href="\\g<2>">\\g<1></a>', text)
+        text = re.sub(cls.RE_GIST, '<script src="https://gist.github.com/\\g<1>.js"></script>', text)
 
         text = re.sub(
             cls.RE_POLL,
             '<div class="card bg-light p-2 m-2"><div class="card-body">'
             '<script src="https://yastatic.net/q/forms-frontend-ext/_/embed.js"></script>'
-            '<iframe src="https://forms.yandex.ru/u/\g<1>/?iframe=1" frameborder="0" width="100%" name="ya-form-\g<1>">'
+            '<iframe src="https://forms.yandex.ru/u/\\g<1>/?iframe=1" '
+            'frameborder="0" width="100%" name="ya-form-\\g<1>">'
             '</iframe></div></div>',
             text)
 
@@ -469,23 +470,23 @@ class TextCompiler:
 
         text = re.sub(cls.RE_TABLE, replace_table, text)
 
-        text = re.sub(cls.RE_TITLE, '<h4 data-geopattern="\g<1>" class="subtitle">\g<1></h4>', text)
+        text = re.sub(cls.RE_TITLE, '<h4 data-geopattern="\\g<1>" class="subtitle">\\g<1></h4>', text)
 
         text = re.sub(
             cls.RE_NOTE, '<div class="card mb-3"><div class="card-header text-white bg-success">На заметку</div>'
-                         '<div class="card-body">\g<1></div></div>', text)
+                         '<div class="card-body">\\g<1></div></div>', text)
         text = re.sub(
             cls.RE_WARNING, '<div class="card mb-3"><div class="card-header text-white bg-danger">Внимание</div>'
-                            '<div class="card-body">\g<1></div></div>', text)
+                            '<div class="card-body">\\g<1></div></div>', text)
 
         text = re.sub(
             cls.RE_PODSTER,
-            '<iframe width="100%" height="85" src="\g<1>/embed/13?link=1" frameborder="0" allowtransparency="true">'
+            '<iframe width="100%" height="85" src="\\g<1>/embed/13?link=1" frameborder="0" allowtransparency="true">'
             '</iframe>',
             text
         )
         text = re.sub(
-            cls.RE_IMAGE, '<img alt="\g<1>" src="\g<1>" data-canonical-src="\g<1>" style="max-width:100%;">', text)
+            cls.RE_IMAGE, '<img alt="\\g<1>" src="\\g<1>" data-canonical-src="\\g<1>" style="max-width:100%;">', text)
         text = re.sub(cls.RE_URL, replace_href, text)
 
         text = text.replace('\n', '<br>')

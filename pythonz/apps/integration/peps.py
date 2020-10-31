@@ -22,9 +22,9 @@ KEYS_REQUIRED: List[str] = ['pep', 'title', 'status', 'type', 'author', 'created
 KEYS_OPTIONAL: List[str] = ['python-version', 'superseded-by', 'replaces', 'requires']
 KEYS_ALL: List[str] = KEYS_REQUIRED + KEYS_OPTIONAL
 
-RE_VERSION = re.compile('(\d{1,2}.\d{1,2}(.\d{1,2})?)')
-RE_MAIL_TYPE1 = re.compile('([^<]+)<[^>]+>')
-RE_MAIL_TYPE2 = re.compile('[^(]+\(([^)]+)\)')
+RE_VERSION = re.compile(r'(\d{1,2}.\d{1,2}(.\d{1,2})?)')
+RE_MAIL_TYPE1 = re.compile(r'([^<]+)<[^>]+>')
+RE_MAIL_TYPE2 = re.compile(r'[^(]+\(([^)]+)\)')
 
 
 PepInfo = namedtuple('PEPInfo', (
