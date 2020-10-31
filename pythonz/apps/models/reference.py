@@ -59,6 +59,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     slug_pick: bool = True
     slug_auto: bool = True
     allow_linked: bool = False
+    allow_edit_published: bool = True
     details_related: List[str] = ['parent', 'submitter']
 
     @unique

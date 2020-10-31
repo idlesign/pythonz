@@ -17,12 +17,11 @@ from xross.utils import XrossHandlerBase
 from .models import ModelWithCompiledText, RealmBaseModel
 from ..exceptions import RedirectRequired, PythonzException
 from ..integration.partners import get_partner_links
-from ..models import ModelWithDiscussions, ModelWithCategory, Discussion, Article, Community, Event, Reference, \
-    Category, User
+from ..models import ModelWithDiscussions, ModelWithCategory, Discussion, Article, Community, Event, Category, User
 from ..utils import message_info, message_warning, message_success, message_error
 
 if False:  # pragma: nocover
-    from .realms import RealmBase
+    from .realms import RealmBase  # noqa
 
 
 class HttpRequest(HttpRequest):
@@ -79,38 +78,39 @@ class RealmView(View):
         :param item:
 
         """
-        if not self.realm.is_allowed_edit():  # Область не поддерживает редактирования.
+        realm = self.realm
+
+        if not realm.is_allowed_edit():  # Область не поддерживает редактирования.
             raise PermissionDenied()
 
-        if not request.user.is_authenticated:  # Неавторизованные пользователи не могут ничего.
+        user = request.user
+
+        if not user.is_authenticated:  # Неавторизованные пользователи не могут ничего.
             raise PermissionDenied()
 
-        if not request.user.is_superuser:
+        if user.is_superuser:
+            return
 
-            try:
-                edit_by_owner = (request.user_id == item.submitter_id)
+        try:
+            edit_by_owner = (request.user_id == item.submitter_id)
 
-            except AttributeError:
-                edit_by_owner = (request.user == item)  # Модель User
+        except AttributeError:
+            edit_by_owner = (user == item)  # Модель User
 
-            if not edit_by_owner:
+        if edit_by_owner:
+            return
 
-                personal_edit_models = User, Article, Discussion
+        if not realm.model.allow_edit_anybody:
+            raise PermissionDenied()
 
-                if self.realm.model in personal_edit_models:
-                    raise PermissionDenied()
+        if item.is_published and not realm.model.allow_edit_published:
 
-                # Запрещаем редактирование опубликованных материалов.
-                public_edit_models = Community, Event, Reference
+            message_warning(
+                request,
+                'Этот материал уже прошёл модерацию и был опубликован. '
+                'На данный момент в проекте запрещено редактирование опубликованных материалов.')
 
-                if item.is_published and self.realm.model not in public_edit_models:
-
-                    message_warning(
-                        request,
-                        'Этот материал уже прошёл модерацию и был опубликован. '
-                        'На данный момент в проекте запрещено редактирование опубликованных материалов.')
-
-                    raise PermissionDenied()
+            raise PermissionDenied()
 
     @classmethod
     def get_template_path(cls, name: str = None) -> str:

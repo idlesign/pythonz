@@ -17,6 +17,8 @@ class Article(
     ModelWithCompiledText):
     """Модель сущности `Статья`."""
 
+    allow_edit_anybody: bool = False
+
     @unique
     class Location(models.IntegerChoices):
 

@@ -22,6 +22,7 @@ class Event(
     ModelWithCompiledText, WithPlace):
     """Модель сущности `Событие`."""
 
+    allow_edit_published: bool = True
     notify_on_publish: bool = False
 
     @unique

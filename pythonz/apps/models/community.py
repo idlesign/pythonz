@@ -14,6 +14,8 @@ class Community(
     ModelWithCompiledText):
     """Модель сообществ. Формально объединяет некоторую группу людей."""
 
+    allow_edit_published: bool = True
+
     place = models.ForeignKey(
         Place, verbose_name='Место', related_name='communities', null=True, blank=True,
         help_text='Для географически локализованных сообществ можно указать место (страна, город, село).<br>'

@@ -14,6 +14,8 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
     Фактически - форум.
     
     """
+    allow_edit_anybody: bool = False
+
     object_id = models.PositiveIntegerField(verbose_name='ID объекта', db_index=True, null=True, blank=True)
 
     content_type = models.ForeignKey(

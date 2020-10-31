@@ -16,6 +16,7 @@ from ..integration.utils import get_timezone_name
 class User(UtmReady, RealmBaseModel, AbstractUser):
     """Наша модель пользователей."""
 
+    allow_edit_anybody: bool = False
     items_per_page: int = 14
     details_related: List[str] = ['last_editor', 'person', 'place']
 

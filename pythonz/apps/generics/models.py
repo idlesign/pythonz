@@ -265,6 +265,12 @@ class RealmBaseModel(ModelWithFlag):
     notify_on_publish: bool = True
     """Следует ли оповещать внешние системы о публикации сущности."""
 
+    allow_edit_anybody: bool = True
+    """Дозволено редактирования любому пользователю (не автору)."""
+
+    allow_edit_published: bool = False
+    """Дозволено редактирования опубликованных материалов."""
+
     paginator_order: str = '-time_created'
     """Поле, по которому следует сортировать объекты
     при обращении к постраничному списку.
