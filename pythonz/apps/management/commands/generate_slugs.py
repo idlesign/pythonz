@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
             else:
                 model_cls = realm.model
-                if hasattr(model_cls, 'autogenerate_slug'):
+                if hasattr(model_cls, 'slug_auto'):
 
                     self.stdout.write(f'Processing {model_cls.__name__} model ...\n')
 

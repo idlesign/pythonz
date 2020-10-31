@@ -17,7 +17,8 @@ LifeTimeInfo = namedtuple('LifeTimeInfo', ['idx', 'since', 'till', 'pos1', 'pos2
 
 class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
 
-    autogenerate_slug: bool = True
+    slug_pick: bool = True
+    slug_auto: bool = True
     items_per_page: int = 10
 
     date = models.DateField('Дата выпуска')

@@ -3,12 +3,12 @@ from contextlib import suppress
 from copy import copy
 from datetime import datetime
 from enum import unique
-from typing import List, Union, Type
+from typing import List, Type
 from uuid import uuid4
 
 from django.conf import settings
 from django.core.cache import cache
-from django.db import models, IntegrityError
+from django.db import models
 from django.db.models import Model, QuerySet
 from django.urls import reverse
 from django.utils import timezone
@@ -29,7 +29,7 @@ SLUGIFIER = Slugify(pretranslate=CYRILLIC, to_lower=True, safe_chars='-._', max_
 
 
 if False:  # pragma: nocover
-    from .forms import CommonEntityForm
+    from .forms import CommonEntityForm  # noqa
     from .realms import RealmBase
     from ..models import Category, User
 
@@ -41,8 +41,8 @@ class ModelWithAuthorAndTranslator(models.Model):
         '<br><b>[u:<ид>:<имя>]</b> формирует ссылку на профиль пользователя pythonz. Например: [u:1:идле].')
 
     author = models.CharField(
-        'Автор', max_length=255,
-        help_text='Предпочтительно имя и фамилия. Можно указать несколько, разделяя запятыми.')
+        'Автор/Персона', max_length=255,
+        help_text=f'Предпочтительно имя и фамилия. Можно указать несколько, разделяя запятыми.{_hint_userlink}')
 
     translator = models.CharField(
         'Перевод', max_length=255, blank=True, null=True,
@@ -106,7 +106,10 @@ class CommonEntityModel(models.Model):
     class Meta:
         abstract = True
 
-    autogenerate_slug: bool = False
+    slug_pick: bool = False
+    """Дозволено ли обращение к записям по их краткому имени."""
+
+    slug_auto: bool = False
     """Следует ли автоматически генерировать краткое имя в транслите для URL.
     Предполагается, что эта опция также включает машинерию, позволяющую адресовать
     объект по его краткому имени.
@@ -143,7 +146,7 @@ class CommonEntityModel(models.Model):
         self.title = BasicTypograph.apply_to(self.title)
         self.description = BasicTypograph.apply_to(self.description)
 
-        if not self.id and self.autogenerate_slug:
+        if not self.id and self.slug_auto:
             self.slug = self.generate_slug()
 
         # Требуется для правильной обработки спарки unique=True и null=True

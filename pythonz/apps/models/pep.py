@@ -59,7 +59,8 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         STANDARD = 2, 'Стандарт'
         INFO = 3, 'Информация'
 
-    autogenerate_slug: bool = True
+    slug_pick: bool = True
+    slug_auto: bool = True
     items_per_page: int = 40
     details_related: List[str] = []
 

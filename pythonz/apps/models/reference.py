@@ -56,7 +56,8 @@ class ReferenceMissing(models.Model):
 class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
     """Модель сущности `Справочник`."""
 
-    autogenerate_slug: bool = True
+    slug_pick: bool = True
+    slug_auto: bool = True
     allow_linked: bool = False
     details_related: List[str] = ['parent', 'submitter']
 

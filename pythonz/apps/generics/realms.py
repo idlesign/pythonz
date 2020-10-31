@@ -202,7 +202,7 @@ class RealmBase:
         """Возвращает название URL страницы с детальной информацией об объекте.
 
         :param slugged Следует ли вернуть название для URL человекопонятного
-            (см. CommonEntityModel.autogenerate_slug).
+            (см. CommonEntityModel.slug_auto).
 
         """
         _tmp, realm_name_plural = cls.get_names()
@@ -238,7 +238,7 @@ class RealmBase:
 
         items = [get_item(details_urlname)]
 
-        if getattr(cls.model, 'autogenerate_slug', False):
+        if getattr(cls.model, 'slug_pick', False):
             items.append(get_item(cls.get_details_urlname(slugged=True), id_attr='slug'))
 
         return items
