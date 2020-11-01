@@ -4,7 +4,7 @@ from sitemessage.toolbox import send_scheduled_messages, cleanup_sent_messages, 
 from uwsgiconf.runtime.scheduling import register_timer, register_cron
 
 from .commands import publish_postponed, clean_missing_refs
-from .models import Summary, PEP, ExternalResource, Vacancy, Event
+from .models import Summary, PEP, ExternalResource, Vacancy, Event, App
 from .sitemessages import PythonzEmailDigest
 
 
@@ -113,3 +113,11 @@ def task_notify_undelivered(sig_num):
     """Оповещение о недоставленных сообщениях."""
     check_undelivered()
 
+
+@register_cron(weekday=1, hour=_nsk(10), minute=5)
+def task_app_stats_update(sig_num):
+    """Обновление данных о загрузках приложений.
+    Понедельник 10:05 Нск (6:05 Мск).
+
+    """
+    App.actualize_downloads()

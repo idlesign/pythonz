@@ -13,7 +13,7 @@ from simple_history.admin import SimpleHistoryAdmin
 from .integration.partners import get_partners_choices
 from .forms.forms import BookForm
 from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version, PartnerLink, \
-    Vacancy, ReferenceMissing, PEP, Person, ExternalResource, Summary
+    Vacancy, ReferenceMissing, PEP, Person, ExternalResource, Summary, App
 
 
 def get_inline(model: Type[Model], field_name: str) -> Type:
@@ -248,3 +248,19 @@ class PersonAdmin(admin.ModelAdmin):
     ordering = ['name']
     raw_id_fields = ['user', 'last_editor']
     readonly_fields = ['text', 'supporters_num']
+
+
+@admin.register(App)
+class AppAdmin(EntityBaseAdmin):
+
+    list_display = ('time_created', 'title', 'slug', 'time_published')
+    search_fields = ['title', 'slug']
+    list_filter = ['status']
+
+    actions = EntityBaseAdmin.actions + ['update_stats']
+
+    def update_stats(self, request, queryset):
+
+        App.actualize_downloads()
+
+    update_stats.short_description = 'Обновить данные о загрузках'

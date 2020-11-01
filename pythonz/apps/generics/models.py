@@ -316,11 +316,17 @@ class RealmBaseModel(ModelWithFlag):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self._consider_published = False
         """Указывает на то, следует ли считать сущность опубликованной."""
+
         self._consider_modified = True
         """Указывает на то, нужно ли при сохранении устанавливать время изменения"""
+
         self._status_backup = self.status
+
+    def on_publish(self):
+        """Вызывается при смене стутуса на «Опубликовано»."""
 
     def save(self, *args, **kwargs):
         """Перекрыт, чтобы можно было отследить флаг модифицированности объекта
@@ -349,6 +355,9 @@ class RealmBaseModel(ModelWithFlag):
             if status_changed:
                 # Если сохраняем с переходом статуса, наивно полагаем объект немодифицированным.
                 self._consider_modified = False
+
+                if self.is_published:
+                    self.on_publish()
 
             if self.is_published:
                 setattr(self, 'time_published', now)

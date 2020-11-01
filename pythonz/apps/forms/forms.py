@@ -347,3 +347,6 @@ class AppForm(RealmEditBaseForm):
             'author',
             'text_src',
         )
+
+    def clean_slug(self) -> Union[str, None]:
+        return self.cleaned_data.get('slug', '').strip() or None

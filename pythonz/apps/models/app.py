@@ -1,14 +1,16 @@
 from typing import List
-
+from random import choice
+from time import sleep
 from django.db import models
 from django.db.models import QuerySet, Q
 from etc.models import InheritedModel
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
-from .person import PersonsLinked
 from .discussion import ModelWithDiscussions
+from .person import PersonsLinked
 from ..generics.models import CommonEntityModel, ModelWithCompiledText, RealmBaseModel, ModelWithAuthorAndTranslator
+from ..integration.pypistats import get_for_package
 
 
 class App(
@@ -23,6 +25,7 @@ class App(
         help_text='URL, по которому доступен исходный код приложения.')
 
     authors = models.ManyToManyField('Person', verbose_name='Авторы', related_name='apps', blank=True)
+    downloads = models.JSONField('Загрузки', default=dict)
 
     slug_pick: bool = True
     translator = None
@@ -68,13 +71,39 @@ class App(
 
         return cls.objects.published().filter(q).order_by('time_published')
 
+    @classmethod
+    def actualize_downloads(cls, qs: QuerySet = None) -> int:
+        """Актуализирует данные о загрузках приложений."""
+
+        if qs is None:
+            qs = cls.objects.published()
+
+        apps = qs.filter(slug__isnull=False)
+
+        updated = []
+
+        for idx, app in enumerate(apps):
+
+            if idx > 0:
+                # У pypistats.org есть ограничени по кол-ву запросов с IP.
+                # Пробуем быть особо вежливыми.
+                sleep(choice((0.3, 0.8, 1.2)))
+
+            if app.update_downloads():
+                updated.append(app)
+
+        if updated:
+            cls.objects.bulk_update(updated, fields=['downloads'])
+
+        return len(updated)
+
     @property
     def turbo_content(self) -> str:
         return self.make_html(self.description)
 
     @property
     def github_ident(self) -> str:
-        repo = self.repo
+        repo = self.repo or ''
 
         prefix = 'https://github.com/'
 
@@ -82,3 +111,19 @@ class App(
             return ''
 
         return repo.replace(prefix, '', 1)
+
+    def on_publish(self):
+        self.update_downloads()
+
+    def update_downloads(self) -> bool:
+        """Обновляет данные о загрузках пакета."""
+        slug = self.slug
+
+        if not slug:
+            return False
+
+        data = get_for_package(slug)
+
+        self.downloads.update(data)
+
+        return bool(data)
