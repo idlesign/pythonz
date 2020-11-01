@@ -112,7 +112,7 @@ class App(
         if not repo.startswith(prefix):
             return ''
 
-        return repo.replace(prefix, '', 1)
+        return repo.replace(prefix, '', 1).rstrip('/')
 
     def on_publish(self):
         self.update_downloads()
