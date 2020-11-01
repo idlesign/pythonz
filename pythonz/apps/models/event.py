@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime
 from enum import unique
-from typing import Optional
+from typing import Optional, List
 
 from django.db import models
 from django.db.models import F, QuerySet
@@ -24,6 +24,7 @@ class Event(
 
     allow_edit_published: bool = True
     notify_on_publish: bool = False
+    paginator_defer: List[str] = ['contacts', 'text', 'text_src']
 
     @unique
     class Spec(models.IntegerChoices):

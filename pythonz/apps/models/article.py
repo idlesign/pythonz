@@ -1,4 +1,5 @@
 from enum import unique
+from typing import List
 
 from django.db import models
 from etc.models import InheritedModel
@@ -18,6 +19,7 @@ class Article(
     """Модель сущности `Статья`."""
 
     allow_edit_anybody: bool = False
+    paginator_defer: List[str] = ['url', 'text', 'text_src']
 
     @unique
     class Location(models.IntegerChoices):

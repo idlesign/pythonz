@@ -277,6 +277,9 @@ class RealmBaseModel(ModelWithFlag):
 
     """
 
+    paginator_defer: List[str] = []
+    """Тяжелые поля, содержимое которых не важно для списков."""
+
     paginator_related: List[str] = ['submitter']
     """Поле, из которого следует тянуть данные одним запросом
     при обращении к постраничному списку объектов.
@@ -402,8 +405,13 @@ class RealmBaseModel(ModelWithFlag):
 
         qs = cls.objects.published()
 
-        if cls.paginator_related:
-            qs = qs.select_related(*cls.paginator_related)
+        related = cls.paginator_related
+        if related:
+            qs = qs.select_related(*related)
+
+        defer = cls.paginator_defer
+        if defer:
+            qs = qs.defer(*defer)
 
         qs = qs.order_by(cls.paginator_order)
 

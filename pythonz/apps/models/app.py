@@ -20,6 +20,8 @@ class App(
 
     COVER_UPLOAD_TO: str = 'apps'
 
+    paginator_defer: List[str] = ['downloads', 'text', 'text_src']
+
     repo = models.URLField(
         'Репозиторий', null=True, blank=True, unique=True,
         help_text='URL, по которому доступен исходный код приложения.')

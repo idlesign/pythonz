@@ -1,3 +1,5 @@
+from typing import List
+
 from django.db import models
 from etc.models import InheritedModel
 from simple_history.models import HistoricalRecords
@@ -15,6 +17,7 @@ class Community(
     """Модель сообществ. Формально объединяет некоторую группу людей."""
 
     allow_edit_published: bool = True
+    paginator_defer: List[str] = ['url', 'text', 'text_src']
 
     place = models.ForeignKey(
         Place, verbose_name='Место', related_name='communities', null=True, blank=True,
