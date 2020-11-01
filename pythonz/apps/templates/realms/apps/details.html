@@ -1,6 +1,10 @@
 {% extends "base_details.html" %}
 {% load model_field %}
 
+{% block head %}
+    {{ block.super }}
+    {% include "sub/plotly.html" %}
+{% endblock %}
 
 {% block page_keywords %}{{ block.super }}, python {{ app.title }}{% endblock %}
 
@@ -56,4 +60,8 @@
     <div class="py_user mb-3 card">
         <div class="card-body">{{ app.text|safe }}</div>
     </div>
+
+    {% if app.downloads %}
+        {% include "realms/apps/downloads.html" with downloads=app.downloads %}
+    {% endif %}
 {% endblock %}

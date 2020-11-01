@@ -2,8 +2,7 @@
 
 {% block head %}
     {{ block.super }}
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-locale-ru-latest.js"></script>
+    {% include "sub/plotly.html" %}
 {% endblock %}
 
 {% block page_contents_pre %}

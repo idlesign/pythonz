@@ -124,6 +124,10 @@ class App(
 
         data = get_for_package(slug)
 
-        self.downloads.update(data)
+        downloads = self.downloads
+        downloads.update(data)
+
+        self.downloads = dict(sorted((
+            item for item in downloads.items()), key=lambda item: item[0]))
 
         return bool(data)

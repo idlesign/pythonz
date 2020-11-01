@@ -1,0 +1,31 @@
+
+<div class="mt-2 mb-2">
+    <div id="downloads"></div>
+    <script>
+        Plotly.plot('downloads', {
+
+            data: [
+                {
+                    x: ['{{ downloads.keys|join:"', '" }}'],
+                    y: [{{ downloads.values|join:", " }}],
+                    type: 'bar'
+                }
+            ],
+
+            layout: {
+                title: 'Загрузки (pypistats.org)',
+                height: 300,
+                margin: {l: 30, r: 30, b: 35, t: 50, pad: 4},
+                hovermode: 'closest',
+                showlegend: false
+            },
+
+            config: {
+                {% include "sub/plotly_config.html" %}
+            }
+
+        });
+
+    </script>
+</div>
+

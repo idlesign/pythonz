@@ -261,6 +261,6 @@ class AppAdmin(EntityBaseAdmin):
 
     def update_stats(self, request, queryset):
 
-        App.actualize_downloads()
+        App.actualize_downloads(queryset)
 
     update_stats.short_description = 'Обновить данные о загрузках'
