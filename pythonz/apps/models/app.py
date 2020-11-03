@@ -104,6 +104,11 @@ class App(
         return self.make_html(self.description)
 
     @property
+    def downloads_map(self) -> dict:
+        """Данные о загрузках в виде словаря."""
+        return {self.slug: self.downloads}
+
+    @property
     def github_ident(self) -> str:
         repo = self.repo or ''
 

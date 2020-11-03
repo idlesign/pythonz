@@ -211,7 +211,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
 
         return result
 
-    def get_materials(self) -> Dict[str, Tuple[str, QuerySet]]:
+    def get_materials(self) -> dict:
         """Возвращает словарь с матералами, созданными персоной.
 
         Индексирован названиями разделов сайта; значения — список моделей материалов.
@@ -226,7 +226,13 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
             get_realm('app'),
         ]  # Пока ограничимся.
 
-        materials = {}
+        downloads: Dict[str, dict] = {}
+        materials: Dict[str, Tuple[str, QuerySet]] = {}
+
+        materials_data = {
+            'downloads_map': downloads,
+            'items': materials,
+        }
 
         for realm in realms:
 
@@ -245,4 +251,8 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
             if items:
                 materials[realm_name] = (plural, items)
 
-        return materials
+                if realm.name == 'app':
+                    for item in items:
+                        downloads[item.slug] = item.downloads
+
+        return materials_data

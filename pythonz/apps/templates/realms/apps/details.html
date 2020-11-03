@@ -62,6 +62,6 @@
     </div>
 
     {% if app.downloads %}
-        {% include "realms/apps/downloads.html" with downloads=app.downloads %}
+        {% include "realms/apps/downloads.html" with downloads_map=app.downloads_map %}
     {% endif %}
 {% endblock %}

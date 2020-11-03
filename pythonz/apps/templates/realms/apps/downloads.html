@@ -2,22 +2,28 @@
 <div class="mt-2 mb-2">
     <div id="downloads"></div>
     <script>
+        let data = [];
+
+        {% for app, downloads in downloads_map.items %}
+        data.push({
+            x: ['{{ downloads.keys|join:"', '" }}'],
+            y: [{{ downloads.values|join:", " }}],
+            name: '{{ app }}',
+            type: 'bar'
+        })
+        {% endfor %}
+
         Plotly.plot('downloads', {
 
-            data: [
-                {
-                    x: ['{{ downloads.keys|join:"', '" }}'],
-                    y: [{{ downloads.values|join:", " }}],
-                    type: 'bar'
-                }
-            ],
+            data: data,
 
             layout: {
                 title: 'Загрузки (pypistats.org)',
+                barmode: 'stack',
                 height: 300,
                 margin: {l: 30, r: 30, b: 35, t: 50, pad: 4},
                 hovermode: 'closest',
-                showlegend: false
+                legend: {'orientation': 'h'}
             },
 
             config: {
