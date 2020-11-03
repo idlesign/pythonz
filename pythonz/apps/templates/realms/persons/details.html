@@ -48,14 +48,15 @@
     <div class="clearfix"></div>
 
 {% cache 300 person_materials person.pk %}
-    {% if materials %}
-    <div class="mt-4">
-        {% include "sub/realms_links_tabs.html" with realms_links=materials.items %}
+    {% if materials.downloads_map %}
+    <div class="mt-3 mb-4 card">
+        <div class="card-body">{% include "realms/apps/downloads.html" with downloads_map=materials.downloads_map %}</div>
     </div>
     {% endif %}
-    {% if materials.downloads_map %}
-    <div class="mt-3 mb-3 card">
-        <div class="card-body">{% include "realms/apps/downloads.html" with downloads_map=materials.downloads_map %}</div>
+
+    {% if materials.items %}
+    <div class="mt-4">
+        {% include "sub/realms_links_tabs.html" with realms_links=materials.items %}
     </div>
     {% endif %}
 {% endcache %}
