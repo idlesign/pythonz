@@ -235,7 +235,12 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
 
             _, plural = realm.get_names()
 
-            items = getattr(self, plural).order_by('slug', 'title')
+            items = getattr(self, plural)
+
+            if realm.name != 'pep':
+                items = items.published()
+
+            items = items.order_by('slug', 'title')
 
             if items:
                 materials[realm_name] = (plural, items)
