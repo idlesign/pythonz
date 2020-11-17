@@ -55,13 +55,13 @@
             {% if user.url %}
                 <tr>
                     <td>{% model_field_verbose_name from user.url %}:</td>
-                    <td><a href="{{ user.get_utm_url }}">{{ user.url }}</a></td>
+                    <td><a href="{{ user.get_utm_url }}" rel="nofollow">{{ user.url }}</a></td>
                 </tr>
             {% endif %}
             {% if user.twitter %}
                 <tr>
                     <td>{% model_field_verbose_name from user.twitter %}:</td>
-                    <td><a href="https://twitter.com/{{ user.twitter }}">{{ user.twitter }}</a></td>
+                    <td><a href="https://twitter.com/{{ user.twitter }}" rel="nofollow">{{ user.twitter }}</a></td>
                 </tr>
             {% endif %}
             {% if user.person %}
