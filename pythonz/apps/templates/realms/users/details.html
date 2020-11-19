@@ -52,17 +52,19 @@
                     <td><a href="mailto:{{ user.email_public }}">{{ user.email_public }}</a></td>
                 </tr>
             {% endif %}
-            {% if user.url %}
-                <tr>
-                    <td>{% model_field_verbose_name from user.url %}:</td>
-                    <td><a href="{{ user.get_utm_url }}" rel="nofollow">{{ user.url }}</a></td>
-                </tr>
-            {% endif %}
-            {% if user.twitter %}
-                <tr>
-                    <td>{% model_field_verbose_name from user.twitter %}:</td>
-                    <td><a href="https://twitter.com/{{ user.twitter }}" rel="nofollow">{{ user.twitter }}</a></td>
-                </tr>
+            {% if user.karma > 0 %}
+                {% if user.url %}
+                    <tr>
+                        <td>{% model_field_verbose_name from user.url %}:</td>
+                        <td><a href="{{ user.get_utm_url }}" rel="nofollow">{{ user.url }}</a></td>
+                    </tr>
+                {% endif %}
+                {% if user.twitter %}
+                    <tr>
+                        <td>{% model_field_verbose_name from user.twitter %}:</td>
+                        <td><a href="https://twitter.com/{{ user.twitter }}" rel="nofollow">{{ user.twitter }}</a></td>
+                    </tr>
+                {% endif %}
             {% endif %}
             {% if user.person %}
             <tr>
@@ -156,7 +158,7 @@
 {% block details_share %}{% endblock %}
 
 {% block column_controls %}
-    {% if user.twitter %}
+    {% if user.karma > 0 and user.twitter %}
         <div class="sticky">
             {% include "sub/twitter_timeline.html" with username=user.twitter %}
         </div>

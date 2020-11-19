@@ -61,6 +61,8 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
 
     url = models.URLField('Страница в сети', null=True, blank=True)
 
+    karma = models.DecimalField('Карма', max_digits=6, decimal_places=2, default=0)
+
     class Meta:
 
         verbose_name = 'Пользователь'
