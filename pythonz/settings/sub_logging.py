@@ -1,14 +1,6 @@
 from .sub_paths import PROJECT_DIR_STATE
 
 
-RAVEN_DSN = ''
-
-
-RAVEN_CONFIG = {
-    'dsn': RAVEN_DSN,
-}
-
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -34,10 +26,6 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
-        'sentry': {
-            'level': 'WARNING',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -54,11 +42,6 @@ LOGGING = {
         },
     },
     'loggers': {
-        'root': {
-            'level': 'WARNING',
-            'handlers': ['sentry'],
-            'filters': ['require_debug_false'],
-        },
         'django.db.backends': {
             'level': 'ERROR',
             'handlers': ['console'],
@@ -75,16 +58,6 @@ LOGGING = {
             'propagate': True,
         },
         'pythonz.apps.management.commands': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-            'propagate': False,
-        },
-        'raven': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-            'propagate': False,
-        },
-        'sentry.errors': {
             'level': 'DEBUG',
             'handlers': ['console'],
             'propagate': False,

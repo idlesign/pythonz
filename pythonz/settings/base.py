@@ -3,6 +3,7 @@ from .sub_email import *
 from .sub_intergration import *
 from .sub_logging import *
 from .sub_security import *
+from .sub_sentry import init_sentry
 
 from pythonz import VERSION_STR
 
@@ -79,7 +80,6 @@ INSTALLED_APPS = [
 
     'simple_history',
     'robots',
-    'raven.contrib.django.raven_compat',
 
     'pythonz.apps',
 

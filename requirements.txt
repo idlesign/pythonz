@@ -27,7 +27,7 @@ Pillow==8.0.1
 psycopg2==2.8.6
 pyTelegramBotAPI==3.7.4
 pytz==2020.4
-raven==6.10.0
+sentry-sdk==0.19.5
 regex==2020.11.13
 requests[socks]==2.25.1
 twitter==1.18.0
