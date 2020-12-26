@@ -445,14 +445,18 @@ class EditView(RealmView):
         if 'pythonz_form' in request.POST:
             data = request.POST
 
-        form = self.realm.form(data, request.FILES or None, instance=item, user=request.user)
-
-        if item is None:
-            form.submit_title = self.realm.txt_form_add
-
-        else:
+        if item is not None:
             self.check_edit_permissions(request, item)
-            form.submit_title = self.realm.txt_form_edit
+
+        form = self.realm.form(
+            data,
+            request=request,
+            src='POST',
+            instance=item,
+            files=request.FILES or None,
+            id='edit_form',
+            user=request.user,
+        )
 
         xross_listener(http_method='POST', item=item)
 

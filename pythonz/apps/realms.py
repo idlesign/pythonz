@@ -183,9 +183,7 @@ def build_sitetree():
 
 
 class BookRealm(RealmBase):
-    """
-    Область с книгами.
-    """
+    """Область с книгами."""
 
     txt_form_add: str = 'Добавить книгу'
     txt_form_edit: str = 'Изменить книгу'
@@ -199,9 +197,7 @@ class BookRealm(RealmBase):
 
 
 class VideoRealm(RealmBase):
-    """
-    Область с видео.
-    """
+    """Область с видео."""
 
     txt_form_add: str = 'Добавить видео'
     txt_form_edit: str = 'Изменить видео'
@@ -215,9 +211,7 @@ class VideoRealm(RealmBase):
 
 
 class EventRealm(RealmBase):
-    """
-    Область с событиями.
-    """
+    """Область с событиями."""
 
     view_listing_description: str = (
         'События, которые могут заинтересовать питонистов: встречи, конференции, спринты, и пр.')
@@ -232,9 +226,7 @@ class EventRealm(RealmBase):
 
 
 class VacancyRealm(RealmBase):
-    """
-    Область с вакансиями.
-    """
+    """Область с вакансиями."""
 
     allowed_views: Tuple[str, ...] = ('listing',)
     name_plural: str = 'vacancies'
@@ -252,9 +244,7 @@ class VacancyRealm(RealmBase):
 
 
 class ReferenceRealm(RealmBase):
-    """
-    Область со справочниками.
-    """
+    """Область со справочниками."""
 
     allowed_views: Tuple[str, ...] = ('listing', 'details', 'add', 'edit')
 
@@ -304,9 +294,7 @@ class ReferenceRealm(RealmBase):
 
 
 class ArticleRealm(RealmBase):
-    """
-    Область со статьями.
-    """
+    """Область со статьями."""
 
     txt_form_add: str = 'Добавить статью'
     txt_form_edit: str = 'Редактировать статью'
@@ -320,9 +308,7 @@ class ArticleRealm(RealmBase):
 
 
 class PlaceRealm(RealmBase):
-    """
-    Область с географическими объектами (местами).
-    """
+    """Область с географическими объектами (местами)."""
 
     view_listing_description: str = 'Места, так или иначе связанные с языком программирования Python.'
     view_listing_keywords: str = 'python в городе, где программируют на питоне'
@@ -341,9 +327,7 @@ class PlaceRealm(RealmBase):
 
 
 class DiscussionRealm(RealmBase):
-    """
-    Область обсуждений.
-    """
+    """Область обсуждений."""
 
     txt_form_add: str = 'Создать обсуждение'
     txt_form_edit: str = 'Редактировать обсуждение'
@@ -360,9 +344,7 @@ class DiscussionRealm(RealmBase):
 
 
 class UserRealm(RealmBase):
-    """
-    Область с пользователями сайта.
-    """
+    """Область с пользователями сайта."""
 
     txt_form_edit: str = 'Изменить настройки'
 
@@ -390,9 +372,7 @@ class UserRealm(RealmBase):
 
 
 class CategoryRealm(RealmBase):
-    """
-    Область с категориями.
-    """
+    """Область с категориями."""
 
     view_listing_description: str = 'Карта категорий материалов по языку программирования Python доступных на сайте.'
     view_listing_keywords: str = 'материалы по питону, python по категориям'
@@ -508,9 +488,7 @@ class CategoryRealm(RealmBase):
 
 
 class CommunityRealm(RealmBase):
-    """
-    Область с сообществами.
-    """
+    """Область с сообществами."""
 
     txt_form_add: str = 'Добавить сообщество'
     txt_form_edit: str = 'Редактировать сообщество'
@@ -529,9 +507,7 @@ class CommunityRealm(RealmBase):
 
 
 class VersionRealm(RealmBase):
-    """
-    Область с версиями.
-    """
+    """Область с версиями."""
 
     txt_form_add: str = 'Добавить версию'
     txt_form_edit: str = 'Редактировать версию'
@@ -553,9 +529,7 @@ class VersionRealm(RealmBase):
 
 
 class PepRealm(RealmBase):
-    """
-    Область с предложениями по улучшению.
-    """
+    """Область с предложениями по улучшению."""
 
     view_listing_description: str = 'Предложения по улучшению Питона (PEP).'
     view_listing_keywords: str = 'python pep, преложения по улучшению, пепы, пеп'

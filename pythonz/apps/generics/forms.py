@@ -3,13 +3,21 @@ from typing import Optional
 
 from django import forms
 from django.forms.widgets import CheckboxInput
+from django.http import HttpRequest
+from siteforms.composers.bootstrap4 import Bootstrap4, SUBMIT
+from siteforms.toolbox import ModelForm
 
 from ..forms.widgets import RstEditWidget
 from ..models import Article, User
 
 
-class CommonEntityForm(forms.ModelForm):
+class CommonEntityForm(ModelForm):
     """Базовый класс для форм создания/редактирования сущностей."""
+
+    pythonz_form = forms.CharField(widget=forms.HiddenInput(), initial='1')
+
+    def __init__(self, *args, request: HttpRequest = None, src: str = None, id: str = '', **kwargs):
+        super().__init__(*args, request=request, src=src, id=id, **kwargs)
 
     def clean_year(self) -> str:
 
@@ -21,6 +29,14 @@ class CommonEntityForm(forms.ModelForm):
                 raise forms.ValidationError('Такой год не похож на правду.')
 
         return year
+
+    class Composer(Bootstrap4):
+
+        opt_submit = 'Сохранить'
+
+        attrs = {
+            SUBMIT: {'class': 'btn btn-block btn-success'},
+        }
 
 
 class RealmEditBaseForm(CommonEntityForm):
