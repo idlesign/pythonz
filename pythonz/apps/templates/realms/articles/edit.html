@@ -6,14 +6,14 @@
     <script type="text/javascript">
 
         function toggleFormFields() {
-            var isExternal = $('#id_location').val() === '2',
+            var isExternal = $('#edit_form_location').val() === '2',
                 fieldsForExternal = ['url'],
                 commonFields = ['location', 'status', 'published_by_author'];
 
-            $('.form-group', '#edit_form').each(function(idx, el){
+            $('.form-control', '#edit_form').each(function(idx, el){
 
                 var $el = $(el),
-                    name = $el.data('fieldname'),
+                    name = $el.attr('name'),
                     in_array = $.inArray(name, fieldsForExternal) > -1,
                     show = (isExternal && in_array) || (!isExternal && !in_array);
 
@@ -21,16 +21,18 @@
                     return;
                 }
 
-                $el.hide();
+                var $parent = $el.parent('.form-group');
+
+                $parent.hide();
                 if (show) {
-                    $el.show();
+                    $parent.show();
                 }
 
             });
         }
 
         $(function(){
-            $('#id_location').on('change', toggleFormFields);
+            $('#edit_form_location').on('change', toggleFormFields);
             toggleFormFields();
         });
     </script>

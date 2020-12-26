@@ -9,21 +9,22 @@
             var idFunc = '4',
                 idClass = '5',
                 idMethod = '6',
-                show = $.inArray($('#id_type').val(), [idFunc, idClass, idMethod]) > -1;
+                show = $.inArray($('#edit_form_type').val(), [idFunc, idClass, idMethod]) > -1;
 
-            $('.form-group', '#edit_form').each(function(idx, el){
+            $('.form-control', '#edit_form').each(function(idx, el){
                 var $el = $(el);
-                if ($el.data('fieldname').indexOf('func_')===0) {
-                    $el.hide();
+                if ($el.attr('name').indexOf('func_')===0) {
+                    var $parent = $el.parent('.form-group');
+                    $parent.hide();
                     if (show) {
-                        $el.show();
+                        $parent.show();
                     }
                 }
             });
         }
 
         $(function(){
-            $('#id_type').on('change', toggleFormFields);
+            $('#edit_form_type').on('change', toggleFormFields);
             toggleFormFields();
         });
     </script>
