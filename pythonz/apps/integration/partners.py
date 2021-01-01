@@ -183,7 +183,7 @@ class Book24(PartnerBase):
             match = page_soup.find(itemprop='price').get_text().strip()
 
             if match:
-                price = match
+                price = match.replace(' ', '')
 
         return price
 
