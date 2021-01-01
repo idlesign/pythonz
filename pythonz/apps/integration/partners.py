@@ -1,6 +1,6 @@
 from collections import namedtuple
-from typing import Optional, List, Tuple, Union, Type
-
+from typing import Optional, List, Tuple, Union, Type, Dict
+from decimal import Decimal
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.cache import cache
@@ -16,19 +16,28 @@ if False:  # pragma: nocover
     from ..generics.models import RealmBaseModel
     from ..models import PartnerLink, ModelWithPartnerLinks
 
-_PARTNERS_REGISTRY: Optional[dict] = None
 _CACHE_TIMEOUT: int = 28800  # 8 часов
 
 
 class PartnerBase:
     """Базовый класс для работы с партнёрскими сайтами."""
 
-    ident: str = None
+    alias: str = None
     title: str = None
     link_mutator: str = None
 
+    registry: Dict[str, 'PartnerBase'] = {}
+    """Реестр объектов партнёров."""
+
     def __init__(self, partner_id: str):
         self.partner_id = partner_id
+
+    def __init_subclass__(cls) -> None:
+        super().__init_subclass__()
+
+        alias = cls.alias
+        partner_id = settings.PARTNER_IDS.get(alias, '')
+        cls.registry[alias] = cls(partner_id)
 
     def get_link_data(self, realm: 'RealmBase', link: 'PartnerLink') -> dict:
         """Возвращает словарь с данными партнёрской ссылки.
@@ -96,7 +105,7 @@ class PartnerBase:
 class BooksRu(PartnerBase):
     """Класс реализует работу по партнёрской программе сайта books.ru."""
 
-    ident: str = 'booksru'
+    alias: str = 'booksru'
     title: str = 'books.ru'
     link_mutator: str = '?partner={partner_id}'
 
@@ -117,7 +126,7 @@ class BooksRu(PartnerBase):
 class LitRes(PartnerBase):
     """Класс реализует работу по партнёрской программе сайта litres.ru."""
 
-    ident: str = 'litres'
+    alias: str = 'litres'
     title: str = 'litres.ru'
     link_mutator: str = '?lfrom={partner_id}'
 
@@ -138,7 +147,7 @@ class LitRes(PartnerBase):
 class Ozon(PartnerBase):
     """Класс реализует работу по партнёрской программе сайта ozon.ru."""
 
-    ident: str = 'ozon'
+    alias: str = 'ozon'
     title: str = 'ozon.ru'
     link_mutator: str = '?partner={partner_id}'
 
@@ -156,12 +165,14 @@ class Ozon(PartnerBase):
         return price
 
 
-class ReadRu(PartnerBase):
-    """Класс реализует работу по партнёрской программе сайта ozon.ru."""
+class Book24(PartnerBase):
+    """Класс реализует работу по партнёрской программе сайта book24.ru (бывший read.ru)."""
 
-    ident: str = 'readru'
-    title: str = 'read.ru'
-    link_mutator: str = '?pp={partner_id}'
+    alias: str = 'book24'
+    title: str = 'book24.ru'
+    link_mutator: str = (
+            '?utm_source=affiliate&utm_medium=cpa&utm_campaign={partner_id}&'
+            'utm_content=site&partnerId={partner_id}')
 
     @classmethod
     def get_price(cls, page_soup: BeautifulSoup) -> str:
@@ -169,18 +180,32 @@ class ReadRu(PartnerBase):
         price = ''
 
         if page_soup:
-            matches = page_soup.select('.read2__book_price__fullprice')
+            match = page_soup.find(itemprop='price').get_text().strip()
 
-            if not matches:
-                matches = page_soup.select('.book_price3__fullprice')
+            if match:
+                price = match
 
-            if matches:
-                price = matches[0].text
+        return price
+
+
+class Bookvoed(PartnerBase):
+    """Класс реализует работу по партнёрской программе сайта bookvoed.ru."""
+
+    alias: str = 'bookvoed'
+    title: str = 'bookvoed.ru'
+    link_mutator: str = '?{partner_id}'  # нет партнёрской программы
+
+    @classmethod
+    def get_price(cls, page_soup: BeautifulSoup) -> str:
+
+        price = ''
+
+        if page_soup:
+            match = page_soup.find(itemprop='price')
+            if match:
+                price = match.attrs.get('content') or ''
                 if price:
-                    try:
-                        price = price.encode('latin1').decode('cp1251').strip().split(' ')[0]
-                    except UnicodeEncodeError:
-                        pass
+                    price = f'{int(Decimal(price))}'
 
         return price
 
@@ -188,7 +213,7 @@ class ReadRu(PartnerBase):
 class LabirintRu(PartnerBase):
     """Класс реализует работу по партнёрской программе сайта labirint.ru."""
 
-    ident: str = 'labirint'
+    alias: str = 'labirint'
     title: str = 'labirint.ru'
     link_mutator: str = '?p={partner_id}'
 
@@ -217,23 +242,6 @@ def get_cache_key(instance: 'RealmBaseModel') -> str:
 
 def init_partners_module():
     """Инициализирует объекты известных партнёров и заносит их в реестр."""
-
-    global _PARTNERS_REGISTRY
-
-    if _PARTNERS_REGISTRY is not None:
-        return
-
-    _PARTNERS_REGISTRY = {}
-
-    PARTNER_CLASSES = [BooksRu, LitRes, Ozon, ReadRu, LabirintRu]
-
-    partners_settings = settings.PARTNER_IDS
-
-    for partner_class in PARTNER_CLASSES:
-        ident = partner_class.ident
-        if ident in partners_settings:
-            _PARTNERS_REGISTRY[ident] = partner_class(partners_settings[ident])
-
     from ..models import PartnerLink
 
     def partner_links_cache_invalidate(*args, **kwargs):
@@ -256,8 +264,8 @@ def get_partners_choices() -> List[Tuple[str, str]]:
 
     choices = []
 
-    for partner in _PARTNERS_REGISTRY.values():
-        choices.append((partner.ident, partner.title))
+    for partner in PartnerBase.registry.values():
+        choices.append((partner.alias, partner.title))
 
     return choices
 
@@ -285,9 +293,10 @@ def get_partner_links(realm: Type['RealmBase'], item: Union['RealmBaseModel', 'M
 
         links_data = []
         tasks = []
+        get_partner = PartnerBase.registry.get
 
         for link in item.partner_links.order_by('partner_alias', 'description').all():
-            partner = _PARTNERS_REGISTRY.get(link.partner_alias)
+            partner = get_partner(link.partner_alias)
 
             if partner:
                 tasks.append(Task(

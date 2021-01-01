@@ -62,3 +62,19 @@ def test_litres(assert_link_data):
     assert_link_data(
         partners.LitRes,
         'https://www.litres.ru/mark-summerfield/programmirovanie-na-python-3-podrobnoe-rukovodstvo-24499518/')
+
+
+@pytest.mark.slow
+def test_bookvoed(assert_link_data):
+
+    assert_link_data(
+        partners.Bookvoed,
+        'https://www.bookvoed.ru/book?id=10041789')
+
+
+@pytest.mark.slow
+def test_book24(assert_link_data):
+
+    assert_link_data(
+        partners.Book24,
+        'https://book24.ru/product/legkiy-sposob-vyuchit-python-3-2209997/')
