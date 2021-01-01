@@ -1,3 +1,5 @@
+from typing import List
+
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -41,3 +43,45 @@ class ModelWithPartnerLinks(models.Model):
     class Meta:
 
         abstract = True
+
+    @classmethod
+    def partner_links_enrich(cls, data: dict) -> List[PartnerLink]:
+        """Пополняет партнёрские ссылки по данным из указанного словаря.
+        Возвращает список добавленных новых ссылок.
+
+        :param data:
+
+        """
+        content_type = ContentType.objects.get_for_model(cls, for_concrete_model=False)
+
+        result = []
+
+        for title, links in data.items():
+
+            try:
+                source_obj = cls.objects.get(title=title)
+
+            except cls.DoesNotExist:
+                # Нет полного совпадения.
+                # Пробуем сориентироваться по ссылкам.
+                source_obj = PartnerLink.objects.filter(url__in=links).first()
+
+                if source_obj:
+                    source_obj = source_obj.linked_object
+
+                else:
+                    source_obj = cls.objects.create(title=title)
+
+            for url, partner_alias in links.items():
+
+                link, link_created = PartnerLink.objects.get_or_create(
+                    content_type=content_type,
+                    object_id=source_obj.id,
+                    partner_alias=partner_alias,
+                    url=url,
+                )
+
+                if link_created:
+                    result.append(link)
+
+        return result

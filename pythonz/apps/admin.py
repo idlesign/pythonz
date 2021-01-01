@@ -1,3 +1,4 @@
+from json import loads
 from typing import Type
 
 from admirarchy.toolbox import HierarchicalModelAdmin
@@ -7,16 +8,32 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.contenttypes.admin import GenericTabularInline
-from django.db.models import Model
+from django.db import models
+from etc.admin import CustomModelPage
 from simple_history.admin import SimpleHistoryAdmin
 
-from .integration.partners import get_partners_choices
 from .forms.forms import BookForm
+from .integration.partners import get_partners_choices
 from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version, PartnerLink, \
     Vacancy, ReferenceMissing, PEP, Person, ExternalResource, Summary, App
 
 
-def get_inline(model: Type[Model], field_name: str) -> Type:
+class BookLinksImportPage(CustomModelPage):
+    """Обрабатывает данные о партнёрских ссылках, загружаемые пакетно."""
+
+    title = 'Импорт ссылок на книги'
+
+    data = models.FileField('Данные для импорта')
+
+    def save(self):
+        links = Book.partner_links_enrich(loads(self.data.read()))
+        self.bound_admin.message_success(self.bound_request, f'Добавлено ссылок: {len(links)}.')
+
+
+BookLinksImportPage.register()
+
+
+def get_inline(model: Type[models.Model], field_name: str) -> Type:
     """Возвращает класс встраиваемого редактора для использования
     в inlines в случаях полей многие-ко-многим.
 
