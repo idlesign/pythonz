@@ -33,9 +33,14 @@ def publish_postponed():
 
         for submitter_id, items in postponed_by_submitter.items():
 
-            latest = realm_model.objects.filter(
-                status=status_published, submitter_id=submitter_id,
-            ).latest('time_published')
+            try:
+                latest = realm_model.objects.filter(
+                    status=status_published,
+                    submitter_id=submitter_id,
+                ).latest('time_published')
+
+            except realm_model.DoesNotExist:
+                latest = None
 
             if not latest or latest.time_published < date_before:
                 # Пока публикуем только первый из назначенных к публикации материалов.
