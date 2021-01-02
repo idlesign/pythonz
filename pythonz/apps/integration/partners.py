@@ -180,10 +180,10 @@ class Book24(PartnerBase):
         price = ''
 
         if page_soup:
-            match = page_soup.find(itemprop='price').get_text().strip()
+            match = page_soup.find(itemprop='price')
 
             if match:
-                price = match.replace(' ', '')
+                price = match.get_text().strip().replace(' ', '')
 
         return price
 
