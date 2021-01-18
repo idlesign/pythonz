@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from django.core.exceptions import FieldDoesNotExist
 
-from pythonz.apps.realms import get_realm, PEP
+from pythonz.apps.realms import get_realm, PEP, Category, Article
 
 
 @pytest.fixture
@@ -26,7 +26,7 @@ def check_page(request_client):
 
 
 @pytest.fixture
-def check_realm(check_page, robot, monkeypatch):
+def check_realm(check_page, robot, monkeypatch, request_client):
 
     def check_realm_(alias, *, views_hooks: dict = None, obj_kwargs=None):
 
@@ -103,6 +103,11 @@ def check_realm(check_page, robot, monkeypatch):
                 assertions=checks, user=robot)
 
             hook and hook(result)
+
+        if realm.syndication_enabled:
+            client = request_client(user=None)
+            content = client.get(f'/{realm.name_plural}/feed/').content.decode()
+            assert f'<guid isPermaLink="false">{realm.name}_{obj.id}</guid>' in content
 
     return check_realm_
 
@@ -220,3 +225,18 @@ def test_persons(check_realm):
     check_realm('person', obj_kwargs={
         'name_en': 'Персона заголовок',
     })
+
+
+def test_categories_feed(request_client, robot):
+    client = request_client(user=None)
+
+    category = Category(creator=robot, title='someti')
+    category.save()
+
+    article = Article(submitter=robot)
+    article.mark_published()
+    article.save()
+    article.add_to_category(category, user=robot)
+
+    content = client.get(f'/categories/{category.id}/feed/').content.decode()
+    assert f'<guid isPermaLink="false">article_{article.id}</guid>' in content

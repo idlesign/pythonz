@@ -137,7 +137,8 @@ class RealmBase:
             'item_title': lambda self, item: item.title,
             'item_pubdate': lambda self, item: item.time_published,
             'item_link': lambda self, item: item.get_absolute_url(),
-            'item_guid': lambda self, item: f'{cls.name}_{item.pk}',
+            'item_guid': lambda self, item: f'{item.realm.name}_{item.pk}',
+            'item_guid_is_permalink': False,
             'item_description': lambda self, item: item.description,
             'item_turbo': lambda self, item: item.turbo_content,
         }
