@@ -77,4 +77,5 @@ https://github.com/idlesign/pythonz
 Запуск тестов
 ~~~~~~~~~~~~~
 
+* Установите в окружение зависимости: ``$ pip install -r tests/requirements.txt``;
 * Используйте команду ``$ ./runtests.sh`` для прогона имеющихся тестов.
