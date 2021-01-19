@@ -1,4 +1,3 @@
-{% load sitetree model_meta %}
 
 <div class="card col-md-6 mt-3 float-left">
 
@@ -7,7 +6,7 @@
     <ul>
         {% for item in realm_data.items %}
         <li class="mb-2">
-            <a href="{% if item.src_alias %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">
+            <a href="{% if item.src_alias and item.utm_on_main %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">
                 {{ item.title }}
             </a>
             {% if not item.src_alias and item.title != item.description %}<div class="small text-muted">{{ item.description }}</div>{% endif %}

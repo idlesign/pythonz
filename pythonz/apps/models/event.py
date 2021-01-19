@@ -25,6 +25,7 @@ class Event(
     allow_edit_published: bool = True
     notify_on_publish: bool = False
     paginator_defer: List[str] = ['contacts', 'text', 'text_src']
+    utm_on_main: bool = False
 
     @unique
     class Spec(models.IntegerChoices):

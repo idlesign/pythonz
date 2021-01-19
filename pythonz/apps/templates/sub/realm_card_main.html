@@ -21,7 +21,7 @@
             <ul class="pl-4">
                 {% for item in realm_data.items %}
                 <li class="mb-2">
-                    <a href="{% if item.src_alias %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">
+                    <a href="{% if item.src_alias and item.utm_on_main %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">
                         {{ item.title }}
                     </a>
                 </li>
