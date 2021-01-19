@@ -27,6 +27,11 @@
             {% include "sub/search_bar.html" %}
         </div>
     </div>
+    <div class="row">
+        <div class="col mt-2">
+            {% include "sub/box_ads.html" with area="maintop"%}
+        </div>
+    </div>
 
     <div class="row mt-4 no-gutters justify-content-around" id="box-index">
     {% for realm_data in realms_data %}
