@@ -49,9 +49,6 @@ https://github.com/idlesign/pythonz
 Локальный запуск
 ----------------
 
-*Дополнительную полезную информацию* можно получить из wiki - https://github.com/idlesign/pythonz/wiki
-
-
 Подготовка
 ~~~~~~~~~~
 
