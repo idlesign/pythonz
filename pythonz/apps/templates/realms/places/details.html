@@ -2,26 +2,21 @@
 {% load sitecats %}
 
 
-{% block page_description %}Python в городе {{ place.title }}{% endblock %}
-
-
-{% block page_keywords %}{{ block.super }}, {{ place.title }} python{% endblock %}
-
-
 {% block head %}
     {{ block.super }}
     {% include "sub/ya_map_head.html" %}
 {% endblock %}
 
+{% block page_title %}Python в городе {{ place.title }}{% endblock %}
+
+{% block page_keywords %}{{ block.super }}, {{ place.title }} python{% endblock %}
 
 {% block schema_type %}AdministrativeArea{% endblock %}
-
 
 {% block cover %}
     <div id="cover-map" style="width: 260px; height: 300px;"></div>
     {% include "sub/ya_map.html" with item=item element_id="cover-map" %}
 {% endblock %}
-
 
 {% block details_contents %}
 
@@ -34,7 +29,6 @@
     {{ block.super }}
 {% endblock %}
 
-
 {% block column_controls %}
     {% if stats_salary %}
     <div class="small mb-4">
@@ -43,7 +37,6 @@
     {% endif %}
     {{ block.super }}
 {% endblock %}
-
 
 {% block details_contents_after %}
 

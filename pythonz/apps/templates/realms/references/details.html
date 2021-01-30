@@ -2,22 +2,19 @@
 {% load model_field sitetree static %}
 {% get_static_prefix as STATIC_URL %}
 
+{% block page_title %}{{ reference.title }} в Python{% endblock %}
 
 {% block page_description %}Описание {{ reference.title }} в Python. {{ reference.description|truncatechars:"135" }}{% endblock %}
 
-
 {% block page_keywords %}{{ block.super }}, python3 {{ reference.title }}, питон {{ reference.title }}, {{ reference.keywords }}{% endblock %}
-
 
 {% block js_bottom %}
     {% include "realms/references/js.html" %}
 {% endblock %}
 
-
 {% block breadcrumbs %}
     {% sitetree_breadcrumbs from "references" template "sitetree/crumbs.html" %}
 {% endblock %}
-
 
 {% block column_right_contents %}
 
@@ -36,9 +33,7 @@
 
 {% endblock %}
 
-
 {% block schema_type %}APIReference{% endblock %}
-
 
 {% block details_contents %}
     <meta itemprop="headline" content="{{ reference.title }}" />
@@ -64,7 +59,6 @@
     </div>
 
 {%  endblock %}
-
 
 {% block details_contents_add %}
 
@@ -98,6 +92,5 @@
 
     {{ block.super }}
 {% endblock %}
-
 
 {% block cover %}{% endblock %}

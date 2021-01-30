@@ -1,16 +1,15 @@
 {% extends "base_details.html" %}
 {% load model_field %}
 
+{% block page_title %}Сообщество {{ community.title }}{% endblock %}
 
 {% block page_keywords %}{{ block.super }}, сообщество {{ community.title }}{% endblock %}
-
 
 {% block meta_og %}
     <meta property="og:type" content="object" />
     <meta property="og:title" content="{{ community.title }}" />
     {{ block.super }}
 {% endblock %}
-
 
 {% block details_contents_add %}
     <div class="text-muted mb-3 small">

@@ -7,12 +7,11 @@
     {% include "sub/ya_map_head.html" %}
 {% endblock %}
 
+{% block page_title %}{{ event.get_display_type }} {{ event.title }}{% if event.time_start %} ({{ event.time_start|date:"d E Y года" }}){% endif %}{% endblock %}
 
 {% block page_description %}Событие «{{ event.title }}»{% endblock %}
 
-
 {% block page_keywords %}{{ block.super }}, событие {{ event.title }}{% endblock %}
-
 
 {% block meta_og %}
     <meta property="og:type" content="event" />

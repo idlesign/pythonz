@@ -32,7 +32,7 @@
         {% endif %}
     {% endblock %}
 
-    <title itemprop="name">{% block page_title %}{% sitetree_breadcrumbs from "main" template "sitetree/breadcrumbs-title.html" %}{% endblock %}</title>
+    <title itemprop="name">{% block page_title %}{% sitetree_page_title from "main" %}{% endblock %}</title>
 
 </head>
 <body class="d-flex flex-column h-100">
@@ -42,7 +42,7 @@
 
             <div class="navbar-header">
 
-                <a class="navbar-brand" href="/" title="На главную страницу pythonz.net">
+                <a class="navbar-brand" href="/" title="На главную страницу">
                     <img src="{{ STATIC_URL }}img/favicon.gif" alt="pythonz">
                 </a>
 

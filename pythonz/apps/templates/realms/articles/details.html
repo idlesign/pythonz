@@ -2,15 +2,12 @@
 {% load gravatar model_meta sitetree static %}
 {% get_static_prefix as STATIC_URL %}
 
-
 {% block page_keywords %}{{ block.super }}, статья {{ article.title }}, что такое {{ article.title }}{% endblock %}
-
 
 {% block head %}
     {{ block.super }}
     {% include "sub/vk_head.html" %}
 {% endblock %}
-
 
 {% block meta_og %}
     <meta property="og:type" content="article" />
@@ -20,7 +17,6 @@
     {% endif %}
     {{ block.super }}
 {% endblock %}
-
 
 {% block schema_type %}Article{% endblock %}
 

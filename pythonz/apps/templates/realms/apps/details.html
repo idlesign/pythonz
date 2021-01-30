@@ -6,8 +6,9 @@
     {% include "sub/plotly.html" %}
 {% endblock %}
 
-{% block page_keywords %}{{ block.super }}, python {{ app.title }}{% endblock %}
+{% block page_title %}{{ app.title }} на Python{% endblock %}
 
+{% block page_keywords %}{{ block.super }}, python {{ app.title }}{% endblock %}
 
 {% block meta_og %}
     <meta property="og:type" content="object" />

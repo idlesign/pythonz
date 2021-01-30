@@ -1,15 +1,14 @@
 {% extends "_base.html" %}
 
-
 {% block head %}
     {{ block.super }}
     {% include "sub/ya_map_head.html" %}
     <meta property="yandex_recommendations_kill" content="1"/>
 {% endblock %}
 
+{% block page_title %}Места, где используют Python{% endblock %}
 
 {% block page_keywords %}{{ realm.view_listing_keywords }}{% endblock %}
-
 
 {% block page_contents %}
     <div class="row">

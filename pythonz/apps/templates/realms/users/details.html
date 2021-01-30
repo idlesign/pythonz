@@ -2,11 +2,11 @@
 {% load gravatar sitetree model_field cache %}
 
 
+{% block page_title %}{{ user.title }} на pythonz.net{% endblock %}
+
 {% block page_description %}Профиль питониста «{{ user.title }}»{% endblock %}
 
-
 {% block page_keywords %}{{ block.super }}, {{ user.title }} python{% endblock %}
-
 
 {% block meta_og %}
     <meta property="og:type" content="profile" />
@@ -19,9 +19,7 @@
     <meta property="og:image" content="{% gravatar_get_url user 180 %}" />
 {% endblock %}
 
-
 {% block schema_type %}Person{% endblock %}
-
 
 {% block details_contents %}
     <h4><i class="fa fa-fw fa-user-circle-o"></i> Общая информация</h4>
@@ -79,7 +77,6 @@
             {% endif %}
         </table>
     </div>
-
 
 {% cache 300 user_stats user.pk %}
     {% if stats %}

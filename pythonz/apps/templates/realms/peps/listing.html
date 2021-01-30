@@ -1,6 +1,8 @@
 {% extends "base_listing.html" %}
 {% load cache %}
 
+{% block page_title %}Все PEP в Python{% endblock %}
+
 {% block bar_right %}
     {% cache 21600 pep_filter %}
     <div>

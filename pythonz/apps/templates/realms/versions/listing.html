@@ -5,6 +5,8 @@
     {% include "sub/plotly.html" %}
 {% endblock %}
 
+{% block page_title %}Версии Python и срок поддержки{% endblock %}
+
 {% block page_contents_pre %}
     {{ block.super }}
     {% include "realms/versions/lifetime.html" %}

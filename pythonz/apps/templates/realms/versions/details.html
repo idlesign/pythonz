@@ -1,19 +1,18 @@
 {% extends "base_details.html" %}
 
 
-{% block page_keywords %}{{ block.super }}, python версия {{ version.title }}, что нового в python {{ version.title }}{% endblock %}
+{% block page_title %}что нового в Python {{ version.title }}{% endblock %}
 
+{% block page_keywords %}{{ block.super }}, python версия {{ version.title }}{% endblock %}
 
 {% block head %}
     {{ block.super }}
     {% include "sub/vk_head.html" %}
 {% endblock %}
 
-
 {% block details_contents %}
     <div class="pull-right badge badge-info">Дата выпуска: {{ version.date }}</div>
 {% endblock %}
-
 
 {% block details_contents_add %}
 

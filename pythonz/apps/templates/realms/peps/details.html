@@ -1,20 +1,18 @@
 {% extends "base_details.html" %}
 {% load model_field %}
 
+{% block page_title %}PEP {{ pep.num }} — {{ pep.title }}{% endblock %}
 
-{% block page_keywords %}{{ block.super }}, PEP {{ pep.num }}, {{ pep.title }}, предложение по улучшению{% endblock %}
-
+{% block page_keywords %}{{ block.super }}, предложение по улучшению{% endblock %}
 
 {% block head %}
     {{ block.super }}
     {% include "sub/vk_head.html" %}
 {% endblock %}
 
-
 {% block details_contents %}
     <div class="pull-right badge badge-info">{{ pep.time_published|date }}</div>
 {% endblock %}
-
 
 {% block details_description %}
     <div class="mb-3" itemprop="description">
@@ -22,7 +20,6 @@
         <a href="{{ pep.get_link_to_pyorg }}" title="Полный текст улучшения на английском языке">{{ item.description }}</a>
     </div>
 {% endblock %}
-
 
 {% block details_contents_add %}
 
