@@ -37,6 +37,7 @@ def publish_postponed():
                 latest = realm_model.objects.filter(
                     status=status_published,
                     submitter_id=submitter_id,
+                    time_published__isnull=False,
                 ).latest('time_published')
 
             except realm_model.DoesNotExist:
