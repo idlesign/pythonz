@@ -1,7 +1,8 @@
 from datetime import datetime
-from typing import Callable, Optional
+from typing import Callable, Optional, List
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, EmptyPage, Page
 from django.db.models import QuerySet
@@ -10,6 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition
 from django.views.generic.base import View
+from sitecats.models import Tie
 from sitecats.toolbox import get_category_aliases_under
 from xross.toolbox import xross_view, xross_listener
 from xross.utils import XrossHandlerBase
@@ -226,6 +228,30 @@ class ListingView(RealmView):
     def get_paginator_per_page(self, request: HttpRequest) -> int:
         return self.realm.model.items_per_page
 
+    @classmethod
+    def get_categories(cls) -> List[Category]:
+
+        model = cls.realm.model
+
+        if not issubclass(model, ModelWithCategory):
+            return []
+
+        content_type = ContentType.objects.get_for_model(model, for_concrete_model=False)
+
+        categories = [
+            Category(id=category_id, title=category_title)
+            for category_id, category_title in Tie.objects.filter(
+                content_type=content_type,
+            ).values_list('category_id', 'category__title').distinct()
+        ]
+
+        get_url = model.get_category_absolute_url
+
+        for category in categories:
+            category.note = get_url(category)
+
+        return categories
+
     def get(self, request: HttpRequest, category_id: int = None) -> HttpResponse:
 
         try:
@@ -252,6 +278,7 @@ class ListingView(RealmView):
             self.realm.name_plural: page_items,
             'items': page_items,
             'category': category,
+            'get_categories': self.get_categories,
             'items_most_voted': self.get_most_voted_objects()
         }
 
@@ -390,7 +417,7 @@ class DetailsView(RealmView):
             item.set_category_lists_init_kwargs({'show_title': True, 'cat_html_class': 'label label-default'})
 
         # Нарочно передаём item под двумя разными именами.
-        # Требуется для упрощения наслования шаблонов.
+        # Требуется для упрощения наследования шаблонов.
         context = {
             self.realm.name: item,
             'item': item,

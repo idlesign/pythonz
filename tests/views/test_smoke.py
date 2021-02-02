@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytest
 from django.core.exceptions import FieldDoesNotExist
+from sitecats.models import ModelWithCategory
 
 from pythonz.apps.realms import get_realm, PEP, Category, Article
 
@@ -26,7 +27,20 @@ def check_page(request_client):
 
 
 @pytest.fixture
-def check_realm(check_page, robot, monkeypatch, request_client):
+def init_category(robot, monkeypatch):
+
+    def init_category_(*, title):
+        category, _ = Category.objects.get_or_create(
+            creator=robot,
+            title=title,
+        )
+        return category
+
+    return init_category_
+
+
+@pytest.fixture
+def check_realm(check_page, robot, monkeypatch, request_client, init_category):
 
     def check_realm_(alias, *, views_hooks: dict = None, obj_kwargs=None):
 
@@ -55,10 +69,19 @@ def check_realm(check_page, robot, monkeypatch, request_client):
 
         obj = model.objects.create(**{**obj_kwargs, **obj_kwargs_base})
 
+        supports_categories = issubclass(model, ModelWithCategory)
+
+        if supports_categories:
+            category_1 = init_category(title='catone')
+            obj.add_to_category(category_1, user=robot)
+
         if 'listing' in realm.allowed_views:
 
             hook = views_hooks.get('listing')
             checks = []
+
+            if supports_categories:
+                checks.append(f'small">{category_1.title}</a>')
 
             not hook and checks.extend([
                 f'{model._meta.verbose_name_plural}<',
@@ -227,11 +250,10 @@ def test_persons(check_realm):
     })
 
 
-def test_categories_feed(request_client, robot):
+def test_categories_feed(request_client, robot, init_category):
     client = request_client(user=None)
 
-    category = Category(creator=robot, title='someti')
-    category.save()
+    category = init_category(title='someti')
 
     article = Article(submitter=robot)
     article.mark_published()

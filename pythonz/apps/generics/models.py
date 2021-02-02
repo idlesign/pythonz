@@ -633,13 +633,14 @@ class RealmBaseModel(ModelWithFlag):
     def absolute_url_prefixed(self) -> str:
         return self.get_absolute_url(with_prefix=True)
 
-    def get_category_absolute_url(self, category: 'Category') -> str:
+    @classmethod
+    def get_category_absolute_url(cls, category: 'Category') -> str:
         """Возвращает URL страницы с разбивкой по данной категории.
 
         :param category:
 
         """
-        tmp, realm_name_plural = self.realm.get_names()
+        tmp, realm_name_plural = cls.realm.get_names()
 
         return reverse(f'{realm_name_plural}:tags', args=[str(category.id)])
 
