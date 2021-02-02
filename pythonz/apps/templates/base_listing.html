@@ -40,14 +40,16 @@
 {% block page_contents_post %}
             {% include "sub/paginator.html" with paginator=items %}
 
-            {% cache 3600 realm.name %}
+            {% cache 3600 realmname realm.name %}
                 {% with categories=get_categories %}
                 {% if not category and categories%}
                     <div class="mb-2 mt-2">
-                    <span class="small">У нас есть для вас {{ realm.model.get_verbose_name_plural|lower }} в следующих категориях:</span>
+                    <span class="small">
+                        А ещё у нас есть для вас {{ realm.model.get_verbose_name_plural|lower }} в следующих категориях:
+                    </span>
                     {% for cat in categories %}
                         <a href="{{ cat.note }}" class="mr-1 small">{{ cat.title }}</a>
-                    {% endfor %}
+                    {% endfor %}&hellip;
                     </div>
                 {% endif %}
                 {% endwith %}

@@ -240,9 +240,10 @@ class ListingView(RealmView):
 
         categories = [
             Category(id=category_id, title=category_title)
-            for category_id, category_title in Tie.objects.filter(
-                content_type=content_type,
-            ).values_list('category_id', 'category__title').distinct()
+            for category_id, category_title in
+                Tie.objects.filter(content_type=content_type).
+                    values_list('category_id', 'category__title').
+                    order_by('category__title').distinct()[:30]
         ]
 
         get_url = model.get_category_absolute_url
