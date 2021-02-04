@@ -44,7 +44,7 @@ var pythonz = {
     markUser: function() {
         "use strict";
         $('.py_user').each(function(i, el) {
-            var html = el.innerHTML.replace(/\[u:(\d+):\s*([^\]]+)\s*\]/g, '<a href="http://pythonz.net/users/$1" title="Профиль на pythonz">$2</a>');
+            var html = el.innerHTML.replace(/\[u:(\d+):\s*([^\]]+)\s*\]/g, '<a href="https://pythonz.net/users/$1" title="Профиль на pythonz">$2</a>');
             $(el).html(html);
         });
     },
@@ -207,13 +207,13 @@ var pythonz = {
         decorateFuncParams: function(areaId) {
             "use strict";
             var funcProcessArgs = function (matchStr, argName, separator) {
-                    argName = argName.replace(/([^=]+)(=.+)/g, '$1<span class="text-muted">$2</span>');
-                    return '<small><span class="glyphicon glyphicon-certificate"></span></small> <b>' + argName + '</b>' + separator;
+                    argName = argName.replace(/([^\s]+)(\s.+)/g, '$1<span class="text-muted">$2</span>')
+                    return '<span class="fa fa-certificate text-muted"></span> <b>' + argName + '</b>' + separator;
                 };
 
             this.decorateArea(areaId,
                 [
-                    [/([^>\s]+)(\s--)/g, funcProcessArgs],
+                    [/([^->]+)(\s--)/g, funcProcessArgs],
                     [/--/g, ':'],
                     this.RULE_PYVERSION_REMOVED,
                     this.RULE_PYVERSION_ADDED,
