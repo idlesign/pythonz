@@ -17,7 +17,7 @@
 {% block details_description %}
     <div class="mb-3" itemprop="description">
         <strong>PEP {{ pep.num }}</strong>:
-        <a href="{{ pep.get_link_to_pyorg }}" title="Полный текст улучшения на английском языке">{{ item.description }}</a>
+        <a href="{{ pep.get_link_to_pyorg }}" rel="nofollow" title="Полный текст улучшения на английском языке">{{ item.description }}</a>
     </div>
 {% endblock %}
 

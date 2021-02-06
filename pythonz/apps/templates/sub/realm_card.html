@@ -6,9 +6,11 @@
     <ul>
         {% for item in realm_data.items %}
         <li class="mb-2">
-            <a href="{% if item.src_alias and item.utm_on_main %}{{ item.get_utm_url }}{% else %}{{ item.get_absolute_url }}{% endif %}">
-                {{ item.title }}
-            </a>
+            {% if item.is_external %}
+                <a href="{{ item.get_utm_url }}" rel="nofollow">{{ item.title }}</a>
+            {% else %}
+                <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+            {% endif %}
             {% if not item.src_alias and item.title != item.description %}<div class="small text-muted">{{ item.description }}</div>{% endif %}
         </li>
         {% endfor %}

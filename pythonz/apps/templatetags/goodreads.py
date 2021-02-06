@@ -15,4 +15,4 @@ def goodreads_get_search_tag(query: str):
     """
     url = f"https://www.goodreads.com/search/?{urlencode({'query': query})}"
 
-    return safe(f'<a href="{url}" title="ISBN на goodreads.com">{query}</a>')
+    return safe(f'<a href="{url}" rel="nofollow" title="ISBN на goodreads.com">{query}</a>')

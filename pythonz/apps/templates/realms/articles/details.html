@@ -34,7 +34,7 @@
     {% if not article.is_handmade and article.url %}
         <div class="mt-3">
             <i class="cl__gray fa fa-copyright"></i>
-            <i>С полным текстом статьи можно ознакомиться здесь: <a href="{{ article.get_utm_url }}">{{ article.title }}</a></i>
+            <i>С полным текстом статьи можно ознакомиться здесь: <a href="{{ article.get_utm_url }}" rel="nofollow">{{ article.title }}</a></i>
         </div>
     {% endif %}
 {% endblock %}

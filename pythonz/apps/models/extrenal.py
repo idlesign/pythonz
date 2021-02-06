@@ -30,6 +30,13 @@ class ExternalResource(UtmReady, RealmBaseModel):
 
     description = models.TextField('Описание', blank=True, default='')
 
+    is_external: bool = True
+    """Признак внешнего ресурса.
+    Используется в тех случаях, когда внешние ресурсы идут 
+    вперемежку со внутренними.
+    
+    """
+
     class Meta:
 
         verbose_name = 'Внешний ресурс'

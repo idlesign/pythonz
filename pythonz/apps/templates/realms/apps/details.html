@@ -30,16 +30,16 @@
 {% block details_contents_add %}
     {% if app.slug %}
     <div class="mb-3">
-        <a href="https://pypi.org/project/{{ app.slug }}/">
+        <a href="https://pypi.org/project/{{ app.slug }}/" rel="nofollow">
             <img src="https://img.shields.io/pypi/v/{{ app.slug }}?style=for-the-badge&labelColor=ddd&label=версия" alt="PyPI Страница приложения">
         </a>
 
-        <a href="https://packaging.python.org/guides/analyzing-pypi-package-downloads/#background">
+        <a href="https://packaging.python.org/guides/analyzing-pypi-package-downloads/#background" rel="nofollow">
             <img src="https://img.shields.io/pypi/dm/{{ app.slug }}?style=for-the-badge&labelColor=ddd&label=загрузки" alt="PyPI Загрузок за месяц">
         </a>
 
         {% with gh_ident=app.github_ident %}{% if gh_ident %}
-        <a href="https://github.com/{{ gh_ident }}">
+        <a href="https://github.com/{{ gh_ident }}" rel="nofollow">
             <img src="https://img.shields.io/github/stars/{{ gh_ident }}?style=for-the-badge&labelColor=ddd&label=звёзды" alt="Звёзды">
         </a>
         {% endif %}{% endwith %}
@@ -49,7 +49,7 @@
     <div class="text-muted mb-3">
         {% if app.repo %}
         <span class="mr-3">
-            {% model_field_verbose_name from app.repo %}: <a href="{{ app.repo }}">{{ app.repo }}</a>
+            {% model_field_verbose_name from app.repo %}: <a href="{{ app.repo }}" rel="nofollow">{{ app.repo }}</a>
         </span>
         {% endif %}
         <span class="mr-3">

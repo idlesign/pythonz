@@ -78,7 +78,7 @@
         {% if event.url %}
             <tr>
                 <td width="2%" nowrap>{% model_field_verbose_name from event.url %}:</td>
-                <td><a href="{{ event.get_utm_url }}">{{ event.url }}</a></td>
+                <td><a href="{{ event.get_utm_url }}" rel="nofollow">{{ event.url }}</a></td>
             </tr>
         {% endif %}
         {% if event.contacts %}

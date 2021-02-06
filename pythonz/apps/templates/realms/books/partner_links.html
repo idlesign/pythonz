@@ -7,7 +7,7 @@
                     {% if link.icon_url %}
                         <img src="{{ link.icon_url }}" width="16" height="16" alt="{{ link.title }}">&nbsp;
                     {% endif %}
-                    <a href="{{ link.url }}">{{ link.title }}</a>
+                    <a href="{{ link.url }}" rel="nofollow">{{ link.title }}</a>
                 </td>
                 <td>{{ link.price }}</td>
             </tr>
