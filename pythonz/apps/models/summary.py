@@ -45,6 +45,8 @@ class Summary(RealmBaseModel):
         """
         summary_text = []
 
+        trans_map = str.maketrans(dict.fromkeys(('|', '`', '\t', '\n', '\r')))
+
         for fetcher_alias, items in fetched.items():
 
             if not items:
@@ -54,10 +56,15 @@ class Summary(RealmBaseModel):
             summary_text.append('.. table::')
 
             for item in items:
-                line = f'`{item.title}<{item.url}>`_'
+                title = item.title.translate(trans_map)
 
-                if item.description:
-                    line += f' — {item.description}'
+                line = f'`{title}<{item.url}>`_'
+
+                description = item.description
+
+                if description:
+                    description = description.translate(trans_map)
+                    line += f' — {description}'
 
                 summary_text.append(line)
 
