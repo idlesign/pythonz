@@ -18,7 +18,7 @@ django-siteprefs==1.2.2
 django-sitetree==1.16.0
 django-xross==0.6.0
 django-yaturbo==1.0.0
-Django==3.1.6
+Django==3.1.7
 envbox==1.2.0
 feedparser==6.0.2
 icalendar_light==1.0.0
@@ -28,7 +28,7 @@ Pillow==8.1.0
 psycopg2==2.8.6
 pyTelegramBotAPI==3.7.6
 pytz==2021.1
-sentry-sdk==0.20.1
+sentry-sdk==0.20.3
 regex==2020.11.13
 requests[socks]==2.25.1
 twitter==1.18.0
