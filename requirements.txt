@@ -23,7 +23,7 @@ envbox==1.2.0
 feedparser==6.0.2
 icalendar_light==1.0.0
 lassie==0.11.9
-lxml==4.6.2
+lxml==4.6.3
 Pillow==8.1.1
 psycopg2==2.8.6
 pyTelegramBotAPI==3.7.6
