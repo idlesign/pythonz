@@ -1,6 +1,6 @@
 from typing import Callable, List, Tuple, Type
 
-from django.conf.urls import url
+from django.conf.urls import re_path
 from django.contrib.sitemaps import GenericSitemap
 from django.db.models import QuerySet
 from django.urls import reverse
@@ -14,7 +14,7 @@ from ..integration.utils import get_thumb_url
 from ..utils import get_logger
 
 if False:  # pragma: nocover
-    from .models import RealmBaseModel
+    from .models import RealmBaseModel  # noqa
 
 
 LOGGER = get_logger('realms')
@@ -374,7 +374,7 @@ class RealmBase:
                 url_name = view_name
 
             views.append(
-                url(getattr(cls, f'view_{url_name}_url'), cls.get_view(view_name).as_view(), name=url_name)
+                re_path(getattr(cls, f'view_{url_name}_url'), cls.get_view(view_name).as_view(), name=url_name)
             )
 
         for view_name in cls.allowed_views:
@@ -384,8 +384,8 @@ class RealmBase:
                 add_view(view_name, 'details_slug')
 
         if cls.syndication_enabled:
-            views.append(url(fr'^{SYNDICATION_URL_MARKER}/$', cls.get_syndication_feed(), name='syndication'))
+            views.append(re_path(fr'^{SYNDICATION_URL_MARKER}/$', cls.get_syndication_feed(), name='syndication'))
 
         _, realm_name_plural = cls.get_names()
 
-        return [url(fr'^{realm_name_plural}/', (views, realm_name_plural, realm_name_plural))]
+        return [re_path(fr'^{realm_name_plural}/', (views, realm_name_plural, realm_name_plural))]

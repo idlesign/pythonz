@@ -1,7 +1,7 @@
 from operator import attrgetter
 from typing import List, Type, Dict, Optional, Generator, Tuple
 
-from django.conf.urls import url
+from django.conf.urls import re_path
 from django.contrib.sitemaps import GenericSitemap
 from django.contrib.sitemaps.views import sitemap
 from django.db.models import signals
@@ -124,7 +124,7 @@ def get_realms_urls() -> List:
     sitemaps = get_sitemaps()
 
     if sitemaps:
-        url_patterns += [url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps})]
+        url_patterns += [re_path(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps})]
 
     return url_patterns
 
@@ -480,11 +480,11 @@ class CategoryRealm(RealmBase):
             feed.category_id = category_id
 
             feeds.append(
-                url(fr'^{category_id}/{SYNDICATION_URL_MARKER}/$', feed, name=f'category_{category_id}'))
+                re_path(fr'^{category_id}/{SYNDICATION_URL_MARKER}/$', feed, name=f'category_{category_id}'))
 
         _, realm_name_plural = CategoryRealm.get_names()
 
-        return [url(fr'^{realm_name_plural}/', (feeds, realm_name_plural, cls.SYNDICATION_NAMESPACE))]
+        return [re_path(fr'^{realm_name_plural}/', (feeds, realm_name_plural, cls.SYNDICATION_NAMESPACE))]
 
 
 class CommunityRealm(RealmBase):

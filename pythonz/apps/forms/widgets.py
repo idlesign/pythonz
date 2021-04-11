@@ -4,7 +4,7 @@ from django import forms
 from django.forms.utils import flatatt
 from django.forms.widgets import TextInput
 from django.template import loader
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import format_html
 
 from ..generics.models import RealmBaseModel
@@ -89,4 +89,4 @@ class RstEditWidget(forms.Widget):
 
         html = loader.render_to_string('sub/rst_hints.html')
 
-        return format_html(html, flatatt(final_attrs), force_text(value))
+        return format_html(html, flatatt(final_attrs), force_str(value))
