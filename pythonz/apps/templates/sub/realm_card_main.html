@@ -6,7 +6,7 @@
     <div>
         <div class="col-md-6 col-sm-12 float-left mb-3">
             <div class="feature p-3 rounded">
-                {% with item=realm_data.items.0 %}
+                {% with item=realm_data.featured %}
                 {% block cover %}
                     <div>
                     {% thumbs_get_thumb_url item.cover 180 236 item.realm as thumb_url %}
