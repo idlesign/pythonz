@@ -524,7 +524,6 @@ class VersionRealm(RealmBase):
     form: Type[CommonEntityForm] = VersionForm
     icon: str = 'code-fork'
 
-    show_on_main: bool = False
     show_on_top: bool = False
 
 

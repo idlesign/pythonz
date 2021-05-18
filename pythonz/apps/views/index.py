@@ -32,7 +32,6 @@ def index(request: HttpRequest) -> HttpResponse:
     min_local = 2
 
     dt_stale_featured = now() - timedelta(days=7)
-    """Дата, начиная с которой следует считать материал устаревшим."""
 
     for name, realm in realms_registry.items():
 
@@ -45,20 +44,16 @@ def index(request: HttpRequest) -> HttpResponse:
         if count_local < min_local:
             count_local = min_local
 
-        actual = realm.model.get_actual()
-        items: List[RealmBaseModel] = list(actual[:count_local])
+        realm_model = realm.model
+        items: List[RealmBaseModel] = list(realm_model.get_actual()[:count_local])
         items.extend(realm_externals[:max_items - count_local])
 
         featured = None
         if items:
             featured = items[0]
-            if (featured.time_modified or featured.time_created) < dt_stale_featured:
-                # Объект устарел, покажем что-нибудь случайное.
-                # ? ведёт себя сносно, пока таблица влезает в память.
-                featured = actual.filter(id__lt=featured.id).order_by('?').first() or featured
 
         realms_data.append({
-            'featured': featured,
+            'featured': realm_model.get_featured(candidate=featured, dt_stale=dt_stale_featured),
             'cls': realm,
             'items': items,
         })

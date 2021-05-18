@@ -1,0 +1,6 @@
+{% extends "sub/realm_card_main.html" %}
+
+{% block cover %}
+    {{ block.super }}
+    {% if item.is_now %}<div class="badge badge-info mt-2">проходит прямо сейчас</div>{% endif %}
+{% endblock %}

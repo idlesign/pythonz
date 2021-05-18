@@ -9,8 +9,12 @@
                 {% with item=realm_data.featured %}
                 {% block cover %}
                     <div>
-                    {% thumbs_get_thumb_url item.cover 180 236 item.realm as thumb_url %}
-                    <img src="{{ thumb_url }}" class="img-thumbnail" alt="{{ item.title }}">
+                        {% thumbs_get_thumb_url item.cover 180 236 item.realm as thumb_url %}
+                        {% if thumb_url %}
+                            <img src="{{ thumb_url }}" class="img-thumbnail" alt="{{ item.title }}">
+                        {% else %}
+                            <i class="img-thumbnail fa fa-3x fa-{{ item.realm.icon }}"></i>
+                        {% endif %}
                     </div>
                 {% endblock %}
                 <div class="mt-2"><a class="text-white" href="{{ item.get_absolute_url }}">{{ item.title }}</a></div>

@@ -128,6 +128,20 @@ class Event(
         return self.time_start - timedelta(days=1)
 
     @classmethod
+    def get_featured(cls, *, candidate: 'Event', dt_stale: datetime) -> Optional['Event']:
+        now = timezone.now()
+
+        featured = cls.objects.published().filter(
+            time_start__gte=now,
+            time_finish__lt=now,
+        ).first()
+
+        if featured is None:
+            return super().get_featured(candidate=candidate, dt_stale=dt_stale)
+
+        return featured
+
+    @classmethod
     def spawn_object(cls, item_data: dict, *, source: RemoteSource):
 
         big = item_data.pop('big')

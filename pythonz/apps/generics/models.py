@@ -3,7 +3,7 @@ from contextlib import suppress
 from copy import copy
 from datetime import datetime
 from enum import unique
-from typing import List, Type
+from typing import List, Type, Optional
 from uuid import uuid4
 
 from django.conf import settings
@@ -398,6 +398,33 @@ class RealmBaseModel(ModelWithFlag):
     def get_actual(cls, **kwargs) -> QuerySet:
         """Возвращает выборку актуальных объектов."""
         return cls.objects.published().order_by('-time_published').all()
+
+    @classmethod
+    def get_featured(
+        cls,
+        *,
+        candidate: 'RealmBaseModel',
+        dt_stale: datetime
+    ) -> Optional['RealmBaseModel']:
+        """Возвращает объект «подсвеченный» (особо выделенный на главной)
+        объект, либо None.
+
+        :param candidate: Ранее выбранный кандидат на «подсвеченность».
+
+        :param dt_stale: Дата, начиная с которой следует считать материал устаревшим.
+
+        """
+        if not candidate:
+            return candidate
+
+        featured = candidate
+
+        if (candidate.time_modified or candidate.time_created) < dt_stale:
+            # Объект устарел, покажем что-нибудь случайное.
+            # ? ведёт себя сносно, пока таблица влезает в память.
+            featured = cls.get_actual().filter(id__lt=candidate.id).order_by('?').first() or candidate
+
+        return featured
 
     @classmethod
     def get_paginator_objects(cls) -> QuerySet:
