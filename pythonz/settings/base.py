@@ -118,3 +118,5 @@ TEMPLATES = [
 
 
 ROBOTS_CACHE_TIMEOUT = 6 * 60 * 60
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
