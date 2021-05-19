@@ -4,3 +4,5 @@
     {{ block.super }}
     {% if item.is_now %}<div class="badge badge-info mt-2">проходит прямо сейчас</div>{% endif %}
 {% endblock %}
+
+{% block item_title %}{{ item.get_display_type }}: {{ item.title }}{% endblock %}

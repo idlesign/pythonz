@@ -132,8 +132,8 @@ class Event(
         now = timezone.now()
 
         featured = cls.objects.published().filter(
-            time_start__gte=now,
-            time_finish__lt=now,
+            time_start__lte=now,
+            time_finish__gt=now,
         ).first()
 
         if featured is None:

@@ -17,7 +17,7 @@
                         {% endif %}
                     </div>
                 {% endblock %}
-                <div class="mt-2"><a class="text-white" href="{{ item.get_absolute_url }}">{{ item.title }}</a></div>
+                <div class="mt-2"><a class="text-white" href="{{ item.get_absolute_url }}">{% block item_title %}{{ item.title }}{% endblock %}</a></div>
                 {% endwith %}
             </div>
         </div>
