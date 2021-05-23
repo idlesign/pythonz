@@ -47,6 +47,8 @@ class Article(
 
     published_by_author = models.BooleanField('Я являюсь автором данной статьи', default=True)
 
+    nofollow = models.BooleanField('Без перехода по ссылкам.', default=False)  # nofollow
+
     history = HistoricalRecords()
 
     class Meta:

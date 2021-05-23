@@ -9,6 +9,8 @@ from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db import models
+from django.db.models import QuerySet
+from django.http import HttpRequest
 from etc.admin import CustomModelPage
 from simple_history.admin import SimpleHistoryAdmin
 
@@ -175,7 +177,7 @@ class EntityBaseAdmin(SimpleHistoryAdmin):
 
     actions = ['publish']
 
-    def publish(self, request, queryset):
+    def publish(self, request: HttpRequest, queryset: QuerySet):
 
         for obj in queryset:
             obj.mark_published()
@@ -189,6 +191,13 @@ class ArticleAdmin(EntityBaseAdmin):
 
     list_display = ('time_created', 'title', 'submitter', 'source', 'published_by_author', 'time_published')
     list_filter = ['time_created', 'status', 'source', 'published_by_author']
+
+    actions = EntityBaseAdmin.actions + ['nofollow']
+
+    def nofollow(self, request: HttpRequest, queryset: QuerySet):
+        queryset.update(nofollow=True)
+
+    nofollow.short_description = 'Проставить nofollow'
 
 
 @admin.register(Book)
@@ -222,7 +231,8 @@ class EventAdmin(EntityBaseAdmin):
 
 
 @admin.register(Video)
-class VideoAdmin(EntityBaseAdmin): pass
+class VideoAdmin(EntityBaseAdmin):
+    pass
 
 
 @admin.register(PEP)
@@ -277,7 +287,7 @@ class AppAdmin(EntityBaseAdmin):
 
     actions = EntityBaseAdmin.actions + ['update_stats']
 
-    def update_stats(self, request, queryset):
+    def update_stats(self, request: HttpRequest, queryset: QuerySet):
 
         App.actualize_downloads(queryset)
 

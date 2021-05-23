@@ -5,6 +5,7 @@
 {% block page_keywords %}{{ block.super }}, статья {{ article.title }}, что такое {{ article.title }}{% endblock %}
 
 {% block head %}
+    {% if article.nofollow %}<meta name="robots" content="nofollow" />{% endif %}
     {{ block.super }}
     {% include "sub/vk_head.html" %}
 {% endblock %}

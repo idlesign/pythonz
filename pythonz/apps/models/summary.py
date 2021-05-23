@@ -102,6 +102,7 @@ class Summary(RealmBaseModel):
             text_src=summary_text,
             source=Article.Source.SCRAPING,
             published_by_author=False,
+            nofollow=True,
         )
         article.mark_published()
         article.save()
