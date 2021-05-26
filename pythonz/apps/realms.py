@@ -525,6 +525,7 @@ class VersionRealm(RealmBase):
     icon: str = 'code-fork'
 
     show_on_top: bool = False
+    show_on_main: bool = False
 
 
 class PepRealm(RealmBase):
@@ -585,7 +586,6 @@ class AppRealm(RealmBase):
 
     icon: str = 'tablet'
 
-    show_on_main: bool = False
     show_on_top: bool = False
 
 
