@@ -1,8 +1,8 @@
 {% extends "realms/categories/_base.html" %}
 {% load sitecats cache %}
 
-
-{% block page_description %}Материалы, связанные с Python, в категории «{{ item.title }}». {{ item.note|truncatechars:100 }}{% endblock %}
+{% block page_title %}Материалы про {{ item.title }}{% endblock %}
+{% block page_description %}Здесь перечислены материалы в категории «{{ item.title }}», связанные с Python. {{ item.note|truncatechars:80 }}{% endblock %}
 
 
 {% block page_keywords %}{{ block.super }}, {{ item.title }}{% endblock %}

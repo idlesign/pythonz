@@ -287,7 +287,8 @@ class RealmBase:
     def get_sitetree_tags_item(cls) -> TreeItemBase:
         """Возвращает элемент древа сайта, указывающий на страницу разбивки объектов по метке (категории)."""
         return item(
-            'Категория «{{ category.title }}»', f'{cls.get_tags_urlname()} category.id',
+            '{{ category.title }} - %s' % cls.model._meta.verbose_name,
+            url=f'{cls.get_tags_urlname()} category.id',
             in_menu=False, in_sitetree=False)
 
     @classmethod

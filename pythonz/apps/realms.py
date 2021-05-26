@@ -202,7 +202,7 @@ class VideoRealm(RealmBase):
     txt_form_add: str = 'Добавить видео'
     txt_form_edit: str = 'Изменить видео'
 
-    view_listing_description: str = 'Видео-записи лекций, курсов, докладов, связанные с языком программирования Python.'
+    view_listing_description: str = 'Видео-записи лекций, курсов, докладов, связанные с языком программирования Python'
     view_listing_keywords: str = 'видео по питону, доклады по python'
 
     model: Type[RealmBaseModel] = Video
