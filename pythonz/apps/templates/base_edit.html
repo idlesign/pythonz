@@ -9,12 +9,6 @@
 
 {% endblock %}
 
-{% block js_bottom %}
-<script type="text/javascript">
-    pythonz.initEditor($('textarea', '#rst_src')[0]);
-</script>
-{% endblock %}
-
 {% block page_contents %}
 
     {% include "sub/title_block.html" %}
@@ -37,3 +31,11 @@
     {% endblock %}
 
 {%  endblock %}
+
+{% block js_bottom %}
+{{ block.super }}
+<script type="text/javascript">
+    pythonz.initEditor($('textarea', '#rst_src')[0]);
+</script>
+<script>{% include "siteajax/init_csrf.js" %}</script>
+{% endblock %}

@@ -2,9 +2,9 @@
 <div id="bookmark_box" class="block ml-2">
     {% if request.user.is_authenticated %}
         {% if item.is_bookmarked %}
-        <button id="toggle_bookmark" data-xaction="0" data-xtarget="bookmark_box" data-xsuccess="replace" class="xross btn btn-warning" title="{% model_meta_verbose_name item %} в избранном. Нажмите для отмены."><i class="fa fa-bookmark"></i></button>
+        <button id="toggle-bookmark" hx-post hx-vals='{"action": 0}' hx-swap="outerHTML" hx-target="#bookmark_box" class="btn btn-warning" title="{% model_meta_verbose_name item %} в избранном. Нажмите для отмены."><i class="fa fa-bookmark"></i></button>
         {% else %}
-        <button id="toggle_bookmark" data-xaction="1" data-xtarget="bookmark_box" data-xsuccess="replace" class="xross btn btn-light" title="Нажмите, чтобы поместить в избранные {% model_meta_verbose_name_plural item %}."><i class="fa fa-bookmark-o"></i></button>
+        <button id="toggle-bookmark" hx-post hx-vals='{"action": 1}' hx-swap="outerHTML" hx-target="#bookmark_box" class="btn btn-light" title="Нажмите, чтобы поместить в избранные {% model_meta_verbose_name_plural item %}."><i class="fa fa-bookmark-o"></i></button>
         {% endif %}
 
     {% else %}

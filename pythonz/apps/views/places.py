@@ -1,6 +1,7 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from xross.toolbox import xross_view
-from xross.utils import XrossHandlerBase
+from django.utils.decorators import method_decorator
+from siteajax.toolbox import ajax_dispatch
 
 from ..generics.views import DetailsView, RealmView, HttpRequest
 from ..models import Place, User, Community, Event, Vacancy
@@ -9,22 +10,26 @@ from ..models import Place, User, Community, Event, Vacancy
 class PlaceDetailsView(DetailsView):
     """Представление с детальной информацией о месте."""
 
-    def set_im_here(self, request: HttpRequest, xross: XrossHandlerBase = None):
-        """Используется xross. Прописывает место и часовой пояс в профиль пользователя.
+    @method_decorator(login_required)
+    def set_im_here(self, request: HttpRequest, obj_id: int) -> HttpResponse:
+        """Обслуживает ajax-запрос. Прописывает место и часовой пояс в профиль пользователя.
 
         :param request:
-        :param xross:
+        :param obj_id:
 
         """
         user = request.user
+        user.place = self.get_object(request=request, obj_id=obj_id)
+        user.set_timezone_from_place()
+        user.save()
 
-        if user.is_authenticated:
-            user.place = xross.attrs['item']
-            user.set_timezone_from_place()
-            user.save()
+        return HttpResponse()
 
-    @xross_view(set_im_here)  # Метод перекрыт для добавления AJAX-обработчика.
+    @ajax_dispatch({
+        'set-im-here': set_im_here
+    })
     def get(self, request: HttpRequest, obj_id: int) -> HttpResponse:
+        # Метод перекрыт для добавления AJAX-обработчика.
         return super().get(request, obj_id)
 
     def update_context(self, context: dict, request: HttpRequest):

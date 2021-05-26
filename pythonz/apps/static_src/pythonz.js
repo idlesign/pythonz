@@ -1,10 +1,9 @@
-/*globals $ xross sitecats SimpleMDE ymaps */
+/*globals $ sitecats SimpleMDE ymaps */
 
 var pythonz = {
 
     bootstrap: function() {
         "use strict";
-        xross.automate();
 
         $(function(){
             pythonz.makeGeopatterns();

@@ -1,12 +1,12 @@
 <div id="rate_box" class="text-center mb-2 block">
     {% if request.user.is_authenticated %}
         {% if item.my_support %}
-            <button id="set_rate" data-xaction="0" data-xtarget="rate_box" data-xsuccess="replace" class="xross btn btn-success" title="Сбросить одобрение">
+            <button id="set-rate" hx-post hx-vals='{"action": 0}' hx-swap="outerHTML" hx-target="#rate_box" class="btn btn-success" title="Сбросить одобрение">
                 &nbsp; <span class="badge badge-success">{{ item.supporters_num }}</span> &nbsp;<i class="fa fa-thumbs-o-down"></i>
 
             </button>
         {% else %}
-            <button id="set_rate" data-xaction="1" data-xtarget="rate_box" data-xsuccess="replace" class="xross btn btn-light" title="Одобряю!">
+            <button id="set-rate" hx-post hx-vals='{"action": 1}' hx-swap="outerHTML" hx-target="#rate_box" class="btn btn-light" title="Одобряю!">
                 &nbsp; <span class="badge badge-success">{{ item.supporters_num }}</span> &nbsp;<i class="fa fa-thumbs-o-up"></i>
             </button>
         {% endif %}

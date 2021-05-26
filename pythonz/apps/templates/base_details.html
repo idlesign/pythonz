@@ -88,3 +88,9 @@
 
     </div>
 {%  endblock %}
+
+
+{% block js_bottom %}
+{{ block.super }}
+<script>{% include "siteajax/init_csrf.js" %}</script>
+{% endblock %}

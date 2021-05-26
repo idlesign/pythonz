@@ -87,8 +87,11 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
             self.timezone = None
             return True
 
-        lat, lng = self.place.geo_pos.split(',')
-        self.timezone = get_timezone_name(lat, lng)
+        geo_pos = self.place.geo_pos
+
+        if geo_pos:
+            lat, lng = geo_pos.split(',')
+            self.timezone = get_timezone_name(lat, lng)
 
     def get_drafts(self) -> Dict[str, QuerySet]:
         """Возвращает словарь с неопубликованными материалами пользователя.

@@ -21,8 +21,8 @@
 {% block details_contents %}
 
     {% if allow_im_here %}
-        <div id="im_here_box" class="mb-3">
-            <button id="set_im_here" data-xtarget="im_here_box" data-xsuccess="remove" class="xross btn btn-warning" title="Нажмите, если находитесь в этом месте.">Я здесь!</button>
+        <div class="mb-3">
+            <button id="set-im-here" hx-post hx-swap="outerHTML" class="btn btn-warning" title="Нажмите, если находитесь в этом месте.">Я здесь!</button>
         </div>
     {% endif %}
 
@@ -70,7 +70,7 @@
 {% endblock %}
 
 {% block js_bottom %}
-
+    {{ block.super }}
     <script type="text/javascript">
         $(function(){
             $('#tabs-realms a:first').tab('show');

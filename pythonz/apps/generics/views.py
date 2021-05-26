@@ -11,10 +11,9 @@ from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition
 from django.views.generic.base import View
+from siteajax.toolbox import ajax_dispatch
 from sitecats.models import Tie
 from sitecats.toolbox import get_category_aliases_under
-from xross.toolbox import xross_view, xross_listener
-from xross.utils import XrossHandlerBase
 
 from .models import ModelWithCompiledText, RealmBaseModel
 from ..exceptions import RedirectRequired, PythonzException
@@ -319,15 +318,16 @@ class DetailsView(RealmView):
         self._attach_bookmark_data(item, request)
         self._attach_support_data(item, request)
 
-    def toggle_bookmark(self, request: HttpRequest, action: int, xross: XrossHandlerBase = None) -> HttpResponse:
-        """Используется xross. Реализует занесение/изъятие объекта в/из избранного..
+    @method_decorator(login_required)
+    def toggle_bookmark(self, request: HttpRequest, obj_id: int) -> HttpResponse:
+        """Обслуживает ajax-запрос. Реализует занесение/изъятие объекта в/из избранного..
 
         :param request:
-        :param action:
-        :param xross:
+        :param obj_id:
 
         """
-        item = xross.attrs['item']
+        item = self.get_object(request=request, obj_id=obj_id)
+        action = int(request.POST.get('action', 0))
 
         if action == 1:
             item.set_bookmark(self.request.user)
@@ -339,27 +339,28 @@ class DetailsView(RealmView):
 
         return render(self.request, 'sub/box_bookmark.html', {'item': item})
 
-    def set_rate(self, request: HttpRequest, action: int, xross: XrossHandlerBase = None) -> HttpResponse:
-        """Используется xross. Реализует оценку самого объекта.
+    @method_decorator(login_required)
+    def set_rate(self, request: HttpRequest, obj_id: int) -> HttpResponse:
+        """Обслуживает ajax-запрос. Реализует оценку объекта.
 
         :param request:
-        :param action:
-        :param xross:
+        :param obj_id:
 
         """
-        item = xross.attrs['item']
+        item = self.get_object(request=request, obj_id=obj_id)
 
         if self._is_rating_allowed(request, item):
+            action = int(request.POST.get('action', 0))
 
             if action == 1:
-                item.set_support(self.request.user)
+                item.set_support(request.user)
 
             elif action == 0:
-                item.remove_support(self.request.user)
+                item.remove_support(request.user)
 
-        self._attach_support_data(item, self.request)
+        self._attach_support_data(item, request)
 
-        return render(self.request, 'sub/box_rating.html', {'item': item})
+        return render(request, 'sub/box_rating.html', {'item': item})
 
     @classmethod
     def _is_rating_allowed(cls, request: HttpRequest, item: RealmBaseModel) -> bool:
@@ -372,20 +373,17 @@ class DetailsView(RealmView):
         """
         return request.user != item  # Пользователи не могут рекомендовать себя %)
 
-    def list_partner_links(self, request: HttpRequest, xross: XrossHandlerBase = None) -> HttpResponse:
-        """Используется xross. Реализует получение блока с партнёрскими ссылками.
+    def list_partner_links(self, request: HttpRequest, obj_id: int) -> HttpResponse:
+        """Обслуживает ajax-запрос. Реализует получение блока с партнёрскими ссылками.
 
         :param request:
-        :param action:
-        :param xross:
+        :param obj_id:
 
         """
-        item = xross.attrs['item']
-
+        item = self.get_object(request=request, obj_id=obj_id)
         return render(request, self.get_template_path('partner_links'), get_partner_links(self.realm, item))
 
-    @xross_view(set_rate, toggle_bookmark, list_partner_links)
-    def get(self, request: HttpRequest, obj_id: int) -> HttpResponse:
+    def get_object(self, *, request: HttpRequest, obj_id: int):
 
         item = self.get_object_or_404(obj_id)
 
@@ -396,7 +394,16 @@ class DetailsView(RealmView):
         if isinstance(item, ModelWithDiscussions):
             item.has_discussions = True
 
-        xross_listener(item=item)
+        return item
+
+    @ajax_dispatch({
+        'list-partner-links': list_partner_links,
+        'set-rate': set_rate,
+        'toggle-bookmark': toggle_bookmark,
+    })
+    def get(self, request: HttpRequest, obj_id: int) -> HttpResponse:
+
+        item = self.get_object(request=request, obj_id=obj_id)
 
         try:
             self._attach_data(item, request)
@@ -448,20 +455,17 @@ class EditView(RealmView):
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         return super().dispatch(request, *args, **kwargs)
 
-    def preview_rst(self, request: HttpRequest, text_src: str, xross: XrossHandlerBase = None) -> HttpResponse:
-        """Используется xross. Обрабатывает запрос на предварительный просмотр текста в формате rst.
+    def preview_rst(self, request: HttpRequest, obj_id: Optional[int] = None) -> HttpResponse:
+        """Обслуживает ajax-запрос. Обрабатывает запрос на предварительный просмотр текста в формате rst.
 
         :param request:
-        :param text_src:
-        :param xross:
 
         """
-        item = xross.attrs['item']
+        return HttpResponse(ModelWithCompiledText.compile_text(request.POST.get('text_src', '')))
 
-        if item is None or isinstance(item, ModelWithCompiledText):
-            return HttpResponse(ModelWithCompiledText.compile_text(text_src))
-
-    @xross_view(preview_rst)
+    @ajax_dispatch({
+        'preview-rst': preview_rst,
+    })
     def get(self, request: HttpRequest, obj_id: Optional[int] = None) -> HttpResponse:
 
         item = None
@@ -485,8 +489,6 @@ class EditView(RealmView):
             id='edit_form',
             user=request.user,
         )
-
-        xross_listener(http_method='POST', item=item)
 
         if isinstance(item, ModelWithCategory):
 

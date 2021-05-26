@@ -7,6 +7,7 @@ django-debug-toolbar==3.2.1
 django-etc==1.3.0
 django-robots==4.0
 django-simple-history==3.0.0
+django-siteajax==0.2.0
 django-siteblocks==1.2.0
 django-sitecats==1.2.1
 django-siteflags==1.2.0
@@ -16,7 +17,6 @@ django-sitemessage==1.3.3
 django-sitemetrics==1.2.0
 django-siteprefs==1.2.2
 django-sitetree==1.16.0
-django-xross==0.6.0
 django-yaturbo==1.0.0
 Django==3.2.3
 envbox==1.2.0

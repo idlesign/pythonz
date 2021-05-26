@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
 
     'admirarchy',
+    'siteajax',
     'sitecats',
     'siteflags',
     'sitetree',
@@ -73,7 +74,6 @@ INSTALLED_APPS = [
     'sitemetrics',
     'siteprefs',
     'sitemessage',
-    'xross',
     'etc',
 
     'uwsgiconf.contrib.django.uwsgify',
@@ -96,6 +96,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'pythonz.apps.middleware.TimezoneMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
+    'siteajax.middleware.ajax_handler',
 ]
 
 
