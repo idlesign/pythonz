@@ -96,7 +96,6 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'pythonz.apps.middleware.TimezoneMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-    'siteajax.middleware.ajax_handler',
 ]
 
 
