@@ -5,6 +5,7 @@ from .base import *
 
 
 DEBUG = True
+SITE_URL = 'http://localhost:8000'
 
 ALLOWED_HOSTS = [
     'localhost',
