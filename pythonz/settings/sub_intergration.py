@@ -39,3 +39,9 @@ SITEMESSAGES_SETTINGS = {
     'fb': [FB_ACCESS_TOKEN],
     'vk': [VK_ACCESS_TOKEN],
 }
+
+SITEGATE_REMOTES = {
+    'yandex': 'not_a_secret',
+    'google': 'not_a_secret',
+}
+"""Идентификаторы клиентов для внешней авторизации."""
