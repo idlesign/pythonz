@@ -7,32 +7,10 @@ from django.template import loader
 from django.utils.encoding import force_str
 from django.utils.html import format_html
 
-from ..generics.models import RealmBaseModel
 from ..models import Place
 
 
-class RealmWidget:
-
-    # См. RealmEditBaseForm
-    model: RealmBaseModel
-    field_name: str
-
-
-class ReadOnlyWidget(forms.Widget, RealmWidget):
-    """Представляет поле только для чтения."""
-
-    def value_from_datadict(self, data, files, name):
-        return getattr(self.model, self.field_name)  # Чтобы поле не считалось изменённым.
-
-    def render(self, name, value, attrs=None, renderer=None) -> str:
-
-        if hasattr(self, 'initial'):
-            value = self.initial
-
-        return f"{value or ''}"
-
-
-class PlaceWidget(TextInput, RealmWidget):
+class PlaceWidget(TextInput):
     """Представляет поле для редактирования места."""
 
     _place_cached: bool = False
@@ -40,8 +18,9 @@ class PlaceWidget(TextInput, RealmWidget):
 
     def render(self, name, value, attrs=None, renderer=None) -> str:
 
-        if value and self.model:
-            value = self.model.place.geo_title  # Выводим полное название места.
+        model = self.bound_field.form.instance
+        if value and model:
+            value = model.place.geo_title  # Выводим полное название места.
 
         return super().render(name, value, attrs=attrs)
 

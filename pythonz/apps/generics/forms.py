@@ -2,12 +2,11 @@ from datetime import datetime
 from typing import Optional
 
 from django import forms
-from django.forms.widgets import CheckboxInput
 from django.http import HttpRequest
+
 from siteforms.composers.bootstrap4 import Bootstrap4, SUBMIT
 from siteforms.toolbox import ModelForm
-
-from ..forms.widgets import RstEditWidget
+from ..forms.widgets import RstEditWidget, PlaceWidget
 from ..models import Article, User
 
 
@@ -56,25 +55,14 @@ class RealmEditBaseForm(CommonEntityForm):
                     except KeyError:  # Нет такого поля на форме.
                         pass
 
-        instance = kwargs.get('instance', None)
+    class Composer(CommonEntityForm.Composer):
 
-        for field_name in self.fields:
+        attrs = {
+            'description': {'rows': 3},
+        }
 
-            fld = self.fields[field_name]
-
-            if field_name == 'description':
-                fld.widget = forms.Textarea(attrs={'rows': 3})
-
-            elif field_name == 'text_src':
-                fld.widget = RstEditWidget(attrs={'rows': 12})
-                fld.strip = False  # Обрубать размеченный текст не следует.
-
-            # Эти изменения нужны для стилизации форм.
-            if isinstance(self.fields[field_name].widget, CheckboxInput):
-                self.fields[field_name].is_checkbox = True
-
-            fld.widget.attrs['class'] = 'form-control input-sm'
-
-            # Эти связи потребуются в некоторых виджетах.
-            fld.widget.model = instance
-            fld.widget.field_name = field_name
+    class Meta:
+        widgets = {
+            'text_src': RstEditWidget(attrs={'rows': 12}),
+            'place': PlaceWidget(),
+        }

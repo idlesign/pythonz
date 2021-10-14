@@ -1,19 +1,22 @@
 from typing import Optional, List, Type, Union
 
-from django.conf import settings
 from django import forms
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+
+from .widgets import RstEditWidget
+from ..generics.forms import RealmEditBaseForm
 from ..generics.models import RealmBaseModel, CommonEntityModel
 from ..generics.realms import RealmBase
 from ..integration.videos import VideoBroker
 from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference, Version, App
-from ..generics.forms import RealmEditBaseForm
-from .widgets import RstEditWidget, ReadOnlyWidget, PlaceWidget
 
 
 class DiscussionForm(RealmEditBaseForm):
 
-    class Meta:
+    hidden_fields = {'object_id', 'content_type'}
+
+    class Meta(RealmEditBaseForm.Meta):
 
         model = Discussion
         fields = (
@@ -23,10 +26,6 @@ class DiscussionForm(RealmEditBaseForm):
             'content_type',
         )
         labels = {'text_src': ''}
-        widgets = {
-            'object_id': forms.HiddenInput(),
-            'content_type': forms.HiddenInput(),
-        }
 
     @classmethod
     def _get_realm_item(
@@ -81,7 +80,13 @@ class DiscussionForm(RealmEditBaseForm):
 
 class VersionForm(RealmEditBaseForm):
 
-    class Meta:
+    class Composer(RealmEditBaseForm.Composer):
+
+        attrs = {
+            'text_src': {'rows': 25},
+        }
+
+    class Meta(RealmEditBaseForm.Meta):
 
         model = Version
         fields = (
@@ -92,14 +97,17 @@ class VersionForm(RealmEditBaseForm):
             'description',
             'text_src',
         )
-        widgets = {
-            'text_src': RstEditWidget(attrs={'rows': 25}),
-        }
 
 
 class ArticleForm(RealmEditBaseForm):
+
+    class Composer(RealmEditBaseForm.Composer):
+
+        attrs = {
+            'text_src': {'rows': 25},
+        }
     
-    class Meta:
+    class Meta(RealmEditBaseForm.Meta):
 
         model = Article
         fields = (
@@ -162,7 +170,7 @@ class ArticleForm(RealmEditBaseForm):
 
 class BookForm(RealmEditBaseForm):
 
-    class Meta:
+    class Meta(RealmEditBaseForm.Meta):
 
         model = Book
         fields = (
@@ -201,7 +209,7 @@ class BookForm(RealmEditBaseForm):
 
 class VideoForm(RealmEditBaseForm):
 
-    class Meta:
+    class Meta(RealmEditBaseForm.Meta):
 
         model = Video
         fields = (
@@ -235,7 +243,7 @@ class VideoForm(RealmEditBaseForm):
 
 class EventForm(RealmEditBaseForm):
 
-    class Meta:
+    class Meta(RealmEditBaseForm.Meta):
 
         model = Event
         fields = (
@@ -252,14 +260,13 @@ class EventForm(RealmEditBaseForm):
             'place',
             'text_src',
         )
-        widgets = {
-            'place': PlaceWidget(),
-        }
 
 
 class UserForm(RealmEditBaseForm):
 
-    class Meta:
+    readonly_fields = {'timezone'}
+
+    class Meta(RealmEditBaseForm.Meta):
 
         model = User
         fields = (
@@ -275,10 +282,6 @@ class UserForm(RealmEditBaseForm):
             'disqus_shortname',
             'disqus_category_id',
         )
-        widgets = {
-            'place': PlaceWidget(),
-            'timezone': ReadOnlyWidget(),
-        }
 
     def save(self, *args, **kwargs):
 
@@ -290,7 +293,7 @@ class UserForm(RealmEditBaseForm):
 
 class CommunityForm(RealmEditBaseForm):
 
-    class Meta:
+    class Meta(RealmEditBaseForm.Meta):
 
         model = Community
         fields = (
@@ -303,14 +306,17 @@ class CommunityForm(RealmEditBaseForm):
             'place',
             'year',
         )
-        widgets = {
-            'place': PlaceWidget(),
-        }
 
 
 class ReferenceForm(RealmEditBaseForm):
 
-    class Meta:
+    class Composer(RealmEditBaseForm.Composer):
+
+        attrs = {
+            'func_params': {'rows': 4},
+        }
+
+    class Meta(RealmEditBaseForm.Meta):
 
         model = Reference
         fields = (
@@ -328,14 +334,11 @@ class ReferenceForm(RealmEditBaseForm):
             'version_deprecated',
             'search_terms',
         )
-        widgets = {
-            'func_params': forms.Textarea(attrs={'rows': 4}),
-        }
 
 
 class AppForm(RealmEditBaseForm):
 
-    class Meta:
+    class Meta(RealmEditBaseForm.Meta):
 
         model = App
         fields = (
