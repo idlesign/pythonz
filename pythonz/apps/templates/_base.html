@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html lang="ru" prefix="og: https://ogp.me/ns#" class="h-100">
 <head itemscope itemtype="https://schema.org/WebSite">
+    <link href=bootstrap.css" rel="stylesheet" type="text/css">
     <meta charset="UTF-8">
     <meta name="language" content="ru" />
     <meta name="description" content="{% block page_description %}{% sitetree_page_description from "main" %}{% endblock %}">
@@ -42,17 +43,19 @@
 
             <div class="navbar-header">
 
-                <a class="navbar-brand" href="/" title="На главную страницу">
+                <a class="navbar-brand link-dark" href="/" title="На главную страницу">
                     <img src="{{ STATIC_URL }}img/favicon.gif" alt="pythonz">
                 </a>
 
-                <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#nav_toggable" aria-expanded="false">
+                <! выдает ошибку анализа из-за того, что пустая кнопка, добавила title !>
+
+                <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#nav_toggable" aria-expanded="false" title="Развернуть меню">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
             </div>
 
-            <div class="collapse navbar-collapse" id="nav_toggable">
+            <div class="collapse navbar-collapse" id="nav_toggable" role="navigation">
 
                 {% sitetree_menu from "main" include "topmenu" template "sitetree/menu_top.html" %}
 
@@ -105,7 +108,6 @@
                 {% endfor %}
             </div>
             {% endif %}
-
             {% block page_contents_pre %}{% endblock %}
             {% block page_contents %}{% endblock %}
             {% block page_contents_post %}{% endblock %}

@@ -5,10 +5,9 @@
     {% sitetree_breadcrumbs from "main" template "sitetree/crumbs.html" %}
 {% endif %}
 
-
 {% if view.name == 'listing' %}
     {% if realm.syndication_enabled %}
-    <div class="badge badge-info float-right mt-1 mr-1">
+    <div class="badge bg-light text-info float-right mt-1 mr-1">
         <a title="Подписаться на RSS раздела {% model_meta_verbose_name_plural realm.model %}" href="{{ realm.get_syndication_url }}">
             <i class="fa fa-fw fa-rss"></i>&nbsp;RSS
         </a>
