@@ -18,7 +18,7 @@ django-sitemetrics==1.2.0
 django-siteprefs==1.2.2
 django-sitetree==1.17.0
 django-yaturbo==1.0.0
-Django==3.2.8
+Django==3.2.10
 envbox==1.2.0
 feedparser==6.0.8
 icalendar_light==1.0.0
