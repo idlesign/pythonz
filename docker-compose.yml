@@ -1,12 +1,9 @@
 version: '3.8'
-#https://testdriven:io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/:
 services:
   web:
-    build: . # путь в котором находится Dockerfile - просто точка
-    command: python manage.py runserver 0.0.0.0:8000
+    build: .
+    command: python3 /app/pythonz/manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./pythonz/:/usr/src/pythonz/
+      - .:/app
     ports:
       - 8000:8000
-    env_file:
-      - ./.env.dev
