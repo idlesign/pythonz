@@ -33,10 +33,7 @@
     {% endblock %}
 
     <title itemprop="name">{% block page_title %}{% sitetree_page_title from "main" %}{% endblock %}</title>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="/resources/demos/style.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+
 </head>
 <body class="d-flex flex-column h-100">
     <header>
@@ -88,11 +85,20 @@
                                         required itemprop="query-input"
                                         hx-post="search/"
                                         hx-trigger="keyup changed delay:500ms"
-                                        hx-target="#search_field"
+                                        hx-target="#active_search_results"
                                         hx-indicator=".htmx-indicator">
                             </label>
                         </div>
-                        <!-- Прикрутить div для отображения результатов -->
+                        <div id="active_search_results" class="mr-2" style="position: absolute;
+                                                                            width: auto;
+                                                                            height: auto;
+                                                                            top: 40px;
+                                                                            z-index:999999;
+                                                                            background-color: whitesmoke;
+                                                                            display: block;
+                                                                            ">
+
+                        </div>
                     </form>
 
                 </div>
@@ -112,7 +118,6 @@
 
             </div>
     </nav>
-    {% include "siteajax/cdn.html" %}
     </header>
 
     <main role="main" class="flex-shrink-0">
