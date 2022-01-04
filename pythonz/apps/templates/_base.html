@@ -33,7 +33,10 @@
     {% endblock %}
 
     <title itemprop="name">{% block page_title %}{% sitetree_page_title from "main" %}{% endblock %}</title>
-
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
 </head>
 <body class="d-flex flex-column h-100">
     <header>
@@ -71,10 +74,25 @@
 
                     <form class="form-inline" action="/search/" method="post" itemprop="potentialAction" itemscope itemtype="https://schema.org/SearchAction">
                         {% csrf_token %}
-                        <div role="search" class="mr-2">
+                        <div id="search_field" role="search" class="mr-2">
                             <meta itemprop="target" content="{% site_url %}/search/?text={search_term}"/>
-                            <input class="form-control" autofocus type="search" aria-label="Search" name="text" placeholder="Поиск по справочнику" value="{{ search_term }}" required itemprop="query-input">
+                            <label for="tags">
+                                <input
+                                        id='tags'
+                                        class="form-control"
+                                        autofocus type="search"
+                                        aria-label="Search"
+                                        name="text"
+                                        placeholder="Поиск по справочнику"
+                                        value="{{ search_term }}"
+                                        required itemprop="query-input"
+                                        hx-post="search/"
+                                        hx-trigger="keyup changed delay:500ms"
+                                        hx-target="#search_field"
+                                        hx-indicator=".htmx-indicator">
+                            </label>
                         </div>
+                        <!-- Прикрутить div для отображения результатов -->
                     </form>
 
                 </div>
@@ -94,6 +112,7 @@
 
             </div>
     </nav>
+    {% include "siteajax/cdn.html" %}
     </header>
 
     <main role="main" class="flex-shrink-0">
