@@ -3,7 +3,5 @@ services:
   web:
     build: .
     command: python3 /app/pythonz/manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/app
     ports:
       - 8000:8000

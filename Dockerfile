@@ -8,5 +8,14 @@ RUN pip3 install --upgrade pip
 
 ADD . /app
 WORKDIR /app
-ADD bootstrap_docker.sh /bootstrap_docker.sh
-RUN /bootstrap_docker.sh
+
+RUN pip3 install wheel && \
+    pip3 install -r requirements.txt && \
+    pip3 install -r tests/requirements.txt && \
+    pip3 install -e .
+
+#RUN mkdir state
+
+RUN pythonz migrate && \
+    pythonz createsuperuser --noinput
+
