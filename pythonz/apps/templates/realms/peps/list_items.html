@@ -11,7 +11,7 @@
 {% for pep in items %}
     <tr class="table-{{ pep.bg_class }}">
         <td width="8%">{{ pep.num }}</td>
-        <td><a href="{{ pep.get_absolute_url }}">{{ pep.title }}</a></td>
+        <td><a href="{{ pep.get_absolute_url }}" id="pep-href">{{ pep.title }}</a></td>
         <td class="text-center"><code>{{ pep.display_type_letter }}</code></td>
         <td class="text-center"><code>{{ pep.display_status_letter }}</code></td>
     </tr>
