@@ -1,5 +1,5 @@
 awesome-slugify==1.6.5
-beautifulsoup4==4.10.0
+beautifulsoup4==4.9.3
 bleach==3.3.0
 #dataclasses==0.7  # только для python < 3.8
 django-admirarchy==1.2.1
