@@ -2,7 +2,11 @@
     <div class="card-body">
         {% block cover %}<a href="{{ item.get_absolute_url }}">{% include "sub/item_cover.html" %}</a>{% endblock %}
         <div class="card-title">
+            {% if item.title|length > 58 %}
             <a href="{{ item.get_absolute_url }}" title="{{ item.title }}">{{ item.title|truncatechars:58 }}</a>
+            {% else %}
+            <a href="{{ item.get_absolute_url }}">{{ item.title|truncatechars:58 }}</a>
+            {% endif %}
         </div>
         {% block info %}{% endblock %}
     </div>

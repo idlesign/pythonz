@@ -4,5 +4,7 @@
 
 {% block bottom %}
     <span>{{ item.date }}</span>
-    <span class="badge badge-success float-right">{{ item.supporters_num }}</span>
+    {% if  item.supporters_num > 0 %}
+    <span class="badge badge-success float-right" title = "Одобрившие">{{ item.supporters_num }}</span>
+    {% endif %}
 {% endblock %}

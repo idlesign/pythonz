@@ -3,5 +3,7 @@
 {% block info %}<i class="small">{{ item.description }}</i>{% endblock %}
 
 {% block bottom %}
-    <span class="badge badge-success float-right">{{ item.supporters_num }}</span>
+    {% if  item.supporters_num > 0 %}
+    <span class="badge badge-success float-right" title = "Одобрившие">{{ item.supporters_num }}</span>
+    {% endif %}
 {% endblock %}
