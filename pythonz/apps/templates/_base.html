@@ -71,7 +71,7 @@
 
                     <form class="form-inline" action="/search/" method="post" itemprop="potentialAction" itemscope itemtype="https://schema.org/SearchAction">
                         {% csrf_token %}
-                        <div id="search_field" role="search" class="mr-2">
+                        <div id="search" role="search" class="mr-2">
                             <meta itemprop="target" content="{% site_url %}/search/?text={search_term}"/>
                             <label for="tags">
                                 <input
