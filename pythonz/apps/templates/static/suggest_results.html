@@ -1,0 +1,5 @@
+{% for item in results %}
+    <div>
+        <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+    </div>
+{% endfor %}

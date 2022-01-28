@@ -71,9 +71,33 @@
 
                     <form class="form-inline" action="/search/" method="post" itemprop="potentialAction" itemscope itemtype="https://schema.org/SearchAction">
                         {% csrf_token %}
-                        <div role="search" class="mr-2">
+                        <div id="search" role="search" class="mr-2">
                             <meta itemprop="target" content="{% site_url %}/search/?text={search_term}"/>
-                            <input class="form-control" autofocus type="search" aria-label="Search" name="text" placeholder="Поиск по справочнику" value="{{ search_term }}" required itemprop="query-input">
+                            <label for="tags">
+                                <input
+                                        id='tags'
+                                        class="form-control"
+                                        autofocus type="search"
+                                        aria-label="Search"
+                                        name="text"
+                                        placeholder="Поиск по справочнику"
+                                        value="{{ search_term }}"
+                                        required itemprop="query-input"
+                                        hx-post="search/"
+                                        hx-trigger="keyup changed delay:500ms"
+                                        hx-target="#active_search_results"
+                                        hx-indicator=".htmx-indicator">
+                            </label>
+                        </div>
+                        <div id="active_search_results" class="mr-2" style="position: absolute;
+                                                                            width: auto;
+                                                                            height: auto;
+                                                                            top: 40px;
+                                                                            z-index:999999;
+                                                                            background-color: whitesmoke;
+                                                                            display: block;
+                                                                            ">
+
                         </div>
                     </form>
 

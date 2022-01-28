@@ -14,6 +14,7 @@ from sitemessage.toolbox import get_sitemessage_urls
 
 from .apps.realms import bootstrap_realms
 from .apps.views import page_not_found, permission_denied, server_error, index, search, login, telebot, user_settings
+from .apps.views.search import suggest
 
 urls_password_reset = [
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),

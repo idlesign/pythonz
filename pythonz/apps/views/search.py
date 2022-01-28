@@ -4,12 +4,28 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
+from siteajax.decorators import ajax_dispatch
+from siteajax.utils import AjaxResponse
 
 from ..generics.views import HttpRequest
 from ..models import Reference, ReferenceMissing, Category, Person, App
 from ..utils import message_warning, search_models
 
+def suggest(request):
+    search_term, results = search_models(
+        request.POST.get('text', ''), search_in=(
+            Category,
+            Person,
+            Reference,
+            App,
+        ))
+    if len(results) > 5:
+        results = results[:5]
+    return render(request, 'static/suggest_results.html', {'results': results})
 
+@ajax_dispatch({
+    'tags': suggest
+})
 def search(request: HttpRequest) -> HttpResponse:
     """Страница с результатами поиска по справочнику.
     Если найден один результат, перенаправляет на страницу результата.
