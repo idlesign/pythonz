@@ -1,11 +1,10 @@
 from operator import attrgetter
 from typing import List, Type, Dict, Optional, Generator, Tuple
 
-from django.conf.urls import re_path
 from django.contrib.sitemaps import GenericSitemap
 from django.contrib.sitemaps.views import sitemap
 from django.db.models import signals
-from django.urls import get_resolver, reverse, path
+from django.urls import get_resolver, reverse, path, re_path
 from sitecats.toolbox import get_tie_model
 from sitetree.models import TreeItemBase
 from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree

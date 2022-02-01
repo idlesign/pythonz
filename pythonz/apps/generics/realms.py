@@ -1,9 +1,8 @@
 from typing import Callable, List, Tuple, Type
 
-from django.conf.urls import re_path
 from django.contrib.sitemaps import GenericSitemap
 from django.db.models import QuerySet
-from django.urls import reverse
+from django.urls import reverse, re_path
 from sitetree.models import TreeItemBase
 from sitetree.utils import item
 from yaturbo import YandexTurboFeed
