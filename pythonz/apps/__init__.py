@@ -1,7 +1,3 @@
-
-default_app_config = 'pythonz.apps.config.PythonzAppsConfig'
-
-
 from json import JSONEncoder
 
 
