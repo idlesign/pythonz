@@ -251,7 +251,7 @@ class ReferenceRealm(RealmBase):
     txt_form_edit: str = 'Редактировать статью'
 
     view_listing_description: str = 'Справочные и обучающие материалы по языку программирования Python.'
-    view_listing_keywords: str = 'справочник питон, руководство python, самоучитель python'
+    view_listing_keywords: str = 'справочник, питон, руководство, обучение, python 3, пайтон'
 
     view_listing_base_class: Type[RealmView] = ReferenceListingView
     view_details_base_class: Type[RealmView] = ReferenceDetailsView

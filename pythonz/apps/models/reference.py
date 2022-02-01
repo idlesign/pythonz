@@ -153,8 +153,14 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         }
 
     @cached_property
-    def keywords(self):
-        return f"{self.title.replace('.', ', ')}, {self.search_terms}".rstrip(', ')
+    def page_keywords(self):
+        title = self.title
+        title_chunked = title.replace('.', ', ')
+
+        if title != title_chunked:
+            title = f"{title}, {title_chunked}"
+
+        return f'{title}, {self.search_terms}'.rstrip(', ')
 
     @property
     def turbo_content(self) -> str:

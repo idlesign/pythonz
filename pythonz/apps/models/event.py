@@ -5,6 +5,7 @@ from typing import Optional, List
 from django.db import models
 from django.db.models import F, QuerySet
 from django.utils import timezone
+from django.utils.formats import date_format
 from etc.models import InheritedModel
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
@@ -103,6 +104,16 @@ class Event(
 
     def get_display_specialization(self) -> str:
         return self.Spec(self.specialization).label
+
+    @property
+    def page_title(self):
+
+        title = f'{self.get_display_type()} {self.title}'
+        time_start = self.time_start
+        if time_start:
+            title = f'{title} {date_format(time_start, "d E Y года")}'
+
+        return title
 
     @property
     def is_in_past(self) -> Optional[bool]:

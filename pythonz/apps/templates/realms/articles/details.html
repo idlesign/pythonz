@@ -2,10 +2,8 @@
 {% load gravatar model_meta sitetree static %}
 {% get_static_prefix as STATIC_URL %}
 
-{% block page_keywords %}{{ block.super }}, статья {{ article.title }}, что такое {{ article.title }}{% endblock %}
-
 {% block head %}
-    {% if article.nofollow %}<meta name="robots" content="nofollow" />{% endif %}
+    {% if article.nofollow %}<meta name="robots" content="noindex,nofollow" />{% endif %}
     {{ block.super }}
     {% include "sub/vk_head.html" %}
 {% endblock %}
