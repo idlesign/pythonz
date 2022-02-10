@@ -17,6 +17,8 @@ RUN pip3 install -r requirements.txt && \
     pip3 install -r tests/requirements.txt && \
     pip3 install -e .
 
+RUN mkdir state
+
 RUN pythonz migrate && \
     pythonz createsuperuser --noinput
 
