@@ -6,11 +6,12 @@ from pathlib import Path
 from typing import List, Optional, Set, Callable, Dict, Union
 
 import requests
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
+from django.db.models.fields.files import ImageFieldFile
 from django.utils import timezone
 from lassie import Lassie, LassieError
 from requests import Response
@@ -19,7 +20,7 @@ from ..signals import sig_integration_failed
 from ..utils import truncate_words, truncate_chars
 
 if False:  # pragma: nocover
-    from ..generics.realms import RealmBase
+    from ..generics.realms import RealmBase  # noqa
 
 
 PageInfo = namedtuple('PageInfo', ['title', 'description', 'site_name', 'images'])
@@ -171,7 +172,13 @@ def make_soup(page: str) -> BeautifulSoup:
     return BeautifulSoup(page, 'lxml')
 
 
-def get_thumb_url(realm: 'RealmBase', image: Image, width: int, height: int, absolute_url: bool = False) -> str:
+def get_thumb_url(
+        realm: 'RealmBase',
+        image: ImageFieldFile,
+        width: int,
+        height: int,
+        absolute_url: bool = False
+) -> str:
     """Создаёт на лету уменьшенную копию указанного изображения.
 
     :param realm:
@@ -205,9 +212,17 @@ def get_thumb_url(realm: 'RealmBase', image: Image, width: int, height: int, abs
             except FileExistsError:
                 pass
 
-            img = Image.open(image)
-            img.thumbnail((width, height), Image.ANTIALIAS)
-            img.convert('RGB').save(f'{thumb_file}', format=img.format.lower())
+            try:
+                img = Image.open(image)
+
+            except UnidentifiedImageError:
+                # сбойное изображение
+                image.delete()
+                return ''
+
+            else:
+                img.thumbnail((width, height), Image.ANTIALIAS)
+                img.convert('RGB').save(f'{thumb_file}', format=img.format.lower())
 
         url = Path(settings.MEDIA_URL) / thumb_file_base
         url = f'{url}'
