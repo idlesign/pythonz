@@ -3,7 +3,7 @@ beautifulsoup4==4.11.1
 bleach==4.1.0
 #dataclasses==0.7  # только для python < 3.8
 django-admirarchy==1.2.2
-django-debug-toolbar==3.7.0
+django-debug-toolbar==3.2.4
 django-etc==1.4.0
 django-robots==5.0
 django-simple-history==3.1.1
