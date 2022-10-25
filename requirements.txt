@@ -28,7 +28,7 @@ psycopg2==2.9.4
 pyTelegramBotAPI==3.7.9
 pytz==2022.5
 regex==2022.9.13
-requests[socks]==2.28.1
+requests[socks]==2.27.1
 sentry-sdk==1.5.4
 twitter==1.19.6
 uwsgi==2.0.21
