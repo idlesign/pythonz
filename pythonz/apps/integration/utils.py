@@ -13,7 +13,6 @@ from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.db.models.fields.files import ImageFieldFile
 from django.utils import timezone
-from lassie import Lassie, LassieError
 from requests import Response
 
 from ..signals import sig_integration_failed
@@ -34,35 +33,7 @@ def get_page_info(url: str, timeout: int = 4) -> Optional[PageInfo]:
     :param timeout: Таймаут на подключение.
 
     """
-    if not url:
-        return None
-
-    lassie = Lassie()
-    lassie.request_opts = {'timeout': timeout}
-
-    try:
-        result = lassie.fetch(
-            url,
-            touch_icon=False,
-            favicon=False,
-        )
-
-    except LassieError:
-        # В LassieError заворачиваются исключения requests,
-        # в т.ч.ошибки подключения, таймаут и пр.
-        return None
-
-    if result['status_code'] != 200:
-        return None
-
-    info = PageInfo(
-        title=result.get('title', ''),
-        description=result.get('description', ''),
-        site_name=result.get('site_name', ''),
-        images=result['images'],
-    )
-
-    return info
+    return None
 
 
 def get_from_url(url: str, *, method: str = 'get', **kwargs) -> Response:

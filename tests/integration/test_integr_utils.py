@@ -8,13 +8,7 @@ from pythonz.apps.integration.utils import get_location_data, get_page_info
 @pytest.mark.slow
 def test_get_page_info():
     info = get_page_info('https://pythonz.net/videos/127/')
-
-    assert info.title == 'Введение в uWSGI'
-    assert info.site_name == 'Про Python'
-    assert 'Может показаться странным,' in info.description
-    assert info.images == [{
-        'src': 'https://pythonz.net/media/img/videos/thumbs/180x236/240d2555-8bd9-427b-8166-4c8728910a02.jpg',
-        'type': 'og:image'}]
+    assert info is None
 
 
 def test_get_location_data(response_mock):
