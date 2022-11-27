@@ -50,9 +50,9 @@ handler500 = server_error
 if settings.DEBUG:
     # Чтобы работала отладочная панель.
     import debug_toolbar
-    from django.conf.urls import include, url
+    from django.urls import include, re_path
 
-    urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls)),]
+    urlpatterns += [re_path(r'^__debug__/', include(debug_toolbar.urls)),]
     # Чтобы статика раздавалась при runserver.
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

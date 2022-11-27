@@ -2,13 +2,6 @@ PYTHONZ
 =======
 https://github.com/idlesign/pythonz
 
-
-.. image:: https://requires.io/github/idlesign/pythonz/requirements.svg?branch=master
-     :target: https://requires.io/github/idlesign/pythonz/requirements/?branch=master
-     :alt: Состояние зависимостей
-
-
-
 Что это
 -------
 
