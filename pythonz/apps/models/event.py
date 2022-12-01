@@ -109,8 +109,8 @@ class Event(
     def page_title(self):
 
         title = f'{self.get_display_type()} {self.title}'
-        time_start = self.time_start
-        if time_start:
+
+        if time_start := self.time_start:
             title = f'{title} {date_format(time_start, "d E Y года")}'
 
         return title
@@ -166,9 +166,8 @@ class Event(
 
         if page_info:
             site_name = page_info.site_name
-            description = page_info.description
-
-            if description:
+            
+            if description := page_info.description:
                 if site_name == 'Meetup':
                     # Meetup в описание пихает мусорную конкатенацию.
                     description = page_info.title or ''

@@ -367,9 +367,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
         """
         if realm.ready_for_digest:
 
-            entries = realm.model.get_actual().filter(**filter_kwargs).order_by(order_by)
-
-            if entries:
+            if entries := realm.model.get_actual().filter(**filter_kwargs).order_by(order_by):
 
                 for entry in entries:
                     entry.absolute_url = entry.get_absolute_url(with_prefix=True, utm_source='mail')
@@ -410,16 +408,13 @@ class PythonzEmailDigest(PythonzEmailMessage):
 
         realms_data = {}
 
-        objects_upcoming = cls.get_upcoming_items()
-        if objects_upcoming:
+        if objects_upcoming := cls.get_upcoming_items():
             realms_data['Скоро'] = objects_upcoming
 
-        objects_new = cls.get_realms_data(date_from, date_till)
-        if objects_new:
+        if objects_new := cls.get_realms_data(date_from, date_till):
             realms_data['Новые'] = objects_new
 
-        objects_modified = cls.get_realms_data(date_from, date_till, modified_mode=True)
-        if objects_modified:
+        if objects_modified := cls.get_realms_data(date_from, date_till, modified_mode=True):
             realms_data['Изменившиеся'] = objects_modified
 
         context.update({'realms_data': realms_data})

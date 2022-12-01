@@ -60,9 +60,7 @@ class Summary(RealmBaseModel):
 
                 line = f'`{title}<{item.url}>`_'
 
-                description = item.description
-
-                if description:
+                if description := item.description:
                     description = description.translate(trans_map)
                     line += f' — {description}'
 

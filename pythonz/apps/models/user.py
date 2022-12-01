@@ -87,9 +87,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
             self.timezone = None
             return True
 
-        geo_pos = self.place.geo_pos
-
-        if geo_pos:
+        if geo_pos := self.place.geo_pos:
             lat, lng = geo_pos.split(',')
             self.timezone = get_timezone_name(lat, lng)
 

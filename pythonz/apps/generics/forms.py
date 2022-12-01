@@ -19,9 +19,7 @@ class CommonEntityForm(ModelForm):
         super().__init__(*args, request=request, src=src, id=id, **kwargs)
 
     def clean_year(self) -> str:
-
-        year = self.cleaned_data['year'] or ''
-        year = year.strip()
+        year = (self.cleaned_data['year'] or '').strip()
 
         if year:
             if len(year) != 4 or not year.isdigit() or not (1900 < int(year) <= datetime.now().year):

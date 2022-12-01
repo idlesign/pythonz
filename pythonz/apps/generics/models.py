@@ -351,9 +351,7 @@ class RealmBaseModel(ModelWithFlag):
 
         now = timezone.now()
 
-        status_changed = self._status_backup != self.status
-
-        if status_changed or self._consider_published:
+        if (status_changed := self._status_backup != self.status) or self._consider_published:
 
             if status_changed:
                 # Если сохраняем с переходом статуса, наивно полагаем объект немодифицированным.

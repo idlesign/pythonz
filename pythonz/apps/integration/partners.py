@@ -115,9 +115,7 @@ class BooksRu(PartnerBase):
         price = ''
 
         if page_soup:
-            matches = page_soup.select('h3.book-price')
-
-            if matches:
+            if matches := page_soup.select('h3.book-price'):
                 price = matches[0].text
 
         return price
@@ -136,9 +134,7 @@ class LitRes(PartnerBase):
         price = ''
 
         if page_soup:
-            matches = page_soup.select('.simple-price')
-
-            if matches:
+            if matches := page_soup.select('.simple-price'):
                 price = matches[0].text
 
         return price
@@ -157,9 +153,7 @@ class Ozon(PartnerBase):
         price = ''
 
         if page_soup:
-            matches = page_soup.findAll('span', attrs={'itemprop': 'price', 'class': 'hidden'})
-
-            if matches:
+            if matches := page_soup.findAll('span', attrs={'itemprop': 'price', 'class': 'hidden'}):
                 price = matches[0].text
 
         return price
@@ -180,9 +174,8 @@ class Book24(PartnerBase):
         price = ''
 
         if page_soup:
-            match = page_soup.find(itemprop='price')
 
-            if match:
+            if match := page_soup.find(itemprop='price'):
                 price = match.get_text().strip().replace(' ', '')
 
         return price
@@ -201,8 +194,8 @@ class Bookvoed(PartnerBase):
         price = ''
 
         if page_soup:
-            match = page_soup.find(itemprop='price')
-            if match:
+
+            if match := page_soup.find(itemprop='price'):
                 price = match.attrs.get('content') or ''
                 if price:
                     price = f'{int(Decimal(price))}'
@@ -223,9 +216,7 @@ class LabirintRu(PartnerBase):
         price = ''
 
         if page_soup:
-            matches = page_soup.select('.buying-price-val-number')
-
-            if matches:
+            if matches := page_soup.select('.buying-price-val-number'):
                 price = matches[0].text
 
         return price
@@ -284,9 +275,7 @@ def get_partner_links(realm: Type['RealmBase'], item: Union['RealmBaseModel', 'M
     Task = namedtuple('Task', ['link', 'realm', 'partner'])
 
     def contribute_info(task: Task):
-        data = task.partner.get_link_data(task.realm, task.link)
-
-        if data:
+        if data := task.partner.get_link_data(task.realm, task.link):
             links_data.append(data)
 
     if links_data is None:
@@ -296,9 +285,7 @@ def get_partner_links(realm: Type['RealmBase'], item: Union['RealmBaseModel', 'M
         get_partner = PartnerBase.registry.get
 
         for link in item.partner_links.order_by('partner_alias', 'description').all():
-            partner = get_partner(link.partner_alias)
-
-            if partner:
+            if partner := get_partner(link.partner_alias):
                 tasks.append(Task(
                     link=link,
                     realm=realm,

@@ -58,13 +58,10 @@ class DiscussionForm(RealmEditBaseForm):
 
             from ..realms import get_realm
 
-            realm = get_realm(data['related_item_realm'])
-
-            if realm is not None:
+            if realm := get_realm(data['related_item_realm']) is not None:
                 item_id = data['related_item_id']
-                item = self._get_realm_item(realm, item_id)
 
-                if item is not None:
+                if item := self._get_realm_item(realm, item_id) is not None:
                     data = dict(data)
 
                     data['object_id'] = item_id
@@ -152,12 +149,7 @@ class ArticleForm(RealmEditBaseForm):
         return super().full_clean()
 
     def clean_url(self) -> Optional[str]:
-        url = self.cleaned_data['url']
-
-        if not url:
-            url = None
-
-        return url
+        return self.cleaned_data['url'].strip() or None
 
     def save(self, *args, **kwargs):
         url = self.cleaned_data.get('url')
@@ -189,9 +181,8 @@ class BookForm(RealmEditBaseForm):
     def clean_isbn_(isbn) -> Optional[str]:
         isbn = isbn or ''
         isbn = isbn.replace('-', '').strip()
-        length = len(isbn)
 
-        if length:
+        if length := len(isbn):
             if (length != 10 and length != 13) or not isbn.isdigit():
                 raise forms.ValidationError('Код ISBN должен содержать 10, либо 13 цифр.')
 

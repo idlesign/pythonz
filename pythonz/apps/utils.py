@@ -415,8 +415,7 @@ class TextCompiler:
                             bg_letter, row_sign = value[3:5]
                             value = value[5:].strip()
 
-                            bg_class = bg_map.get(bg_letter, '')
-                            if bg_class:
+                            if bg_class := bg_map.get(bg_letter, ''):
                                 attr = f' class="{bg_class}"'
 
                                 if row_sign == '+':

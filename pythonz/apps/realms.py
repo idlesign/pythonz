@@ -120,9 +120,7 @@ def get_realms_urls() -> List:
     for realm in get_realms().values():
         url_patterns += realm.get_urls()
 
-    sitemaps = get_sitemaps()
-
-    if sitemaps:
+    if sitemaps := get_sitemaps():
         url_patterns += [re_path(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps})]
 
     return url_patterns

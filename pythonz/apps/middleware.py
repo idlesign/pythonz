@@ -15,8 +15,8 @@ def TimezoneMiddleware(get_response):
         user = getattr(request, 'user', None)
 
         if user is not None and not isinstance(user, AnonymousUser):
-            if user.timezone:
-                current_timezone = user.timezone
+            if tz := user.timezone:
+                current_timezone = tz
 
         try:
             timezone.activate(current_timezone)
