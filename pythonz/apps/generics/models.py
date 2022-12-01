@@ -3,7 +3,7 @@ from contextlib import suppress
 from copy import copy
 from datetime import datetime
 from enum import unique
-from typing import List, Type, Optional
+from typing import List, Type, Optional, Set
 from uuid import uuid4
 
 from django.conf import settings
@@ -123,16 +123,16 @@ class CommonEntityModel(models.Model):
         """Генерирует краткое имя для URL и заполняет им атрибут slug."""
         return SLUGIFIER(self.title)
 
-    def validate_unique(self, exclude: List = None):
+    def validate_unique(self, exclude: Set[str] = None):
 
         # Перекрываем для правильной обработки спарки unique=True и null=True
         # в поле краткого имени URL.
 
         if not exclude:
-            exclude = []
+            exclude = set()
 
         if not self.slug:
-            exclude.append('slug')
+            exclude.update('slug')
 
         return super().validate_unique(exclude)
 

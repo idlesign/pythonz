@@ -10,12 +10,21 @@ from pythonz.apps.realms import get_realm, PEP, Category, Article
 @pytest.fixture
 def check_page(request_client):
 
-    def check(view, *, assertions, args=None, user=None):
+    def check(view, *, assertions, args=None, user=None, data: dict = None):
 
         client = request_client(user=user)
 
-        content = client.get(
-            (view, args), follow=True
+        kwargs = {}
+        if data is None:
+            method = client.get
+        else:
+            method = client.post
+            kwargs['data'] = data
+
+        content = method(
+            (view, args),
+            **kwargs,
+            follow=True
         ).content.decode()
 
         for assertion in assertions:
@@ -42,10 +51,11 @@ def init_category(robot, monkeypatch):
 @pytest.fixture
 def check_realm(check_page, robot, monkeypatch, request_client, init_category):
 
-    def check_realm_(alias, *, views_hooks: dict = None, obj_kwargs=None):
+    def check_realm_(alias, *, views_hooks: dict = None, obj_kwargs=None, add_kwargs=None):
 
         views_hooks = views_hooks or {}
         obj_kwargs = obj_kwargs or {}
+        add_kwargs = add_kwargs or {}
 
         realm = get_realm(alias)
 
@@ -110,6 +120,29 @@ def check_realm(check_page, robot, monkeypatch, request_client, init_category):
 
             hook and hook(result)
 
+        if 'add' in realm.allowed_views and add_kwargs:
+
+            add_kwargs.update({
+                'pythonz_form': '1',
+                '__submit': 'siteform',
+            })
+
+            hook = views_hooks.get('add')
+            checks = []
+
+            not hook and checks.extend([
+                'title="Добавил: ',  # страница деталей содержит этот текст
+
+            ])
+
+            result = check_page(
+                realm.get_add_urlname(),
+                data=add_kwargs,
+                args={},
+                assertions=checks, user=robot)
+
+            hook and hook(result)
+
         if 'edit' in realm.allowed_views:
 
             hook = views_hooks.get('edit')
@@ -161,7 +194,7 @@ def test_search(check_page):
 def test_login(check_page):
 
     check_page('login', assertions=[
-        'Регистрация</h2>',
+        'Вход</h2>',
     ])
 
 
@@ -195,8 +228,15 @@ def test_videos(check_realm):
     check_realm('video')
 
 
-def test_events(check_realm):
-    check_realm('event')
+def test_events(check_realm, request_client):
+
+    check_realm('event', add_kwargs={
+        'title': 'one',
+        'type': '1',
+        'specialization': '1',
+        'description': '3123',
+        'text_src': 'qwreewr',
+    })
 
 
 def test_vacancies(check_realm):
