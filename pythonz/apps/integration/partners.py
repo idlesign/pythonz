@@ -176,7 +176,7 @@ class Book24(PartnerBase):
         if page_soup:
 
             if match := page_soup.find(itemprop='price'):
-                price = match.get_text().strip().replace(' ', '')
+                price = match.get('content', '').replace(' ', '')
 
         return price
 
