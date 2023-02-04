@@ -2,8 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from pythonz.apps.integration.summary import MailarchConferences, GithubTrending, Stackoverflow, Lwn, Discuss, Psf, \
-    MailarchDev
+from pythonz.apps.integration.summary import MailarchConferences, GithubTrending, Stackoverflow, Lwn, Discuss, Psf
 
 pytestmark = [pytest.mark.slow]
 
@@ -58,18 +57,6 @@ def test_pipermail():
     ).run()
 
     assert len(latest) == 1
-
-
-def test_hyperkitty():
-
-    current, latest = MailarchDev(
-        previous_result=[],
-        previous_dt=datetime(2019, 12, 31),
-        till=datetime(2019, 12, 31)
-    ).run()
-
-    assert len(current) >= 6
-    assert len(latest) >= 6
 
 
 def test_discuss():

@@ -12,12 +12,6 @@ class MailarchAnnounce(HyperKittyBase):
     alias: str = 'python-announce-list@python.org'
 
 
-class MailarchDev(HyperKittyBase):
-
-    title: str = 'Разработка языка'
-    alias: str = 'python-dev@python.org'
-
-
 class MailarchConferences(PipermailBase):
 
     title: str = 'Мероприятия'
