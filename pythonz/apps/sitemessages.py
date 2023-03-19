@@ -251,6 +251,8 @@ class PythonzEmailMessage(EmailHtmlMessage):
 class PythonzEmailOneliner(PythonzEmailMessage):
     """Простое "однострочное" сообщение."""
 
+    group_mark = 'oneline'
+
     @classmethod
     def create(cls, subject: str, text: str):
         """Создаёт оповещение общего вида.
