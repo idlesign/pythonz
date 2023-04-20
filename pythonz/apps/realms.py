@@ -10,18 +10,24 @@ from sitetree.models import TreeItemBase
 from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree
 from sitetree.utils import tree, item
 
-from .forms.forms import BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm, \
-    ReferenceForm, VersionForm, AppForm
+from .forms.forms import (
+    BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm,
+    ReferenceForm, VersionForm, AppForm,
+)
 from .generics.forms import CommonEntityForm
 from .generics.models import RealmBaseModel
 from .generics.realms import RealmBase, SYNDICATION_URL_MARKER, SYNDICATION_ITEMS_LIMIT
 from .generics.views import RealmView
-from .models import User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy, Version, \
-    PEP, Person, Category, App
+from .models import (
+    User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy, Version,
+    PEP, Person, Category, App,
+)
 from .signals import sig_support_changed
-from .views import UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView, \
-    ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView, PersonDetailsView, \
+from .views import (
+    UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView,
+    ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView, PersonDetailsView,
     PepListingView, ide
+)
 from .zen import register_zen_siteblock
 
 # Регистрируем блок сайта с дзеном
@@ -357,7 +363,10 @@ class UserRealm(RealmBase):
 
     sitemap_date_field: str = 'date_joined'
     sitemap_changefreq: str = 'weekly'
-    allowed_views: Tuple[str, ...] = ('listing', 'details', 'edit')
+    allowed_views: Tuple[str, ...] = ('details', 'edit')
+    ready_for_digest: bool = False
+    sitemap_enabled: bool = False
+
     show_on_main: bool = False
     show_on_top: bool = False
 
