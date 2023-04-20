@@ -1,8 +1,10 @@
+from datetime import timedelta
 from statistics import median
 from typing import List, Optional
 
 from django.db import models
 from django.db.models import Count
+from django.utils.timezone import now
 
 from .place import Place, WithPlace
 from .shared import UtmReady
@@ -161,6 +163,7 @@ class Vacancy(UtmReady, WithPlace):
         """Обновляет состояния записей по данным внешнего ресурса."""
 
         for_update = []
+        stale_time = now() - timedelta(days=30)
 
         for vacancy in cls.objects.published():
 
@@ -173,11 +176,14 @@ class Vacancy(UtmReady, WithPlace):
 
             status = source.get_status(vacancy.url_api)
 
-            if status:
+            if vacancy.time_created < stale_time:
                 vacancy.status = cls.Status.ARCHIVED
 
-            elif status is None:
-                vacancy.status = cls.Status.DELETED
+            else:
+                if status:
+                    vacancy.status = cls.Status.ARCHIVED
 
-        if for_update:
-            cls.objects.bulk_update(for_update, fields=['status'])
+                elif status is None:
+                    vacancy.status = cls.Status.DELETED
+
+        cls.objects.bulk_update(for_update, fields=['status'])

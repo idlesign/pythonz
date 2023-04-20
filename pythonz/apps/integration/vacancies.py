@@ -29,7 +29,7 @@ class HhVacancy(VacancySource):
         :param url:
 
         """
-        response = get_json(url, return_none_statuses=[404])
+        response = get_json(url, return_none_statuses={404}, silent_statuses={403})
 
         if not response:
             return response

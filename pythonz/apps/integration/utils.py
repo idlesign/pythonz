@@ -57,15 +57,16 @@ def get_from_url(url: str, *, method: str = 'get', **kwargs) -> Response:
     return method(url, **r_kwargs)
 
 
-def get_json(url: str, return_none_statuses: List[int] = None) -> dict:
+def get_json(url: str, *, return_none_statuses: Set[int] = None, silent_statuses: Set[int] = None) -> dict:
     """Возвращает словарь, созданный из JSON документа, полученного
     с указанного URL.
 
     :param url:
-    :param list return_none_statuses: Коды статусов, для которых требуется вернуть None.
+    :param return_none_statuses: Коды статусов, для которых требуется вернуть None.
+    :param silent_statuses: Коды статусов, для которых не требуется рассылать оповещения об ошибках.
 
     """
-    return_none_statuses = return_none_statuses or []
+    return_none_statuses = return_none_statuses or set()
     result = {}
 
     try:
@@ -79,9 +80,9 @@ def get_json(url: str, return_none_statuses: List[int] = None) -> dict:
         if status in return_none_statuses:
             return {}
 
-        elif status != 503:
+        elif status != 503 and status not in silent_statuses:
             # Temporary Unavailable. В следующий раз получится.
-            sig_integration_failed.send(None, description=f'URL {url}. Error: {e}')
+            sig_integration_failed.send(None, description=f'URL {url}.\nError: {e}')
 
     else:
 
