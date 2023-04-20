@@ -318,6 +318,7 @@ class RealmBase:
             if 'listing' not in cls.allowed_views:
                 sitetree_items.inmenu = False
                 sitetree_items.insitetree = False
+                sitetree_items.inbreadcrumbs = False
 
             sitetree_items.show_on_top = cls.show_on_top
             cls.sitetree_items = sitetree_items

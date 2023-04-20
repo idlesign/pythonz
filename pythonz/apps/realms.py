@@ -342,6 +342,10 @@ class DiscussionRealm(RealmBase):
     form: Type[CommonEntityForm] = DiscussionForm
     icon: str = 'comments-o'
 
+    allowed_views: Tuple[str, ...] = ('details', 'tags', 'add', 'edit')
+    ready_for_digest: bool = False
+    sitemap_enabled: bool = False
+
     show_on_main: bool = False
     show_on_top: bool = False
 
