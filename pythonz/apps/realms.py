@@ -345,6 +345,7 @@ class DiscussionRealm(RealmBase):
     allowed_views: Tuple[str, ...] = ('details', 'tags', 'add', 'edit')
     ready_for_digest: bool = False
     sitemap_enabled: bool = False
+    syndication_enabled: bool = False
 
     show_on_main: bool = False
     show_on_top: bool = False
@@ -370,11 +371,10 @@ class UserRealm(RealmBase):
     allowed_views: Tuple[str, ...] = ('details', 'edit')
     ready_for_digest: bool = False
     sitemap_enabled: bool = False
+    syndication_enabled: bool = False
 
     show_on_main: bool = False
     show_on_top: bool = False
-
-    syndication_enabled: bool = False
 
     @classmethod
     def get_sitetree_details_item(cls) -> TreeItemBase:
