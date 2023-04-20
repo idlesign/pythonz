@@ -294,7 +294,9 @@ class RealmBase:
     def get_sitetree_items(cls) -> TreeItemBase:
         """Возвращает элементы древа сайта."""
 
-        if cls.sitetree_items is None:
+        sitetree_items = cls.sitetree_items
+
+        if sitetree_items is None:
             children = []
 
             for view_name in cls.allowed_views:
@@ -307,16 +309,20 @@ class RealmBase:
 
                     children.extend(items)
 
-            cls.sitetree_items = item(
+            sitetree_items = item(
                 cls.view_listing_title or str(cls.model._meta.verbose_name_plural),
                 cls.get_listing_urlname(),
                 description=cls.view_listing_description,
                 children=children,
             )
+            if 'listing' not in cls.allowed_views:
+                sitetree_items.inmenu = False
+                sitetree_items.insitetree = False
 
-            cls.sitetree_items.show_on_top = cls.show_on_top
+            sitetree_items.show_on_top = cls.show_on_top
+            cls.sitetree_items = sitetree_items
 
-        return cls.sitetree_items
+        return sitetree_items
 
     @classmethod
     def get_names(cls) -> Tuple[str, str]:
