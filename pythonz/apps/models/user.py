@@ -29,7 +29,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         on_delete=models.SET_NULL)
 
     profile_public = models.BooleanField(
-        'Публичный профиль', default=True, db_index=True,
+        'Публичный профиль', default=False, db_index=True,
         help_text='Если выключить, то увидеть ваш профиль сможете только вы.<br>'
                   'В списках пользователей профиль значиться тоже не будет.')
 
