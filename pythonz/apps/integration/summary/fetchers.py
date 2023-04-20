@@ -2,6 +2,8 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Tuple, List, Dict, Union, Optional
 
+from lxml import etree as ET
+
 from .base import PipermailBase, StackdataBase, ItemsFetcherBase, SummaryItem, TypeFetcherResult, HyperKittyBase
 from ..utils import get_from_url, make_soup, get_json
 
@@ -82,16 +84,22 @@ class Psf(ItemsFetcherBase):
 
     def fetch(self) -> TypeFetcherResult:
 
-        url_rss = 'https://pyfound.blogspot.com/feeds/posts/default?alt=rss'
+        url_rss = 'https://pyfound.blogspot.com/feeds/posts/default'
 
         items = {}
         result = get_from_url(url_rss)
-        soup = make_soup(result.text)
+        xml = ET.fromstring(result.content)
 
-        for entry in soup.select('entry'):
-            item_title = entry.find('title').text.strip()
-            item_url = entry.find('feedburner:origlink').text.strip()
-            items[item_url] = SummaryItem(url=item_url, title=item_title)
+        for entry in xml.findall('{http://www.w3.org/2005/Atom}entry'):
+            item_title = entry.find('{http://www.w3.org/2005/Atom}title').text.strip()
+            item_url = ''
+
+            for entry_url in entry.findall('{http://www.w3.org/2005/Atom}link'):
+                if entry_url.attrib['type'] == 'text/html':
+                    item_url = entry_url.attrib['href']
+
+            if item_url:
+                items[item_url] = SummaryItem(url=item_url, title=item_title)
 
         items, latest_result = self._filter(items)
 
