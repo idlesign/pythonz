@@ -263,7 +263,7 @@ def test_discussions(check_realm):
 def test_users(check_realm):
     check_realm(
         'user',
-        obj_kwargs={'username': 'Пользователь заголовок'},
+        obj_kwargs={'username': 'Пользователь заголовок', 'profile_public': True},
         views_hooks={'edit': lambda contents: True})
 
 
