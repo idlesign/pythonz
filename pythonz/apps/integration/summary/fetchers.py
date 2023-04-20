@@ -197,7 +197,7 @@ class GithubTrending(ItemsFetcherBase):
         period = self.period
 
         url_base = self.url_base
-        url = f'{url_base}/trending/python?since={period}'
+        url = f'{url_base}/trending/python?since={period}&spoken_language_code='
 
         page = get_from_url(url)
         soup = make_soup(page.text)
@@ -208,7 +208,7 @@ class GithubTrending(ItemsFetcherBase):
 
         for list_item in list_items:
 
-            link = list_item.select('h1 a')[0]
+            link = list_item.select('h2 a')[0]
 
             item_url = f"{url_base}{link.attrs['href']}"
             item_title = link.text.strip().replace('\n', '').replace(' ', '')
