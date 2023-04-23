@@ -52,7 +52,7 @@ var pythonz = {
         "use strict";
         setTimeout(function(){
             var maxCount = 0,
-                ids = ['comments_vk', 'comments_fb', 'comments_disqus', 'comments_internal'];
+                ids = ['comments_vk'];
 
             $.each(ids, function(idx, tabId){
                 var count = parseInt($('#' + tabId + '_cnt').text());

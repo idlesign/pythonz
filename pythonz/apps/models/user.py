@@ -33,19 +33,6 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
         help_text='Если выключить, то увидеть ваш профиль сможете только вы.<br>'
                   'В списках пользователей профиль значиться тоже не будет.')
 
-    comments_enabled = models.BooleanField(
-        'Разрешить комментарии',
-        help_text='Включает/отключает систему комментирования Disqus на страницах ваших публикаций.', default=False)
-
-    disqus_shortname = models.CharField(
-        'Идентификатор Disqus', max_length=100, null=True, blank=True,
-        help_text='Короткое имя (shortname), под которым вы зарегистрировали форум на Disqus.')
-
-    disqus_category_id = models.CharField(
-        'Идентификатор категории Disqus', max_length=30, null=True, blank=True,
-        help_text='Если ваш форум на Disqus использует категории, можете указать нужный номер здесь. '
-                  'Это не обязательно.')
-
     timezone = models.CharField(
         'Часовой пояс', max_length=150, null=True, blank=True,
         help_text='Название часового пояса. Например: Asia/Novosibirsk.<br>'
@@ -54,10 +41,6 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
     email_public = models.EmailField(
         'Эл. почта', null=True, blank=True,
         help_text='Адрес электронной почты для показа посетителям сайта.')
-
-    twitter = models.CharField(
-        'Twitter', max_length=100, blank=True, default='',
-        help_text='Имя в Twitter.')
 
     url = models.URLField('Страница в сети', null=True, blank=True)
 

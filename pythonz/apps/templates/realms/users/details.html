@@ -57,12 +57,6 @@
                         <td><a href="{{ user.get_utm_url }}" rel="nofollow">{{ user.url }}</a></td>
                     </tr>
                 {% endif %}
-                {% if user.twitter %}
-                    <tr>
-                        <td>{% model_field_verbose_name from user.twitter %}:</td>
-                        <td><a href="https://twitter.com/{{ user.twitter }}" rel="nofollow">{{ user.twitter }}</a></td>
-                    </tr>
-                {% endif %}
             {% endif %}
             {% if user.person %}
             <tr>
@@ -154,13 +148,7 @@
 
 {% block details_share %}{% endblock %}
 
-{% block column_controls %}
-    {% if user.karma > 0 and user.twitter %}
-        <div class="sticky">
-            {% include "sub/twitter_timeline.html" with username=user.twitter %}
-        </div>
-    {% endif %}
-{% endblock %}
+{% block column_controls %}{% endblock %}
 
 {% block cover %}
     <img src="{% gravatar_get_url user 180 %}" class="img-thumbnail" alt="{{ user.get_display_name }}">

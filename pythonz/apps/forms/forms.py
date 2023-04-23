@@ -268,10 +268,6 @@ class UserForm(RealmEditBaseForm):
             'timezone',
             'url',
             'email_public',
-            'twitter',
-            'comments_enabled',
-            'disqus_shortname',
-            'disqus_category_id',
         )
 
     def save(self, *args, **kwargs):

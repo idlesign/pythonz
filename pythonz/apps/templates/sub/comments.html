@@ -17,22 +17,6 @@
     </li>
     {% endif %}
 
-    {% if not disable_disqus %}
-    <li role="presentation" class="nav-item">
-        <a href="#comments_disqus" class="nav-link" aria-controls="comments_disqus" role="tab" data-toggle="tab">
-            Disqus
-            <span id="comments_disqus_cnt" class="disqus-comment-count badge ml-2" data-disqus-identifier="{{ entity_name }}_{{ entity_id }}">0</span></a>
-    </li>
-    {% endif %}
-
-    {% if not disable_internal %}
-    <li role="presentation" class="nav-item">
-        <a href="#comments_internal" class="nav-link" aria-controls="comments_internal" role="tab" data-toggle="tab">
-            Обсуждения
-            <span id="comments_internal_cnt" class="badge ml-2">0</span></a>
-    </li>
-    {% endif %}
-
 </ul>
 
 <div class="tab-content">
@@ -40,22 +24,6 @@
     {% if not disable_vk %}
     <div role="tabpanel" class="tab-pane active" id="comments_vk">
         {% include "sub/vk_comments.html" %}
-    </div>
-    {% endif %}
-
-    {% if not disable_disqus %}
-    <div role="tabpanel" class="tab-pane" id="comments_disqus">
-        {% if personalized and author.disqus_shortname %}
-            {% include "sub/disqus.html" with shortname=author.disqus_shortname comments_enabled=author.comments_enabled category_id=author.disqus_category_id %}
-        {% else %}
-            {% include "sub/disqus.html" with shortname="pythonz-discussions" comments_enabled=1 %}
-        {% endif %}
-    </div>
-    {% endif %}
-
-    {% if not disable_internal %}
-    <div role="tabpanel" class="tab-pane" id="comments_internal">
-        {% include "realms/discussions/sub_discussions.html" with items=item.discussions.all show_form_for=item show_texts=1 %}
     </div>
     {% endif %}
 

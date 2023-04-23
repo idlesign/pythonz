@@ -84,14 +84,11 @@ class UserAdmin(BaseUserAdmin):
 
     form = UserChangeForm
     add_form = UserCreationForm
-    list_display = BaseUserAdmin.list_display + ('karma', 'time_created', 'url', 'twitter', 'is_active',)
+    list_display = BaseUserAdmin.list_display + ('karma', 'time_created', 'url', 'is_active',)
 
     fieldsets = BaseUserAdmin.fieldsets + ((None, {'fields': (
         'karma',
         'profile_public',
-        'comments_enabled',
-        'disqus_shortname',
-        'disqus_category_id',
         'timezone',
         'url',
         'twitter',
