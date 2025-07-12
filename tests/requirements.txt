@@ -1,3 +1,0 @@
-pytest==7.2.1
-pytest-djangoapp>=1.0.0
-pytest-responsemock==1.1.1
