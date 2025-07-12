@@ -1,39 +1,45 @@
 import re
-from functools import partial
-from collections import namedtuple
-from os.path import splitext
 from datetime import datetime
-from typing import List, Dict
+from functools import partial
+from os.path import splitext
+from typing import TYPE_CHECKING, NamedTuple
 
 import requests
 from django.conf import settings
 from django.utils import timezone
 
-from ..utils import sync_many_to_many, get_logger, PersonName
 from ..signals import sig_send_generic_telegram
+from ..utils import PersonName, get_logger, sync_many_to_many
 
-if False:  # pragma: nocover
+if TYPE_CHECKING:
     from ..models import PEP
 
 
 LOG = get_logger(__name__)
 
-KEYS_REQUIRED: List[str] = ['pep', 'title', 'status', 'type', 'author', 'created']
-KEYS_OPTIONAL: List[str] = ['python-version', 'superseded-by', 'replaces', 'requires']
-KEYS_ALL: List[str] = KEYS_REQUIRED + KEYS_OPTIONAL
+KEYS_REQUIRED: list[str] = ['pep', 'title', 'status', 'type', 'author', 'created']
+KEYS_OPTIONAL: list[str] = ['python-version', 'superseded-by', 'replaces', 'requires']
+KEYS_ALL: list[str] = KEYS_REQUIRED + KEYS_OPTIONAL
 
 RE_VERSION = re.compile(r'(\d{1,2}.\d{1,2}(.\d{1,2})?)')
 RE_MAIL_TYPE1 = re.compile(r'([^<]+)<[^>]+>')
 RE_MAIL_TYPE2 = re.compile(r'[^(]+\(([^)]+)\)')
 
 
-PepInfo = namedtuple('PEPInfo', (
-    'num', 'title', 'status', 'type',
-    'created', 'authors', 'versions', 'superseded', 'replaces', 'requires'
-))
+class PepInfo(NamedTuple):
+    num: str
+    title: str
+    status: str
+    type: str
+    created: str
+    authors: str
+    versions: str
+    superseded: str
+    replaces: str
+    requires: str
 
 
-def strip_mail(value: str) -> List[str]:
+def strip_mail(value: str) -> list[str]:
     """Удаляет адреса эл. почты из строки author."""
     names = []
 
@@ -81,12 +87,12 @@ def normalize_date(value: str) -> datetime:
     return created
 
 
-def get_peps(exclude_peps: List[str] = None, limit: int = None) -> List[PepInfo]:
+def get_peps(exclude_peps: list[str] = None, limit: int = None) -> list[PepInfo]:
     """Проходит по репозиторию PEPов и возвращает данные о них в виде
     списка PEPInfo.
 
-    :param exclude_peps: Номера PEP (с ведущиеми нулями), которые можно пропустить.
-    :param limit: Максимальное количесто PEP, которые следует обработать.
+    :param exclude_peps: Номера PEP (с ведущими нулями), которые можно пропустить.
+    :param limit: Максимальное количество PEP, которые следует обработать.
 
     """
     LOG.debug('Getting PEPs ...')
@@ -102,12 +108,7 @@ def get_peps(exclude_peps: List[str] = None, limit: int = None) -> List[PepInfo]
         version = pep.get('python-version', [])
 
         if version:
-            version_ = []
-
-            for match in RE_VERSION.findall(version):
-                version_.append(match[0].replace(',', '.').replace('3000', '3.0'))
-
-            version = version_
+            version = [match[0].replace(',', '.').replace('3000', '3.0') for match in RE_VERSION.findall(version)]
 
         pep['python-version'] = version
         pep['created'] = normalize_date(pep['created'])
@@ -117,7 +118,7 @@ def get_peps(exclude_peps: List[str] = None, limit: int = None) -> List[PepInfo]
         make_list(pep, 'requires')
 
     def get_pep_info(download_url: str) -> PepInfo:
-        LOG.debug(f'Getting PEP info from {download_url} ...')
+        LOG.debug('Getting PEP info from %s ...', download_url)
 
         response = requests.get(download_url).text
 
@@ -181,7 +182,7 @@ def get_peps(exclude_peps: List[str] = None, limit: int = None) -> List[PepInfo]
         if not name.startswith('pep-'):
             continue
 
-        name_split = splitext(name)
+        name_split = splitext(name)  # noqa: PTH122
 
         ext = name_split[1]
 
@@ -204,14 +205,14 @@ def get_peps(exclude_peps: List[str] = None, limit: int = None) -> List[PepInfo]
     return peps
 
 
-def sync(*, skip_deadend_peps: bool = True, limit: int = None) -> Dict[int, 'PEP']:
+def sync(*, skip_deadend_peps: bool = True, limit: int = None) -> dict[int, 'PEP']:
     """Синхронизирует данные БД сайта с данными PEP из репозитория.
 
     :param skip_deadend_peps: Следует ли пропустить ПУПы, состояние которых уже не измениться.
-    :param limit: Максимальное количесто PEP, которые следует обработать.
+    :param limit: Максимальное количество PEP, которые следует обработать.
 
     """
-    from ..models import Version, PEP, Person, PersonsLinked
+    from ..models import PEP, Person, PersonsLinked, Version  # noqa: PLC0415
 
     LOG.debug('Syncing PEPs ...')
 
@@ -254,12 +255,12 @@ def sync(*, skip_deadend_peps: bool = True, limit: int = None) -> Dict[int, 'PEP
 
         if not status_id:
             # Неизвестный статус. Например, Provisional.
-            LOG.warning(f'Unknown status {pep.status} ...')
+            LOG.warning('Unknown status %s ...', pep.status)
             continue
 
         type_id = int(map_types[pep.type])
 
-        LOG.info(f'Working on PEP {num} ...')
+        LOG.info('Working on PEP %s ...', num)
 
         if num in known_peps:
 
@@ -278,7 +279,7 @@ def sync(*, skip_deadend_peps: bool = True, limit: int = None) -> Dict[int, 'PEP
                 sig_send_generic_telegram.send(None, text=msg)
 
         else:
-            LOG.debug(f'PEP {num} is new. Creating ...')
+            LOG.debug('PEP %s is new. Creating ...', num)
 
             pep_model = PEP(
                 num=num,

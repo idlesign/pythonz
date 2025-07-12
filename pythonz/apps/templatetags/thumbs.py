@@ -1,4 +1,3 @@
-from typing import Union
 
 from django import template
 from django.db.models.fields.files import ImageFieldFile
@@ -12,7 +11,7 @@ register = template.Library()
 @register.simple_tag(takes_context=True)
 def thumbs_get_thumb_url(
         context,
-        image: Union[str, ImageFieldFile],
+        image: str | ImageFieldFile,
         width: int,
         height: int,
         realm: RealmBase

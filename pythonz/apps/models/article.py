@@ -1,16 +1,15 @@
 from enum import unique
-from typing import List
 
 from django.db import models
 from etc.models import InheritedModel
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
-from .discussion import ModelWithDiscussions
-from .shared import UtmReady
 from ..exceptions import RemoteSourceError
 from ..generics.models import CommonEntityModel, ModelWithCompiledText, RealmBaseModel
 from ..integration.utils import scrape_page
+from .discussion import ModelWithDiscussions
+from .shared import UtmReady
 
 
 class Article(
@@ -19,13 +18,13 @@ class Article(
     """Модель сущности `Статья`."""
 
     allow_edit_anybody: bool = False
-    paginator_defer: List[str] = ['url', 'text', 'text_src']
+    paginator_defer: list[str] = ['url', 'text', 'text_src']
 
     @unique
     class Location(models.IntegerChoices):
 
         INTERNAL = 1, 'На этом сайте'
-        # EXTERNAL = 2, 'На другом сайте'
+        EXTERNAL = 2, 'На другом сайте'
 
     @unique
     class Source(models.IntegerChoices):

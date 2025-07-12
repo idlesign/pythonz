@@ -1,6 +1,6 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 from enum import unique
-from typing import Optional, List
+from typing import Optional
 
 from django.db import models
 from django.db.models import F, QuerySet
@@ -10,12 +10,12 @@ from etc.models import InheritedModel
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
-from .discussion import ModelWithDiscussions
-from .place import WithPlace
-from .shared import UtmReady, HINT_IMPERSONAL_REQUIRED
-from ..generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator
+from ..generics.models import CommonEntityModel, ModelWithAuthorAndTranslator, ModelWithCompiledText
 from ..integration.base import RemoteSource
 from ..integration.events import EventSource
+from .discussion import ModelWithDiscussions
+from .place import WithPlace
+from .shared import HINT_IMPERSONAL_REQUIRED, UtmReady
 
 
 class Event(
@@ -25,7 +25,7 @@ class Event(
 
     allow_edit_published: bool = True
     notify_on_publish: bool = False
-    paginator_defer: List[str] = ['contacts', 'text', 'text_src']
+    paginator_defer: list[str] = ['contacts', 'text', 'text_src']
     utm_on_main: bool = False
 
     @unique
@@ -116,7 +116,7 @@ class Event(
         return title
 
     @property
-    def is_in_past(self) -> Optional[bool]:
+    def is_in_past(self) -> bool | None:
 
         field = self.time_finish or self.time_start
 

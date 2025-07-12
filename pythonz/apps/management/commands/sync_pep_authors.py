@@ -3,7 +3,6 @@ from django.core.management.base import BaseCommand
 from ...integration.peps import sync
 from ...utils import get_logger
 
-
 LOG = get_logger(__name__)
 
 

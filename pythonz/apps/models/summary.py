@@ -1,21 +1,21 @@
 import json
-from typing import Dict, List, Optional
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 from django.db import models
 
-from .article import Article
-from .category import Category
-from .user import User
 from ..generics.models import RealmBaseModel
 from ..integration.summary import SUMMARY_FETCHERS
 from ..utils import get_datetime_from_till
+from .article import Article
+from .category import Category
+from .user import User
 
-if False:  # pragma: nocover
+if TYPE_CHECKING:
     from ..integration.summary.base import ItemsFetcherBase, SummaryItem
 
 
-TypeFetched = Dict[str, List['SummaryItem']]
+TypeFetched = dict[str, list['SummaryItem']]
 
 
 class Summary(RealmBaseModel):
@@ -77,7 +77,7 @@ class Summary(RealmBaseModel):
         return summary_text
 
     @classmethod
-    def create_article(cls, fetched: Optional[TypeFetched] = None) -> 'Article':
+    def create_article(cls, fetched: TypeFetched | None = None) -> 'Article':
         """Создаёт сводку, используя данные, полученные извне.
 
         :param fetched: Данные для составления статьи.
@@ -88,7 +88,7 @@ class Summary(RealmBaseModel):
 
         summary_text = cls.make_text(fetched)
 
-        format_date = lambda d: d.date().strftime('%d.%m.%Y')
+        format_date = lambda d: d.date().strftime('%d.%m.%Y')  # noqa: E731
         date_from, date_till = get_datetime_from_till(7)
 
         robot_id = settings.ROBOT_USER_ID

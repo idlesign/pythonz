@@ -1,5 +1,10 @@
-from .sub_email import *
-
+from .sub_email import (
+    EMAIL_HOST,
+    EMAIL_HOST_PASSWORD,
+    EMAIL_HOST_USER,
+    EMAIL_USE_TLS,
+    SERVER_EMAIL,
+)
 
 SOCKS5_PROXY = ''
 """Адрес socks5 для запросов во вне."""

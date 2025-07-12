@@ -1,6 +1,5 @@
 from ..utils import UTM
 
-
 HINT_IMPERSONAL_REQUIRED = (
     '<strong>Без обозначения личного отношения. Личное отношение можно выразить в Обсуждениях к материалу.</strong>')
 

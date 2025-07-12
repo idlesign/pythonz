@@ -3,7 +3,7 @@ from contextlib import suppress
 from copy import copy
 from datetime import datetime
 from enum import unique
-from typing import List, Type, Optional, Set
+from typing import TYPE_CHECKING, Optional
 from uuid import uuid4
 
 from django.conf import settings
@@ -17,21 +17,21 @@ from django.utils.html import urlize
 from django.utils.text import Truncator
 from etc.models import InheritedModelMetaclass
 from siteflags.models import ModelWithFlag
-from slugify import Slugify, CYRILLIC
+from slugify import CYRILLIC, Slugify
 
 from ..integration.base import RemoteSource
 from ..integration.utils import get_image_from_url
 from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
-from ..utils import UTM, TextCompiler, BasicTypograph
+from ..utils import UTM, BasicTypograph, TextCompiler
 
-USER_MODEL: str = getattr(settings, 'AUTH_USER_MODEL')
+USER_MODEL: str = settings.AUTH_USER_MODEL
 SLUGIFIER = Slugify(pretranslate=CYRILLIC, to_lower=True, safe_chars='-._', max_length=200)
 
 
-if False:  # pragma: nocover
-    from .forms import CommonEntityForm  # noqa
-    from .realms import RealmBase
+if TYPE_CHECKING:
     from ..models import Category, User
+    from .forms import CommonEntityForm
+    from .realms import RealmBase
 
 
 class ModelWithAuthorAndTranslator(models.Model):
@@ -83,9 +83,9 @@ def get_upload_to(instance: Model, filename: str) -> str:
     :param filename:
 
     """
-    category = getattr(instance, 'COVER_UPLOAD_TO')
+    category = instance.COVER_UPLOAD_TO
 
-    return os.path.join('img', category, 'orig', f'{uuid4()}{os.path.splitext(filename)[-1]}')
+    return os.path.join('img', category, 'orig', f'{uuid4()}{os.path.splitext(filename)[-1]}')  # noqa PTH122,PTH118
 
 
 class CommonEntityModel(models.Model):
@@ -123,7 +123,7 @@ class CommonEntityModel(models.Model):
         """Генерирует краткое имя для URL и заполняет им атрибут slug."""
         return SLUGIFIER(self.title)
 
-    def validate_unique(self, exclude: Set[str] = None):
+    def validate_unique(self, exclude: set[str] = None):
 
         # Перекрываем для правильной обработки спарки unique=True и null=True
         # в поле краткого имени URL.
@@ -277,16 +277,16 @@ class RealmBaseModel(ModelWithFlag):
 
     """
 
-    paginator_defer: List[str] = []
+    paginator_defer: list[str] = []
     """Тяжелые поля, содержимое которых не важно для списков."""
 
-    paginator_related: List[str] = ['submitter']
+    paginator_related: list[str] = ['submitter']
     """Поле, из которого следует тянуть данные одним запросом
     при обращении к постраничному списку объектов.
 
     """
 
-    details_related: List[str] = ['submitter', 'last_editor']
+    details_related: list[str] = ['submitter', 'last_editor']
     """Поле, из которого следует тянуть данные одним запросом
     при обращении странице с детальной информацией по объекту.
 
@@ -361,14 +361,14 @@ class RealmBaseModel(ModelWithFlag):
                     self.on_publish()
 
             if self.is_published:
-                setattr(self, 'time_published', now)
+                self.time_published = now
                 self._consider_published = False
 
                 if notify_published is None:
                     notify_published = True
 
         if self._consider_modified:
-            setattr(self, 'time_modified', now)
+            self.time_modified = now
 
         else:
             self._consider_modified = True
@@ -625,7 +625,7 @@ class RealmBaseModel(ModelWithFlag):
 
         return self.time_modified and format_date(self.time_modified) != format_date(self.time_created)
 
-    def get_absolute_url(self, with_prefix: bool = False, utm_source: str = None) -> str:
+    def get_absolute_url(self, *, with_prefix: bool = False, utm_source: str = None) -> str:
         """Возвращает URL страницы с детальной информацией об объекте.
 
         :param with_prefix: Флаг. Следует ли добавлять название хоста к URL.
@@ -697,7 +697,7 @@ class WithRemoteSourceMeta(InheritedModelMetaclass):
 class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
     """Примесь для моделей, умеющих хранить данные, полученные из внешних источников."""
 
-    source_group: Type[RemoteSource] = None
+    source_group: type[RemoteSource] = None
 
     # Ограничения (choices) выбора источников проставляются в метаклассе.
     src_alias = models.CharField('Идентификатор источника', max_length=20, null=True, blank=True)
@@ -737,7 +737,7 @@ class WithRemoteSource(RealmBaseModel, metaclass=WithRemoteSourceMeta):
     def fetch_items(cls):
         """Добывает данные из источника и складирует их."""
 
-        for _, source in cls.source_group.get_sources().items():
+        for source in cls.source_group.get_sources().values():
 
             source_obj = source()
             items = source_obj.fetch_list()

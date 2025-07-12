@@ -1,12 +1,10 @@
-from datetime import datetime
-from typing import Optional
-
 from django import forms
 from django.http import HttpRequest
-
-from siteforms.composers.bootstrap4 import Bootstrap4, SUBMIT
+from django.utils import timezone
+from siteforms.composers.bootstrap4 import SUBMIT, Bootstrap4
 from siteforms.toolbox import ModelForm
-from ..forms.widgets import RstEditWidget, PlaceWidget
+
+from ..forms.widgets import PlaceWidget, RstEditWidget
 from ..models import Article, User
 
 
@@ -22,7 +20,7 @@ class CommonEntityForm(ModelForm):
         year = (self.cleaned_data['year'] or '').strip()
 
         if year:
-            if len(year) != 4 or not year.isdigit() or not (1900 < int(year) <= datetime.now().year):
+            if len(year) != 4 or not year.isdigit() or not (1900 < int(year) <= timezone.now().year):
                 raise forms.ValidationError('Такой год не похож на правду.')
 
         return year
@@ -39,7 +37,7 @@ class CommonEntityForm(ModelForm):
 class RealmEditBaseForm(CommonEntityForm):
     """Базовый класс для форм создания/редактирования сущностей, принадлежащим областям."""
 
-    def __init__(self, *args, user: Optional[User] = None, **kwargs):
+    def __init__(self, *args, user: User | None = None, **kwargs):
 
         super().__init__(*args, **kwargs)
 

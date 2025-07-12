@@ -1,11 +1,11 @@
 from enum import unique
 from itertools import chain
 
-from django.db import models, IntegrityError
+from django.db import IntegrityError, models
 
-from .shared import UtmReady
 from ..generics.models import RealmBaseModel
 from ..integration.resources import PyDigestResource
+from .shared import UtmReady
 
 
 class ExternalResource(UtmReady, RealmBaseModel):

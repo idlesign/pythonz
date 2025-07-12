@@ -1,6 +1,6 @@
 from django.db.models import Q, QuerySet
 from django.urls import reverse
-from sitecats.models import Category as Category_, ModelWithCategory  # Импорт используется
+from sitecats.models import Category as Category_
 
 
 class Category(Category_):

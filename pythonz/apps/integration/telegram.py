@@ -1,17 +1,19 @@
 from functools import lru_cache
-from typing import List, Union
+from pathlib import Path
+from typing import TYPE_CHECKING, Union
 
 import telebot
 from bleach import clean
 from django.conf import settings
 from django.http import HttpRequest
-from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, InlineQuery
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, InlineQuery, Message
 
-from ..generics.models import RealmBaseModel, CommonEntityModel
-from ..models import Reference, PEP
-from ..utils import get_logger
-from ..utils import truncate_chars
+from ..models import PEP, Reference
+from ..utils import get_logger, truncate_chars
 from ..zen import ZEN
+
+if TYPE_CHECKING:
+    from ..generics.models import CommonEntityModel, RealmBaseModel
 
 LOGGER = get_logger('telebot')
 
@@ -36,7 +38,7 @@ def set_webhook() -> dict:
     certificate = None
 
     if settings.PATH_CERTIFICATE and settings.CERTIFICATE_SELF_SIGNED:
-        certificate = open(settings.PATH_CERTIFICATE, 'r')
+        certificate = Path.open(settings.PATH_CERTIFICATE)
 
     bot.remove_webhook()
 
@@ -106,7 +108,7 @@ def on_help(message: Message):
 
 
 @lru_cache(maxsize=2)
-def get_inline_zen() -> List:
+def get_inline_zen() -> list:
     """Возвращает список цитат из дзена питона."""
     results = []
 
@@ -124,7 +126,7 @@ def get_inline_zen() -> List:
     return results
 
 
-def compose_entities_inline_result(entities: List[Union['RealmBaseModel', 'CommonEntityModel']]) -> List:
+def compose_entities_inline_result(entities: list[Union['RealmBaseModel', 'CommonEntityModel']]) -> list:
     """Возвращает список сущностей для вывода в качестве встрочных результатов поиска ботом.
 
     :param entities:
@@ -151,7 +153,7 @@ def compose_entities_inline_result(entities: List[Union['RealmBaseModel', 'Commo
 
 
 @lru_cache(maxsize=64)
-def get_inline_reference(term: str, items_limit: int = 25) -> List:
+def get_inline_reference(term: str, items_limit: int = 25) -> list:
     """Возвращает статьи справочника.
 
     :param term: Текст запроса
@@ -162,7 +164,7 @@ def get_inline_reference(term: str, items_limit: int = 25) -> List:
 
 
 @lru_cache(maxsize=20)
-def get_inline_pep(term: str, items_limit: int = 10) -> List:
+def get_inline_pep(term: str, items_limit: int = 10) -> list:
     """Возвращает ссылки на PEP.
 
     :param term: Текст запроса
@@ -173,7 +175,7 @@ def get_inline_pep(term: str, items_limit: int = 10) -> List:
 
 
 @lru_cache(maxsize=2)
-def get_inline_no_query() -> List:
+def get_inline_no_query() -> list:
     """Возвращает ответ на пустую строку запроса."""
     markup = InlineKeyboardMarkup()
     markup.row(InlineKeyboardButton('Бота в другой чат', switch_inline_query=''))
@@ -212,7 +214,7 @@ def query_text(inline_query: InlineQuery):
             results = get_inline_zen()
 
         elif term.startswith('pep'):
-            results = get_inline_pep(term.strip('pep').strip())
+            results = get_inline_pep(term.replace('pep', '', 1).strip())
 
         else:
             results = get_inline_reference(term)

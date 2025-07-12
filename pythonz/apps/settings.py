@@ -1,7 +1,6 @@
 """Файл для siteprefs, чтобы настройки отображались в административном интерфейсе."""
 from django.conf import settings
 
-
 SOCKS5_PROXY = settings.SOCKS5_PROXY
 
 GOOGLE_API_KEY = settings.GOOGLE_API_KEY

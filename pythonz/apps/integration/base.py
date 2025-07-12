@@ -1,10 +1,9 @@
 from collections import defaultdict
 from enum import unique
-from typing import Dict, Type, Optional, List, Set
 
 from django.db import models
 
-from .utils import get_from_url, PageInfo, get_page_info, run_threads
+from .utils import PageInfo, get_from_url, get_page_info, run_threads
 
 
 class RemoteSource:
@@ -34,12 +33,12 @@ class RemoteSource:
             cls.registry[cls.realm][alias] = cls
 
     @classmethod
-    def get_sources(cls) -> Dict[str, Type['RemoteSource']]:
+    def get_sources(cls) -> dict[str, type['RemoteSource']]:
         """Возвращает словарь с источниками, зарегистрированными для области."""
         return cls.registry[cls.realm]
 
     @classmethod
-    def get_source(cls, alias: str) -> Optional[Type['RemoteSource']]:
+    def get_source(cls, alias: str) -> type['RemoteSource'] | None:
         """Возвращает класс источника по псевдониму.
 
         :param alias: Псевдоним источника.
@@ -48,7 +47,7 @@ class RemoteSource:
         return cls.get_sources().get(alias)
 
     @classmethod
-    def get_enum(cls) -> Type[models.TextChoices]:
+    def get_enum(cls) -> type[models.TextChoices]:
         """Возвращает перечисление источников для модели."""
 
         enum = unique(models.TextChoices('Source', [
@@ -68,7 +67,7 @@ class RemoteSource:
 
         return response.text
 
-    def fetch_list(self) -> List[dict]:
+    def fetch_list(self) -> list[dict]:
         """Возвращает словарь с данными записей, полученных из внешнего
         источника.
 
@@ -76,7 +75,7 @@ class RemoteSource:
         raise NotImplementedError  # pragma: nocover
 
     @classmethod
-    def get_page_info(cls, url: str) -> Optional[PageInfo]:
+    def get_page_info(cls, url: str) -> PageInfo | None:
         """Возвращает информацию о странице, расположенной
         по указанному адресу, либо None.
 
@@ -86,7 +85,7 @@ class RemoteSource:
         return get_page_info(url)
 
     @classmethod
-    def get_pages_info(cls, urls: Set[str], *, thread_num: int = None) -> Dict[str, Optional[PageInfo]]:
+    def get_pages_info(cls, urls: set[str], *, thread_num: int = None) -> dict[str, PageInfo | None]:
         """Возвращает информацию о страницах, расположенных
         по указанным адресам. Отправляет запросы в нитях.
 
@@ -100,7 +99,7 @@ class RemoteSource:
         return run_threads(urls, cls.get_page_info, thread_num=thread_num)
 
     @classmethod
-    def contribute_page_info(cls, results: List[dict]):
+    def contribute_page_info(cls, results: list[dict]):
         """Дополняет указанные словари результатов ключем __page_info,
         в котором будут указаны данные страниц, упомянутых в ключах `url`.
 
@@ -109,7 +108,7 @@ class RemoteSource:
         :param results:
 
         """
-        by_url = cls.get_pages_info(set(item['url'] for item in results))
+        by_url = cls.get_pages_info({item['url'] for item in results})
 
         for item in results:
             page_info = by_url.get(item['url'])

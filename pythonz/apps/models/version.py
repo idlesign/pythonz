@@ -1,18 +1,24 @@
-from collections import namedtuple
 from datetime import timedelta
+from typing import NamedTuple
 
 from django.conf import settings
 from django.db import models
-from django.db.models import QuerySet, FloatField
+from django.db.models import FloatField, QuerySet
 from django.db.models.functions import Cast
 from django.utils import timezone
 from etc.models import InheritedModel
 
+from ..generics.models import CommonEntityModel, ModelWithCompiledText, RealmBaseModel
 from .discussion import ModelWithDiscussions
 from .shared import HINT_IMPERSONAL_REQUIRED
-from ..generics.models import CommonEntityModel, ModelWithCompiledText, RealmBaseModel
 
-LifeTimeInfo = namedtuple('LifeTimeInfo', ['idx', 'since', 'till', 'pos1', 'pos2'])
+
+class LifeTimeInfo(NamedTuple):
+    idx: int
+    since: str
+    till: str
+    pos1: str
+    pos2: str
 
 
 class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
@@ -130,8 +136,8 @@ class Version(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscus
                 idx=idx,
                 since=format_date(version.date),
                 till=format_date(version.date_till),
-                pos1=str(next_pos),
-                pos2=str(next_pos + 0.2),
+                pos1=f'{next_pos}',
+                pos2=f'{next_pos + 0.2}',
             ))
             next_pos += 1
 

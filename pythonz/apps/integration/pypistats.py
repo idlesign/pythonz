@@ -1,10 +1,9 @@
 from collections import defaultdict
-from typing import Dict
 
 from .utils import get_json
 
 
-def get_for_package(name: str) -> Dict[str, int]:
+def get_for_package(name: str) -> dict[str, int]:
     """Возвращает количество загрузок указанного пакета по месяцам
     по данным pypistats.org.
 

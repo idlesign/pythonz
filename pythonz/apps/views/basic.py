@@ -1,11 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.defaults import (
-    page_not_found as dj_page_not_found,
-    permission_denied as dj_permission_denied,
-    server_error as dj_server_error
-)
-from sitegate.decorators import signin_view, signup_view, redirect_signedin
+from django.views.defaults import page_not_found as dj_page_not_found
+from django.views.defaults import permission_denied as dj_permission_denied
+from django.views.defaults import server_error as dj_server_error
+from sitegate.decorators import redirect_signedin, signin_view, signup_view
 from sitegate.signup_flows.classic import SimpleClassicWithEmailSignup
 
 from ..generics.views import HttpRequest

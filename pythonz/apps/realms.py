@@ -1,32 +1,62 @@
+from collections.abc import Generator
 from operator import attrgetter
-from typing import List, Type, Dict, Optional, Generator, Tuple
 
 from django.contrib.sitemaps import GenericSitemap
 from django.contrib.sitemaps.views import sitemap
 from django.db.models import signals
-from django.urls import get_resolver, reverse, path, re_path
+from django.urls import get_resolver, path, re_path, reverse
 from sitecats.toolbox import get_tie_model
 from sitetree.models import TreeItemBase
-from sitetree.sitetreeapp import register_dynamic_trees, compose_dynamic_tree
-from sitetree.utils import tree, item
+from sitetree.sitetreeapp import compose_dynamic_tree, register_dynamic_trees
+from sitetree.utils import item, tree
 
 from .forms.forms import (
-    BookForm, VideoForm, UserForm, DiscussionForm, ArticleForm, CommunityForm, EventForm,
-    ReferenceForm, VersionForm, AppForm,
+    AppForm,
+    ArticleForm,
+    BookForm,
+    CommunityForm,
+    DiscussionForm,
+    EventForm,
+    ReferenceForm,
+    UserForm,
+    VersionForm,
+    VideoForm,
 )
 from .generics.forms import CommonEntityForm
 from .generics.models import RealmBaseModel
-from .generics.realms import RealmBase, SYNDICATION_URL_MARKER, SYNDICATION_ITEMS_LIMIT
+from .generics.realms import SYNDICATION_ITEMS_LIMIT, SYNDICATION_URL_MARKER, RealmBase
 from .generics.views import RealmView
 from .models import (
-    User, Discussion, Book, Video, Place, Article, Community, Event, Reference, Vacancy, Version,
-    PEP, Person, Category, App,
+    PEP,
+    App,
+    Article,
+    Book,
+    Category,
+    Community,
+    Discussion,
+    Event,
+    Person,
+    Place,
+    Reference,
+    User,
+    Vacancy,
+    Version,
+    Video,
 )
 from .signals import sig_support_changed
 from .views import (
-    UserDetailsView, CategoryListingView, PlaceListingView, PlaceDetailsView, UserEditView,
-    ReferenceListingView, ReferenceDetailsView, VacancyListingView, VersionDetailsView, PersonDetailsView,
-    PepListingView, ide
+    CategoryListingView,
+    PepListingView,
+    PersonDetailsView,
+    PlaceDetailsView,
+    PlaceListingView,
+    ReferenceDetailsView,
+    ReferenceListingView,
+    UserDetailsView,
+    UserEditView,
+    VacancyListingView,
+    VersionDetailsView,
+    ide,
 )
 from .zen import register_zen_siteblock
 
@@ -34,7 +64,7 @@ from .zen import register_zen_siteblock
 register_zen_siteblock()
 
 
-def bootstrap_realms(urlpatterns: List) -> List:
+def bootstrap_realms(urlpatterns: list) -> list:
     """Инициализирует машинерию областей сайта.
 
     Принимает на вход urlpatterns из urls.py и модифицирует их.
@@ -50,7 +80,7 @@ def bootstrap_realms(urlpatterns: List) -> List:
     return urlpatterns
 
 
-REALMS_REGISTRY: Dict[str, Type[RealmBase]] = {}
+REALMS_REGISTRY: dict[str, type[RealmBase]] = {}
 
 
 def connect_signals():
@@ -61,7 +91,7 @@ def connect_signals():
     signals.post_delete.connect(ReferenceRealm.build_sitetree, sender=Reference)
 
 
-def register_realms(*classes: Type[RealmBase]):
+def register_realms(*classes: type[RealmBase]):
     """Регистрирует области (сущности), которые должны быть доступны на сайте.
 
     :param classes:
@@ -72,12 +102,12 @@ def register_realms(*classes: Type[RealmBase]):
         cls.init()
 
 
-def get_realms_models() -> List[Type[RealmBaseModel]]:
+def get_realms_models() -> list[type[RealmBaseModel]]:
     """Возвращает список моделей всех областей сайта."""
     return [r.model for r in get_realms().values()]
 
 
-def get_realms() -> Dict[str, Type[RealmBase]]:
+def get_realms() -> dict[str, type[RealmBase]]:
     """Возвращает словарь зарегистрированных областей сайта,
     индексированный именами областей.
 
@@ -85,7 +115,7 @@ def get_realms() -> Dict[str, Type[RealmBase]]:
     return REALMS_REGISTRY
 
 
-def get_realm(name: str) -> Optional[Type[RealmBase]]:
+def get_realm(name: str) -> type[RealmBase] | None:
     """Вернёт область по её имени, либо None.
 
     :param name:
@@ -103,7 +133,7 @@ def get_realm(name: str) -> Optional[Type[RealmBase]]:
     return realm
 
 
-def get_sitemaps() -> Dict[str, GenericSitemap]:
+def get_sitemaps() -> dict[str, GenericSitemap]:
     """Возвращает словарь с sitemap-директивами для поисковых систем."""
 
     sitemaps = {}
@@ -116,7 +146,7 @@ def get_sitemaps() -> Dict[str, GenericSitemap]:
     return sitemaps
 
 
-def get_realms_urls() -> List:
+def get_realms_urls() -> list:
     """Возвращает url-шаблоны всех зарегистрированных областей сайта."""
 
     url_patterns = [
@@ -132,7 +162,7 @@ def get_realms_urls() -> List:
     return url_patterns
 
 
-def get_sitetree_root_item(children: Generator[TreeItemBase, None, None] = None) -> TreeItemBase:
+def get_sitetree_root_item(children: Generator[TreeItemBase] = None) -> TreeItemBase:
     """Возвращает корневой элемент динамического древа сайта.
 
     :param children: Дочерние динамические элементы.
@@ -194,8 +224,8 @@ class BookRealm(RealmBase):
     view_listing_description: str = 'Книги по программированию вообще и на языке Python в частности.'
     view_listing_keywords: str = 'книги по питону, литература по python'
 
-    model: Type[RealmBaseModel] = Book
-    form: Type[CommonEntityForm] = BookForm
+    model: type[RealmBaseModel] = Book
+    form: type[CommonEntityForm] = BookForm
     icon: str = 'book'
 
 
@@ -208,8 +238,8 @@ class VideoRealm(RealmBase):
     view_listing_description: str = 'Видео-записи лекций, курсов, докладов, связанные с языком программирования Python'
     view_listing_keywords: str = 'видео по питону, доклады по python'
 
-    model: Type[RealmBaseModel] = Video
-    form: Type[CommonEntityForm] = VideoForm
+    model: type[RealmBaseModel] = Video
+    form: type[CommonEntityForm] = VideoForm
     icon: str = 'film'
 
 
@@ -223,15 +253,15 @@ class EventRealm(RealmBase):
     txt_form_add: str = 'Добавить событие'
     txt_form_edit: str = 'Изменить событие'
 
-    model: Type[RealmBaseModel] = Event
-    form: Type[CommonEntityForm] = EventForm
+    model: type[RealmBaseModel] = Event
+    form: type[CommonEntityForm] = EventForm
     icon: str = 'calendar'
 
 
 class VacancyRealm(RealmBase):
     """Область с вакансиями."""
 
-    allowed_views: Tuple[str, ...] = ('listing',)
+    allowed_views: tuple[str, ...] = ('listing',)
     name_plural: str = 'vacancies'
 
     show_on_main: bool = False
@@ -239,9 +269,9 @@ class VacancyRealm(RealmBase):
     view_listing_description: str = 'Список вакансий, так или иначе связанных с языком программирования Python.'
     view_listing_keywords: str = 'вакансии python, работа питон'
 
-    view_listing_base_class: Type[RealmView] = VacancyListingView
+    view_listing_base_class: type[RealmView] = VacancyListingView
 
-    model: Type[RealmBaseModel] = Vacancy
+    model: type[RealmBaseModel] = Vacancy
     icon: str = 'briefcase'
     sitemap_enabled: bool = False
 
@@ -249,7 +279,7 @@ class VacancyRealm(RealmBase):
 class ReferenceRealm(RealmBase):
     """Область со справочниками."""
 
-    allowed_views: Tuple[str, ...] = ('listing', 'details', 'add', 'edit')
+    allowed_views: tuple[str, ...] = ('listing', 'details', 'add', 'edit')
 
     txt_form_add: str = 'Дополнить справочник'
     txt_form_edit: str = 'Редактировать статью'
@@ -257,11 +287,11 @@ class ReferenceRealm(RealmBase):
     view_listing_description: str = 'Справочные и обучающие материалы по языку программирования Python.'
     view_listing_keywords: str = 'справочник, питон, руководство, обучение, python 3, пайтон'
 
-    view_listing_base_class: Type[RealmView] = ReferenceListingView
-    view_details_base_class: Type[RealmView] = ReferenceDetailsView
+    view_listing_base_class: type[RealmView] = ReferenceListingView
+    view_details_base_class: type[RealmView] = ReferenceDetailsView
 
-    model: Type[RealmBaseModel] = Reference
-    form: Type[CommonEntityForm] = ReferenceForm
+    model: type[RealmBaseModel] = Reference
+    form: type[CommonEntityForm] = ReferenceForm
     icon: str = 'search'
 
     @classmethod
@@ -305,8 +335,8 @@ class ArticleRealm(RealmBase):
     view_listing_description: str = 'Статьи и заметки, связанные с программированием Python и не только.'
     view_listing_keywords: str = 'статьи про питон, материалы по python'
 
-    model: Type[RealmBaseModel] = Article
-    form: Type[CommonEntityForm] = ArticleForm
+    model: type[RealmBaseModel] = Article
+    form: type[CommonEntityForm] = ArticleForm
     icon: str = 'file-o'
 
 
@@ -316,15 +346,15 @@ class PlaceRealm(RealmBase):
     view_listing_description: str = 'Места, так или иначе связанные с языком программирования Python.'
     view_listing_keywords: str = 'python в городе, где программируют на питоне'
 
-    view_listing_base_class: Type[RealmView] = PlaceListingView
-    view_details_base_class: Type[RealmView] = PlaceDetailsView
+    view_listing_base_class: type[RealmView] = PlaceListingView
+    view_details_base_class: type[RealmView] = PlaceDetailsView
 
-    model: Type[RealmBaseModel] = Place
-    form: Type[CommonEntityForm] = VideoForm
+    model: type[RealmBaseModel] = Place
+    form: type[CommonEntityForm] = VideoForm
     icon: str = 'globe'
 
     sitemap_changefreq: str = 'weekly'
-    allowed_views: Tuple[str, ...] = ('listing', 'details')
+    allowed_views: tuple[str, ...] = ('listing', 'details')
     show_on_main: bool = False
     show_on_top: bool = False
 
@@ -338,11 +368,11 @@ class DiscussionRealm(RealmBase):
     view_listing_description: str = 'Обсуждения вопросов, связанных с программированием на Питоне.'
     view_listing_keywords: str = 'вопросы по питону, обсуждения python, отзывы'
 
-    model: Type[RealmBaseModel] = Discussion
-    form: Type[CommonEntityForm] = DiscussionForm
+    model: type[RealmBaseModel] = Discussion
+    form: type[CommonEntityForm] = DiscussionForm
     icon: str = 'comments-o'
 
-    allowed_views: Tuple[str, ...] = ('details', 'tags', 'add', 'edit')
+    allowed_views: tuple[str, ...] = ('details', 'tags', 'add', 'edit')
     ready_for_digest: bool = False
     sitemap_enabled: bool = False
     syndication_enabled: bool = False
@@ -359,16 +389,16 @@ class UserRealm(RealmBase):
     view_listing_description: str = 'Список пользователей сайта.'
     view_listing_keywords: str = 'питонисты, разработчики python, пользователи сайта'
 
-    view_details_base_class: Type[RealmView] = UserDetailsView
-    view_edit_base_class: Type[RealmView] = UserEditView
+    view_details_base_class: type[RealmView] = UserDetailsView
+    view_edit_base_class: type[RealmView] = UserEditView
 
-    model: Type[RealmBaseModel] = User
-    form: Type[CommonEntityForm] = UserForm
+    model: type[RealmBaseModel] = User
+    form: type[CommonEntityForm] = UserForm
     icon: str = 'users'
 
     sitemap_date_field: str = 'date_joined'
     sitemap_changefreq: str = 'weekly'
-    allowed_views: Tuple[str, ...] = ('details', 'edit')
+    allowed_views: tuple[str, ...] = ('details', 'edit')
     ready_for_digest: bool = False
     sitemap_enabled: bool = False
     syndication_enabled: bool = False
@@ -387,11 +417,11 @@ class CategoryRealm(RealmBase):
     view_listing_description: str = 'Карта категорий материалов по языку программирования Python доступных на сайте.'
     view_listing_keywords: str = 'материалы по питону, python по категориям'
 
-    model: Type[RealmBaseModel] = Category
+    model: type[RealmBaseModel] = Category
     icon: str = 'tag'
     name: str = 'category'
     name_plural: str = 'categories'
-    allowed_views: Tuple[str, ...] = ('listing', 'details')
+    allowed_views: tuple[str, ...] = ('listing', 'details')
     ready_for_digest: bool = False
     sitemap_enabled: bool = False
 
@@ -399,8 +429,8 @@ class CategoryRealm(RealmBase):
     show_on_top: bool = False
 
     view_listing_title: str = 'Путеводитель'
-    view_listing_base_class: Type[RealmView] = CategoryListingView
-    view_details_base_class: Type[RealmView] = CategoryListingView
+    view_listing_base_class: type[RealmView] = CategoryListingView
+    view_details_base_class: type[RealmView] = CategoryListingView
 
     SYNDICATION_NAMESPACE: str = 'category_feeds'
 
@@ -419,7 +449,7 @@ class CategoryRealm(RealmBase):
         signals.post_delete.connect(cls.update_syndication_urls, sender=tie_model)
 
     @classmethod
-    def get_urls(cls) -> List:
+    def get_urls(cls) -> list:
         urls = super().get_urls()
         urls += CategoryRealm.get_syndication_urls()
         return urls
@@ -455,7 +485,7 @@ class CategoryRealm(RealmBase):
             urlpatterns += cls.get_syndication_urls()
 
     @classmethod
-    def get_syndication_urls(cls) -> List:
+    def get_syndication_urls(cls) -> list:
         """Возвращает url-шаблоны с привязанными сгенерированными представлениями
          для потоков синдикации (RSS) с перечислением новых материалов в категориях.
 
@@ -508,8 +538,8 @@ class CommunityRealm(RealmBase):
 
     name: str = 'community'
     name_plural: str = 'communities'
-    model: Type[RealmBaseModel] = Community
-    form: Type[CommonEntityForm] = CommunityForm
+    model: type[RealmBaseModel] = Community
+    form: type[CommonEntityForm] = CommunityForm
     icon: str = 'building-o'
 
     show_on_main: bool = False
@@ -525,13 +555,13 @@ class VersionRealm(RealmBase):
     view_listing_description: str = 'Вышедшие и будущие выпуски Python.'
     view_listing_keywords: str = 'версии python, выпуски Питона'
 
-    allowed_views: Tuple[str, ...] = ('listing', 'details', 'add', 'edit')
-    view_details_base_class: Type[RealmView] = VersionDetailsView
+    allowed_views: tuple[str, ...] = ('listing', 'details', 'add', 'edit')
+    view_details_base_class: type[RealmView] = VersionDetailsView
 
     name: str = 'version'
     name_plural: str = 'versions'
-    model: Type[RealmBaseModel] = Version
-    form: Type[CommonEntityForm] = VersionForm
+    model: type[RealmBaseModel] = Version
+    form: type[CommonEntityForm] = VersionForm
     icon: str = 'code-fork'
 
     show_on_top: bool = False
@@ -544,13 +574,13 @@ class PepRealm(RealmBase):
     view_listing_description: str = 'Предложения по улучшению Питона (PEP).'
     view_listing_keywords: str = 'python pep, преложения по улучшению, пепы, пеп'
 
-    view_listing_base_class: Type[RealmView] = PepListingView
+    view_listing_base_class: type[RealmView] = PepListingView
 
-    allowed_views: Tuple[str, ...] = ('listing', 'details')
+    allowed_views: tuple[str, ...] = ('listing', 'details')
 
     name: str = 'pep'
     name_plural: str = 'peps'
-    model: Type[RealmBaseModel] = PEP
+    model: type[RealmBaseModel] = PEP
 
     icon: str = 'bell'
 
@@ -563,12 +593,12 @@ class PersonRealm(RealmBase):
     view_listing_description: str = 'Персоны, тем или иным образом связанные с языком Python.'
     view_listing_keywords: str = 'персоны python, питонисты, разработчики python'
 
-    allowed_views: Tuple[str, ...] = ('listing', 'details')
-    view_details_base_class: Type[RealmView] = PersonDetailsView
+    allowed_views: tuple[str, ...] = ('listing', 'details')
+    view_details_base_class: type[RealmView] = PersonDetailsView
 
     name: str = 'person'
     name_plural: str = 'persons'
-    model: Type[RealmBaseModel] = Person
+    model: type[RealmBaseModel] = Person
 
     icon: str = 'user'
 
@@ -591,8 +621,8 @@ class AppRealm(RealmBase):
     name: str = 'app'
     name_plural: str = 'apps'
 
-    model: Type[RealmBaseModel] = App
-    form: Type[CommonEntityForm] = AppForm
+    model: type[RealmBaseModel] = App
+    form: type[CommonEntityForm] = AppForm
 
     icon: str = 'tablet'
 

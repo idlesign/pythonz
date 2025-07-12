@@ -1,10 +1,9 @@
 from enum import Enum
 from sys import maxsize
-from typing import Type, Dict
 
 from django.db.models import QuerySet
 
-from ..generics.views import ListingView, HttpRequest
+from ..generics.views import HttpRequest, ListingView
 from ..models import PEP
 
 
@@ -16,7 +15,7 @@ class PepListingView(ListingView):
             return maxsize
         return super().get_paginator_per_page(request)
 
-    def apply_object_filter(self, *, attrs: Dict[str, Type[Enum]], objects: QuerySet):
+    def apply_object_filter(self, *, attrs: dict[str, type[Enum]], objects: QuerySet):
 
         applied = False
 

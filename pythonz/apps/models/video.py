@@ -1,15 +1,14 @@
-from typing import List
 
 from django.db import models
 from etc.models import InheritedModel
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
+from ..generics.models import CommonEntityModel, ModelWithAuthorAndTranslator, RealmBaseModel
+from ..integration.videos import VideoBroker
 from .discussion import ModelWithDiscussions
 from .person import PersonsLinked
 from .shared import HINT_IMPERSONAL_REQUIRED
-from ..generics.models import CommonEntityModel, ModelWithAuthorAndTranslator, RealmBaseModel
-from ..integration.videos import VideoBroker
 
 
 class Video(
@@ -27,7 +26,7 @@ class Video(
 
     history = HistoricalRecords()
 
-    persons_fields: List[str] = ['authors']
+    persons_fields: list[str] = ['authors']
 
     class Meta:
 
@@ -58,7 +57,7 @@ class Video(
         return self.make_html(self.description)
 
     @classmethod
-    def get_supported_hostings(cls) -> List[str]:
+    def get_supported_hostings(cls) -> list[str]:
         return list(VideoBroker.hostings.keys())
 
     def update_code_and_cover(self, url: str):

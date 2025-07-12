@@ -1,10 +1,9 @@
-from datetime import datetime
+from django.utils import timezone
+from sitemessage.toolbox import check_undelivered, cleanup_sent_messages, send_scheduled_messages
+from uwsgiconf.runtime.scheduling import register_cron, register_timer
 
-from sitemessage.toolbox import send_scheduled_messages, cleanup_sent_messages, check_undelivered
-from uwsgiconf.runtime.scheduling import register_timer, register_cron
-
-from .commands import publish_postponed, clean_missing_refs
-from .models import Summary, PEP, ExternalResource, Vacancy, Event, App
+from .commands import clean_missing_refs, publish_postponed
+from .models import PEP, App, Event, ExternalResource, Summary, Vacancy
 from .sitemessages import PythonzEmailDigest
 
 
@@ -50,7 +49,7 @@ def task_publish_postponed(sig_num):
     Не позднее 21 Нск (17 Мск).
 
     """
-    if _nsk(13) <= datetime.now().hour < _nsk(21):
+    if _nsk(13) <= timezone.now().hour < _nsk(21):
         publish_postponed()
 
 

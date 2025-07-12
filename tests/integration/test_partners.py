@@ -2,10 +2,10 @@ from unittest.mock import Mock
 
 import pytest
 
-from pythonz.apps.realms import BookRealm, Book
 from pythonz.apps.integration import partners
 from pythonz.apps.integration.partners import get_partner_links
 from pythonz.apps.models import PartnerLink
+from pythonz.apps.realms import Book, BookRealm
 
 
 @pytest.fixture

@@ -1,19 +1,19 @@
 from enum import unique
-from typing import List, Tuple, Optional
+from typing import Optional
 
-from django.db import models, IntegrityError
+from django.db import IntegrityError, models
 from simple_history.models import HistoricalRecords
 
-from .discussion import ModelWithDiscussions
 from ..generics.models import RealmBaseModel, WithRemoteSource
 from ..integration.base import RemoteSource
 from ..integration.utils import get_location_data
+from .discussion import ModelWithDiscussions
 
 
 class Place(RealmBaseModel, ModelWithDiscussions):
     """Географическое место. Для людей, событий и пр."""
 
-    details_related: List[str] = ['last_editor']
+    details_related: list[str] = ['last_editor']
 
     @unique
     class GeoType(models.TextChoices):
@@ -49,7 +49,7 @@ class Place(RealmBaseModel, ModelWithDiscussions):
     def turbo_content(self) -> str:
         return self.make_html(self.description)
 
-    def get_pos(self) -> Tuple[str, str]:
+    def get_pos(self) -> tuple[str, str]:
         """Возвращает координаты объекта в виде кортежа: (широта, долгота)."""
         lat, lng = self.geo_pos.split('|')
         return lat, lng

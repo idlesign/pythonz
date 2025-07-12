@@ -1,4 +1,3 @@
-from typing import List
 
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
@@ -45,7 +44,7 @@ class ModelWithPartnerLinks(models.Model):
         abstract = True
 
     @classmethod
-    def partner_links_enrich(cls, data: dict) -> List[PartnerLink]:
+    def partner_links_enrich(cls, data: dict) -> list[PartnerLink]:
         """Пополняет партнёрские ссылки по данным из указанного словаря.
         Возвращает список добавленных новых ссылок.
 

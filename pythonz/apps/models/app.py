@@ -1,16 +1,16 @@
-from typing import List
 from random import choice
 from time import sleep
+
 from django.db import models
-from django.db.models import QuerySet, Q
+from django.db.models import Q, QuerySet
 from etc.models import InheritedModel
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
+from ..generics.models import CommonEntityModel, ModelWithAuthorAndTranslator, ModelWithCompiledText, RealmBaseModel
+from ..integration.pypistats import get_for_package
 from .discussion import ModelWithDiscussions
 from .person import PersonsLinked
-from ..generics.models import CommonEntityModel, ModelWithCompiledText, RealmBaseModel, ModelWithAuthorAndTranslator
-from ..integration.pypistats import get_for_package
 
 
 class App(
@@ -20,7 +20,7 @@ class App(
 
     COVER_UPLOAD_TO: str = 'apps'
 
-    paginator_defer: List[str] = ['downloads', 'text', 'text_src']
+    paginator_defer: list[str] = ['downloads', 'text', 'text_src']
 
     repo = models.URLField(
         'Репозиторий', null=True, blank=True, unique=True,
@@ -34,7 +34,7 @@ class App(
 
     history = HistoricalRecords()
 
-    persons_fields: List[str] = ['authors']
+    persons_fields: list[str] = ['authors']
 
     class Meta:
 

@@ -1,13 +1,12 @@
 from enum import unique
-from typing import List
 
 from django.db import models
 from django.db.models import Q, QuerySet
 
-from .discussion import ModelWithDiscussions
-from .version import Version
 from ..generics.models import CommonEntityModel, RealmBaseModel
 from ..integration.peps import sync as sync_peps
+from .discussion import ModelWithDiscussions
+from .version import Version
 
 
 class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
@@ -62,7 +61,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
     slug_pick: bool = True
     slug_auto: bool = True
     items_per_page: int = 40
-    details_related: List[str] = []
+    details_related: list[str] = []
 
     # Далее отключаем общую логику работы с удалёнными.
     is_published: bool = True

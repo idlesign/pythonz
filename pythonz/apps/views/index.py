@@ -1,7 +1,7 @@
 from datetime import timedelta
 from itertools import groupby
 from operator import attrgetter
-from typing import List
+from typing import TYPE_CHECKING
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -9,16 +9,18 @@ from django.utils.timezone import now
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_protect
 
-from ..generics.models import RealmBaseModel
 from ..generics.views import HttpRequest
 from ..models import ExternalResource
+
+if TYPE_CHECKING:
+    from ..generics.models import RealmBaseModel
 
 
 @cache_page(900)  # 15 минут
 @csrf_protect
 def index(request: HttpRequest) -> HttpResponse:
     """Индексная страница."""
-    from ..realms import get_realms
+    from ..realms import get_realms  # noqa PLC0415
 
     realms_data = []
     realms_registry = get_realms()
@@ -45,7 +47,7 @@ def index(request: HttpRequest) -> HttpResponse:
             count_local = min_local
 
         realm_model = realm.model
-        items: List[RealmBaseModel] = list(realm_model.get_actual()[:count_local])
+        items: list[RealmBaseModel] = list(realm_model.get_actual()[:count_local])
         items.extend(realm_externals[:max_items - count_local])
 
         featured = None

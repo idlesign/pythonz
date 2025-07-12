@@ -1,5 +1,4 @@
 from json import loads
-from typing import Type
 
 from admirarchy.toolbox import HierarchicalModelAdmin
 from django import forms
@@ -16,8 +15,26 @@ from simple_history.admin import SimpleHistoryAdmin
 
 from .forms.forms import BookForm
 from .integration.partners import get_partners_choices
-from .models import Book, Video, Event, User, Article, Place, Community, Discussion, Reference, Version, PartnerLink, \
-    Vacancy, ReferenceMissing, PEP, Person, ExternalResource, Summary, App
+from .models import (
+    PEP,
+    App,
+    Article,
+    Book,
+    Community,
+    Discussion,
+    Event,
+    ExternalResource,
+    PartnerLink,
+    Person,
+    Place,
+    Reference,
+    ReferenceMissing,
+    Summary,
+    User,
+    Vacancy,
+    Version,
+    Video,
+)
 
 
 class BookLinksImportPage(CustomModelPage):
@@ -35,7 +52,7 @@ class BookLinksImportPage(CustomModelPage):
 BookLinksImportPage.register()
 
 
-def get_inline(model: Type[models.Model], field_name: str) -> Type:
+def get_inline(model: type[models.Model], field_name: str) -> type:
     """Возвращает класс встраиваемого редактора для использования
     в inlines в случаях полей многие-ко-многим.
 
@@ -238,7 +255,9 @@ class PEPAdmin(EntityBaseAdmin):
     list_display = ('num', 'title', 'type', 'status')
     search_fields = ['title', 'description']
     list_filter = ['status', 'type']
-    raw_id_fields = EntityBaseAdmin.raw_id_fields + ['versions', 'superseded', 'replaces', 'requires', 'linked', 'authors']
+    raw_id_fields = EntityBaseAdmin.raw_id_fields + [
+        'versions', 'superseded', 'replaces', 'requires', 'linked', 'authors'
+    ]
     readonly_fields = EntityBaseAdmin.readonly_fields + ['status', 'type', 'description']
 
 

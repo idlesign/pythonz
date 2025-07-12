@@ -1,9 +1,10 @@
 import logging
 import re
-from datetime import timedelta, datetime
+from collections.abc import Callable
+from datetime import datetime, timedelta
 from textwrap import wrap
-from typing import Tuple, List, Dict, Callable, Any, Union, Type, Optional
-from urllib.parse import urlsplit, urlunsplit, parse_qs, urlparse, urlencode, urlunparse
+from typing import Any
+from urllib.parse import parse_qs, urlencode, urlparse, urlsplit, urlunparse, urlunsplit
 
 from bleach import clean
 from django.contrib import messages
@@ -29,7 +30,7 @@ def get_logger(name: str) -> logging.Logger:
 LOG = get_logger(__name__)
 
 
-def get_datetime_from_till(days_gap: int) -> Tuple[datetime, datetime]:
+def get_datetime_from_till(days_gap: int) -> tuple[datetime, datetime]:
     """Возвращает даты "с" и "по", где "по" - текущая дата,
     а "с" отстоит от неё в прошлое на указанное количество дней.
 
@@ -50,7 +51,7 @@ class PersonName:
     def __init__(self, name: str):
         name = re.sub(r'\s+', ' ', name).strip()
 
-        self._name: List[str] = name.split(' ')
+        self._name: list[str] = name.split(' ')
 
         self.is_valid: bool = len(self._name) > 1
         """Флаг, указывающие на то, что имя состоит хотя бы из двух частей (имя и фамилия)."""
@@ -59,7 +60,7 @@ class PersonName:
             self._name = ['', '']
 
     @property
-    def get_variants(self) -> List[str]:
+    def get_variants(self) -> list[str]:
         """Возвращает наиболее часто встречающиеся варианты представления имени."""
         variants = []
         other = [self.full, self.short, self.first_last, self.last_first]
@@ -107,12 +108,12 @@ class PersonName:
         return f"{name[0][0]}. {' '.join(name[1:])}"
 
 
-def truncate_chars(text: str, to: int, html: bool = False) -> str:
+def truncate_chars(text: str, to: int, *, html: bool = False) -> str:
     """Укорачивает поданный на вход текст до опционально указанного количества символов."""
     return Truncator(text).chars(to, html=html)
 
 
-def truncate_words(text: str, to: int, html: bool = False) -> str:
+def truncate_words(text: str, to: int, *, html: bool = False) -> str:
     """Укорачивает поданный на вход текст до опционально указанного количества слов."""
     return Truncator(text).words(to, html=html)
 
@@ -132,9 +133,9 @@ def sync_many_to_many(
     model: Model,
     m2m_attr: str,
     related_attr: str,
-    known_items: Dict[str, Union[Model, List[Model]]],
+    known_items: dict[str, Model | list[Model]],
     unknown_handler: Callable = None
-) -> List[str]:
+) -> list[str]:
     """Синхронизирует (при необходимости) список из указанного атрибута
     объекта-источника в поле многие-ко-многим указанной модели.
 
@@ -196,7 +197,7 @@ def sync_many_to_many(
 
             if val is None:
 
-                LOG.debug(f'Handling unknown item in sync_many_to_many(): {item}')
+                LOG.debug('Handling unknown item in sync_many_to_many(): %s', item)
                 val = unknown_handler(item, known_items)
 
                 if val is None:
@@ -207,7 +208,7 @@ def sync_many_to_many(
                 val = [val]
 
             for item in val:
-                to_add.append(item)
+                to_add.append(item)  # noqa: PERF402
 
         m2m_model_attr.add(*to_add)
 
@@ -298,8 +299,8 @@ class BasicTypograph:
         'TRADEMARK': (re.compile(r'\(tm\)'), '™'),
         'TRADEMARK_R': (re.compile(r'\(r\)'), '®'),
 
-        'QUOTES_CYR_CLOSE': (re.compile(r'(\S+)"', re.U), '\\g<1>»'),
-        'QUOTES_CYR_OPEN': (re.compile(r'"(\S+)', re.U), '«\\g<1>'),
+        'QUOTES_CYR_CLOSE': (re.compile(r'(\S+)"', re.UNICODE), '\\g<1>»'),
+        'QUOTES_CYR_OPEN': (re.compile(r'"(\S+)', re.UNICODE), '«\\g<1>'),
     }
 
     @classmethod
@@ -307,7 +308,7 @@ class BasicTypograph:
 
         input_str = f' {input_str.strip()} '
 
-        for name, (regexp, replacement) in cls.rules.items():
+        for regexp, replacement in cls.rules.values():
             input_str = re.sub(regexp, replacement, input_str)
 
         return input_str.strip()
@@ -325,25 +326,25 @@ def get_simple_directive(name: str) -> str:
 class TextCompiler:
     """Предоставляет инструменты для RST-подобного форматирования в HTML."""
 
-    RE_CODE = re.compile(r'\.{2}\s*code::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
+    RE_CODE = re.compile(r'\.{2}\s*code::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.DOTALL)
 
-    RE_TABLE = re.compile(r'\.{2}\s*table::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.S)
+    RE_TABLE = re.compile(r'\.{2}\s*table::([^\n]+)?\n{1,2}(.+?)\n{3}((?=\S)|$)', re.DOTALL)
 
-    RE_NOTE = re.compile(get_simple_directive('note'), re.S)
+    RE_NOTE = re.compile(get_simple_directive('note'), re.DOTALL)
 
-    RE_TITLE = re.compile(get_simple_directive('title'), re.S)
+    RE_TITLE = re.compile(get_simple_directive('title'), re.DOTALL)
 
-    RE_WARNING = re.compile(get_simple_directive('warning'), re.S)
+    RE_WARNING = re.compile(get_simple_directive('warning'), re.DOTALL)
 
-    RE_GIST = re.compile(get_simple_directive('gist'), re.S)
+    RE_GIST = re.compile(get_simple_directive('gist'), re.DOTALL)
 
-    RE_POLL = re.compile(get_simple_directive('poll'), re.S)
+    RE_POLL = re.compile(get_simple_directive('poll'), re.DOTALL)
 
-    RE_VIDEO = re.compile(get_simple_directive('video'), re.S)
+    RE_VIDEO = re.compile(get_simple_directive('video'), re.DOTALL)
 
-    RE_PODSTER = re.compile(get_simple_directive('podster'), re.S)
+    RE_PODSTER = re.compile(get_simple_directive('podster'), re.DOTALL)
 
-    RE_IMAGE = re.compile(get_simple_directive('image'), re.S)
+    RE_IMAGE = re.compile(get_simple_directive('image'), re.DOTALL)
 
     RE_ACCENT = re.compile(r'``([^`\n]+)``')
 
@@ -355,9 +356,9 @@ class TextCompiler:
 
     RE_URL = re.compile(r'(?<!["])(http[s]?:[^\s)<]+)')
 
-    RE_URL_WITH_TITLE = re.compile(r'`([^◀]+)\n*◀([^▶]+)▶`_', re.U)
+    RE_URL_WITH_TITLE = re.compile(r'`([^◀]+)\n*◀([^▶]+)▶`_', re.UNICODE)
 
-    RE_UL = re.compile(r'^\*\s+([^\n]+)\n', re.M)
+    RE_UL = re.compile(r'^\*\s+([^\n]+)\n', re.MULTILINE)
 
     @classmethod
     def compile(cls, text: str) -> str:
@@ -385,7 +386,6 @@ class TextCompiler:
             return code
 
         def replace_table(match):
-            opt = match.group(1)  # Зарезервированная опция.
             body = match.group(2)
             rows = []
 
@@ -578,7 +578,7 @@ def swap_layout(src_text: str) -> str:
     return src_text.translate(TRANSLATION_DICT)
 
 
-def search_models(term: str, *, search_in=List[Type[models.Model]]) -> Tuple[str, List[models.Model]]:
+def search_models(term: str, *, search_in=list[type[models.Model]]) -> tuple[str, list[models.Model]]:
     """Производит поиск указанной строки в указанных областях.
     Возвращает результаты поиска.
 

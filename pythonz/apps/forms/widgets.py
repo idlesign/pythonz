@@ -1,4 +1,3 @@
-from typing import Union
 
 from django import forms
 from django.forms.utils import flatatt
@@ -24,7 +23,7 @@ class PlaceWidget(TextInput):
 
         return super().render(name, value, attrs=attrs)
 
-    def value_from_datadict(self, data, files, name) -> Union[str, int]:
+    def value_from_datadict(self, data, files, name) -> str | int:
         """Здесь получаем из строки наименования места объект места.
 
         :param data:

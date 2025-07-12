@@ -1,4 +1,3 @@
-from typing import Dict, List
 
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.exceptions import FieldError
@@ -6,11 +5,11 @@ from django.db import models
 from django.db.models import QuerySet
 from siteflags.utils import get_flag_model
 
+from ..generics.models import RealmBaseModel
+from ..integration.utils import get_timezone_name
 from .category import Category
 from .place import Place
 from .shared import UtmReady
-from ..generics.models import RealmBaseModel
-from ..integration.utils import get_timezone_name
 
 
 class User(UtmReady, RealmBaseModel, AbstractUser):
@@ -18,7 +17,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
 
     allow_edit_anybody: bool = False
     items_per_page: int = 14
-    details_related: List[str] = ['last_editor', 'person', 'place']
+    details_related: list[str] = ['last_editor', 'person', 'place']
 
     objects = UserManager()
 
@@ -74,12 +73,12 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
             lat, lng = geo_pos.split(',')
             self.timezone = get_timezone_name(lat, lng)
 
-    def get_drafts(self) -> Dict[str, QuerySet]:
+    def get_drafts(self) -> dict[str, QuerySet]:
         """Возвращает словарь с неопубликованными материалами пользователя.
         Индексирован названиями разделов сайта; значения — списки материалов.
 
         """
-        from ..realms import get_realms_models
+        from ..realms import get_realms_models  # noqa: PLC0415
 
         drafts = {}
 
@@ -103,7 +102,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
 
         return drafts
 
-    def get_stats(self) -> Dict[str, Dict]:
+    def get_stats(self) -> dict[str, dict]:
         """Возвращает словарь со статистикой пользователя.
 
         Индексирован названиями разделов сайта; значения — словарь со статистикой:
@@ -111,7 +110,7 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
             cnt_postponed - кол-во материалов, назначенных к отложенной публикации
 
         """
-        from ..realms import get_realms_models
+        from ..realms import get_realms_models  # noqa: PLC0415
 
         stats = {}
         for realm_model in get_realms_models():
@@ -134,12 +133,12 @@ class User(UtmReady, RealmBaseModel, AbstractUser):
 
         return stats
 
-    def get_bookmarks(self) -> Dict[str, QuerySet]:
+    def get_bookmarks(self) -> dict[str, QuerySet]:
         """Возвращает словарь с избранными пользователем элементами (закладками).
         Словарь индексирован классами моделей различных сущностей, в значениях - списки с самими сущностями.
 
         """
-        from ..realms import get_realms_models
+        from ..realms import get_realms_models  # noqa: PLC0415
 
         FLAG_MODEL = get_flag_model()
 

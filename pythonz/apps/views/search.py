@@ -2,11 +2,10 @@ from urllib.parse import quote_plus
 
 from django.conf import settings
 from django.http import HttpResponse
-from django.shortcuts import redirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from ..generics.views import HttpRequest
-from ..models import Reference, ReferenceMissing, Category, Person, App
+from ..models import App, Category, Person, Reference, ReferenceMissing
 from ..utils import message_warning, search_models
 
 

@@ -1,6 +1,5 @@
 from .sub_paths import PROJECT_DIR_STATE
 
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
 
-from ..generics.views import DetailsView, RealmView, HttpRequest
+from ..generics.views import DetailsView, HttpRequest, RealmView
 
 
 class ReferenceListingView(RealmView):

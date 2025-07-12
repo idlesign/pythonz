@@ -8,7 +8,7 @@ class PythonzAppsConfig(AppConfig):
     verbose_name: str = 'Сущности pythonz'
 
     def ready(self):
-        from .realms import get_realms
+        from .realms import get_realms  # noqa: PLC0415
 
         for realm in get_realms().values():
             # Привязываем область к моделям, она понадобится для вычисления URL.

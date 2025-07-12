@@ -1,20 +1,19 @@
 from datetime import timedelta
 from statistics import median
-from typing import List, Optional
 
 from django.db import models
 from django.db.models import Count
 from django.utils.timezone import now
 
-from .place import Place, WithPlace
-from .shared import UtmReady
 from ..integration.vacancies import VacancySource
 from ..utils import format_currency
+from .place import Place, WithPlace
+from .shared import UtmReady
 
 
 class Vacancy(UtmReady, WithPlace):
 
-    paginator_related: List[str] = ['place']
+    paginator_related: list[str] = ['place']
     items_per_page: int = 15
     notify_on_publish: bool = False
 
@@ -64,7 +63,7 @@ class Vacancy(UtmReady, WithPlace):
         return ', '.join(chunks)
 
     @classmethod
-    def get_places_stats(cls, min_count: int = 5) -> List[Place]:
+    def get_places_stats(cls, min_count: int = 5) -> list[Place]:
         """Возвращает статистику по количеству вакансий на местах.
 
         :param min_count: Минимальное количество вакансий для попадения
@@ -83,7 +82,7 @@ class Vacancy(UtmReady, WithPlace):
         return stats
 
     @classmethod
-    def get_salary_stats(cls, place: Optional[Place] = None) -> dict:
+    def get_salary_stats(cls, place: Place | None = None) -> dict:
         """Возвращает статистику по зарплатам.
 
         :param place: Место, для которого следует получить статистику.
@@ -131,11 +130,11 @@ class Vacancy(UtmReady, WithPlace):
                 row['min'] + ((row['max'] - row['min']) / 2)
             )
 
-        for currency, info in by_currency.items():
+        for info in by_currency.values():
 
             info['avg'] = median(info['avg'])
 
-            for key in {'min', 'max', 'avg'}:
+            for key in ('min', 'max', 'avg'):
                 info[key] = f'{round(info[key] / 1000, 1)}'.replace('.0', '', 1) + 'K'
 
         return by_currency
@@ -155,7 +154,7 @@ class Vacancy(UtmReady, WithPlace):
 
         return ' '.join(map(str, chunks)).strip()
 
-    def get_absolute_url(self, with_prefix: bool = False, utm_source: str = None) -> str:
+    def get_absolute_url(self, *, with_prefix: bool = False, utm_source: str = None) -> str:
         return self.get_utm_url()
 
     @classmethod

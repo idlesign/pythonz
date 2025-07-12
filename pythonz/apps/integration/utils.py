@@ -1,31 +1,36 @@
-import os
-from collections import namedtuple
+from collections.abc import Callable
 from concurrent.futures import as_completed
 from concurrent.futures.thread import ThreadPoolExecutor
 from pathlib import Path
-from typing import List, Optional, Set, Callable, Dict, Union
+from typing import TYPE_CHECKING, NamedTuple
 
 import requests
-from PIL import Image, UnidentifiedImageError
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.db.models.fields.files import ImageFieldFile
 from django.utils import timezone
+from PIL import Image, UnidentifiedImageError
 from requests import Response
 
 from ..signals import sig_integration_failed
-from ..utils import truncate_words, truncate_chars
+from ..utils import get_logger, truncate_chars, truncate_words
 
-if False:  # pragma: nocover
-    from ..generics.realms import RealmBase  # noqa
-
-
-PageInfo = namedtuple('PageInfo', ['title', 'description', 'site_name', 'images'])
+if TYPE_CHECKING:
+    from ..generics.realms import RealmBase
 
 
-def get_page_info(url: str, timeout: int = 4) -> Optional[PageInfo]:
+LOG = get_logger(__name__)
+
+class PageInfo(NamedTuple):
+    title: str
+    description: str
+    site_name: str
+    images: list[ImageFieldFile]
+
+
+def get_page_info(url: str, timeout: int = 4) -> PageInfo | None:
     """Возвращает информацию о странице, расположенной
     по указанному адресу, либо None.
 
@@ -57,7 +62,7 @@ def get_from_url(url: str, *, method: str = 'get', **kwargs) -> Response:
     return method(url, **r_kwargs)
 
 
-def get_json(url: str, *, return_none_statuses: Set[int] = None, silent_statuses: Set[int] = None) -> dict:
+def get_json(url: str, *, return_none_statuses: set[int] = None, silent_statuses: set[int] = None) -> dict:
     """Возвращает словарь, созданный из JSON документа, полученного
     с указанного URL.
 
@@ -95,7 +100,7 @@ def get_json(url: str, *, return_none_statuses: Set[int] = None, silent_statuses
     return result
 
 
-def get_image_from_url(url: str) -> Optional[ContentFile]:
+def get_image_from_url(url: str) -> ContentFile | None:
     """Забирает изображение с указанного URL.
 
     :param url:
@@ -149,6 +154,7 @@ def get_thumb_url(
         image: ImageFieldFile,
         width: int,
         height: int,
+        *,
         absolute_url: bool = False
 ) -> str:
     """Создаёт на лету уменьшенную копию указанного изображения.
@@ -174,15 +180,12 @@ def get_thumb_url(
 
     if url is None:
 
-        thumb_file = Path(settings.MEDIA_ROOT) / thumb_file_base
+        media_root = Path(settings.MEDIA_ROOT)
+        thumb_file = media_root / thumb_file_base
 
         if not thumb_file.exists():
 
-            try:
-                os.makedirs(os.path.join(settings.MEDIA_ROOT, base_path), mode=0o755)
-
-            except FileExistsError:
-                pass
+            (media_root / base_path).mkdir(mode=0o755, parents=True, exist_ok=True)
 
             try:
                 img = Image.open(image)
@@ -207,7 +210,7 @@ def get_thumb_url(
     return url
 
 
-def get_timezone_name(lat: str, lng: str) -> Optional[str]:
+def get_timezone_name(lat: str, lng: str) -> str | None:
     """Возвращает имя часового пояса по геокоординатам, либо None.
     Использует Сервис Google Time Zone API.
 
@@ -217,12 +220,7 @@ def get_timezone_name(lat: str, lng: str) -> Optional[str]:
     """
     url = (
         'https://maps.googleapis.com/maps/api/timezone/json?'
-        'location=%(lat)s,%(lng)s&timestamp=%(ts)s&key=%(api_key)s' % {
-            'lat': lat,
-            'lng': lng,
-            'ts': timezone.now().timestamp(),
-            'api_key': settings.GOOGLE_API_KEY,
-        }
+        f'location={lat},{lng}&timestamp={timezone.now().timestamp()}&key={settings.GOOGLE_API_KEY}'
     )
 
     try:
@@ -231,6 +229,7 @@ def get_timezone_name(lat: str, lng: str) -> Optional[str]:
         tz_name = doc['timeZoneId']
 
     except Exception:
+        LOG.exception('Timezone calc error')
         return None
 
     return tz_name
@@ -255,6 +254,7 @@ def get_location_data(location_name: str) -> dict:
         doc = result.json()
 
     except Exception:
+        LOG.exception('Location find error')
         return {}
 
     response = doc.get('response')
@@ -283,15 +283,15 @@ def get_location_data(location_name: str) -> dict:
     return location_data
 
 
-def run_threads(items: Union[List, Set], func: Callable, *, thread_num: int = None) -> Dict[str, Optional[PageInfo]]:
-    """Возвращает результаты обработки в нитях указанной функцей указанных элементов.
+def run_threads(items: list | set, func: Callable, *, thread_num: int = None) -> dict[str, PageInfo | None]:
+    """Возвращает результаты обработки в нитях указанной функцией указанных элементов.
 
     :param items: Элементы для обработки.
 
     :param func: Функция для вызова.
 
     :param thread_num: Количество нитей для забора данных.
-        Если не указано, о будет создано нитей по количеству элементов,
+        Если не указано, то будет создано нитей по количеству элементов,
         но не более определённого числа.
 
     """

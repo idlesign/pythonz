@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from ...integration.telegram import set_webhook, get_webhook_url
+from ...integration.telegram import get_webhook_url, set_webhook
 
 
 class Command(BaseCommand):

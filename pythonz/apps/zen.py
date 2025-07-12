@@ -2,7 +2,6 @@ from random import choice
 
 from siteblocks.siteblocksapp import register_dynamic_block
 
-
 ZEN = (
     ('Beautiful is better than ugly', 'Красивое лучше безобразного'),
     ('Explicit is better than implicit', 'Явное лучше подразумеваемого'),

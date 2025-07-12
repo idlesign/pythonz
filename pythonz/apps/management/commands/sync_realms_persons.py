@@ -1,8 +1,7 @@
-from typing import Union
 
 from django.core.management.base import BaseCommand
 
-from ...models import Video, Book, Person
+from ...models import Book, Person, Video
 from ...utils import get_logger
 
 LOG = get_logger(__name__)
@@ -21,7 +20,7 @@ class Command(BaseCommand):
         for model_cls in (Video, Book):
 
             for item in model_cls.objects.all():
-                item: Union[Video, Book]
+                item: Video | Book
                 item.sync_persons_fields(known_persons)
 
         LOG.info('Linking to persons done')

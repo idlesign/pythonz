@@ -1,11 +1,10 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import Tuple, List, Dict, Union, Optional
 
 from lxml import etree as ET
 
-from .base import PipermailBase, StackdataBase, ItemsFetcherBase, SummaryItem, TypeFetcherResult, HyperKittyBase
-from ..utils import get_from_url, make_soup, get_json
+from ..utils import get_from_url, get_json, make_soup
+from .base import HyperKittyBase, ItemsFetcherBase, PipermailBase, StackdataBase, SummaryItem, TypeFetcherResult
 
 
 class MailarchAnnounce(HyperKittyBase):
@@ -119,7 +118,7 @@ class Lwn(ItemsFetcherBase):
         'Python Language Summit',
     }
 
-    def _filter(self, items: dict) -> Tuple[List[SummaryItem], Union[List, Dict]]:
+    def _filter(self, items: dict) -> tuple[list[SummaryItem], list | dict]:
 
         previous_result = self.previous_result or {}
         latest_result = {}
@@ -190,7 +189,7 @@ class GithubTrending(ItemsFetcherBase):
 
     filter_skip_unchanged: bool = True
 
-    def __init__(self, *, previous_result: List, previous_dt: Optional[datetime], period=None, **kwargs):
+    def __init__(self, *, previous_result: list, previous_dt: datetime | None, period=None, **kwargs):
         """
 
         :param previous_result:

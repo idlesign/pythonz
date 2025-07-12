@@ -1,24 +1,26 @@
-from typing import Dict, Type, Tuple, List
 
 import feedparser
 
 from ..signals import sig_integration_failed
+from ..utils import get_logger
 
 if False:  # pragma: nocover
     from ..generics.realms import RealmBase  # noqa
+
+LOG = get_logger(__name__)
 
 
 class PyDigestResource:
     """Инструменты для получения данных со внешнего ресурса pythondigest.ru."""
 
-    mapping: Dict[Type['RealmBase'], Tuple[str, ...]] = None
+    mapping: dict[type['RealmBase'], tuple[str, ...]] = None
 
     @classmethod
-    def get_mapping(cls) -> Dict[Type['RealmBase'], Tuple[str, ...]]:
+    def get_mapping(cls) -> dict[type['RealmBase'], tuple[str, ...]]:
         """Возвращает словарь соотношений классов областей псевдонимам разделов."""
 
         if cls.mapping is None:
-            from ..realms import ArticleRealm, VideoRealm, EventRealm
+            from ..realms import ArticleRealm, VideoRealm  # noqa: PLC0415
 
             mapping = {
                 ArticleRealm: ('article',),
@@ -29,7 +31,7 @@ class PyDigestResource:
         return cls.mapping
 
     @classmethod
-    def fetch_entries(cls) -> List[dict]:
+    def fetch_entries(cls) -> list[dict]:
         """Собирает данные (записи) со внешнего ресурса, соотнося их с разделами pythonz."""
 
         base_url = 'http://pythondigest.ru/rss/'
@@ -55,6 +57,7 @@ class PyDigestResource:
                     parsed = feedparser.parse(url)
 
                 except Exception as e:
+                    LOG.exception('Fetch digest error')
                     sig_integration_failed.send(None, description=f'URL {url}. Error: {e}')
 
                 else:

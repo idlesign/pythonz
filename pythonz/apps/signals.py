@@ -1,6 +1,5 @@
 import django.dispatch
 
-
 sig_entity_new = django.dispatch.Signal()
 """Сигнализирует о добавлении новой сущности.
 Аргументы: entity

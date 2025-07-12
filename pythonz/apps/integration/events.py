@@ -1,6 +1,5 @@
 import re
 from datetime import timedelta
-from typing import List
 from hashlib import md5
 
 from django.utils import timezone
@@ -62,7 +61,7 @@ class GoogleCalendarSource(EventSource):
 
         return item
 
-    def fetch_list(self) -> List[dict]:
+    def fetch_list(self) -> list[dict]:
 
         results = []
 

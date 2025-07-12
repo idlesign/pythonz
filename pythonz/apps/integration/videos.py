@@ -1,4 +1,3 @@
-from typing import Dict, Tuple
 
 from ..exceptions import RemoteSourceError
 
@@ -8,16 +7,16 @@ class VideoBroker:
     EMBED_WIDTH: int = 560
     EMBED_HEIGHT: int = 315
 
-    hostings: Dict[str, Tuple[str, ...]] = {
+    hostings: dict[str, tuple[str, ...]] = {
         'Vimeo': ('vimeo.com', 'vimeo'),
         'YouTube': ('youtu', 'youtube'),
     }
     hostings = dict(sorted(hostings.items(), key=lambda k: k[0]))
 
     @classmethod
-    def get_data_from_vimeo(cls, url: str) -> Tuple[str, str]:
+    def get_data_from_vimeo(cls, url: str) -> tuple[str, str]:
 
-        from ..integration.utils import get_json
+        from ..integration.utils import get_json  # noqa: PLC0415
 
         if 'vimeo.com' not in url:  # http://vimeo.com/{id}
             raise RemoteSourceError(f'Не удалось обнаружить ID видео в URL `{url}`')
@@ -35,7 +34,7 @@ class VideoBroker:
         return embed_code, cover_url
 
     @classmethod
-    def get_data_from_youtube(cls, url: str) -> Tuple[str, str]:
+    def get_data_from_youtube(cls, url: str) -> tuple[str, str]:
 
         if 'youtu.be' in url:  # http://youtu.be/{id}
             video_id = url.rsplit('/', 1)[-1]
@@ -67,7 +66,7 @@ class VideoBroker:
     def get_hosting_for_url(cls, url: str) -> str:
         hosting = ''
 
-        for title, data in cls.hostings.items():
+        for data in cls.hostings.values():
             search_str, hid = data
 
             if search_str in url:
@@ -77,7 +76,7 @@ class VideoBroker:
         return hosting
 
     @classmethod
-    def get_code_and_cover(cls, url: str, wrap_responsive: bool = False) -> Tuple[str, str]:
+    def get_code_and_cover(cls, url: str, *, wrap_responsive: bool = False) -> tuple[str, str]:
 
         url = url.rstrip('/')
         hid = cls.get_hosting_for_url(url)

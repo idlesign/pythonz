@@ -1,6 +1,5 @@
-from typing import List
 
-from ..generics.views import ListingView, HttpRequest
+from ..generics.views import HttpRequest, ListingView
 from ..models import Vacancy
 
 
@@ -11,5 +10,5 @@ class VacancyListingView(ListingView):
         context['stats_salary'] = Vacancy.get_salary_stats()
         context['stats_places'] = Vacancy.get_places_stats()
 
-    def get_most_voted_objects(self) -> List:
+    def get_most_voted_objects(self) -> list:
         return []

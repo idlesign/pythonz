@@ -1,16 +1,16 @@
-from typing import Callable, List, Tuple, Type
+from collections.abc import Callable
 
 from django.contrib.sitemaps import GenericSitemap
 from django.db.models import QuerySet
-from django.urls import reverse, re_path
+from django.urls import re_path, reverse
 from sitetree.models import TreeItemBase
 from sitetree.utils import item
 from yaturbo import YandexTurboFeed
 
-from .forms import CommonEntityForm
-from .views import ListingView, DetailsView, AddView, EditView, TagsView, RealmView
 from ..integration.utils import get_thumb_url
 from ..utils import get_logger
+from .forms import CommonEntityForm
+from .views import AddView, DetailsView, EditView, ListingView, RealmView, TagsView
 
 if False:  # pragma: nocover
     from .models import RealmBaseModel  # noqa
@@ -24,10 +24,10 @@ SYNDICATION_ITEMS_LIMIT = 15
 class RealmBase:
     """Базовый класс области (книга, видео и пр)"""
 
-    model: Type['RealmBaseModel'] = None
+    model: type['RealmBaseModel'] = None
     """Класс модели, связанный с областью"""
 
-    form: Type[CommonEntityForm] = None
+    form: type[CommonEntityForm] = None
     """Форма, связанная с областью."""
 
     icon: str = 'icon'
@@ -38,7 +38,7 @@ class RealmBase:
     name_plural: str = None
     """Имя области. Мн. ч."""
 
-    allowed_views: Tuple[str, ...] = ('listing', 'details', 'tags', 'add', 'edit')
+    allowed_views: tuple[str, ...] = ('listing', 'details', 'tags', 'add', 'edit')
     """Имена доступных представлений."""
 
     show_on_main: bool = True
@@ -73,7 +73,7 @@ class RealmBase:
 
     # Представление списка.
     view_listing = None
-    view_listing_base_class: Type[RealmView] = ListingView
+    view_listing_base_class: type[RealmView] = ListingView
     view_listing_url: str = r'^$'
     view_listing_title: str = None
     view_listing_description: str = ''
@@ -81,23 +81,23 @@ class RealmBase:
 
     # Представление с детальной информацией.
     view_details = None
-    view_details_base_class: Type[RealmView] = DetailsView
+    view_details_base_class: type[RealmView] = DetailsView
     view_details_url: str = r'^(?P<obj_id>\d+)/$'
     view_details_slug_url: str = r'^named/(?P<obj_id>[0-9A-z\.-]+)/$'
 
     # Представление для добавления нового элемента.
     view_add = None
-    view_add_base_class: Type[RealmView] = AddView
+    view_add_base_class: type[RealmView] = AddView
     view_add_url: str = r'^add/$'
 
     # Представление для редактирования.
     view_edit = None
-    view_edit_base_class: Type[RealmView] = EditView
+    view_edit_base_class: type[RealmView] = EditView
     view_edit_url: str = r'^edit/(?P<obj_id>\d+)/$'
 
     # Представление с разбивкой элементов по категориям.
     view_tags = None
-    view_tags_base_class: Type[RealmView] = TagsView
+    view_tags_base_class: type[RealmView] = TagsView
     view_tags_url: str = r'^tags/(?P<category_id>\d+)/$'
 
     @classmethod
@@ -198,7 +198,7 @@ class RealmBase:
         return f'{realm_name_plural}:listing'
 
     @classmethod
-    def get_details_urlname(cls, slugged: bool = False) -> str:
+    def get_details_urlname(cls, *, slugged: bool = False) -> str:
         """Возвращает название URL страницы с детальной информацией об объекте.
 
         :param slugged Следует ли вернуть название для URL человекопонятного
@@ -215,7 +215,7 @@ class RealmBase:
         return name
 
     @classmethod
-    def get_sitetree_details_item(cls) -> List[TreeItemBase]:
+    def get_sitetree_details_item(cls) -> list[TreeItemBase]:
         """Возвращает элемент древа сайта, указывающий на страницу с детальной информацией об объекте."""
 
         realm_name, realm_name_plural = cls.get_names()
@@ -229,7 +229,7 @@ class RealmBase:
 
         def get_item(urlname, id_attr='id'):
             return item(
-                '{{ %s }}' % realm_name,
+                '{{ %s }}' % realm_name,  # noqa: UP031
                 f'{urlname} {realm_name}.{id_attr}',  # Например books:details book.id
                 children=children,
                 in_menu=False,
@@ -286,7 +286,7 @@ class RealmBase:
     def get_sitetree_tags_item(cls) -> TreeItemBase:
         """Возвращает элемент древа сайта, указывающий на страницу разбивки объектов по метке (категории)."""
         return item(
-            '{{ category.title }} - %s' % cls.model._meta.verbose_name,
+            '{{ category.title }} - %s' % cls.model._meta.verbose_name,  # noqa: UP031
             url=f'{cls.get_tags_urlname()} category.id',
             in_menu=False, in_sitetree=False)
 
@@ -326,7 +326,7 @@ class RealmBase:
         return sitetree_items
 
     @classmethod
-    def get_names(cls) -> Tuple[str, str]:
+    def get_names(cls) -> tuple[str, str]:
         """Возвращает кортеж с именами области в ед. и мн. числах."""
 
         if cls.name is None:
@@ -371,7 +371,7 @@ class RealmBase:
         return cls.syndication_url
 
     @classmethod
-    def get_urls(cls) -> List:
+    def get_urls(cls) -> list:
         """Вовзвращает набор URL, актуальных для этой области."""
         views = []
 

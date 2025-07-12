@@ -1,15 +1,14 @@
-from typing import Optional, List, Type, Union
 
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 
-from .widgets import RstEditWidget
 from ..generics.forms import RealmEditBaseForm
-from ..generics.models import RealmBaseModel, CommonEntityModel
+from ..generics.models import CommonEntityModel, RealmBaseModel
 from ..generics.realms import RealmBase
 from ..integration.videos import VideoBroker
-from ..models import Book, Video, Event, Discussion, User, Article, Community, Reference, Version, App
+from ..models import App, Article, Book, Community, Discussion, Event, Reference, User, Version, Video
+from .widgets import RstEditWidget
 
 
 class DiscussionForm(RealmEditBaseForm):
@@ -30,9 +29,9 @@ class DiscussionForm(RealmEditBaseForm):
     @classmethod
     def _get_realm_item(
             cls,
-            realm: Type[RealmBase],
+            realm: type[RealmBase],
             item_id: int
-    ) -> Optional[Union[RealmBaseModel, CommonEntityModel]]:
+    ) -> RealmBaseModel | CommonEntityModel | None:
         """Вернёт объект из указанной области по идентификтаору, либо None.
 
         :param realm:
@@ -56,7 +55,7 @@ class DiscussionForm(RealmEditBaseForm):
             # Вызов со страницы сущности одной из областей.
             # Связываем сущность с обсуждением.
 
-            from ..realms import get_realm
+            from ..realms import get_realm  # noqa: PLC0415
 
             if realm := get_realm(data['related_item_realm']) is not None:
                 item_id = data['related_item_id']
@@ -122,7 +121,7 @@ class ArticleForm(RealmEditBaseForm):
             'text_src': RstEditWidget(attrs={'rows': 25}),
         }
 
-    def set_fields_required(self, fields: List[str], required: bool = True):
+    def set_fields_required(self, fields: list[str], *, required: bool = True):
 
         for field in fields:
             self.fields[field].required = required
@@ -140,15 +139,15 @@ class ArticleForm(RealmEditBaseForm):
             else:
                 if location == Article.LOCATION_INTERNAL:
                     self.data['url'] = None
-                    self.set_fields_required(['url'], False)
+                    self.set_fields_required(['url'], required=False)
 
                 elif location == Article.LOCATION_EXTERNAL:
                     self.set_fields_required(['url'])
-                    self.set_fields_required(['title', 'description', 'text_src'], False)
+                    self.set_fields_required(['title', 'description', 'text_src'], required=False)
 
         return super().full_clean()
 
-    def clean_url(self) -> Optional[str]:
+    def clean_url(self) -> str | None:
         return self.cleaned_data['url'].strip() or None
 
     def save(self, *args, **kwargs):
@@ -178,7 +177,7 @@ class BookForm(RealmEditBaseForm):
         )
 
     @staticmethod
-    def clean_isbn_(isbn) -> Optional[str]:
+    def clean_isbn_(isbn) -> str | None:
         isbn = isbn or ''
         isbn = isbn.replace('-', '').strip()
 
@@ -191,10 +190,10 @@ class BookForm(RealmEditBaseForm):
 
         return isbn
 
-    def clean_isbn(self) -> Optional[str]:
+    def clean_isbn(self) -> str | None:
         return self.clean_isbn_(self.cleaned_data['isbn'])
 
-    def clean_isbn_ebook(self) -> Optional[str]:
+    def clean_isbn_ebook(self) -> str | None:
         return self.clean_isbn_(self.cleaned_data['isbn_ebook'])
 
 
@@ -338,5 +337,5 @@ class AppForm(RealmEditBaseForm):
             'text_src',
         )
 
-    def clean_slug(self) -> Union[str, None]:
+    def clean_slug(self) -> str | None:
         return self.cleaned_data.get('slug', '').strip() or None

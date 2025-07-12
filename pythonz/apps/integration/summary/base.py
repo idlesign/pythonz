@@ -1,16 +1,17 @@
 import csv
 import json
 import re
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from io import StringIO
 from traceback import format_exc
-from typing import List, Tuple, Optional, Union, Dict
 
-from ..utils import get_from_url, make_soup
+from django.utils import timezone
+
 from ...exceptions import LogicError
 from ...signals import sig_integration_failed
-from ...utils import get_logger, get_datetime_from_till
+from ...utils import get_datetime_from_till, get_logger
+from ..utils import get_from_url, make_soup
 
 LOG = get_logger(__name__)
 
@@ -28,7 +29,7 @@ class SummaryItem:
         return json.dumps(asdict(self))
 
 
-TypeFetcherResult = Optional[Tuple[List[SummaryItem], Union[List, Dict]]]
+TypeFetcherResult = tuple[list[SummaryItem], list | dict] | None
 
 
 class ItemsFetcherBase:
@@ -56,7 +57,7 @@ class ItemsFetcherBase:
     filter_hide_seen = False
     """Убирать ли из представления элементы присутствующие и в предыдущем, и в текущем заборах."""
 
-    def __init__(self, *, previous_result: Union[List, Dict], previous_dt: Optional[datetime], **kwargs):
+    def __init__(self, *, previous_result: list | dict, previous_dt: datetime | None, **kwargs):
         """
 
         :param previous_result: Результат предыдущего забора данных.
@@ -70,11 +71,11 @@ class ItemsFetcherBase:
         self.previous_result = previous_result or []
         self.previous_dt = previous_dt or get_datetime_from_till(7)[0]
 
-    def run(self) -> Optional[TypeFetcherResult]:
+    def run(self) -> TypeFetcherResult | None:
         """Основной рабочий метод. Запускает сбор данных."""
         fetcher_name = self.__class__.__name__
 
-        LOG.debug(f'Summary fetcher `{fetcher_name}` started ...')
+        LOG.debug('Summary fetcher `%s` started ...', fetcher_name)
 
         try:
             fetched = self.fetch()
@@ -89,7 +90,7 @@ class ItemsFetcherBase:
                 None,
                 description=f'Summary fetcher `{fetcher_name}` error: {e} {format_exc()}')
 
-            LOG.exception(f'Summary fetcher `{fetcher_name}` failed')
+            LOG.exception('Summary fetcher `%s` failed', fetcher_name)
 
         return None
 
@@ -107,7 +108,7 @@ class ItemsFetcherBase:
         """
         raise NotImplementedError(f'`{self.__class__.__name__}` must implement .fetch()')  # pragma: nocover
 
-    def _filter(self, items: dict) -> Tuple[List[SummaryItem], Union[List, Dict]]:
+    def _filter(self, items: dict) -> tuple[list[SummaryItem], list | dict]:
         """
         :param items:
 
@@ -174,9 +175,9 @@ class HyperKittyBase(ItemsFetcherBase):
     def __init__(
             self,
             *,
-            previous_result: List,
-            previous_dt: Optional[datetime],
-            till: Optional[datetime] = None,
+            previous_result: list,
+            previous_dt: datetime | None,
+            till: datetime | None = None,
             **kwargs
     ):
         self.till = till
@@ -188,13 +189,13 @@ class HyperKittyBase(ItemsFetcherBase):
     def fetch(self) -> TypeFetcherResult:
 
         since = self.previous_dt
-        till = self.till or datetime.now()
+        till = self.till or timezone.now()
 
         if not since:
             since = till
 
         delta = till.date() - since.date()
-        target_dates = [till - timedelta(days=day_num) for day_num in range(0, delta.days)] or [till]
+        target_dates = [till - timedelta(days=day_num) for day_num in range(delta.days)] or [till]
 
         items = {}
         url_base = self.url_base
@@ -222,7 +223,7 @@ class PipermailBase(ItemsFetcherBase):
     def get_url(self) -> str:
         return f'https://mail.python.org/pipermail/{self.alias}/'
 
-    def __init__(self, *, previous_result: List, previous_dt: Optional[datetime], year_month: str = None, **kwargs):
+    def __init__(self, *, previous_result: list, previous_dt: datetime | None, year_month: str = None, **kwargs):
         self.year_month = year_month
         super().__init__(previous_result=previous_result, previous_dt=previous_dt, **kwargs)
 
@@ -236,7 +237,7 @@ class PipermailBase(ItemsFetcherBase):
         if not year_month:
             page = get_from_url(url)
 
-            match = re.search(r'="((\d{4}-[^/]+)%s)"' % details_page_file, page.text)
+            match = re.search(rf'="((\d{4}-[^/]+){details_page_file})"', page.text)
 
             if not match:
                 sig_integration_failed.send(None, description=f'Subject page link not found at {url}')
@@ -278,19 +279,15 @@ class StackdataBase(ItemsFetcherBase):
     domain: str = None
     query_revision_id: int = None
 
-    def __init__(self, *, previous_result: List, previous_dt: Optional[datetime], top_count: int = 10, **kwargs):
+    def __init__(self, *, previous_result: list, previous_dt: datetime | None, top_count: int = 10, **kwargs):
         self.top_count = top_count
         super().__init__(previous_result=previous_result, previous_dt=previous_dt, **kwargs)
 
     def get_url(self) -> str:
         since = self.previous_dt.strftime('%Y%m%d')
         url = (
-            'http://data.stackexchange.com/%(site)s/csv/%(revision_id)s?top=%(top)s&since=%(since)s' % {
-                'site': self.site,
-                'revision_id': self.query_revision_id,
-                'top': self.top_count,
-                'since': since,
-            }
+            f'http://data.stackexchange.com/{self.site}/csv/{self.query_revision_id}?'
+            f'top={self.top_count}&since={since}'
         )
         return url
 

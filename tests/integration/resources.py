@@ -1,5 +1,6 @@
-from pythonz.apps.integration.resources import PyDigestResource
 import pytest
+
+from pythonz.apps.integration.resources import PyDigestResource
 
 
 @pytest.mark.slow

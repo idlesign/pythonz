@@ -1,21 +1,20 @@
 from functools import partial
-from typing import Dict, List, Tuple
 
 from django.conf import settings
 from django.db import models
 from django.db.models import Q, QuerySet
 from etc.models import InheritedModel
 
-from .shared import UtmReady
-from .user import User
 from ..generics.models import ModelWithCompiledText, RealmBaseModel
 from ..utils import PersonName, sync_many_to_many
+from .shared import UtmReady
+from .user import User
 
 
 class PersonsLinked(models.Model):
     """Примесь для моделей, имеющих поля многие-ко-многим, ссылающиеся на Person."""
 
-    persons_fields: List[str] = []
+    persons_fields: list[str] = []
 
     class Meta:
 
@@ -25,7 +24,7 @@ class PersonsLinked(models.Model):
         super().save(*args, **kwargs)
         self.sync_persons_fields()
 
-    def sync_persons_fields(self, known_persons: Dict[str, List['Person']] = None):
+    def sync_persons_fields(self, known_persons: dict[str, list['Person']] = None):
 
         if not self.persons_fields:
             return
@@ -41,7 +40,7 @@ class PersonsLinked(models.Model):
         self,
         names_str: str,
         persons_field: str,
-        known_persons: Dict[str, List['Person']],
+        known_persons: dict[str, list['Person']],
         related_attr: str = 'name'
     ):
         names_list = []
@@ -59,7 +58,8 @@ class PersonsLinked(models.Model):
     def create_person(
         cls,
         person_name: str,
-        known_persons: Dict[str, List['Person']],
+        known_persons: dict[str, list['Person']],
+        *,
         publish: bool = True
     ) -> 'Person':
         """Создаёт персону и добавляет её в словарь известных персон.
@@ -80,8 +80,8 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
     Персона не обязана являться пользователем сайта, но между этими сущностями может быть связь.
 
     """
-    details_related: List[str] = ['submitter', 'last_editor', 'user']
-    paginator_related: List[str] = []
+    details_related: list[str] = ['submitter', 'last_editor', 'user']
+    paginator_related: list[str] = []
     paginator_order: str = 'name'
     items_per_page: int = 1000
 
@@ -113,7 +113,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         return self.get_display_name()
 
     @classmethod
-    def get_known_persons(cls) -> Dict[str, List['Person']]:
+    def get_known_persons(cls) -> dict[str, list['Person']]:
         """Возвращает словарь, индексированный именами персон.
 
         Где значения являются списками с объектами моделей персон.
@@ -129,7 +129,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         return known
 
     @classmethod
-    def contribute_to_known_persons(cls, person: 'Person', known_persons: Dict[str, List['Person']]):
+    def contribute_to_known_persons(cls, person: 'Person', known_persons: dict[str, list['Person']]):
         """Добавляет объект указанной персоны в словарь с известными персонами.
 
         :param person:
@@ -176,7 +176,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         return cls.get_actual().filter(q)
 
     @classmethod
-    def create(cls, name: str, save: bool = False, publish: bool = True) -> 'Person':
+    def create(cls, name: str, *, save: bool = False, publish: bool = True) -> 'Person':
         """Создаёт объект персоны по имени.
 
         :param name:
@@ -198,7 +198,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         return person
 
     @classmethod
-    def get_paginator_objects(cls) -> List:
+    def get_paginator_objects(cls) -> list:
         persons = super().get_paginator_objects()
 
         def sort_by_surname(person):
@@ -217,7 +217,7 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
         Индексирован названиями разделов сайта; значения — список моделей материалов.
 
         """
-        from ..realms import get_realm
+        from ..realms import get_realm  # noqa: PLC0415
 
         realms = [
             get_realm('pep'),
@@ -226,8 +226,8 @@ class Person(UtmReady, InheritedModel, RealmBaseModel, ModelWithCompiledText):
             get_realm('app'),
         ]  # Пока ограничимся.
 
-        downloads: Dict[str, dict] = {}
-        materials: Dict[str, Tuple[str, QuerySet]] = {}
+        downloads: dict[str, dict] = {}
+        materials: dict[str, tuple[str, QuerySet]] = {}
 
         materials_data = {
             'downloads_map': downloads,

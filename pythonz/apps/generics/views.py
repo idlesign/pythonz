@@ -1,13 +1,13 @@
+from collections.abc import Callable
 from datetime import datetime
-from typing import Callable, Optional, List
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
-from django.core.paginator import Paginator, EmptyPage, Page
+from django.core.paginator import EmptyPage, Page, Paginator
 from django.db.models import QuerySet
 from django.http import Http404, HttpRequest
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
+from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition
 from django.views.generic.base import View
@@ -15,11 +15,11 @@ from siteajax.toolbox import ajax_dispatch
 from sitecats.models import Tie
 from sitecats.toolbox import get_category_aliases_under
 
-from .models import ModelWithCompiledText, RealmBaseModel
-from ..exceptions import RedirectRequired, PythonzException
+from ..exceptions import PythonzException, RedirectRequired
 from ..integration.partners import get_partner_links
-from ..models import ModelWithDiscussions, ModelWithCategory, Discussion, Article, Community, Event, Category, User
-from ..utils import message_info, message_warning, message_success, message_error
+from ..models import Article, Category, Community, Discussion, Event, ModelWithCategory, ModelWithDiscussions, User
+from ..utils import message_error, message_info, message_success, message_warning
+from .models import ModelWithCompiledText, RealmBaseModel
 
 if False:  # pragma: nocover
     from .realms import RealmBase  # noqa
@@ -66,11 +66,11 @@ class RealmView(View):
 
             if item.is_deleted:
                 # Запрещаем доступ к удалённым.
-                raise Http404()
+                raise Http404
 
             elif item.is_draft and hasattr(item, 'submitter') and item.submitter != request.user:
                 # Закрываем доступ к чужим черновикам.
-                raise PermissionDenied()
+                raise PermissionDenied
 
     def check_edit_permissions(self, request: HttpRequest, item: RealmBaseModel):
         """Производит проверку прав пользователя для доступа к редактированию объекта.
@@ -82,12 +82,12 @@ class RealmView(View):
         realm = self.realm
 
         if not realm.is_allowed_edit():  # Область не поддерживает редактирования.
-            raise PermissionDenied()
+            raise PermissionDenied
 
         user = request.user
 
         if not user.is_authenticated:  # Неавторизованные пользователи не могут ничего.
-            raise PermissionDenied()
+            raise PermissionDenied
 
         if user.is_superuser:
             return
@@ -102,7 +102,7 @@ class RealmView(View):
             return
 
         if not realm.model.allow_edit_anybody:
-            raise PermissionDenied()
+            raise PermissionDenied
 
         if item.is_published and not realm.model.allow_edit_published:
 
@@ -111,7 +111,7 @@ class RealmView(View):
                 'Этот материал уже прошёл модерацию и был опубликован. '
                 'На данный момент в проекте запрещено редактирование опубликованных материалов.')
 
-            raise PermissionDenied()
+            raise PermissionDenied
 
     @classmethod
     def get_template_path(cls, name: str = None) -> str:
@@ -178,7 +178,7 @@ class RealmView(View):
 class ListingView(RealmView):
     """Список объектов."""
 
-    def get_last_modified(self, *args, **kwargs) -> Optional[datetime]:
+    def get_last_modified(self, *args, **kwargs) -> datetime | None:
         """Возвращает Last-Modified для списка сущностей."""
 
         field = 'time_published'
@@ -228,7 +228,7 @@ class ListingView(RealmView):
         return self.realm.model.items_per_page
 
     @classmethod
-    def get_categories(cls) -> List[Category]:
+    def get_categories(cls) -> list[Category]:
 
         model = cls.realm.model
 
@@ -455,7 +455,7 @@ class EditView(RealmView):
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         return super().dispatch(request, *args, **kwargs)
 
-    def preview_rst(self, request: HttpRequest, obj_id: Optional[int] = None) -> HttpResponse:
+    def preview_rst(self, request: HttpRequest, obj_id: int | None = None) -> HttpResponse:
         """Обслуживает ajax-запрос. Обрабатывает запрос на предварительный просмотр текста в формате rst.
 
         :param request:
@@ -466,7 +466,7 @@ class EditView(RealmView):
     @ajax_dispatch({
         'preview-rst': preview_rst,
     })
-    def get(self, request: HttpRequest, obj_id: Optional[int] = None) -> HttpResponse:
+    def get(self, request: HttpRequest, obj_id: int | None = None) -> HttpResponse:
 
         item = None
 
@@ -519,10 +519,10 @@ class EditView(RealmView):
                 )
 
         if item is None:
-            redirector = lambda: redirect(item, permanent=True)
+            redirector = lambda: redirect(item, permanent=True)  # noqa: E731
 
         else:
-            redirector = lambda: redirect(self.realm.get_edit_urlname(), item.id, permanent=True)
+            redirector = lambda: redirect(self.realm.get_edit_urlname(), item.id, permanent=True)  # noqa: E731
 
         if form.is_valid():
 

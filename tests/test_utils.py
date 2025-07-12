@@ -1,4 +1,4 @@
-from pythonz.apps.utils import url_mangle, BasicTypograph, TextCompiler, PersonName, swap_layout
+from pythonz.apps.utils import BasicTypograph, PersonName, TextCompiler, swap_layout, url_mangle
 
 
 def test_person_name():
@@ -58,19 +58,19 @@ def test_url_mangle():
 
 def test_typography():
 
-    input_str = "Мама     ''мыла'' раму. " \
-                'Фабрика “Красная Заря”. ' \
-                '"Маме - раму!",- кричал\tИван. ' \
-                'Температура повысилась на 7-8 градусов. ' \
-                '(c), (r), (tm) заменяем на правильные. ' \
-                '"строка\nперенесена'
+    input_str = ("Мама     ''мыла'' раму. "
+                'Фабрика “Красная Заря”. '
+                '"Маме - раму!",- кричал\tИван. '
+                'Температура повысилась на 7-8 градусов. '
+                '(c), (r), (tm) заменяем на правильные. '
+                '"строка\nперенесена')
 
-    expected_str = 'Мама «мыла» раму. ' \
-                   'Фабрика «Красная Заря». ' \
-                   '«Маме — раму!»,— кричал Иван. ' \
-                   'Температура повысилась на 7–8 градусов. ' \
-                   '©, ®, ™ заменяем на правильные. ' \
-                   '«строка\nперенесена'
+    expected_str = ('Мама «мыла» раму. '
+                   'Фабрика «Красная Заря». '
+                   '«Маме — раму!»,— кричал Иван. '
+                   'Температура повысилась на 7–8 градусов. '
+                   '©, ®, ™ заменяем на правильные. '
+                   '«строка\nперенесена')
 
     assert BasicTypograph.apply_to(input_str) == expected_str
 
@@ -158,11 +158,13 @@ def test_text_compiler():
 
     assert (
         compile('.. note:: a note\n') ==
-        '<div class="card mb-3"><div class="card-header text-white bg-success">На заметку</div><div class="card-body">a note</div></div>')
+        '<div class="card mb-3"><div class="card-header text-white bg-success">'
+        'На заметку</div><div class="card-body">a note</div></div>')
 
     assert (
         compile('.. warning:: a warn\n') ==
-        '<div class="card mb-3"><div class="card-header text-white bg-danger">Внимание</div><div class="card-body">a warn</div></div>')
+        '<div class="card mb-3"><div class="card-header text-white bg-danger">'
+        'Внимание</div><div class="card-body">a warn</div></div>')
 
     compiled = compile('.. poll:: absdefgh\n\n\n')
     assert 'absdefgh' in compiled

@@ -1,15 +1,14 @@
-from typing import List
 
 from django.db import models
 from etc.models import InheritedModel
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
+from ..generics.models import CommonEntityModel, ModelWithAuthorAndTranslator, RealmBaseModel
 from .discussion import ModelWithDiscussions
 from .partner import ModelWithPartnerLinks
 from .person import PersonsLinked
 from .shared import HINT_IMPERSONAL_REQUIRED
-from ..generics.models import CommonEntityModel, ModelWithAuthorAndTranslator, RealmBaseModel
 
 
 class Book(
@@ -27,7 +26,7 @@ class Book(
 
     history = HistoricalRecords()
 
-    persons_fields: List[str] = ['authors']
+    persons_fields: list[str] = ['authors']
 
     class Meta:
 

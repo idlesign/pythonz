@@ -17,7 +17,7 @@ class UserDetailsView(DetailsView):
 
         if not item.profile_public and item != request.user:
             # Закрываем доступ к непубличным профилям.
-            raise PermissionDenied()
+            raise PermissionDenied
 
     def update_context(self, context: dict, request: HttpRequest):
 
@@ -35,7 +35,7 @@ class UserEditView(EditView):
     def check_edit_permissions(self, request: HttpRequest, item: User):
         # Пользователи не могут редактировать других пользователей.
         if item != request.user:
-            raise PermissionDenied()
+            raise PermissionDenied
 
     def update_context(self, context: dict, request: HttpRequest):
 
@@ -43,7 +43,7 @@ class UserEditView(EditView):
             prefs_were_set = set_user_preferences_from_request(request)
 
             if prefs_were_set:
-                raise RedirectRequired()
+                raise RedirectRequired
 
         subscr_prefs = get_user_preferences_for_ui(request.user, new_messengers_titles={
             'twitter': '<i class="fi-social-twitter" title="Twitter"></i>',

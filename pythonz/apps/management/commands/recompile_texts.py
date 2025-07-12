@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from ...models import Discussion, Community, Article, Version, Reference, Event, Person
+from ...models import Article, Community, Discussion, Event, Person, Reference, Version
 
 
 class Command(BaseCommand):

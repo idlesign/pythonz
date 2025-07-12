@@ -4,16 +4,20 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import (
-    LogoutView, PasswordResetConfirmView, PasswordResetDoneView, PasswordResetView, PasswordResetCompleteView
+    LogoutView,
+    PasswordResetCompleteView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetView,
 )
 from django.shortcuts import render
-from django.urls import path, include
+from django.urls import include, path
 from robots.views import rules_list
 from sitegate.toolbox import get_sitegate_urls
 from sitemessage.toolbox import get_sitemessage_urls
 
 from .apps.realms import bootstrap_realms
-from .apps.views import page_not_found, permission_denied, server_error, index, search, login, telebot, user_settings
+from .apps.views import index, login, page_not_found, permission_denied, search, server_error, telebot, user_settings
 
 urls_password_reset = [
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),

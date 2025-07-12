@@ -1,8 +1,7 @@
-from datetime import datetime
-
 import pytest
+from django.utils import timezone
 
-from pythonz.apps.integration.summary import MailarchConferences, GithubTrending, Stackoverflow, Lwn, Discuss, Psf
+from pythonz.apps.integration.summary import Discuss, GithubTrending, Lwn, MailarchConferences, Psf, Stackoverflow
 
 pytestmark = [pytest.mark.slow]
 
@@ -126,7 +125,7 @@ def test_stack():
 
     current, latest = Stackoverflow(
         previous_result=[],
-        previous_dt=datetime.now()
+        previous_dt=timezone.now()
     ).run()
 
     assert not len(latest)  # за сегодня ещё нет вопросов

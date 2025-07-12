@@ -1,16 +1,15 @@
-from datetime import datetime
-
 import pytest
 from django.core.exceptions import FieldDoesNotExist
+from django.utils import timezone
 from sitecats.models import ModelWithCategory
 
-from pythonz.apps.realms import get_realm, PEP, Category, Article
+from pythonz.apps.realms import PEP, Article, Category, get_realm
 
 
 @pytest.fixture
 def check_page(request_client):
 
-    def check(view, *, assertions, args=None, user=None, data: dict = None):
+    def check(view, *, assertions, args=None, user=None, data: dict | None = None):
 
         client = request_client(user=user)
 
@@ -52,7 +51,7 @@ def init_category(robot, monkeypatch):
 @pytest.fixture
 def check_realm(check_page, robot, monkeypatch, request_client, init_category):
 
-    def check_realm_(alias, *, views_hooks: dict = None, obj_kwargs=None, add_kwargs=None):
+    def check_realm_(alias, *, views_hooks: dict | None = None, obj_kwargs=None, add_kwargs=None):
 
         views_hooks = views_hooks or {}
         obj_kwargs = obj_kwargs or {}
@@ -150,7 +149,7 @@ def check_realm(check_page, robot, monkeypatch, request_client, init_category):
             checks = []
 
             not hook and checks.extend([
-                f'Выход</a>',
+                'Выход</a>',
                 f'{realm.txt_form_edit}</h1>',
             ])
 
@@ -274,7 +273,7 @@ def test_communities(check_realm):
 
 def test_versions(check_realm):
     check_realm('version', obj_kwargs={
-        'date': datetime.now()
+        'date': timezone.now()
     })
 
 

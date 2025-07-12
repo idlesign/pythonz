@@ -1,6 +1,6 @@
-from collections import namedtuple
-from typing import Optional, List, Tuple, Union, Type, Dict
 from decimal import Decimal
+from typing import TYPE_CHECKING, NamedTuple, Union
+
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.cache import cache
@@ -9,12 +9,12 @@ from django.utils.timezone import now
 from requests import Response
 from requests.exceptions import ConnectionError
 
-from .utils import make_soup, get_from_url, run_threads
+from .utils import get_from_url, make_soup, run_threads
 
-if False:  # pragma: nocover
-    from ..generics.realms import RealmBase  # noqa
+if TYPE_CHECKING:
     from ..generics.models import RealmBaseModel
-    from ..models import PartnerLink, ModelWithPartnerLinks
+    from ..generics.realms import RealmBase
+    from ..models import ModelWithPartnerLinks, PartnerLink
 
 _CACHE_TIMEOUT: int = 28800  # 8 часов
 
@@ -26,7 +26,7 @@ class PartnerBase:
     title: str = None
     link_mutator: str = None
 
-    registry: Dict[str, 'PartnerBase'] = {}
+    registry: dict[str, 'PartnerBase'] = {}
     """Реестр объектов партнёров."""
 
     def __init__(self, partner_id: str):
@@ -87,7 +87,7 @@ class PartnerBase:
         return get_from_url(url, timeout=20)
 
     @classmethod
-    def get_page_soup(cls, url: str) -> Optional[BeautifulSoup]:
+    def get_page_soup(cls, url: str) -> BeautifulSoup | None:
 
         try:
             page = cls.get_page(url)
@@ -233,7 +233,7 @@ def get_cache_key(instance: 'RealmBaseModel') -> str:
 
 def init_partners_module():
     """Инициализирует объекты известных партнёров и заносит их в реестр."""
-    from ..models import PartnerLink
+    from ..models import PartnerLink  # noqa: PLC0415
 
     def partner_links_cache_invalidate(*args, **kwargs):
         """Сбрасывает кеш партнёрских ссылок при изменении данных
@@ -250,18 +250,16 @@ def init_partners_module():
 init_partners_module()
 
 
-def get_partners_choices() -> List[Tuple[str, str]]:
+def get_partners_choices() -> list[tuple[str, str]]:
     """Возвращает варианты выбора известных партнёров для раскрывающихся списков."""
-
-    choices = []
-
-    for partner in PartnerBase.registry.values():
-        choices.append((partner.alias, partner.title))
-
+    choices = [
+        (partner.alias, partner.title)
+        for partner in PartnerBase.registry.values()
+    ]
     return choices
 
 
-def get_partner_links(realm: Type['RealmBase'], item: Union['RealmBaseModel', 'ModelWithPartnerLinks']) -> dict:
+def get_partner_links(realm: type['RealmBase'], item: Union['RealmBaseModel', 'ModelWithPartnerLinks']) -> dict:
     """Возвращает словарь с данными по партнёрским ссылкам,
     готовый для передачи в шаблон.
 
@@ -272,7 +270,10 @@ def get_partner_links(realm: Type['RealmBase'], item: Union['RealmBaseModel', 'M
     cache_key = get_cache_key(item)
     links_data = cache.get(cache_key)
 
-    Task = namedtuple('Task', ['link', 'realm', 'partner'])
+    class Task(NamedTuple):
+        link: str
+        realm: str
+        partner: str
 
     def contribute_info(task: Task):
         if data := task.partner.get_link_data(task.realm, task.link):
@@ -281,16 +282,16 @@ def get_partner_links(realm: Type['RealmBase'], item: Union['RealmBaseModel', 'M
     if links_data is None:
 
         links_data = []
-        tasks = []
         get_partner = PartnerBase.registry.get
-
-        for link in item.partner_links.order_by('partner_alias', 'description').all():
-            if partner := get_partner(link.partner_alias):
-                tasks.append(Task(
-                    link=link,
-                    realm=realm,
-                    partner=partner
-                ))
+        tasks = [
+            Task(
+                link=link,
+                realm=realm,
+                partner=partner
+            )
+            for link in item.partner_links.order_by('partner_alias', 'description').all()
+            if (partner := get_partner(link.partner_alias))
+        ]
 
         if tasks:
             run_threads(tasks, contribute_info)

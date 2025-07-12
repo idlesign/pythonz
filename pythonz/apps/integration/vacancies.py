@@ -1,4 +1,3 @@
-from typing import List
 
 from django.utils.dateparse import parse_datetime
 
@@ -7,7 +6,7 @@ from .utils import get_json
 
 
 class VacancySource(RemoteSource):
-    """База для истоничков вакансий."""
+    """База для источников вакансий."""
 
     realm: str = 'vacancy'
 
@@ -36,20 +35,13 @@ class HhVacancy(VacancySource):
 
         return response['archived']
 
-    def fetch_list(self) -> List[dict]:
+    def fetch_list(self) -> list[dict]:
         """Возвращает словарь с данными вакансий, полученный из внешнего
         источника.
 
         """
         base_url = 'https://api.hh.ru/vacancies/'
-        query = (
-            'search_field=%(field)s&per_page=%(per_page)s'
-            '&order_by=publication_time&period=1&text=%(term)s' % {
-                'term': 'python',
-                'per_page': 100,
-                'field': 'name',  # description
-        })
-
+        query = 'search_field=name&per_page=100&order_by=publication_time&period=1&text=python'
         response = get_json(f'{base_url}?{query}')
 
         if 'items' not in response:

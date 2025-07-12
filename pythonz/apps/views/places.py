@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from siteajax.toolbox import ajax_dispatch
 
-from ..generics.views import DetailsView, RealmView, HttpRequest
-from ..models import Place, User, Community, Event, Vacancy
+from ..generics.views import DetailsView, HttpRequest, RealmView
+from ..models import Community, Event, Place, User, Vacancy
 
 
 class PlaceDetailsView(DetailsView):

@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from sitecats.toolbox import get_category_lists, get_category_aliases_under
+from sitecats.toolbox import get_category_aliases_under, get_category_lists
 
-from ..generics.views import RealmView, HttpRequest
+from ..generics.views import HttpRequest, RealmView
 from ..models import Category
 
 
@@ -10,7 +10,7 @@ class CategoryListingView(RealmView):
     """Выводит список известных категорий, либо список сущностей для конкретной категории."""
 
     def get(self, request: HttpRequest, obj_id: int = None):
-        from ..realms import get_realms
+        from ..realms import get_realms  # noqa: PLC0415
 
         realms = get_realms().values()
 

@@ -1,12 +1,14 @@
+from sitecats.models import ModelWithCategory
+
 from .app import App
 from .article import Article
 from .book import Book
-from .category import Category, ModelWithCategory
+from .category import Category
 from .community import Community
 from .discussion import Discussion, ModelWithDiscussions
 from .event import Event
 from .extrenal import ExternalResource
-from .partner import PartnerLink, ModelWithPartnerLinks
+from .partner import ModelWithPartnerLinks, PartnerLink
 from .pep import PEP
 from .person import Person, PersonsLinked
 from .place import Place

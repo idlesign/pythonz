@@ -1,5 +1,4 @@
 from enum import unique
-from typing import List
 
 from django.db import models
 from django.db.models import Q, QuerySet
@@ -7,9 +6,9 @@ from django.utils.functional import cached_property
 from etc.models import InheritedModel
 from simple_history.models import HistoricalRecords
 
+from ..generics.models import CommonEntityModel, ModelWithCompiledText, RealmBaseModel
 from .discussion import ModelWithDiscussions
 from .version import Version
-from ..generics.models import CommonEntityModel, ModelWithCompiledText, RealmBaseModel
 
 
 class ReferenceMissing(models.Model):
@@ -60,7 +59,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     slug_auto: bool = True
     allow_linked: bool = False
     allow_edit_published: bool = True
-    details_related: List[str] = ['parent', 'submitter']
+    details_related: list[str] = ['parent', 'submitter']
 
     @unique
     class Type(models.IntegerChoices):

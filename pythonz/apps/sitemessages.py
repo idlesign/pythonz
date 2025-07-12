@@ -4,27 +4,25 @@
 """
 from datetime import datetime, timedelta
 from functools import partial
-from typing import List, Union, Dict, Type
 
+from django.conf import settings
+from django.contrib import messages
 from django.db.models import QuerySet
+from django.utils import timezone
+from django.utils.text import Truncator
 from sitemessage.exceptions import UnknownMessengerError
-from sitemessage.utils import register_messenger_objects, register_message_types, override_message_type_for_app
 from sitemessage.messages.email import EmailHtmlMessage
 from sitemessage.messages.plain import PlainTextMessage
 from sitemessage.signals import sig_unsubscribe_failed, sig_unsubscribe_success
-from django.conf import settings
-from django.contrib import messages
-from django.utils import timezone
-from django.utils.text import Truncator
+from sitemessage.utils import override_message_type_for_app, register_message_types, register_messenger_objects
 
 from .generics.models import CommonEntityModel, RealmBaseModel
 from .generics.realms import RealmBase
+from .realms import get_realm, get_realms
+from .signals import sig_entity_new, sig_entity_published, sig_integration_failed, sig_send_generic_telegram
 from .utils import get_datetime_from_till
-from .realms import get_realms, get_realm
-from .signals import sig_entity_published, sig_entity_new, sig_integration_failed, sig_send_generic_telegram
 
-
-Entity = Union[CommonEntityModel, RealmBaseModel]
+Entity = CommonEntityModel | RealmBaseModel
 
 
 def register_messengers():
@@ -110,7 +108,7 @@ def connect_signals():
             PythonzVkontakteMessage.create_published(entity)
 
         except UnknownMessengerError:
-            # В режиме разработки рассльные могут быть не сконфигурированы.
+            # В режиме разработки рассыльные могут быть не сконфигурированы.
 
             if settings.IN_PRODUCTION:
                 raise
@@ -125,7 +123,7 @@ class PythonzBaseMessage(PlainTextMessage):
     """Базовый класс для сообщений о новых материалах."""
 
     alias: str = None
-    supported_messengers: List[str] = None
+    supported_messengers: list[str] = None
 
     priority: int = 1  # Рассылается ежеминутно.
     send_retry_limit: int = 5
@@ -137,7 +135,7 @@ class PythonzFacebookMessage(PythonzBaseMessage):
     """Класс для сообщений о новых материалах на сайте, публикуемых на стене в Facebook."""
 
     alias: str = 'fb_update'
-    supported_messengers: List[str] = ['fb']
+    supported_messengers: list[str] = ['fb']
 
     @classmethod
     def create_published(cls, entity: Entity):
@@ -153,7 +151,7 @@ class PythonzVkontakteMessage(PythonzBaseMessage):
     """Класс для сообщений о новых материалах на сайте, публикуемых на стене в ВКонтакте."""
 
     alias: str = 'vk_update'
-    supported_messengers: List[str] = ['vk']
+    supported_messengers: list[str] = ['vk']
 
     @classmethod
     def create_published(cls, entity: Entity):
@@ -168,7 +166,7 @@ class PythonzVkontakteMessage(PythonzBaseMessage):
 class PythonzTwitterMessage(PythonzBaseMessage):
     """Базовый класс для сообщений, рассылаемых pythonz в Twitter."""
 
-    supported_messengers: List[str] = ['twitter']
+    supported_messengers: list[str] = ['twitter']
 
     @classmethod
     def create_published(cls, entity: Entity):
@@ -197,7 +195,7 @@ class PythonzTelegramMessage(PythonzBaseMessage):
     """Класс для сообщений о новых материалах на сайте, рассылаемых pythonz в Telegram."""
 
     alias: str = 'tele_update'
-    supported_messengers: List[str] = ['telegram']
+    supported_messengers: list[str] = ['telegram']
 
     @classmethod
     def create_published(cls, entity: Entity):
@@ -221,7 +219,7 @@ class PythonzEmailMessage(EmailHtmlMessage):
     title: str = 'Базовые оповещения'
     allow_user_subscription: bool = False
 
-    def __init__(self, subject: str, html_or_dict: Union[str, dict], template_path: str = None):
+    def __init__(self, subject: str, html_or_dict: str | dict, template_path: str = None):
 
         if not isinstance(html_or_dict, dict):
             html_or_dict = {'text': html_or_dict.replace('\n', '<br>')}
@@ -238,14 +236,9 @@ class PythonzEmailMessage(EmailHtmlMessage):
         return f'pythonz.net: {subject}'
 
     @classmethod
-    def get_admins_emails(cls) -> List[str]:
+    def get_admins_emails(cls) -> list[str]:
         """Возвращает адреса электронной почты администраторов проекта."""
-        to = []
-
-        for item in settings.ADMINS:
-            to.append(item[1])  # Адрес электронной почты админа.
-
-        return to
+        return [item[1] for item in settings.ADMINS]
 
 
 class PythonzEmailOneliner(PythonzEmailMessage):
@@ -327,8 +320,9 @@ class PythonzEmailDigest(PythonzEmailMessage):
         cls,
         date_from: datetime,
         date_till: datetime,
+        *,
         modified_mode: bool = False
-    ) -> Dict[str, QuerySet]:
+    ) -> dict[str, QuerySet]:
         """Возвращает данные о материалах за указанный период.
 
         :param date_from: Дата начала периода
@@ -357,7 +351,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
         return realms_data
 
     @classmethod
-    def extend_realms_data(cls, realms_data: Dict, realm: Type[RealmBase], filter_kwargs: dict, order_by: str):
+    def extend_realms_data(cls, realms_data: dict, realm: type[RealmBase], filter_kwargs: dict, order_by: str):
         """Дополняет словарь с данными областей объектами из указанной области.
         Требуемые объекты определяются указанным фильтром.
 
@@ -377,7 +371,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
                 realms_data[realm.model.get_verbose_name_plural()] = entries
 
     @classmethod
-    def get_upcoming_items(cls) -> Dict[str, QuerySet]:
+    def get_upcoming_items(cls) -> dict[str, QuerySet]:
         """Возвращает данные о материалах которые вскоре станут актульными.
         Например, о грядущих событиях.
 

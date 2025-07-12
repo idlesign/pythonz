@@ -1,12 +1,17 @@
-from typing import Dict, Type
-
 from .base import ItemsFetcherBase
 from .fetchers import (
-    MailarchAnnounce, MailarchConferences, MailarchIdeas,
-    Stackoverflow, StackoverflowRu, GithubTrending, Lwn, Discuss, Psf,
+    Discuss,
+    GithubTrending,
+    Lwn,
+    MailarchAnnounce,
+    MailarchConferences,
+    MailarchIdeas,
+    Psf,
+    Stackoverflow,
+    StackoverflowRu,
 )
 
-SUMMARY_FETCHERS: Dict[str, Type[ItemsFetcherBase]] = dict(((fetcher.alias, fetcher) for fetcher in [
+SUMMARY_FETCHERS: dict[str, type[ItemsFetcherBase]] = {fetcher.alias: fetcher for fetcher in [
     MailarchAnnounce,
     MailarchConferences,
     MailarchIdeas,
@@ -16,5 +21,5 @@ SUMMARY_FETCHERS: Dict[str, Type[ItemsFetcherBase]] = dict(((fetcher.alias, fetc
     StackoverflowRu,
     GithubTrending,
     Lwn,
-]))
+]}
 """Сборщики сводок, индексированные псевдонимами."""

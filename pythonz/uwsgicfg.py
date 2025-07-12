@@ -4,7 +4,7 @@ from uwsgiconf.presets.nice import PythonSection
 
 def get_configurations() -> PythonSection:
 
-    from django.conf import settings
+    from django.conf import settings  # noqa: PLC0415
 
     in_production = settings.IN_PRODUCTION
 

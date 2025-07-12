@@ -1,5 +1,5 @@
 from pythonz.apps.integration.summary.base import SummaryItem
-from pythonz.apps.models import Summary, Category
+from pythonz.apps.models import Category, Summary
 
 
 def test_create_article(robot):

@@ -1,14 +1,13 @@
-from typing import List
 
 from django.db import models
 from etc.models import InheritedModel
 from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
+from ..generics.models import CommonEntityModel, ModelWithAuthorAndTranslator, ModelWithCompiledText, RealmBaseModel
 from .discussion import ModelWithDiscussions
 from .place import Place
-from .shared import UtmReady, HINT_IMPERSONAL_REQUIRED
-from ..generics.models import CommonEntityModel, ModelWithCompiledText, ModelWithAuthorAndTranslator, RealmBaseModel
+from .shared import HINT_IMPERSONAL_REQUIRED, UtmReady
 
 
 class Community(
@@ -17,7 +16,7 @@ class Community(
     """Модель сообществ. Формально объединяет некоторую группу людей."""
 
     allow_edit_published: bool = True
-    paginator_defer: List[str] = ['url', 'text', 'text_src']
+    paginator_defer: list[str] = ['url', 'text', 'text_src']
 
     place = models.ForeignKey(
         Place, verbose_name='Место', related_name='communities', null=True, blank=True,
