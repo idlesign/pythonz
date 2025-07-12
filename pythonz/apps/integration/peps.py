@@ -27,16 +27,16 @@ RE_MAIL_TYPE2 = re.compile(r'[^(]+\(([^)]+)\)')
 
 
 class PepInfo(NamedTuple):
-    num: str
+    num: int
     title: str
     status: str
     type: str
-    created: str
-    authors: str
-    versions: str
-    superseded: str
-    replaces: str
-    requires: str
+    created: datetime
+    authors: list[str]
+    versions: list[str]
+    superseded: list[str]
+    replaces: list[str]
+    requires: list[str]
 
 
 def strip_mail(value: str) -> list[str]:
@@ -105,7 +105,7 @@ def get_peps(exclude_peps: list[str] = None, limit: int = None) -> list[PepInfo]
         pep['pep'] = int(pep['pep'])
         pep['author'] = strip_mail(pep['author'])
 
-        version = pep.get('python-version', [])
+        version = pep.get('python-version', '')
 
         if version:
             version = [match[0].replace(',', '.').replace('3000', '3.0') for match in RE_VERSION.findall(version)]
@@ -169,7 +169,7 @@ def get_peps(exclude_peps: list[str] = None, limit: int = None) -> list[PepInfo]
 
     exclude_peps = exclude_peps or []
     peps = []
-    url_base = 'https://api.github.com/repos/python/peps/contents/'
+    url_base = 'https://api.github.com/repos/python/peps/contents/peps?ref=main'
 
     pep_counter = 0
     limit = limit or float('inf')
@@ -205,10 +205,10 @@ def get_peps(exclude_peps: list[str] = None, limit: int = None) -> list[PepInfo]
     return peps
 
 
-def sync(*, skip_deadend_peps: bool = True, limit: int = None) -> dict[int, 'PEP']:
+def sync(*, skip_finalized: bool = True, limit: int = None) -> dict[int, 'PEP']:
     """Синхронизирует данные БД сайта с данными PEP из репозитория.
 
-    :param skip_deadend_peps: Следует ли пропустить ПУПы, состояние которых уже не измениться.
+    :param skip_finalized: Следует ли пропустить ПУПы, состояние которых уже не измениться.
     :param limit: Максимальное количество PEP, которые следует обработать.
 
     """
@@ -236,19 +236,17 @@ def sync(*, skip_deadend_peps: bool = True, limit: int = None) -> dict[int, 'PEP
 
     exclude_peps = None
 
-    if skip_deadend_peps:
-        exclude_peps = PEP.objects.filter(status__in=PEP.STATUSES_DEADEND).values_list('slug', flat=True)
+    if skip_finalized:
+        exclude_peps = PEP.objects.filter(status__in=PEP.STATUSES_FINAL).values_list('slug', flat=True)
 
     peps = get_peps(exclude_peps=exclude_peps, limit=limit)
 
-    known_peps = {pep.num: pep for pep in PEP.objects.all()}
+    known_peps: dict[int, PEP] = {pep.num: pep for pep in PEP.objects.all()}
     known_versions = []
 
     submitter_id = settings.ROBOT_USER_ID
 
     for pep in peps:
-
-        pep: PepInfo
 
         num = pep.num
         status_id = int(map_statuses.get(pep.status, 0))
@@ -264,7 +262,7 @@ def sync(*, skip_deadend_peps: bool = True, limit: int = None) -> dict[int, 'PEP
 
         if num in known_peps:
 
-            pep_model: PEP = known_peps[num]
+            pep_model = known_peps[num]
 
             if pep_model.status != status_id:
                 pep_model.status = status_id

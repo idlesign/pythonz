@@ -27,5 +27,5 @@ def test_strip_mail():
 
 @pytest.mark.slow
 def test_sync(robot):
-    synced = sync(limit=3, skip_deadend_peps=True)
+    synced = sync(limit=3, skip_finalized=True)
     assert len(synced) == 3

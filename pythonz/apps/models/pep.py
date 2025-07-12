@@ -42,7 +42,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
         Status.FOOL: ('Апр.', ''),
     }
 
-    STATUSES_DEADEND = [
+    STATUSES_FINAL = [
         Status.WITHDRAWN,
         Status.REJECTED,
         Status.SUPERSEDED,
