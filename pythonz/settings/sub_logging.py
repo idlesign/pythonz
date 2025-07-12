@@ -1,3 +1,5 @@
+import os
+
 from .sub_paths import PROJECT_DIR_STATE
 
 LOGGING = {
@@ -30,12 +32,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': str(PROJECT_DIR_STATE / 'debug.log'),
-            'formatter': 'verbose'
-        },
         'null': {
             'class': 'logging.NullHandler',
         },
@@ -63,4 +59,14 @@ LOGGING = {
         },
     }
 }
+
+if not os.environ.get('PYTEST_VERSION'):
+    # запуск не из автотестов
+    LOGGING['handlers']['file'] = {
+        'level': 'DEBUG',
+        'class': 'logging.FileHandler',
+        'filename': f"{PROJECT_DIR_STATE / 'debug.log'}",
+        'formatter': 'verbose'
+    }
+
 LOGGERS = LOGGING['loggers']
