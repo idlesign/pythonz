@@ -21,14 +21,15 @@ def check_page(request_client):
             method = client.post
             kwargs['data'] = data
 
-        content = method(
+        response = method(
             (view, args),
             **kwargs,
             follow=True
-        ).content.decode()
+        )
+        content = response.content.decode()
 
         for assertion in assertions:
-            assert assertion in content
+            assert assertion in content, content
 
         return content
 
@@ -202,7 +203,7 @@ def test_logout(check_page, robot):
 
     check_page('logout', assertions=[
         'Про Python</h1>',  # Перенаправление на главную.
-    ], user=robot)
+    ], data = {}, user=robot)
 
 
 def test_settings(check_page, robot):

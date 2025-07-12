@@ -37,7 +37,7 @@ class GoogleCalendarSource(EventSource):
     def compose_item(self, event: Calendar.Event) -> dict:
 
         try:
-            url = re.findall(r'="([^"]+)"', event.description)[0]
+            url = re.findall(r'="([^"]+)"', event.description or '')[0]
 
         except IndexError:
             url = ''
