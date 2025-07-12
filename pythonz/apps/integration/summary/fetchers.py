@@ -32,6 +32,7 @@ class Stackoverflow(StackdataBase):
     site: str = 'stackoverflow'
     domain: str = 'stackoverflow.com'
     query_revision_id: int = 851710
+    """https://data.stackexchange.com/stackoverflow/query/682499/top-n-python-questions-since-x"""
 
 
 class StackoverflowRu(StackdataBase):

@@ -17,8 +17,8 @@ SUMMARY_FETCHERS: dict[str, type[ItemsFetcherBase]] = {fetcher.alias: fetcher fo
     MailarchIdeas,
     Discuss,
     Psf,
-    Stackoverflow,
-    StackoverflowRu,
+    # Stackoverflow,  # 403 ошибка при получении csv
+    # StackoverflowRu,
     GithubTrending,
     Lwn,
 ]}
