@@ -5,11 +5,11 @@ from .sub_logging import *  # noqa
 from .sub_security import *  # noqa
 from .sub_sentry import init_sentry  # noqa
 
-from pythonz import VERSION_STR
+from pythonz import VERSION
 
 SITE_URL = 'https://pythonz.net'
 PROJECT_SOURCE_URL = 'https://github.com/idlesign/pythonz'
-USER_AGENT = f'pythonz.net/{VERSION_STR} (press@pythonz.net)'
+USER_AGENT = f'pythonz.net/{VERSION} (press@pythonz.net)'
 
 ROBOT_USER_ID = 1
 """Идентификатор пользователя-робота."""

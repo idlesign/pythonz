@@ -2,5 +2,5 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pythonz.settings.auto')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pythonz.settings')
 application = get_wsgi_application()
