@@ -10,7 +10,7 @@ if [[ $1 != 'novenv' ]]; then
 
     echo "Trying to use virtual environment '../venv' ..."
 
-    . venv/bin/activate
+    . .venv/bin/activate
 
 else
 
