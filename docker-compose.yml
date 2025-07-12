@@ -2,6 +2,6 @@ version: '3.8'
 services:
   web:
     build: .
-    command: python3 /app/pythonz/manage.py runserver 0.0.0.0:8000
+    command: uv run pythonz runserver 0.0.0.0:8000
     ports:
       - 8000:8000

@@ -1,24 +1,19 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
-RUN apt-get update && \
-    apt-get upgrade -y
+RUN apt update && \
+    apt upgrade -y
 
-RUN apt-get install -y python3-pip libpq-dev
-RUN pip3 install --upgrade pip
+RUN apt install -y  \
+    curl libpq-dev python3-dev build-essential libjpeg-dev  \
+    libxml2-dev libxslt1-dev  \
+    libpcre3-dev libssl-dev
 
-ARG DJANGO_SUPERUSER_USERNAME=admin
-ARG DJANGO_SUPERUSER_PASSWORD=password
-ARG DJANGO_SUPERUSER_EMAIL=admin@example.com
+# add uv
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+ENV PATH="/root/.local/bin/:$PATH"
 
 ADD . /app
 WORKDIR /app
 
-RUN pip3 install -r requirements.txt && \
-    pip3 install -r tests/requirements.txt && \
-    pip3 install -e .
-
-RUN mkdir state
-
-RUN pythonz migrate && \
-    pythonz createsuperuser --noinput
-
+RUN ./bootstrap.sh

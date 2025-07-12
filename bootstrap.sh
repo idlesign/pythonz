@@ -5,10 +5,11 @@
 # Run as follows:
 #   ./bootstrap.sh
 #
+set -e
 
-uv sync
+uv sync --locked
 
-mkdir state
+mkdir -p state
 
 source .venv/bin/activate
 
@@ -18,3 +19,5 @@ export DJANGO_SUPERUSER_USERNAME=admin
 export DJANGO_SUPERUSER_PASSWORD=admin
 export DJANGO_SUPERUSER_EMAIL=admin@example.com
 pythonz createsuperuser
+
+set +e
