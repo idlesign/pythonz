@@ -7,8 +7,12 @@ from .fetchers import (
     MailarchConferences,
     MailarchIdeas,
     Psf,
-    Stackoverflow,
-    StackoverflowRu,
+)
+from .fetchers import (
+    Stackoverflow as Stackoverflow,
+)
+from .fetchers import (
+    StackoverflowRu as StackoverflowRu,
 )
 
 SUMMARY_FETCHERS: dict[str, type[ItemsFetcherBase]] = {fetcher.alias: fetcher for fetcher in [
