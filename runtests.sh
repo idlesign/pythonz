@@ -18,4 +18,4 @@ else
 
 fi
 
-py.test
+pytest

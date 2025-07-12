@@ -6,16 +6,15 @@
 #   ./bootstrap.sh
 #
 
-python3 -m venv venv
-
-source venv/bin/activate
-
-pip install wheel
-pip install -r requirements.txt
-pip install -r tests/requirements.txt
-pip install -e .
+uv sync
 
 mkdir state
 
+source .venv/bin/activate
+
 pythonz migrate
+
+export DJANGO_SUPERUSER_USERNAME=admin
+export DJANGO_SUPERUSER_PASSWORD=admin
+export DJANGO_SUPERUSER_EMAIL=admin@example.com
 pythonz createsuperuser
