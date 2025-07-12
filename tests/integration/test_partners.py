@@ -51,7 +51,7 @@ def test_get_links(robot):
 def test_booksru(assert_link_data):
 
     data = assert_link_data(
-        partners.BooksRu, 'https://www.books.ru/books/bibliya-705085/')
+        partners.BooksRu, 'https://www.books.ru/books/kapital-4985956/')
 
     assert 'https://favicon.yandex.net/favicon/books.ru' == data['icon_url']
 
@@ -61,7 +61,7 @@ def test_litres(assert_link_data):
 
     assert_link_data(
         partners.LitRes,
-        'https://www.litres.ru/mark-summerfield/programmirovanie-na-python-3-podrobnoe-rukovodstvo-24499518/')
+        'https://www.litres.ru/book/karl-marks/nischeta-filosofii-63109882/')
 
 
 @pytest.mark.slow
@@ -69,7 +69,7 @@ def test_bookvoed(assert_link_data):
 
     assert_link_data(
         partners.Bookvoed,
-        'https://www.bookvoed.ru/book?id=10041789')
+        'https://www.bookvoed.ru/product/kapital-5139682')
 
 
 @pytest.mark.slow

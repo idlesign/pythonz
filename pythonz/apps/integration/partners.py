@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import TYPE_CHECKING, NamedTuple, Union
 
 from bs4 import BeautifulSoup
@@ -70,8 +70,12 @@ class PartnerBase:
             page_soup
         ).lower().strip(' .').replace('руб', 'руб.').replace('₽', 'руб.').strip()
 
-        if price.isdigit():
-            price += ' руб.'
+        try:
+            Decimal(price)
+            price = f'{price} руб.'
+
+        except InvalidOperation:
+            pass
 
         data = {
             'icon_url': f'https://favicon.yandex.net/favicon/{self.title}',
@@ -134,8 +138,8 @@ class LitRes(PartnerBase):
         price = ''
 
         if page_soup:
-            if matches := page_soup.select('.simple-price'):
-                price = matches[0].text
+            if matches := page_soup.findAll('meta', attrs={'itemprop': 'price'}):
+                price = matches[0].attrs['content']
 
         return price
 
@@ -195,10 +199,9 @@ class Bookvoed(PartnerBase):
 
         if page_soup:
 
-            if match := page_soup.find(itemprop='price'):
-                price = match.attrs.get('content') or ''
-                if price:
-                    price = f'{int(Decimal(price))}'
+            if matches := page_soup.select('.product'):
+                attrs = matches[0].attrs
+                price = attrs['data-product-price-discounted']
 
         return price
 
