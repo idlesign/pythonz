@@ -8,7 +8,7 @@ authors = [
 readme = "README.md"
 license = "GPL-3.0-only"
 license-files = ["LICENSE"]
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "awesome-slugify~=1.6.5",
     "beautifulsoup4~=4.13",
