@@ -108,7 +108,6 @@ class UserAdmin(BaseUserAdmin):
         'profile_public',
         'timezone',
         'url',
-        'twitter',
         'email_public'
     )}),)
 

@@ -9,7 +9,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.db.models import QuerySet
 from django.utils import timezone
-from django.utils.text import Truncator
 from sitemessage.exceptions import UnknownMessengerError
 from sitemessage.messages.email import EmailHtmlMessage
 from sitemessage.messages.plain import PlainTextMessage
@@ -31,17 +30,11 @@ def register_messengers():
     SETTINGS = settings.SITEMESSAGES_SETTINGS
     SOCKS5_PROXY = settings.SOCKS5_PROXY
 
-    SETTINGS_TWITTER = SETTINGS['twitter']
     SETTINGS_SMTP = SETTINGS['smtp']
     SETTINGS_TELEGRAM = SETTINGS['telegram']
-    SETTINGS_FB = SETTINGS['fb']
     SETTINGS_VK = SETTINGS['vk']
 
     messengers = []
-
-    if SETTINGS_TWITTER:
-        from sitemessage.messengers.twitter import TwitterMessenger
-        messengers.append(TwitterMessenger(*SETTINGS_TWITTER))
 
     if SETTINGS_SMTP:
         from sitemessage.messengers.smtp import SMTPMessenger
@@ -53,10 +46,6 @@ def register_messengers():
             *SETTINGS_TELEGRAM,
             proxy={'https': f'socks5://{SOCKS5_PROXY}'} if SOCKS5_PROXY else None
         ))
-
-    if SETTINGS_FB:
-        from sitemessage.messengers.facebook import FacebookMessenger
-        messengers.append(FacebookMessenger(*SETTINGS_FB))
 
     if SETTINGS_VK:
         from sitemessage.messengers.vkontakte import VKontakteMessenger
@@ -102,9 +91,7 @@ def connect_signals():
             return False
 
         try:
-            PythonzTwitterMessage.create_published(entity)
             PythonzTelegramMessage.create_published(entity)
-            PythonzFacebookMessage.create_published(entity)
             PythonzVkontakteMessage.create_published(entity)
 
         except UnknownMessengerError:
@@ -131,22 +118,6 @@ class PythonzBaseMessage(PlainTextMessage):
     allow_user_subscription: bool = False
 
 
-class PythonzFacebookMessage(PythonzBaseMessage):
-    """Класс для сообщений о новых материалах на сайте, публикуемых на стене в Facebook."""
-
-    alias: str = 'fb_update'
-    supported_messengers: list[str] = ['fb']
-
-    @classmethod
-    def create_published(cls, entity: Entity):
-        message = entity.get_absolute_url(with_prefix=True, utm_source='fb')
-        cls.create(message)
-
-    @classmethod
-    def create(cls, message: str):
-        cls(message).schedule(cls.recipients('fb', ''))
-
-
 class PythonzVkontakteMessage(PythonzBaseMessage):
     """Класс для сообщений о новых материалах на сайте, публикуемых на стене в ВКонтакте."""
 
@@ -161,34 +132,6 @@ class PythonzVkontakteMessage(PythonzBaseMessage):
     @classmethod
     def create(cls, message: str):
         cls(message).schedule(cls.recipients('vk', settings.VK_GROUP))
-
-
-class PythonzTwitterMessage(PythonzBaseMessage):
-    """Базовый класс для сообщений, рассылаемых pythonz в Twitter."""
-
-    supported_messengers: list[str] = ['twitter']
-
-    @classmethod
-    def create_published(cls, entity: Entity):
-
-        len_max = 139  # Максимальная длина твита. Для верности меньше.
-        len_shortened = 30  # Максимальная длина сокращённого URL
-
-        prefix = f'{entity.get_verbose_name()} «'
-        postfix = '»'
-        if settings.AGRESSIVE_MODE:
-            postfix = f'{postfix} #python'
-
-        title = Truncator(str(entity)).chars(len_max - len_shortened - len(prefix) - len(postfix))
-
-        url = entity.get_absolute_url(with_prefix=True, utm_source='twee')
-        message = f'{prefix}{title}{postfix} {url}'
-
-        cls.create(message)
-
-    @classmethod
-    def create(cls, message: str):
-        cls(message).schedule(cls.recipients('twitter', ''))
 
 
 class PythonzTelegramMessage(PythonzBaseMessage):
@@ -420,9 +363,7 @@ class PythonzEmailDigest(PythonzEmailMessage):
 
 # Регистрируем наши типы сообщений.
 register_message_types(
-    PythonzTwitterMessage,
     PythonzTelegramMessage,
-    PythonzFacebookMessage,
     PythonzVkontakteMessage,
     PythonzEmailMessage,
     PythonzEmailOneliner,
