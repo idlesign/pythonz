@@ -196,7 +196,7 @@ def get_thumb_url(
                 return ''
 
             else:
-                img.thumbnail((width, height), Image.ANTIALIAS)
+                img.thumbnail((width, height), Image.Resampling.LANCZOS)
                 img.convert('RGB').save(f'{thumb_file}', format=img.format.lower())
 
         url = Path(settings.MEDIA_URL) / thumb_file_base
