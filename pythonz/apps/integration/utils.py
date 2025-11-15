@@ -72,6 +72,7 @@ def get_json(url: str, *, return_none_statuses: set[int] = None, silent_statuses
 
     """
     return_none_statuses = return_none_statuses or set()
+    silent_statuses = silent_statuses or set()
     result = {}
 
     try:
