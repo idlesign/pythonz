@@ -338,4 +338,5 @@ class AppForm(RealmEditBaseForm):
         )
 
     def clean_slug(self) -> str | None:
-        return self.cleaned_data.get('slug', '').strip() or None
+        slug = self.cleaned_data.get('slug') or ''
+        return slug.strip() or None

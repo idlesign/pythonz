@@ -44,7 +44,7 @@ class App(
     class Fields:
 
         title = 'Название приложения'
-        slug = 'Назание на PyPI'
+        slug = 'Название на PyPI'
 
         description = {
             'help_text': 'Краткое описание назначения приложения.',
