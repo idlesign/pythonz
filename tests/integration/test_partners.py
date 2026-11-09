@@ -65,6 +65,7 @@ def test_litres(assert_link_data):
 
 
 @pytest.mark.slow
+@pytest.mark.xfail(reason='bookvoed.ru отдаёт 403 ботам, живой запрос невозможен')
 def test_bookvoed(assert_link_data):
 
     assert_link_data(
