@@ -58,6 +58,7 @@ def test_booksru(assert_link_data):
 
 
 @pytest.mark.slow
+@pytest.mark.xfail(reason='litres.ru может блокировать ботов, живой запрос нестабилен')
 def test_litres(assert_link_data):
 
     assert_link_data(
