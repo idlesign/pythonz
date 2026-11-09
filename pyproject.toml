@@ -42,7 +42,7 @@ dependencies = [
     "sentry-sdk~=2.32.0",
     "twitter~=1.19.6",
     "uwsgi~=2.0.30",
-    "uwsgiconf[cli]~=2.0.0",
+    "uwsgiconf[cli]~=2.4.0",
 ]
 
 [project.urls]

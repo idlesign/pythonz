@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = "==3.12.*"
 
 [[package]]
@@ -585,7 +585,7 @@ requires-dist = [
     { name = "sentry-sdk", specifier = "~=2.32.0" },
     { name = "twitter", specifier = "~=1.19.6" },
     { name = "uwsgi", specifier = "~=2.0.30" },
-    { name = "uwsgiconf", extras = ["cli"], specifier = "~=2.0.0" },
+    { name = "uwsgiconf", extras = ["cli"], specifier = "~=2.4.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -790,11 +790,11 @@ sdist = { url = "https://files.pythonhosted.org/packages/6f/f0/d794e9c7359f488b1
 
 [[package]]
 name = "uwsgiconf"
-version = "2.0.0"
+version = "2.4.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/9d/0f/9f326057168196a0719673d3a6e8cfd3eaa00eb8050f17a47dea30670d06/uwsgiconf-2.0.0.tar.gz", hash = "sha256:817e282a2ecf8ef39d8a736b88be276a8b246750f63117f6b9d726f4b4cbdca0", size = 127040, upload-time = "2025-06-10T13:51:16.773Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/18/08/4fe6b49d70aca0c4d0258b35c697c54556654a9b26ad2e657ab7c611e996/uwsgiconf-2.4.0.tar.gz", hash = "sha256:5b547abd197ce7f0b7dc6c0266b469c6bf375a3d41d920dbf94d2808248100fb", size = 131822, upload-time = "2026-09-22T14:19:54.002Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0d/9a/95ebbbd8f0bfd9101278b45190247a3f67bbbef92a69be0c06f76e58ca7d/uwsgiconf-2.0.0-py3-none-any.whl", hash = "sha256:121949b68c02d9ad050c4b0c6e5f4db8619f8070a04c654660883f9db3299ead", size = 172989, upload-time = "2025-06-10T13:51:14.116Z" },
+    { url = "https://files.pythonhosted.org/packages/45/a2/749b947e3eeba8cb51fd9226479eaa6ead303f647e007e3debc0a30c4346/uwsgiconf-2.4.0-py3-none-any.whl", hash = "sha256:d808a636a723867cc0c710d6d068e47371c7ca3886b96446f09b3ea605e562ff", size = 180394, upload-time = "2026-09-22T14:19:52.129Z" },
 ]
 
 [package.optional-dependencies]
