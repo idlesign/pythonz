@@ -48,6 +48,7 @@ def test_get_links(robot):
 
 
 @pytest.mark.slow
+@pytest.mark.xfail(reason='books.ru отдаёт цену в usd вместо рублей')
 def test_booksru(assert_link_data):
 
     data = assert_link_data(
@@ -74,6 +75,7 @@ def test_bookvoed(assert_link_data):
 
 
 @pytest.mark.slow
+@pytest.mark.xfail(reason='book24.ru может отдавать 403 ботам, живой запрос нестабилен')
 def test_book24(assert_link_data):
 
     assert_link_data(
