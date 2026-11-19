@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from sitecats.toolbox import get_category_aliases_under, get_category_lists
+from sitecats.toolbox import get_category_aliases_under, get_category_lists, get_tie_model
 
 from ..generics.views import HttpRequest, RealmView
 from ..models import Category
@@ -27,6 +27,10 @@ class CategoryListingView(RealmView):
         # Выводим список материалов (разбитых по областям сайта) для конкретной категории.
         category = get_object_or_404(Category.objects.select_related('parent'), pk=obj_id)
 
+        # Одним запросом получаем id связанных с категорией объектов, сгруппированные по моделям.
+        # Это избавляет от запросов по областям, не имеющим связей с категорией.
+        linked = get_tie_model().get_linked_objects(filter_kwargs={'category_id': obj_id}, id_only=True)
+
         realms_links = {}
 
         for realm in realms:
@@ -35,7 +39,13 @@ class CategoryListingView(RealmView):
             if not hasattr(realm_model, 'categories'):  # ModelWithCategory
                 continue
 
-            items = realm_model.get_objects_in_category(category)
+            linked_ids = linked.get(realm_model)
+
+            if not linked_ids:
+                continue
+
+            items = list(
+                realm_model.get_actual().filter(id__in=linked_ids).select_related('submitter'))
 
             if not items:
                 continue

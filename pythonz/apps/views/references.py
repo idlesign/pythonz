@@ -18,8 +18,10 @@ class ReferenceDetailsView(DetailsView):
     def update_context(self, context: dict, request: HttpRequest):
 
         reference = context['item']
-        context['children'] = reference.get_actual(parent=reference).order_by('title')
+        context['children'] = reference.get_actual(
+            parent=reference).order_by('title').select_related('version_deprecated')
 
         if reference.parent is not None:
             context['siblings'] = reference.get_actual(
-                parent=reference.parent, exclude_id=reference.id).order_by('title')
+                parent=reference.parent, exclude_id=reference.id).order_by(
+                    'title').select_related('version_deprecated')

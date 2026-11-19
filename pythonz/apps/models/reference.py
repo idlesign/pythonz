@@ -59,7 +59,7 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     slug_auto: bool = True
     allow_linked: bool = False
     allow_edit_published: bool = True
-    details_related: list[str] = ['parent', 'submitter']
+    details_related: list[str] = ['parent', 'submitter', 'version_added', 'version_deprecated']
 
     @unique
     class Type(models.IntegerChoices):
