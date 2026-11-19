@@ -6,6 +6,8 @@
 __pycache__
 wscaff.yml
 state/
+conf/
 venv/
 support/
 env_production.py
+.DS_Store
