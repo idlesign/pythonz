@@ -2,7 +2,6 @@ from enum import unique
 from typing import Optional
 
 from django.db import IntegrityError, models
-from simple_history.models import HistoricalRecords
 
 from ..generics.models import RealmBaseModel, WithRemoteSource
 from ..integration.base import RemoteSource
@@ -34,8 +33,6 @@ class Place(RealmBaseModel, ModelWithDiscussions):
 
     geo_type = models.CharField(
         'Тип', max_length=25, null=True, blank=True, choices=GeoType.choices, db_index=True)
-
-    history = HistoricalRecords()
 
     class Meta:
 
@@ -86,7 +83,6 @@ class Place(RealmBaseModel, ModelWithDiscussions):
             place = cls.objects.get(geo_title=full_title)
 
         return place
-
 
 class WithPlace(WithRemoteSource):
     """Примесь для сущностей, которые могут связывать с местом."""

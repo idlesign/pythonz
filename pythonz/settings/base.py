@@ -78,7 +78,6 @@ INSTALLED_APPS = [
 
     'uwsgiconf.contrib.django.uwsgify',
 
-    'simple_history',
     'robots',
 
     'pythonz.apps',
@@ -95,7 +94,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'pythonz.apps.middleware.TimezoneMiddleware',
-    'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
 

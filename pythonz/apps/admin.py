@@ -11,7 +11,6 @@ from django.db import models
 from django.db.models import QuerySet
 from django.http import HttpRequest
 from etc.admin import CustomModelPage
-from simple_history.admin import SimpleHistoryAdmin
 
 from .forms.forms import BookForm
 from .integration.partners import get_partners_choices
@@ -179,7 +178,7 @@ class VacancyAdmin(admin.ModelAdmin):
     ordering = ['-time_created']
 
 
-class EntityBaseAdmin(SimpleHistoryAdmin):
+class EntityBaseAdmin(admin.ModelAdmin):
 
     list_display = ('time_created', 'title', 'submitter', 'time_published')
     raw_id_fields = ['submitter', 'last_editor', 'linked']

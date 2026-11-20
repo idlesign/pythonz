@@ -1,7 +1,6 @@
 
 from django.db import models
 from etc.models import InheritedModel
-from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
 from ..generics.models import CommonEntityModel, ModelWithAuthorAndTranslator, RealmBaseModel
@@ -23,8 +22,6 @@ class Book(
     isbn_ebook = models.CharField('ISBN эл. книги', max_length=20, unique=True, null=True, blank=True)
 
     authors = models.ManyToManyField('Person', verbose_name='Авторы', related_name='books', blank=True)
-
-    history = HistoricalRecords()
 
     persons_fields: list[str] = ['authors']
 

@@ -7,7 +7,6 @@ from django.db.models import F, QuerySet
 from django.utils import timezone
 from django.utils.formats import date_format
 from etc.models import InheritedModel
-from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
 from ..generics.models import CommonEntityModel, ModelWithAuthorAndTranslator, ModelWithCompiledText
@@ -63,8 +62,6 @@ class Event(
         help_text='Дату завершения можно и не указывать.')
 
     fee = models.BooleanField('Участие платное', null=True, blank=True, db_index=True)
-
-    history = HistoricalRecords()
 
     class Meta:
 

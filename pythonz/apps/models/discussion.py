@@ -2,7 +2,6 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from etc.models import InheritedModel
-from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
 from ..generics.models import CommonEntityModel, ModelWithCompiledText, RealmBaseModel
@@ -24,8 +23,6 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
 
     linked_object = GenericForeignKey()
 
-    history = HistoricalRecords()
-
     class Meta:
 
         verbose_name = 'Обсуждение'
@@ -44,7 +41,6 @@ class Discussion(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithCat
 
     def get_description(self) -> str:
         return truncate_chars(self.text, 360, html=True)
-
 
 class ModelWithDiscussions(models.Model):
     """Класс-примесь к моделям сущностей, для который разрешено оставление мнений."""

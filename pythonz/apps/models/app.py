@@ -4,7 +4,6 @@ from time import sleep
 from django.db import models
 from django.db.models import Q, QuerySet
 from etc.models import InheritedModel
-from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
 from ..generics.models import CommonEntityModel, ModelWithAuthorAndTranslator, ModelWithCompiledText, RealmBaseModel
@@ -31,8 +30,6 @@ class App(
 
     slug_pick: bool = True
     translator = None
-
-    history = HistoricalRecords()
 
     persons_fields: list[str] = ['authors']
 

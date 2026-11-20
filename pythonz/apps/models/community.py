@@ -1,7 +1,6 @@
 
 from django.db import models
 from etc.models import InheritedModel
-from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
 from ..generics.models import CommonEntityModel, ModelWithAuthorAndTranslator, ModelWithCompiledText, RealmBaseModel
@@ -31,8 +30,6 @@ class Community(
             f'{ModelWithAuthorAndTranslator._hint_userlink}'))
 
     url = models.URLField('Страница в сети', null=True, blank=True)
-
-    history = HistoricalRecords()
 
     class Meta:
 

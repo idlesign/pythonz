@@ -4,7 +4,6 @@ from django.db import models
 from django.db.models import Q, QuerySet
 from django.utils.functional import cached_property
 from etc.models import InheritedModel
-from simple_history.models import HistoricalRecords
 
 from ..generics.models import CommonEntityModel, ModelWithCompiledText, RealmBaseModel
 from .discussion import ModelWithDiscussions
@@ -50,7 +49,6 @@ class ReferenceMissing(models.Model):
             cls(term=search_term, hits=1).save()
 
         return obj is None
-
 
 class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDiscussions, ModelWithCompiledText):
     """Модель сущности `Справочник`."""
@@ -126,8 +124,6 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
     search_terms = models.CharField(
         'Термины поиска', max_length=500, blank=True, default='',
         help_text='Дополнительные фразы, по которым можно найти данную статью, например: <i>«список», для «list»</i>')
-
-    history = HistoricalRecords()
 
     class Meta:
 

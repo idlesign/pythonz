@@ -2,7 +2,6 @@ from enum import unique
 
 from django.db import models
 from etc.models import InheritedModel
-from simple_history.models import HistoricalRecords
 from sitecats.models import ModelWithCategory
 
 from ..exceptions import RemoteSourceError
@@ -47,8 +46,6 @@ class Article(
     published_by_author = models.BooleanField('Я являюсь автором данной статьи', default=True)
 
     nofollow = models.BooleanField('Без перехода по ссылкам.', default=False)  # nofollow
-
-    history = HistoricalRecords()
 
     class Meta:
 
