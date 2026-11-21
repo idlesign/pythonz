@@ -7,14 +7,14 @@
             <div id="area_func_proto" class="block">
                 {{ reference.func_proto }}
             </div>
-            {% if reference.func_result %} -> <span id="area_func_result">{{ reference.func_result }}</span>{% endif %}
+            {% if reference.func_result %} -> <span id="area_func_result">{{ reference.func_result|ref_result }}</span>{% endif %}
         </div></div>
         {% endif %}
 
         {% if reference.func_params %}
         <div class="mb-3">
             <div id="area_func_params">
-                {{ reference.func_params|linebreaksbr }}
+                {{ reference.func_params|ref_params }}
             </div>
         </div>
         {% endif %}
@@ -25,9 +25,9 @@
 
 <div id="area_description">
     {% if ide %}
-        {{ reference.text|nolinks }}
+        {{ reference.text|nolinks|ref_marks }}
 
     {% else %}
-        {{ reference.text|safe }}
+        {{ reference.text|ref_marks }}
     {% endif %}
 </div>

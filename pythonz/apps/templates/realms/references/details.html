@@ -8,10 +8,6 @@
 
 {% block page_keywords %}{{ block.super }}, {{ reference.page_keywords }}{% endblock %}
 
-{% block js_bottom %}
-    {% include "realms/references/js.html" %}
-{% endblock %}
-
 {% block breadcrumbs %}
     {% sitetree_breadcrumbs from "references" template "sitetree/crumbs.html" %}
 {% endblock %}
