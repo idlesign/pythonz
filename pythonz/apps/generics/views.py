@@ -455,8 +455,9 @@ class EditView(RealmView):
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         return super().dispatch(request, *args, **kwargs)
 
-    def preview_rst(self, request: HttpRequest, obj_id: int | None = None) -> HttpResponse:
-        """Обслуживает ajax-запрос. Обрабатывает запрос на предварительный просмотр текста в формате rst.
+    def preview_text(self, request: HttpRequest, obj_id: int | None = None) -> HttpResponse:
+        """Обслуживает ajax-запрос. Обрабатывает запрос на предварительный просмотр
+        форматированного текста.
 
         :param request:
 
@@ -464,7 +465,7 @@ class EditView(RealmView):
         return HttpResponse(ModelWithCompiledText.compile_text(request.POST.get('text_src', '')))
 
     @ajax_dispatch({
-        'preview-rst': preview_rst,
+        'preview-text': preview_text,
     })
     def get(self, request: HttpRequest, obj_id: int | None = None) -> HttpResponse:
 

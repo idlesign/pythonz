@@ -1,4 +1,4 @@
-/*globals $ sitecats SimpleMDE ymaps */
+/*globals $ sitecats EasyMDE ymaps */
 
 var pythonz = {
 
@@ -8,6 +8,7 @@ var pythonz = {
         $(function(){
             pythonz.makeGeopatterns();
             pythonz.markUser();
+            pythonz.linkifyVersionMarks();
             pythonz.toggleTags();
 
             sitecats.bootstrap();
@@ -48,6 +49,17 @@ var pythonz = {
         });
     },
 
+    linkifyVersionMarks: function() {
+        "use strict";
+        // Превращаем отметки актуальности/устаревания справочника
+        // (ref-ver-add/ref-ver-del, размечаются на сервере) в ссылки на версии.
+        $('.ref-ver-add, .ref-ver-del').each(function(i, el) {
+            var $el = $(el),
+                version = $.trim($el.text());
+            $el.html('<a href="/versions/named/' + version + '/">' + version + '</a>');
+        });
+    },
+
     activateCommentsTab: function(timeout) {
         "use strict";
         setTimeout(function(){
@@ -73,8 +85,8 @@ var pythonz = {
             return;
         }
 
-        // _replaceSelection() взята из исходников SimpleMDE.
-        // https://github.com/NextStepWebs/simplemde-markdown-editor
+        // _replaceSelection() взята из исходников EasyMDE.
+        // https://github.com/Ionaru/easy-markdown-editor
         // После минификации она обфусцируется и далее недоступна.
 
         function _replaceSelection(cm, active, startEnd, url) {
@@ -125,11 +137,20 @@ var pythonz = {
             };
         }
 
-        return new SimpleMDE({
+        return new EasyMDE({
             element: textareaEl,
             forceSync: true,
             indentWithTabs: false,
             spellChecker: false,
+            // Префикс для классов кнопок панели. Без него кнопка таблицы
+            // получает класс table и растягивается Bootstrap-утилитой .table.
+            toolbarButtonClassPrefix: 'mde',
+            shortcuts: {
+                // Предпросмотр осуществляется сервером (вкладка «Предпросмотр»),
+                // встроенные средства редактора отключаем.
+                togglePreview: null,
+                toggleSideBySide: null
+            },
             toolbar: [
                 'bold',
                 'italic',
@@ -138,105 +159,34 @@ var pythonz = {
                 getButton('list_ul', 'list-ul', 'Маркированный список'),
                 getButton('table', 'table', 'Таблица'),
                 '|',
-                'image',
-                'link',
+                getButton('image', 'picture-o', 'Изображение'),
+                getButton('link', 'link', 'Ссылка'),
                 '|',
                 getButton('note', 'flag-o', 'На заметку'),
                 getButton('warning', 'exclamation-triangle', 'Внимание'),
                 getButton('code', 'code', 'Код'),
                 '|',
                 getButton('gist', 'github', 'Gist'),
-                getButton('podster', 'headphones', 'Подкаст с podster.fm'),
+                getButton('video', 'youtube-play', 'Видео'),
+                getButton('podcast', 'headphones', 'Подкаст с podster.fm'),
                 '|',
                 'fullscreen'
             ],
             insertTexts: {
-                image: ['.. image:: ', ''],
-                gist: ['.. gist:: ', ''],
-                note: ['.. note:: ', ''],
-                warning: ['.. warning:: ', ''],
-                podster: ['.. podster:: ', ''],
-                link: ['`', '<>`_'],
-                accent: ['``', '``'],
-                table: ['\n.. table::\n ', '|\n\n\n'],
-                code: ['\n.. code::\n', '\n\n\n'],
-                quote: ['\n```\n', '\n```'],
-                list_ul: ['\n* ', '\n\n']
+                image: ['![', '](https://)'],
+                link: ['[', '](https://)'],
+                accent: ['`', '`'],
+                quote: ['\n> ', '\n'],
+                list_ul: ['\n* ', '\n'],
+                table: ['\n| Заголовок | Заголовок |\n|---|---|\n| ', ' |\n\n'],
+                code: ['\n```python\n', '\n```\n\n'],
+                note: ['\n!!! note\n    ', '\n\n'],
+                warning: ['\n!!! warning\n    ', '\n\n'],
+                gist: ['\n```gist\n', '\n```\n\n'],
+                video: ['\n```video\n', '\n```\n\n'],
+                podcast: ['\n```podcast\n', '\n```\n\n']
             }
         });
-
-    },
-
-    Reference: {
-
-        RULE_PYVERSION_ADDED: [
-            /\+py([\w\.]+)/g,
-            '<small><div class="badge badge-info" title="Актуально с версии"><a href="/versions/named/$1/">$1</a></div></small>'],
-
-        RULE_PYVERSION_REMOVED: [
-            /-py([\w\.]+)/g,
-            '<small><div class="badge badge-danger" title="Устрело в версии"><a href="/versions/named/$1/">$1</a></div></small>'],
-
-        RULE_LITERAL: [/'([^']+)'/g, '<strong class="cl__green">$1</strong>'],
-        RULE_UNDERMETHOD: [/(__[^\s]+__)/g, '<i>$1</i>'],
-        RULE_EMDASH: [/\s+-\s+/g, ' &#8212; '],
-
-        decorateDescription: function(areaId) {
-            "use strict";
-            this.decorateArea(areaId,
-                [
-                    this.RULE_PYVERSION_REMOVED,
-                    this.RULE_PYVERSION_ADDED,
-                    this.RULE_EMDASH
-                ]
-            );
-        },
-
-        decorateFuncResult: function(areaId) {
-            "use strict";
-            this.decorateArea(areaId,
-                [
-                    this.RULE_PYVERSION_REMOVED,
-                    this.RULE_PYVERSION_ADDED,
-                    this.RULE_EMDASH
-                ]
-            );
-        },
-
-        decorateFuncParams: function(areaId) {
-            "use strict";
-            var funcProcessArgs = function (matchStr, argName, separator) {
-                    argName = argName.replace(/([^\s]+)(\s.+)/g, '$1<span class="text-muted">$2</span>')
-                    return '<span class="fa fa-certificate text-muted"></span> <b>' + argName + '</b>' + separator;
-                };
-
-            this.decorateArea(areaId,
-                [
-                    [/([^->]+)(\s--)/g, funcProcessArgs],
-                    [/--/g, ':'],
-                    this.RULE_PYVERSION_REMOVED,
-                    this.RULE_PYVERSION_ADDED,
-                    this.RULE_LITERAL,
-                    this.RULE_UNDERMETHOD,
-                    this.RULE_EMDASH
-                ]
-            );
-        },
-
-        decorateArea: function(areaId, rules) {
-            "use strict";
-            var $area = $('#' + areaId),
-                html = $area.html();
-
-            if (html !== undefined) {
-                $.each(rules, function (idx, rule) {
-                    html = html.replace(rule[0], rule[1]);
-                });
-            }
-
-            $area.html(html);
-
-        }
 
     },
 

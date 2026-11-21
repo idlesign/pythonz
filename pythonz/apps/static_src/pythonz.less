@@ -435,7 +435,7 @@ nav .submenu {
 
 .subtitle {
   .gepattern-mixin;
-  display: inline-block;
+  display: block;
   font-size: 1.2em;
 }
 
@@ -495,4 +495,66 @@ nav .submenu {
 
 #box-tags .title {
     color: #555555 !important;
+}
+
+
+/* Разметка справочника (серверная, templatetags/text.py; ранее делалась в js). */
+
+.ref-ver-add,
+.ref-ver-del {
+  display: inline-block;
+  padding: 0.25em 0.4em;
+  font-size: 75%;
+  font-weight: bold;
+  border-radius: 0.25rem;
+  color: #ffffff;
+}
+
+.ref-ver-add {
+  background-color: #0E5E6B;
+}
+
+.ref-ver-del {
+  background-color: #d9534f;
+}
+
+.ref-lit {
+  font-weight: bold;
+  color: @cl__green;
+}
+
+.ref-dunder {
+  font-style: italic;
+}
+
+.ref-param {
+  font-weight: bold;
+}
+
+.ref-param::before {
+  content: "\f0a3";
+  font-family: FontAwesome;
+  font-weight: normal;
+  color: #888888;
+  margin-right: 3px;
+}
+
+.ref-param-hint {
+  color: #888888;
+}
+
+/* Одностолбцовые таблицы с пустой шапкой (списки ссылок в дайджестах). */
+.table thead:not(:has(th:not(:empty))) {
+  display: none;
+}
+
+.ref-ver-add a,
+.ref-ver-del a {
+  color: #ffffff;
+}
+
+/* Панель редактора markdown: одна строка с прокруткой, без переносов. */
+.editor-toolbar {
+  white-space: nowrap;
+  overflow-x: auto;
 }

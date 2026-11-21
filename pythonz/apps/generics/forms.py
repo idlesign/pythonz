@@ -4,7 +4,7 @@ from django.utils import timezone
 from siteforms.composers.bootstrap4 import SUBMIT, Bootstrap4
 from siteforms.toolbox import ModelForm
 
-from ..forms.widgets import PlaceWidget, RstEditWidget
+from ..forms.widgets import MarkdownEditWidget, PlaceWidget
 from ..models import Article, User
 
 
@@ -59,6 +59,6 @@ class RealmEditBaseForm(CommonEntityForm):
 
     class Meta:
         widgets = {
-            'text_src': RstEditWidget(attrs={'rows': 12}),
+            'text_src': MarkdownEditWidget(attrs={'rows': 12}),
             'place': PlaceWidget(),
         }

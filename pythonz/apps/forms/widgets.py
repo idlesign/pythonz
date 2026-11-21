@@ -46,8 +46,8 @@ class PlaceWidget(TextInput):
         return self._place_cache.id
 
 
-class RstEditWidget(forms.Widget):
-    """Реализует виджет для редактирования и предпросмотра текста в rst-подобном формате."""
+class MarkdownEditWidget(forms.Widget):
+    """Реализует виджет для редактирования и предпросмотра текста в markdown-формате."""
 
     def __init__(self, attrs=None):
 
@@ -65,6 +65,6 @@ class RstEditWidget(forms.Widget):
 
         final_attrs = self.build_attrs(attrs, {'name': name})
 
-        html = loader.render_to_string('sub/rst_hints.html')
+        html = loader.render_to_string('sub/md_hints.html')
 
         return format_html(html, flatatt(final_attrs), force_str(value))

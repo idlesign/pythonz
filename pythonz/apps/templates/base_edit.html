@@ -4,8 +4,8 @@
 {% block head %}
     {{ form.media }}
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/easymde.min.css">
+    <script src="{{ STATIC_URL }}js/easymde.min.js"></script>
 
 {% endblock %}
 
@@ -35,7 +35,7 @@
 {% block js_bottom %}
 {{ block.super }}
 <script type="text/javascript">
-    pythonz.initEditor($('textarea', '#rst_src')[0]);
+    pythonz.initEditor($('textarea', '#md_src')[0]);
 </script>
 <script>{% include "siteajax/init_csrf.js" %}</script>
 {% endblock %}

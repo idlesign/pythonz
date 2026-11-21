@@ -8,7 +8,7 @@ from ..generics.models import CommonEntityModel, RealmBaseModel
 from ..generics.realms import RealmBase
 from ..integration.videos import VideoBroker
 from ..models import App, Article, Book, Community, Discussion, Event, Reference, User, Version, Video
-from .widgets import RstEditWidget
+from .widgets import MarkdownEditWidget
 
 
 class DiscussionForm(RealmEditBaseForm):
@@ -118,7 +118,7 @@ class ArticleForm(RealmEditBaseForm):
             'text_src': ''
         }
         widgets = {
-            'text_src': RstEditWidget(attrs={'rows': 25}),
+            'text_src': MarkdownEditWidget(attrs={'rows': 25}),
         }
 
     def set_fields_required(self, fields: list[str], *, required: bool = True):
