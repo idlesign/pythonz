@@ -2,7 +2,19 @@ import pytest
 from django.urls import reverse
 
 from pythonz.apps.generics.models import RealmBaseModel
-from pythonz.apps.models import PEP, App, Article, Book, Category, Person, Place, Reference, ReferenceMissing, Version, Video
+from pythonz.apps.models import (
+    PEP,
+    App,
+    Article,
+    Book,
+    Category,
+    Person,
+    Place,
+    Reference,
+    ReferenceMissing,
+    Version,
+    Video,
+)
 from pythonz.apps.search import find_exact, get_areas, search_areas
 
 STATUS_PUBLISHED = RealmBaseModel.Status.PUBLISHED

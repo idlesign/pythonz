@@ -48,12 +48,10 @@ def search_suggest(request: HttpRequest) -> JsonResponse:
     if len(term := request.GET.get('q', '').strip()) >= 2:
 
         for group in search_areas(term).groups:
-
-            for obj in group.results:
-                results.append({
-                    'value': obj.get_absolute_url(),
-                    'text': obj.title,
-                    'area': group.area.title,
-                })
+            results.extend({
+                'value': obj.get_absolute_url(),
+                'text': obj.title,
+                'area': group.area.title,
+            } for obj in group.results)
 
     return JsonResponse({'results': results[:SUGGEST_LIMIT]})

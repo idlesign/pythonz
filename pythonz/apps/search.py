@@ -74,19 +74,16 @@ def get_areas() -> list[SearchArea]:
     """Возвращает области поиска, собранные из декларативных атрибутов областей сайта."""
     from .realms import get_realms  # noqa: PLC0415 во избежание циклического импорта
 
-    areas = []
-
-    for realm in get_realms().values():
-
-        if realm.search_weight_fields:
-            areas.append(SearchArea(
-                model=realm.model,
-                title=realm.model._meta.verbose_name_plural,
-                weight_fields=realm.search_weight_fields,
-                exact_fields=realm.search_exact_fields,
-            ))
-
-    return areas
+    return [
+        SearchArea(
+            model=realm.model,
+            title=realm.model._meta.verbose_name_plural,
+            weight_fields=realm.search_weight_fields,
+            exact_fields=realm.search_exact_fields,
+        )
+        for realm in get_realms().values()
+        if realm.search_weight_fields
+    ]
 
 
 class Backend:
@@ -210,12 +207,11 @@ def search_areas(term: str) -> SearchResults:
         return SearchResults(term='', groups=[])
 
     backend = get_backend()
-    groups = []
-
-    for area in get_areas():
-
-        if results := list(backend.search(area, terms)):
-            groups.append(AreaResults(area=area, results=results))
+    groups = [
+        AreaResults(area=area, results=results)
+        for area in get_areas()
+        if (results := list(backend.search(area, terms)))
+    ]
 
     return SearchResults(term=search_term, groups=groups)
 
