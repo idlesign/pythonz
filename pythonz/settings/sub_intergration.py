@@ -15,7 +15,7 @@ PARTNER_IDS = {}
 GOOGLE_API_KEY = 'not_a_secret'
 YANDEX_GEOCODER_KEY = 'not_a_secret'
 
-TELEGRAM_BOT_TOKEN = 'not_a_secret'
+TELEGRAM_BOT_TOKEN = '0000000000:not_a_secret'
 TELEGRAM_BOT_URL = 'not_a_secret'
 TELEGRAM_GROUP = 'group_id or @channel_name'
 
