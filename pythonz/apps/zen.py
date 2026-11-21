@@ -16,10 +16,10 @@ ZEN = (
      'Ошибки не должны оставаться незамеченными.\nЕсли не были заглушены явно'),
     ('In the face of ambiguity, refuse the temptation to guess',
      'Пред лицом многозначности презрите желание догадываться'),
-    ('There should be one — and preferably only one — obvious way to do it.\n'
-     'Although that way may not be obvious at first unless you\'re Dutch',
-     'Должен быть один — и лучше единственный — очевидный способ достичь цели.\n'
-     'Впрочем, если вы не голландец, поначалу этот способ может казаться не столь очевидным'),
+    (('There should be one — and preferably only one — obvious way to do it.\n'
+      'Although that way may not be obvious at first unless you\'re Dutch'),
+     ('Должен быть один — и лучше единственный — очевидный способ достичь цели.\n'
+      'Впрочем, если вы не голландец, поначалу этот способ может казаться не столь очевидным')),
     ('Now is better than never.\nAlthough never is often better than <em>right</em> now',
      'Лучше сейчас, чем никогда.\nВпрочем, часто <em>никогда</em> лучше, чем <em>прямо сейчас</em>'),
     ('If the implementation is hard to explain, it\'s a bad idea',
