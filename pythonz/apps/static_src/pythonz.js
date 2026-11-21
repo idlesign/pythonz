@@ -10,6 +10,7 @@ var pythonz = {
             pythonz.markUser();
             pythonz.linkifyVersionMarks();
             pythonz.toggleTags();
+            pythonz.initSuggests();
 
             sitecats.bootstrap();
             sitecats.make_cloud('box-tags');
@@ -188,6 +189,37 @@ var pythonz = {
             }
         });
 
+    },
+
+    initSuggests: function() {
+        "use strict";
+
+        if (typeof TomSelect === 'undefined') {
+            return;
+        }
+
+        // Поисковая подсказка вариантов с подгрузкой налету (см. #32).
+        // Применяется к полям, отрисованным SelectSuggestWidget.
+        // Подсказки обслуживает EditView.suggest.
+        $('select[data-suggest]').each(function(idx, el) {
+            new TomSelect(el, {
+                load: function(query, callback) {
+                    if (!query.length) {
+                        return callback();
+                    }
+
+                    fetch(window.location.pathname + '?q=' + encodeURIComponent(query), {
+                        headers: {
+                            'HX-Request': 'true',
+                            'HX-Trigger': 'suggest-' + el.name
+                        }
+                    })
+                    .then(function(response) { return response.json(); })
+                    .then(function(json) { callback(json.results); })
+                    .catch(function() { callback(); });
+                }
+            });
+        });
     },
 
     Map: function (mapElementId, objects) {

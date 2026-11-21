@@ -1,5 +1,4 @@
 {% load sitetree cache etc_misc static %}
-{% get_static_prefix as STATIC_URL %}
 
 <!DOCTYPE html>
 <html lang="ru" prefix="og: https://ogp.me/ns#" class="h-100">
@@ -24,7 +23,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.0/styles/default.min.css">
 
-    <link href="{{ STATIC_URL }}img/favicon.gif" rel="icon" type="image/gif" />
+    <link href="{% static 'img/favicon.gif' %}" rel="icon" type="image/gif" />
 
     {% block head %}
         {% if realm.syndication_enabled %}
@@ -43,7 +42,7 @@
             <div class="navbar-header">
 
                 <a class="navbar-brand link-dark" href="/" title="На главную страницу">
-                    <img src="{{ STATIC_URL }}img/favicon.gif" alt="pythonz">
+                    <img src="{% static 'img/favicon.gif' %}" alt="pythonz">
                 </a>
 
                 <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#nav_toggable" aria-expanded="false" title="Развернуть меню">

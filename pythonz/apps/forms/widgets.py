@@ -68,3 +68,32 @@ class MarkdownEditWidget(forms.Widget):
         html = loader.render_to_string('sub/md_hints.html')
 
         return format_html(html, flatatt(final_attrs), force_str(value))
+
+
+class SelectSuggestWidget(forms.Select):
+    """Реализует раскрывающийся список, отображающий только выбранное значение.
+
+    Остальные варианты подгружаются налету поисковой подсказкой (suggest),
+    что позволяет не выводить в разметку сотни элементов.
+
+    Обработчик подсказки: EditView.suggest; инициализация: pythonz.initSuggests.
+
+    """
+
+    def __init__(self, attrs: dict | None = None):
+        super().__init__(attrs)
+        # Маркер для автоматической инициализации подсказки на клиенте.
+        self.attrs['data-suggest'] = ''
+
+    def optgroups(self, name, value, attrs=None):
+        selected = {str(item) for item in value}
+
+        groups = []
+
+        for label, options, index in super().optgroups(name, value, attrs):
+            options = [option for option in options if str(option['value']) in selected or option['value'] in ('', None)]
+
+            if options:
+                groups.append((label, options, index))
+
+        return groups

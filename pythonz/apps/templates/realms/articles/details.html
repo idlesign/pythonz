@@ -1,6 +1,5 @@
 {% extends "base_details.html" %}
 {% load gravatar model_meta sitetree static %}
-{% get_static_prefix as STATIC_URL %}
 
 {% block head %}
     {% if article.nofollow %}<meta name="robots" content="noindex,nofollow" />{% endif %}
@@ -22,7 +21,7 @@
 {% block details_contents %}
     <meta itemprop="headline" content="{{ article.title }}" />
     <meta itemprop="datePublished" content="{{ article.time_published|date:"c" }}" />
-    <meta itemprop="image" content="{{ STATIC_URL }}img/realm_logos/pythonz_articles.png" />
+    <meta itemprop="image" content="{% static 'img/realm_logos/pythonz_articles.png' %}" />
 {% endblock %}
 
 {% block details_description %}<div class="mb-3 lead" itemprop="description">{{ item.description|linebreaksbr }}</div>{% endblock %}

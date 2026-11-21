@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import EmptyPage, Page, Paginator
 from django.db.models import QuerySet
-from django.http import Http404, HttpRequest
+from django.http import Http404, HttpRequest, JsonResponse
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition
@@ -464,8 +464,46 @@ class EditView(RealmView):
         """
         return HttpResponse(ModelWithCompiledText.compile_text(request.POST.get('text_src', '')))
 
+    def suggest(self, request: HttpRequest, obj_id: int | None = None) -> JsonResponse:
+        """Обслуживает ajax-запрос. Подсказывает варианты значений для поля формы по подстроке.
+
+        Имя поля берётся из идентификатора источника запроса (suggest-<поле>).
+        Поиск производится по выборке, назначенной полю формы; таким образом
+        подсказываются только значения, которые впоследствии примет валидация.
+
+        :param request:
+
+        """
+        results = []
+        term = request.GET.get('q', '').strip()
+
+        field_name = request.ajax.source.id.removeprefix('suggest-')
+
+        if len(term) >= 2:
+            form_field = self.realm.form.base_fields.get(field_name)
+            queryset = getattr(form_field, 'queryset', None)
+
+            if queryset is not None:
+                model = queryset.model
+
+                published = getattr(queryset, 'published', None)
+                if published is not None:
+                    queryset = published()
+
+                if obj_id is not None and model is self.realm.model:
+                    # Не подсказываем редактируемый объект (например, во избежание самоподчинения).
+                    queryset = queryset.exclude(pk=obj_id)
+
+                search_field = 'title' if hasattr(model, 'title') else 'name'
+
+                found = queryset.filter(**{f'{search_field}__icontains': term}).order_by(search_field)[:20]
+                results = [{'value': str(obj.pk), 'text': str(obj)} for obj in found]
+
+        return JsonResponse({'results': results})
+
     @ajax_dispatch({
         'preview-text': preview_text,
+        'suggest-*': suggest,
     })
     def get(self, request: HttpRequest, obj_id: int | None = None) -> HttpResponse:
 

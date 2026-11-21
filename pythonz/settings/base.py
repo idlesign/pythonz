@@ -1,3 +1,5 @@
+from time import time
+
 from .sub_paths import *  # noqa
 from .sub_email import *  # noqa
 from .sub_intergration import *  # noqa
@@ -53,6 +55,8 @@ LOGOUT_REDIRECT_URL = 'index'
 ADMIN_URL = 'admin'
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
+STATIC_VERSION = int(time())
+"""Версия статики. Меняется с перезапуском процесса, используется для сброса кеша (см. тег staticv)."""
 
 
 INSTALLED_APPS = [

@@ -1,6 +1,5 @@
 {% extends "base_details.html" %}
 {% load model_field sitetree static %}
-{% get_static_prefix as STATIC_URL %}
 
 {% block page_title %}{{ reference.title }} в Python{% endblock %}
 
@@ -34,7 +33,7 @@
 {% block details_contents %}
     <meta itemprop="headline" content="{{ reference.title }}" />
     <meta itemprop="datePublished" content="{{ reference.time_published|date:"c" }}" />
-    <meta itemprop="image" content="{{ STATIC_URL }}img/realm_logos/pythonz_references.png" />
+    <meta itemprop="image" content="{% static 'img/realm_logos/pythonz_references.png' %}" />
 
     <div class="mb-3 pull-right">
         {% if reference.pep %}

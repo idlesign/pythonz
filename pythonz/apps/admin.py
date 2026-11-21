@@ -164,7 +164,7 @@ class PlaceAdmin(admin.ModelAdmin):
 
     list_display = ('geo_title', 'title', 'status', 'time_created', 'time_published')
     search_fields = ['title', 'geo_title']
-    raw_id_fields = ('last_editor',)
+    autocomplete_fields = ('last_editor',)
     list_filter = ['time_created', 'status', 'geo_type']
     ordering = ['geo_title']
 
@@ -181,7 +181,7 @@ class VacancyAdmin(admin.ModelAdmin):
 class EntityBaseAdmin(admin.ModelAdmin):
 
     list_display = ('time_created', 'title', 'submitter', 'time_published')
-    raw_id_fields = ['submitter', 'last_editor', 'linked']
+    autocomplete_fields = ['submitter', 'last_editor', 'linked']
     search_fields = ['title', 'description']
     list_filter = ['time_created', 'status']
     ordering = ['-time_created']
@@ -219,6 +219,7 @@ class BookAdmin(EntityBaseAdmin):
 
     list_display = ('time_created', 'title', 'submitter', 'isbn', 'time_published')
     search_fields = ['title', 'isbn']
+    autocomplete_fields = EntityBaseAdmin.autocomplete_fields + ['authors']
     inlines = [PartnerLinkInline]
 
 
@@ -244,17 +245,18 @@ class EventAdmin(EntityBaseAdmin):
 
 @admin.register(Video)
 class VideoAdmin(EntityBaseAdmin):
-    pass
+
+    autocomplete_fields = EntityBaseAdmin.autocomplete_fields + ['authors']
 
 
 @admin.register(PEP)
 class PEPAdmin(EntityBaseAdmin):
 
     list_display = ('num', 'title', 'type', 'status')
-    search_fields = ['title', 'description']
+    search_fields = ['num', 'title', 'description']
     list_filter = ['status', 'type']
-    raw_id_fields = EntityBaseAdmin.raw_id_fields + [
-        'versions', 'superseded', 'replaces', 'requires', 'linked', 'authors'
+    autocomplete_fields = EntityBaseAdmin.autocomplete_fields + [
+        'versions', 'superseded', 'replaces', 'requires', 'authors'
     ]
     readonly_fields = EntityBaseAdmin.readonly_fields + ['status', 'type', 'description']
 
@@ -265,6 +267,9 @@ class ReferenceAdmin(HierarchicalModelAdmin, EntityBaseAdmin):
     hierarchy = True
     list_display = ('title', 'submitter', 'type', 'time_published')
     list_filter = ['time_created', 'status', 'type', 'version_added', 'version_deprecated']
+    autocomplete_fields = EntityBaseAdmin.autocomplete_fields + [
+        'parent', 'version_added', 'version_deprecated'
+    ]
 
 
 @admin.register(ReferenceMissing)
@@ -279,6 +284,7 @@ class ReferenceMissingAdmin(admin.ModelAdmin):
 class VersionAdmin(EntityBaseAdmin):
 
     list_display = ('title', 'date', 'date_till', 'status', 'slug', 'time_published')
+    search_fields = ['title']
 
 
 @admin.register(Person)
@@ -288,7 +294,7 @@ class PersonAdmin(admin.ModelAdmin):
     search_fields = ['name', 'name_en', 'aka']
     list_filter = ['status']
     ordering = ['name']
-    raw_id_fields = ['user', 'last_editor']
+    autocomplete_fields = ['user', 'last_editor']
     readonly_fields = ['text', 'supporters_num']
 
 

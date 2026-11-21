@@ -1,11 +1,14 @@
 {% extends "_base.html" %}
-{% load thumbs sitecats %}
+{% load thumbs sitecats statics %}
 
 {% block head %}
     {{ form.media }}
 
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/easymde.min.css">
-    <script src="{{ STATIC_URL }}js/easymde.min.js"></script>
+    <link rel="stylesheet" href="{% staticv 'css/easymde.min.css' %}">
+    <script src="{% staticv 'js/easymde.min.js' %}"></script>
+
+    <link rel="stylesheet" href="{% staticv 'css/tom-select.bootstrap4.min.css' %}">
+    <script src="{% staticv 'js/tom-select.complete.min.js' %}"></script>
 
 {% endblock %}
 

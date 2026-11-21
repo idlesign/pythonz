@@ -1,10 +1,11 @@
 {% extends "base_listing.html" %}
+{% load statics %}
 
 {% block page_title %}Известные люди в мире Python{% endblock %}
 
 {% block js_bottom %}
     {{ block.super }}
-    <script src="{{ STATIC_URL }}js/jquery.alphaindex.min.js" type="text/javascript"></script>
+    <script src="{% staticv 'js/jquery.alphaindex.min.js' %}" type="text/javascript"></script>
     <script>
         $(function(){
             var index = $('#indexed').makeAlphaIndex();

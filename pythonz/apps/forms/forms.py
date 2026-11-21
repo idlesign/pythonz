@@ -8,7 +8,7 @@ from ..generics.models import CommonEntityModel, RealmBaseModel
 from ..generics.realms import RealmBase
 from ..integration.videos import VideoBroker
 from ..models import App, Article, Book, Community, Discussion, Event, Reference, User, Version, Video
-from .widgets import MarkdownEditWidget
+from .widgets import MarkdownEditWidget, SelectSuggestWidget
 
 
 class DiscussionForm(RealmEditBaseForm):
@@ -320,6 +320,11 @@ class ReferenceForm(RealmEditBaseForm):
             'version_deprecated',
             'search_terms',
         )
+        widgets = {
+            'parent': SelectSuggestWidget,
+            'version_added': SelectSuggestWidget,
+            'version_deprecated': SelectSuggestWidget,
+        }
 
 
 class AppForm(RealmEditBaseForm):
