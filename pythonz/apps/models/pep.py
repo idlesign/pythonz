@@ -109,7 +109,7 @@ class PEP(RealmBaseModel, CommonEntityModel, ModelWithDiscussions):
 
     @classmethod
     def get_actual(cls) -> QuerySet:
-        return cls.objects.order_by('-time_published').all()
+        return cls.objects.order_by('-time_published', '-num').all()
 
     def get_link_to_pyorg(self) -> str:
         # Получает ссылку на pep в python.org
