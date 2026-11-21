@@ -165,11 +165,11 @@ wheels = [
 
 [[package]]
 name = "django-etc"
-version = "1.5.0"
+version = "1.6.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/5d/87/2c7a9c4e4f8c01f4efc3521bfaf2032411ef244839d5d81e95a377e3607f/django_etc-1.5.0.tar.gz", hash = "sha256:733fc603be83a184fbc2b0bd0af2d866dce44308eb4383435963ffd23f6ba3ab", size = 11395, upload-time = "2026-11-14T13:27:25.966Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b2/4b/3eb2a2b6d8d99e6ea8383058df278d2cc090cbc72ec4130c0f336f90ff1a/django_etc-1.6.0.tar.gz", hash = "sha256:4f408977470c80705b890f7b66997b7317c01264fc3143c87c991057a7930a8e", size = 11909, upload-time = "2026-11-21T10:05:18.102Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9c/ba/298806515aa767f9676cc188049e91c56eedb364ac3f91f238726ecbe3c1/django_etc-1.5.0-py3-none-any.whl", hash = "sha256:18831a0462dc5bc9809e31fdfbee695941dc5ebfab200ac95e3eee183252f5ed", size = 15609, upload-time = "2026-11-14T13:27:24.733Z" },
+    { url = "https://files.pythonhosted.org/packages/db/22/db43d3b8f55f511a070b0fa30fd11ceb6946416bc51c0b6eae0b2e355bd7/django_etc-1.6.0-py3-none-any.whl", hash = "sha256:5f4d540a3148fbbdbd745eed5a9551a6f99f54a475172b0f628a2d4ee9695084", size = 16237, upload-time = "2026-11-21T10:05:16.929Z" },
 ]
 
 [[package]]
@@ -674,7 +674,7 @@ requires-dist = [
     { name = "bleach", specifier = "~=6.2.0" },
     { name = "django", specifier = "~=6.1.0" },
     { name = "django-admirarchy", specifier = "~=1.2.2" },
-    { name = "django-etc", specifier = "~=1.5.0" },
+    { name = "django-etc", specifier = "~=1.6.0" },
     { name = "django-robots", specifier = "~=7.0" },
     { name = "django-siteajax", specifier = "~=1.0.0" },
     { name = "django-siteblocks", specifier = "~=1.2.2" },
