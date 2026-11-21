@@ -21,8 +21,9 @@ from slugify import CYRILLIC, Slugify
 
 from ..integration.base import RemoteSource
 from ..integration.utils import get_image_from_url
+from ..markup import compile_markdown
 from ..signals import sig_entity_new, sig_entity_published, sig_support_changed
-from ..utils import UTM, BasicTypograph, TextCompiler
+from ..utils import UTM, BasicTypograph
 
 USER_MODEL: str = settings.AUTH_USER_MODEL
 SLUGIFIER = Slugify(pretranslate=CYRILLIC, to_lower=True, safe_chars='-._', max_length=200)
@@ -54,7 +55,7 @@ class ModelWithAuthorAndTranslator(models.Model):
 
 
 class ModelWithCompiledText(models.Model):
-    """Класс-примесь для моделей, требующих поля, содержащие тексты в rst."""
+    """Класс-примесь для моделей, требующих поля с форматированными текстами (markdown)."""
 
     text = models.TextField('Текст')
     text_src = models.TextField('Исходный текст')
@@ -64,12 +65,12 @@ class ModelWithCompiledText(models.Model):
 
     @classmethod
     def compile_text(cls, text: str) -> str:
-        """Преобразует rst-подобное форматирование в html.
+        """Преобразует markdown-форматирование в html.
 
         :param text:
 
         """
-        return TextCompiler.compile(text)
+        return compile_markdown(text)
 
     def save(self, *args, **kwargs):
         self.text = self.compile_text(self.text_src)

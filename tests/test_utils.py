@@ -1,4 +1,4 @@
-from pythonz.apps.utils import BasicTypograph, PersonName, TextCompiler, swap_layout, url_mangle
+from pythonz.apps.utils import BasicTypograph, PersonName, swap_layout, url_mangle
 
 
 def test_person_name():
@@ -73,102 +73,6 @@ def test_typography():
                    '«строка\nперенесена')
 
     assert BasicTypograph.apply_to(input_str) == expected_str
-
-
-def test_text_compiler():
-
-    compile = TextCompiler.compile
-
-    assert compile('- ``func(*args, **kwargs)`` -') == '- <code>func(*args, **kwargs)</code> -'
-    assert compile("    myfunc(*[1], **{'three': 'some'})") == "    myfunc(*[1], **{'three': 'some'})"
-
-    assert (
-        'is <a href="https://some.org">https://some.org</a></td>' in
-        compile('.. table::\n`one / two<https://some.com>`_ - is https://some.org\nanother\n\n\n')
-    )
-
-    assert compile('2 ** 10d') == '2 ** 10d'
-
-    assert (
-        compile('``zip(*[iter(s)] * n)``\nlist(zip(*[iter(seq)] * 2))  # [(1, 2), (3, 4), (5, 6)]') ==
-        '<code>zip(*[iter(s)] * n)</code><br>list(zip(*[iter(seq)] * 2))  # [(1, 2), (3, 4), (5, 6)]')
-
-    assert compile('2 ** 10d') == '2 ** 10d'
-
-    assert compile('**some**') == '<b>some</b>'
-    assert compile('*some*') == '<i>some</i>'
-    assert compile('**1.** пункт') == '<b>1.</b> пункт'
-    assert compile('```\nздесь цитата\n```') == '<blockquote>здесь цитата</blockquote>'
-
-    assert compile('``some``') == '<code>some</code>'
-
-    assert compile('http://some.url/') == '<a href="http://some.url/">http://some.url/</a>'
-    assert compile(
-        '`This is httpserver link<http://some.url/>`_') == '<a href="http://some.url/">This is httpserver link</a>'
-    assert (
-        compile('Пробуем `ссылку с [именем] <http://some.com/here/there/>`_.') ==
-        'Пробуем <a href="http://some.com/here/there/">ссылку с [именем] </a>.')
-
-    assert compile('\n* Some.\n\n') == '<br><ul><li>Some.</li></ul><br>'
-    assert compile('\n* Some.\n* Other.\n\n') == '<br><ul><li>Some.</li><li>Other.</li></ul><br>'
-
-    assert (
-        compile('.. gist:: someuser/gisthashhere\n') ==
-        '<script src="https://gist.github.com/someuser/gisthashhere.js"></script>')
-
-    assert (
-        compile('.. video:: https://youtu.be/ZE7WsnmGZ3U?t=10\n') ==
-        '<div class="embed-responsive embed-responsive-16by9">'
-        '<iframe src="//www.youtube.com/embed/ZE7WsnmGZ3U?start=10&rel=0" '
-        'width="560" height="315" frameborder="0" allowfullscreen></iframe></div>')
-
-    assert (
-        compile('.. podster:: http://mtpod.podster.fm/0\n') ==
-        '<iframe width="100%" height="85" src="http://mtpod.podster.fm/0/embed/13?link=1" '
-        'frameborder="0" allowtransparency="true"></iframe>')
-
-    assert (
-        compile('.. image:: http://some.url/img.png\n') ==
-        '<img alt="http://some.url/img.png" src="http://some.url/img.png" '
-        'data-canonical-src="http://some.url/img.png" style="max-width:100%;">')
-
-    assert (
-        compile('.. code:: python\nprint("some")\n\n\n') ==
-        '<pre><code class="python">print("some")</code></pre><br>')
-
-    assert (
-        compile('.. code:: html\nprint("some")\n\n\n') ==
-        '<pre><code class="html">print("some")</code></pre><br>')
-
-    assert (
-        compile('.. table::\n``x(?<!y)`` | 2|2 | 3 \n4 | 5 | 6\n\n\n') ==
-        '<div class="table-responsive"><table class="table table-striped table-bordered table-hover">'
-        '<tr><td><code>x(?&lt;!y)</code></td><td>2|2</td><td>3</td></tr><tr><td>4</td><td>5</td><td>6</td></tr></table></div><br>')
-
-    assert (
-        compile('.. table::\n! 1 | 2 | 3\n4 | 5 | 6\n\n\n') ==
-        '<div class="table-responsive"><table class="table table-striped table-bordered table-hover">'
-        '<thead><tr><th>1</th><th>2</th><th>3</th></tr></thead><tr><td>4</td><td>5</td><td>6</td></tr></table></div><br>')
-
-    assert (
-        compile('.. table::\n!b:d+ 1 | 2 | 3 \n 4 | !b:i 5 | 6\n\n\n') ==
-        '<div class="table-responsive"><table class="table table-striped table-bordered table-hover">'
-        '<tr class="danger"><td>1</td><td>2</td><td>3</td></tr>'
-        '<tr><td>4</td><td class="info">5</td><td>6</td></tr></table></div><br>')
-
-    assert (
-        compile('.. note:: a note\n') ==
-        '<div class="card mb-3"><div class="card-header text-white bg-success">'
-        'На заметку</div><div class="card-body">a note</div></div>')
-
-    assert (
-        compile('.. warning:: a warn\n') ==
-        '<div class="card mb-3"><div class="card-header text-white bg-danger">'
-        'Внимание</div><div class="card-body">a warn</div></div>')
-
-    compiled = compile('.. poll:: absdefgh\n\n\n')
-    assert 'absdefgh' in compiled
-    assert 'yastatic' in compiled
 
 
 def test_swap_layout():

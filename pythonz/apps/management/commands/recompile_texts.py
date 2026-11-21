@@ -1,11 +1,11 @@
 from django.core.management.base import BaseCommand
 
-from ...models import Article, Community, Discussion, Event, Person, Reference, Version
+from ...models import App, Article, Community, Discussion, Event, Person, Reference, Version
 
 
 class Command(BaseCommand):
 
-    help = 'Recompiles rst-like texts into html.'
+    help = 'Recompiles markdown texts into html.'
 
     def handle(self, *args, **options):
 
@@ -19,12 +19,12 @@ class Command(BaseCommand):
             Reference,
             Event,
             Person,
+            App,
         ]
 
         for model in models:
 
             for item in model.objects.all():
-                item.text_src = item.text_src.rstrip('-_')
                 item.mark_unmodified()
                 item.save()
 

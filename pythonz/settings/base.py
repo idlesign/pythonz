@@ -35,6 +35,7 @@ DATABASES = {
 
 SITE_ID = 1
 
+
 ROOT_URLCONF = 'pythonz.urls'
 WSGI_APPLICATION = 'pythonz.wsgi.application'
 
