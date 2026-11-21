@@ -177,13 +177,6 @@ def test_index(check_page):
     ])
 
 
-def test_search_site(check_page):
-
-    check_page('search_site', assertions=[
-        'Поиск по сайту</h1>',
-    ])
-
-
 def test_search(check_page):
 
     check_page('search', assertions=[

@@ -3,16 +3,19 @@
 {% block body %}
     <div class="mb-3">{% include "sub/box_ads.html" with area="searchtop" %}</div>
     <div class="mb-3 small">Количество результатов: {{ results_len }}</div>
-    <div class="ml-3 mb-3" itemscope itemtype="https://schema.org/SearchResultsPage">
+    <div class="ml-3 mb-3 search-results" itemscope itemtype="https://schema.org/SearchResultsPage">
         {% if results_len %}
-            <ol>
-            {% for result in results %}
-                <li class="mt-3">
-                    <h4><a href="{{ result.get_absolute_url }}">{{ result.title }}</a></h4>
-                    <div class="mt-1"><i>{{ result.description }}</i></div>
-                </li>
+            {% for group in groups %}
+                <h4 class="subtitle mt-3" data-geopattern="{{ group.area.title }}">{{ group.area.title }}</h4>
+                <ol>
+                {% for result in group.results %}
+                    <li class="mt-2">
+                        <h5 class="result-title"><a href="{{ result.get_absolute_url }}">{{ result.title }}</a></h5>
+                        <div class="small"><i>{{ result.description }}</i></div>
+                    </li>
+                {% endfor %}
+                </ol>
             {% endfor %}
-            </ol>
         {% else %}
             <div class="alert alert-warning" role="alert">К сожалению, ничего не найдено.</div>
         {% endif %}

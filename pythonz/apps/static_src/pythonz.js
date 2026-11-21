@@ -11,6 +11,7 @@ var pythonz = {
             pythonz.linkifyVersionMarks();
             pythonz.toggleTags();
             pythonz.initSuggests();
+            pythonz.initSearchSuggest();
 
             sitecats.bootstrap();
             sitecats.make_cloud('box-tags');
@@ -218,6 +219,107 @@ var pythonz = {
                     .then(function(json) { callback(json.results); })
                     .catch(function() { callback(); });
                 }
+            });
+        });
+    },
+
+    initSearchSuggest: function() {
+        "use strict";
+
+        if (typeof TomSelect === 'undefined') {
+            return;
+        }
+
+        // Поисковая подсказка в строке поиска (см. #29).
+        // Подсказки обслуживает представление search_suggest.
+        $('[data-search-suggest]').each(function(idx, el) {
+            var suggest = new TomSelect(el, {
+                valueField: 'value',
+                labelField: 'text',
+                searchField: [],
+                maxOptions: 6,
+                create: false,
+                wrapperClass: 'ts-wrapper form-control-sm',
+                optgroupField: 'area',
+                optgroupValueField: 'area',
+                optgroupLabelField: 'area',
+                lockOptgroupOrder: true,
+                render: {
+                    option: function(data, escape) {
+                        return '<div class="option">' + escape(data.text) + '</div>';
+                    },
+                    item: function(data, escape) {
+                        return '<div>' + escape(data.text) + '</div>';
+                    },
+                    no_results: function() {
+                        return '<div class="no-results">Ничего не найдено</div>';
+                    }
+                },
+                load: function(query, callback) {
+                    if (!query.length) {
+                        return callback();
+                    }
+
+                    fetch('/search/suggest/?q=' + encodeURIComponent(query))
+                    .then(function(response) { return response.json(); })
+                    .then(function(json) {
+                        // Убираем варианты и группы от прошлых запросов,
+                        // регистрируем группы областей для текущего запроса.
+                        this.clearOptions();
+                        this.clearOptionGroups();
+                        var registered = {};
+                        json.results.forEach(function(result) {
+                            if (!registered[result.area]) {
+                                registered[result.area] = true;
+                                this.addOptionGroup(result.area, {});
+                            }
+                        }, this);
+                        callback(json.results);
+                    }.bind(this))
+                    .catch(function() { callback(); });
+                },
+                onItemAdd: function(value) {
+                    // Клик по варианту подсказки ведёт сразу на страницу объекта.
+                    if (this.options[value]) {
+                        window.location.href = value;
+                    }
+                }
+            });
+
+            // Enter переводит на страницу варианта, если тот явно выбран
+            // стрелками или указателем; иначе — на страницу полных результатов
+            // поиска. Обработчик навешивается в фазе захвата, чтобы опередить
+            // собственную обработку Enter в TomSelect.
+            var navigated = false;
+
+            suggest.wrapper.addEventListener('keydown', function(evt) {
+
+                if (evt.key === 'ArrowDown' || evt.key === 'ArrowUp') {
+                    navigated = true;
+                    return;
+                }
+
+                if (evt.key !== 'Enter') {
+                    navigated = false;
+                    return;
+                }
+
+                evt.preventDefault();
+                evt.stopPropagation();
+
+                var active = suggest.activeOption;
+
+                if (navigated && active) {
+                    window.location.href = active.dataset.value;
+
+                } else {
+                    el.value = suggest.control_input.value;
+                    el.form.submit();
+                }
+            }, true);
+
+            suggest.dropdown.addEventListener('mousemove', function() {
+                navigated = true;
             });
         });
     },

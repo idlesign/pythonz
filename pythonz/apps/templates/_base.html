@@ -72,7 +72,7 @@
                         {% csrf_token %}
                         <div role="search" class="mr-2">
                             <meta itemprop="target" content="{% site_url %}/search/?text={search_term}"/>
-                            <input class="form-control" type="search" aria-label="Search" name="text" placeholder="Поиск по справочнику" value="{{ search_term }}" required itemprop="query-input">
+                            <input class="form-control form-control-sm" type="search" aria-label="Search" name="text" placeholder="Поиск по сайту" value="{{ search_term }}" data-search-suggest itemprop="query-input">
                         </div>
                     </form>
 

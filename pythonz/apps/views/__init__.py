@@ -7,7 +7,7 @@ from .peps import PepListingView
 from .persons import PersonDetailsView
 from .places import PlaceDetailsView, PlaceListingView
 from .references import ReferenceDetailsView, ReferenceListingView
-from .search import search
+from .search import search, search_suggest
 from .users import UserDetailsView, UserEditView, user_settings
 from .vacancies import VacancyListingView
 from .versions import VersionDetailsView

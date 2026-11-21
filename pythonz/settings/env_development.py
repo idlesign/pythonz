@@ -3,6 +3,8 @@
 #
 import sys
 
+from envbox import get_environment
+
 from .base import *
 
 DEBUG = True
@@ -44,3 +46,16 @@ LOGGERS.update({
 
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
+
+if get_environment().get('PYTHONZ_DOCKERPG'):
+    # Переключение на PostgreSQL, например для работы с дампом боевых данных.
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'pythonz',
+            'USER': 'pythonz',
+            'PASSWORD': '',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+        }
+    }

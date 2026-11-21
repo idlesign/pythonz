@@ -9,6 +9,8 @@ class Category(Category_):
     class Meta:
 
         proxy = True
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
     @classmethod
     def find(cls, *search_terms: str) -> QuerySet:

@@ -10,4 +10,5 @@ conf/
 venv/
 support/
 env_production.py
+.env*
 .DS_Store

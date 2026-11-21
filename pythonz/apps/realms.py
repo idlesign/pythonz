@@ -202,9 +202,6 @@ def build_sitetree():
                      url_as_pattern=False),
                 item('Карта сайта', '/sitemap/', description='Список разделов на сайте оформленный в виде карты сайта.',
                      url_as_pattern=False),
-                item('Поиск по сайту', '/search/site/',
-                     description='Глобальный поиск по материалам, расположенным на сайте.',
-                     url_as_pattern=False),
                 item('Результаты поиска «{{ search_term }}»', '/search/', url_as_pattern=False, in_menu=False,
                      in_sitetree=False),
             ))
@@ -228,6 +225,11 @@ class BookRealm(RealmBase):
     form: type[CommonEntityForm] = BookForm
     icon: str = 'book'
 
+    search_weight_fields: tuple[tuple[str, str], ...] = (
+        ('title', 'A'),
+        ('description', 'C'),
+    )
+
 
 class VideoRealm(RealmBase):
     """Область с видео."""
@@ -241,6 +243,11 @@ class VideoRealm(RealmBase):
     model: type[RealmBaseModel] = Video
     form: type[CommonEntityForm] = VideoForm
     icon: str = 'film'
+
+    search_weight_fields: tuple[tuple[str, str], ...] = (
+        ('title', 'A'),
+        ('description', 'C'),
+    )
 
 
 class EventRealm(RealmBase):
@@ -294,6 +301,12 @@ class ReferenceRealm(RealmBase):
     form: type[CommonEntityForm] = ReferenceForm
     icon: str = 'search'
 
+    search_weight_fields: tuple[tuple[str, str], ...] = (
+        ('title', 'A'),
+        ('search_terms', 'B'),
+        ('description', 'B'),
+    )
+
     @classmethod
     def build_sitetree(cls, **kwargs):
         """Строит динамическое дерево справочника под именем `references`."""
@@ -339,6 +352,11 @@ class ArticleRealm(RealmBase):
     form: type[CommonEntityForm] = ArticleForm
     icon: str = 'file-o'
 
+    search_weight_fields: tuple[tuple[str, str], ...] = (
+        ('title', 'A'),
+        ('description', 'C'),
+    )
+
 
 class PlaceRealm(RealmBase):
     """Область с географическими объектами (местами)."""
@@ -355,6 +373,12 @@ class PlaceRealm(RealmBase):
 
     sitemap_changefreq: str = 'weekly'
     allowed_views: tuple[str, ...] = ('listing', 'details')
+
+    search_weight_fields: tuple[tuple[str, str], ...] = (
+        ('geo_title', 'A'),
+        ('title', 'A'),
+        ('description', 'C'),
+    )
     show_on_main: bool = False
     show_on_top: bool = False
 
@@ -424,6 +448,12 @@ class CategoryRealm(RealmBase):
     allowed_views: tuple[str, ...] = ('listing', 'details')
     ready_for_digest: bool = False
     sitemap_enabled: bool = False
+
+    search_weight_fields: tuple[tuple[str, str], ...] = (
+        ('title', 'A'),
+        ('note', 'B'),
+    )
+    search_exact_fields: tuple[str, ...] = ('title',)
 
     show_on_main: bool = False
     show_on_top: bool = False
@@ -567,6 +597,11 @@ class VersionRealm(RealmBase):
     show_on_top: bool = False
     show_on_main: bool = False
 
+    search_weight_fields: tuple[tuple[str, str], ...] = (
+        ('title', 'A'),
+        ('description', 'C'),
+    )
+
 
 class PepRealm(RealmBase):
     """Область с предложениями по улучшению."""
@@ -585,6 +620,12 @@ class PepRealm(RealmBase):
     icon: str = 'bell'
 
     show_on_top: bool = False
+
+    search_weight_fields: tuple[tuple[str, str], ...] = (
+        ('title', 'A'),
+        ('slug', 'B'),
+        ('description', 'C'),
+    )
 
 
 class PersonRealm(RealmBase):
@@ -608,6 +649,13 @@ class PersonRealm(RealmBase):
     syndication_enabled: bool = False
     ready_for_digest: bool = False
 
+    search_weight_fields: tuple[tuple[str, str], ...] = (
+        ('name', 'A'),
+        ('name_en', 'A'),
+        ('aka', 'B'),
+    )
+    search_exact_fields: tuple[str, ...] = ('name', 'name_en')
+
 
 class AppRealm(RealmBase):
     """Область приложений."""
@@ -627,6 +675,12 @@ class AppRealm(RealmBase):
     icon: str = 'tablet'
 
     show_on_top: bool = False
+
+    search_weight_fields: tuple[tuple[str, str], ...] = (
+        ('title', 'A'),
+        ('slug', 'B'),
+        ('description', 'C'),
+    )
 
 
 register_realms(

@@ -13,7 +13,6 @@ PARTNER_IDS = {}
 """Здесь указываются партнёрские идентификаторы."""
 
 GOOGLE_API_KEY = 'not_a_secret'
-YANDEX_SEARCH_ID = 'not_a_secret'
 YANDEX_GEOCODER_KEY = 'not_a_secret'
 
 TELEGRAM_BOT_TOKEN = 'not_a_secret'
