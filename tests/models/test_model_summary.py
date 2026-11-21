@@ -12,5 +12,5 @@ def test_create_article(robot):
     })
     assert article
     assert article.text_src == (
-        '.. title:: Блог PSF\n.. table::\n'
-        '`This nice<https://some.iii/a/b>`_ — do  best\n`title<https://other.iii/d/f>`_ — descr\n\n\n')
+        '#### Блог PSF\n|  |\n|---|\n'
+        '| [This nice](https://some.iii/a/b) — do  best |\n| [title](https://other.iii/d/f) — descr |\n\n\n')

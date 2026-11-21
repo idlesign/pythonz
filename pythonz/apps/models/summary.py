@@ -52,19 +52,20 @@ class Summary(RealmBaseModel):
             if not items:
                 continue
 
-            summary_text.append(f'.. title:: {SUMMARY_FETCHERS[fetcher_alias].title}')
-            summary_text.append('.. table::')
+            summary_text.append(f'#### {SUMMARY_FETCHERS[fetcher_alias].title}')
+            summary_text.append('|  |')
+            summary_text.append('|---|')
 
             for item in items:
                 title = item.title.translate(trans_map)
 
-                line = f'`{title}<{item.url}>`_'
+                line = f'[{title}]({item.url})'
 
                 if description := item.description:
                     description = description.translate(trans_map)
                     line += f' — {description}'
 
-                summary_text.append(line)
+                summary_text.append(f'| {line} |')
 
             summary_text.append('\n')
 
