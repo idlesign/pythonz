@@ -12,6 +12,7 @@ var pythonz = {
             pythonz.toggleTags();
             pythonz.initSuggests();
             pythonz.initSearchSuggest();
+            pythonz.scrollRefTree();
 
             sitecats.bootstrap();
             sitecats.make_cloud('box-tags');
@@ -221,6 +222,26 @@ var pythonz = {
                 }
             });
         });
+    },
+
+    scrollRefTree: function() {
+        "use strict";
+
+        // Прокручивает дерево близлежащих разделов справочника
+        // к текущей статье, если та не видна.
+        var box = $('.ref-tree-box')[0],
+            current = $('#ref-tree-current')[0];
+
+        if (!box || !current) {
+            return;
+        }
+
+        var boxRect = box.getBoundingClientRect(),
+            currentRect = current.getBoundingClientRect();
+
+        if (currentRect.top < boxRect.top || currentRect.bottom > boxRect.bottom) {
+            box.scrollTop = box.scrollTop + currentRect.top - boxRect.top - box.clientHeight / 2;
+        }
     },
 
     initSearchSuggest: function() {

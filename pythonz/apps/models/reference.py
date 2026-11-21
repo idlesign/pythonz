@@ -82,6 +82,17 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
         Type.MODULE,
     }
 
+    TYPES_PLURAL = {
+        Type.CHAPTER: 'Разделы',
+        Type.PACKAGE: 'Пакеты',
+        Type.MODULE: 'Модули',
+        Type.FUNCTION: 'Функции',
+        Type.CLASS: 'Классы и типы',
+        Type.METHOD: 'Методы',
+        Type.PROPERTY: 'Свойства',
+    }
+    """Подписи для групп статей при группировке по типу."""
+
     type = models.PositiveIntegerField(
         'Тип статьи', choices=Type.choices, default=Type.CHAPTER,
         help_text='Служит для структурирования информации. Справочные статьи разных типов могут выглядеть по-разному.')
@@ -197,6 +208,23 @@ class Reference(InheritedModel, RealmBaseModel, CommonEntityModel, ModelWithDisc
             qs = qs.exclude(pk=exclude_id)
 
         return qs.order_by('-time_published').all()
+
+    @classmethod
+    def group_by_type(cls, items: QuerySet) -> list[tuple[str, list]]:
+        """Группирует поданные статьи по типам, сохраняя порядок типов.
+        Возвращает список кортежей (подпись группы, статьи группы).
+
+        :param items: Статьи справочника.
+
+        """
+        grouped = []
+
+        for type_, caption in cls.TYPES_PLURAL.items():
+
+            if group_items := [item for item in items if item.type == type_]:
+                grouped.append((caption, group_items))
+
+        return grouped
 
     @classmethod
     def find(cls, *search_terms: str) -> QuerySet:

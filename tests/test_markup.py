@@ -99,19 +99,25 @@ def test_admonitions():
 
     assert (
         compile_markdown('!!! note\n    a note\n') ==
-        '<div class="card mb-3"><div class="card-header text-white bg-success">'
-        'На заметку</div><div class="card-body"><p>a note</p>\n</div></div>')
+        '<div class="card admonition mb-3"><div class="card-header text-white bg-success">'
+        'На заметку</div><div class="card-body"><p>a note</p></div></div>')
 
     assert (
         compile_markdown('!!! warning\n    a warn\n') ==
-        '<div class="card mb-3"><div class="card-header text-white bg-danger">'
-        'Внимание</div><div class="card-body"><p>a warn</p>\n</div></div>')
+        '<div class="card admonition mb-3"><div class="card-header text-white bg-danger">'
+        'Внимание</div><div class="card-body"><p>a warn</p></div></div>')
 
     # Явно заданный заголовок имеет приоритет над умолчательным.
     assert (
         compile_markdown('!!! warning "Свой заголовок"\n    a warn\n') ==
-        '<div class="card mb-3"><div class="card-header text-white bg-danger">'
-        'Свой заголовок</div><div class="card-body"><p>a warn</p>\n</div></div>')
+        '<div class="card admonition mb-3"><div class="card-header text-white bg-danger">'
+        'Свой заголовок</div><div class="card-body"><p>a warn</p></div></div>')
+
+    # Переводы строк убираются и у примечаний в середине текста.
+    assert (
+        compile_markdown('!!! note\n    a note\n\nпосле\n') ==
+        '<div class="card admonition mb-3"><div class="card-header text-white bg-success">'
+        'На заметку</div><div class="card-body"><p>a note</p></div></div><p>после</p>\n')
 
 
 def test_subtitle():

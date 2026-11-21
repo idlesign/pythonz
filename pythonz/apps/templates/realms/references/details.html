@@ -14,7 +14,7 @@
 {% block column_right_contents %}
 
     {% if request.user.is_authenticated %}
-    <div class="card mb-4"><div class="card-body">
+    <div class="card mb-4 small"><div class="card-body">
         <div>Дополнить справочник:</div>
         <div>
             {% include "realms/references/quick_add_form.html" with parent=reference.parent_id title='Добавить по соседству' %}
@@ -22,6 +22,10 @@
         </div>
         <div class="clearfix"></div>
     </div></div>
+    {% endif %}
+
+    {% if reference.parent or children %}
+        {% include "realms/references/nav_tree.html" %}
     {% endif %}
 
     {% include "sub/column_controls.html" %}
@@ -63,29 +67,6 @@
         Синонимы поиска: {{ reference.page_keywords }}
     </div>
 
-    {% if children and reference.is_type_bundle %}
-    <h6 class="mt-3">Статьи раздела</h6>
-    {% include "realms/references/sub_list.html" with items=children detailed=True %}
-    {% endif %}
-
-{% endblock %}
-
-{% block details_discussions_pre %}
-
-    <div class="card bg-light border-light mb-3 small">
-        <div class="card-body">
-            {% if children and not reference.is_type_bundle %}
-                <div class="mb-2"><i class="fa fa-circle-thin" aria-hidden="true"></i> В этом разделе:
-                    {% include "realms/references/sub_list.html" with items=children %}</div>
-            {% endif %}
-            {% if reference.parent and siblings %}
-                <div><i class="fa fa-circle-thin" aria-hidden="true"></i> В разделе «{{ reference.parent.title }}»:
-                    {% include "realms/references/sub_list.html" with items=siblings %}</div>
-            {% endif %}
-        </div>
-    </div>
-
-    {{ block.super }}
 {% endblock %}
 
 {% block cover %}{% endblock %}

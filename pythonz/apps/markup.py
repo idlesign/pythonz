@@ -16,6 +16,9 @@ from .utils import url_mangle
 #: URL собственного домена (нормализуются в относительные).
 RE_SELF_URL = re.compile(r'^https?://(?:www\.)?pythonz\.net(/?)', re.IGNORECASE)
 
+#: Закрытие карточки примечания (admonition) с предшествующими переводами строк.
+RE_ADMON_CLOSE = re.compile(r'\s+(</div></div>)')
+
 #: Заголовки и фоновые классы для примечаний (admonitions).
 ADMON_KINDS: dict[str, tuple[str, str]] = {
     'note': ('На заметку', 'bg-success'),
@@ -109,7 +112,7 @@ def _render_admonition(self, tokens, idx, options, env) -> str:
         title_default, bg = ADMON_KINDS.get(token.meta['tag'], (token.meta['tag'].capitalize(), 'bg-info'))
         title = token.meta.get('title') or title_default
         return (
-            f'<div class="card mb-3"><div class="card-header text-white {bg}">{title}</div>'
+            f'<div class="card admonition mb-3"><div class="card-header text-white {bg}">{title}</div>'
             '<div class="card-body">')
 
     if token.type == 'admonition_close':
@@ -218,4 +221,7 @@ def compile_markdown(text: str, *, breaks: bool = True) -> str:
 
     """
     text = text.replace('\r\n', '\n')
-    return get_engine(breaks=breaks).render(text)
+    html = get_engine(breaks=breaks).render(text)
+
+    # Убираем незначащие переводы строк в конце примечаний (admonitions).
+    return RE_ADMON_CLOSE.sub('\\1', html)

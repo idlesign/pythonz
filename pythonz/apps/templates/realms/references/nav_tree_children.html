@@ -1,0 +1,19 @@
+{% if children %}
+<ul>
+    {% for caption, group_items in children_grouped %}
+        {% if children_grouped|length > 1 %}
+        <li class="text-muted">{{ caption }}
+            <ul>
+                {% for child in group_items %}
+                <li>{% include "realms/references/tree_link.html" with item=child %}</li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% else %}
+            {% for child in group_items %}
+            <li>{% include "realms/references/tree_link.html" with item=child %}</li>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}

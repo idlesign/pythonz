@@ -1,0 +1,26 @@
+<div class="card bg-light border-light mb-3 small">
+    <div class="card-body ref-tree-box">
+        <ul class="ref-tree">
+            <li>
+                {% if reference.parent %}
+                    {% include "realms/references/tree_link.html" with item=reference.parent %}
+                    <ul>
+                        {% for sibling in siblings %}
+                        <li>
+                            {% if sibling.id == reference.id %}
+                                <strong id="ref-tree-current">{{ sibling.title_short }}</strong>
+                                {% include "realms/references/nav_tree_children.html" %}
+                            {% else %}
+                                {% include "realms/references/tree_link.html" with item=sibling %}
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <strong id="ref-tree-current">{{ reference.title }}</strong>
+                    {% include "realms/references/nav_tree_children.html" %}
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+</div>

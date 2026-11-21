@@ -1,0 +1,1 @@
+<a href="{{ item.get_absolute_url }}"{% if item.version_deprecated %} class="text-muted" title="Устарело"{% endif %}>{{ item.title_short|default:item.title }}</a>

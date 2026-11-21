@@ -218,6 +218,59 @@ input[type=checkbox] {
   word-spacing: 6px;
 }
 
+.ref-tree {
+  padding-left: @gap__min + 4;
+  overflow-wrap: break-word;
+
+  ul {
+    padding-left: @gap__min + 4;
+  }
+
+}
+
+.ref-tree-box {
+  max-height: 75vh;
+  overflow-y: auto;
+  font-size: .85rem;
+}
+
+.admonition {
+  font-size: .9rem;
+  margin-left: @gap__mid;
+  margin-right: @gap__mid;
+
+  .card-header {
+    padding: .25rem .75rem;
+    font-size: .85rem;
+    text-align: right;
+    // !important нужен, чтобы перебить text-white и bg-утилиты Bootstrap.
+    color: @cl__gray !important;
+
+    &.bg-success {
+      background-color: #e2edd6 !important;
+    }
+
+    &.bg-danger {
+      background-color: #f2dede !important;
+    }
+
+    &.bg-info {
+      background-color: #d9edf7 !important;
+    }
+  }
+
+  .card-body {
+    padding: .75rem;
+
+    > :last-child {
+      // Убираем отступ последнего элемента (обычно <p>),
+      // чтобы не было лишнего пространства перед низом карточки.
+      margin-bottom: 0;
+    }
+  }
+
+}
+
 //------------------------------------------
 // Custom classes singles.
 
@@ -437,6 +490,7 @@ nav .submenu {
   .gepattern-mixin;
   display: block;
   font-size: 1.2em;
+  margin-top: @gap__mid * 2;
 }
 
 
