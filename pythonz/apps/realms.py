@@ -574,6 +574,7 @@ class CommunityRealm(RealmBase):
 
     show_on_main: bool = False
     show_on_top: bool = False
+    show_in_menu: bool = False
 
 
 class VersionRealm(RealmBase):

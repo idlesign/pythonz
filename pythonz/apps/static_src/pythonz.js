@@ -63,24 +63,6 @@ var pythonz = {
         });
     },
 
-    activateCommentsTab: function(timeout) {
-        "use strict";
-        setTimeout(function(){
-            var maxCount = 0,
-                ids = ['comments_vk'];
-
-            $.each(ids, function(idx, tabId){
-                var count = parseInt($('#' + tabId + '_cnt').text());
-                if (count > maxCount) {
-                    $('a[href="#' + tabId + '"]', '#tabs-comments').tab('show');
-                    maxCount = count;
-                }
-            });
-
-
-        }, timeout);
-    },
-
     initEditor: function(textareaEl) {
         "use strict";
 

@@ -8,11 +8,6 @@
 {% block page_keywords %}{{ block.super }}, обсуждение {{ discussion.title }}{% endblock %}
 
 
-{% block head %}
-    {{ block.super }}
-    {% include "sub/vk_head.html" %}
-{% endblock %}
-
 {% block schema_type %}Comment{% endblock %}
 
 {% block details_contents %}
@@ -35,10 +30,4 @@
     <a href="{{ submitter_url }}">{% gravatar_get_img discussion.submitter 64 %}</a><br>
     <small><a href="{{ submitter_url }}">{{ discussion.submitter.get_display_name }}</a></small>
     {% endwith %}
-{% endblock %}
-
-{% block discussions %}
-    <div class="mt-4 p-2 clearfix border rounded">
-        {% include "sub/comments.html" with disable_internal=1 author=discussion.submitter entity_name='discussion' entity_id=discussion.id personalized=1 %}
-    </div>
 {% endblock %}

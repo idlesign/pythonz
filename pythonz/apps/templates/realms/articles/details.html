@@ -4,7 +4,6 @@
 {% block head %}
     {% if article.nofollow %}<meta name="robots" content="noindex,nofollow" />{% endif %}
     {{ block.super }}
-    {% include "sub/vk_head.html" %}
 {% endblock %}
 
 {% block meta_og %}

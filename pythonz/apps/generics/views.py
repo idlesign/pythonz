@@ -17,7 +17,7 @@ from sitecats.toolbox import get_category_aliases_under
 
 from ..exceptions import PythonzException, RedirectRequired
 from ..integration.partners import get_partner_links
-from ..models import Article, Category, Community, Discussion, Event, ModelWithCategory, ModelWithDiscussions, User
+from ..models import Article, Category, Community, Discussion, Event, ModelWithCategory, User
 from ..utils import message_error, message_info, message_success, message_warning
 from .models import ModelWithCompiledText, RealmBaseModel
 
@@ -388,11 +388,6 @@ class DetailsView(RealmView):
         item = self.get_object_or_404(obj_id)
 
         self.check_view_permissions(request, item)
-
-        item.has_discussions = False
-
-        if isinstance(item, ModelWithDiscussions):
-            item.has_discussions = True
 
         return item
 

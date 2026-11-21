@@ -5,11 +5,6 @@
 
 {% block page_keywords %}{{ block.super }}, предложение по улучшению{% endblock %}
 
-{% block head %}
-    {{ block.super }}
-    {% include "sub/vk_head.html" %}
-{% endblock %}
-
 {% block details_contents %}
     <div class="pull-right badge badge-info">{{ pep.time_published|date }}</div>
 {% endblock %}

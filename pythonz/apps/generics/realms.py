@@ -45,6 +45,8 @@ class RealmBase:
     """Следует ли отображать на главной странице."""
     show_on_top: bool = True
     """Следует ли отображать в верхнем меню."""
+    show_in_menu: bool = True
+    """Следует ли отображать в меню сайта."""
 
     search_weight_fields: tuple[tuple[str, str], ...] = ()
     """Поля модели для поиска и их веса (A — наиболее значимые, D — наименее).
@@ -327,6 +329,9 @@ class RealmBase:
                 sitetree_items.inmenu = False
                 sitetree_items.insitetree = False
                 sitetree_items.inbreadcrumbs = False
+
+            if not cls.show_in_menu:
+                sitetree_items.inmenu = False
 
             sitetree_items.show_on_top = cls.show_on_top
             cls.sitetree_items = sitetree_items

@@ -4,7 +4,6 @@
 
 {% block head %}
     {{ block.super }}
-    {% include "sub/vk_head.html" %}
     <meta property="yandex_recommendations_title" content="{{ item.title }}"/>
     <meta property="yandex_recommendations_category" content="{{ realm.model.get_verbose_name }}"/>
 {% endblock %}
@@ -53,13 +52,6 @@
 
             {% block details_discussions_pre %}
                 {% include "sub/box_recommend.html" with block_id="247489-6" %}
-            {% endblock %}
-            {% block discussions %}
-                {% if item.has_discussions %}
-                    <div class="mt-4 p-2 clearfix border rounded">
-                        {% include "sub/comments.html" %}
-                    </div>
-                {% endif %}
             {% endblock %}
         </div>
 
