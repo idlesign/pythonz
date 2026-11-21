@@ -91,7 +91,10 @@ class SelectSuggestWidget(forms.Select):
         groups = []
 
         for label, options, index in super().optgroups(name, value, attrs):
-            options = [option for option in options if str(option['value']) in selected or option['value'] in ('', None)]
+            options = [
+                option for option in options
+                if str(option['value']) in selected or option['value'] in ('', None)
+            ]
 
             if options:
                 groups.append((label, options, index))

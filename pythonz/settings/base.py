@@ -1,13 +1,13 @@
 from time import time
 
-from .sub_paths import *  # noqa
+from pythonz import VERSION
+
 from .sub_email import *  # noqa
 from .sub_intergration import *  # noqa
 from .sub_logging import *  # noqa
+from .sub_paths import *  # noqa
 from .sub_security import *  # noqa
 from .sub_sentry import init_sentry  # noqa
-
-from pythonz import VERSION
 
 SITE_URL = 'https://pythonz.net'
 PROJECT_SOURCE_URL = 'https://github.com/idlesign/pythonz'
