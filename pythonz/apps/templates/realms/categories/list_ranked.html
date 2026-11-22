@@ -1,0 +1,19 @@
+{% load sitecats %}
+{% with categories=list.get_categories %}
+{% if categories %}
+<div id="catbox_{{ list.get_id }}" data-catalias="{{ list.alias }}" data-catid="{{ list.get_id }}" class="categories_box categories_ranked">
+    {% if list.show_title %}
+    <div class="title" title="{{ list.get_note }}">{{ list.get_title }}</div>
+    {% endif %}
+    <div class="ranked_rows">
+        {% for cat in categories %}
+        <div class="ranked_row">
+            <a href="{% sitecats_url for cat using list %}" data-tiesnum="{{ cat.ties_num }}" data-catid="{{ cat.id }}" class="ranked_label" title="{{ cat.note }}">{{ cat.title }}</a>
+            <div class="ranked_track"><div class="ranked_bar" style="width:{% widthratio cat.ties_num list.ties_max 100 %}%"></div></div>
+            <span class="ranked_num">{{ cat.ties_num }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endwith %}

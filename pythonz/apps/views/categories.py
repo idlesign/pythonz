@@ -18,9 +18,16 @@ class CategoryListingView(RealmView):
             item = get_category_lists(
                 init_kwargs={
                     'show_title': True,
-                    'show_links': lambda cat: reverse(self.realm.get_details_urlname(), args=[cat.id])
+                    'show_links': lambda cat: reverse(self.realm.get_details_urlname(), args=[cat.id]),
+                    'template': 'realms/categories/list_ranked.html',
                 },
                 additional_parents_aliases=get_category_aliases_under())
+
+            # Ранжируем категории по числу связей для наглядного вывода.
+            for catlist in item:
+                categories = sorted(catlist.get_categories(), key=lambda cat: cat.ties_num, reverse=True)
+                catlist.set_get_categories_cache(categories)
+                catlist.ties_max = categories[0].ties_num if categories else 0
 
             return self.render(request, {'item': item, 'realms': realms})
 

@@ -403,6 +403,53 @@ nav .submenu {
   input {
     font-size: 12px;
   }
+
+  // Ранжированный список категорий с полосами (страница «Путеводитель»).
+  .categories_ranked {
+    .title {
+      min-width: 0;
+      max-width: none;
+      float: none;
+      display: block;
+      font-size: @gap__mid;
+      margin-bottom: @gap__min;
+    }
+    .ranked_rows {
+      margin-bottom: @gap__mid;
+    }
+    .ranked_row {
+      display: flex;
+      align-items: center;
+      gap: @gap__min;
+      margin-bottom: 3px;
+      font-size: 14px;
+    }
+    .ranked_label {
+      flex: 0 0 200px;
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .ranked_track {
+      flex: 1 1 auto;
+      height: 14px;
+      background: lighten(@cl__blue2, 42%);
+      border-radius: 3px;
+    }
+    .ranked_bar {
+      height: 100%;
+      min-width: 2px;
+      background: @cl__blue2;
+      border-radius: 3px;
+      opacity: .8;
+    }
+    .ranked_num {
+      flex: 0 0 40px;
+      font-size: 12px;
+      color: @cl__gray;
+    }
+  }
 }
 
 .zen {
